@@ -13,16 +13,23 @@ jobs:
         with:
           # ModDevGradle 2.x совместим с Gradle 8.x; не даём поставить 9-ю
           gradle-version: '8.9'
-      - name: Fetch Create Aeronautics (compile target)
+      - name: Fetch Create Aeronautics + Ponder/Flywheel/Registrate (compile targets)
         run: |
           mkdir -p libs
           curl -sL "https://cdn.modrinth.com/data/oWaK0Q19/versions/44pLdPGg/create-aeronautics-bundled-1.21.1-1.3.2.jar" -o /tmp/ca-bundled.jar
+          curl -sL "https://cdn.modrinth.com/data/LNytGWDc/versions/UjX6dr61/create-1.21.1-6.0.10.jar" -o /tmp/create.jar
           python3 - <<'PY'
           import zipfile
-          z = zipfile.ZipFile('/tmp/ca-bundled.jar')
-          inner = [n for n in z.namelist() if n.endswith('.jar') and 'aeronautics' in n][0]
-          open('libs/create-aeronautics-inner-1.3.2.jar', 'wb').write(z.read(inner))
+          ca = zipfile.ZipFile('/tmp/ca-bundled.jar')
+          inner = [n for n in ca.namelist() if n.endswith('.jar') and 'aeronautics' in n][0]
+          open('libs/create-aeronautics-inner-1.3.2.jar', 'wb').write(ca.read(inner))
           print('extracted:', inner)
+          cr = zipfile.ZipFile('/tmp/create.jar')
+          for n in cr.namelist():
+              if n.startswith('META-INF/jarjar/') and n.endswith('.jar'):
+                  out = 'libs/' + n.rsplit('/', 1)[1].replace('+mc1.21.1', '').replace('+67', '')
+                  open(out, 'wb').write(cr.read(n))
+                  print('extracted:', n, '->', out)
           PY
       - name: Build
         run: gradle build --no-daemon

@@ -35,10 +35,13 @@ dependencies {
     // ВАЖНО: на Modrinth лежит только JarJar-bundled jar (классы — во внутреннем jar),
     // поэтому CI распаковывает внутренний aeronautics-*.jar в libs/ (см. build.yml),
     // и здесь подключаем его напрямую. Ассеты CA — All Rights Reserved: не копируем.
-    // Транзитивные цели компиляции CA: Create и Sable (у них jar'ы с классами на верхнем уровне).
+    // Транзитивные цели компиляции CA: Create и Sable (верхнеуровневые jar'ы на Modrinth-maven).
+    // Ponder (net.createmod.ponder: VirtualBlockEntity и др.), flywheel и Registrate живут
+    // JarJar'ом внутри create-jar — CI распаковывает их туда же в libs/.
     compileOnly files('libs/create-aeronautics-inner-1.3.2.jar')
     compileOnly "maven.modrinth:create:6.0.10+mc1.21.1"
     compileOnly "maven.modrinth:sable:2.0.5+mc1.21.1"
+    compileOnly fileTree(dir: 'libs', include: ['ponder-*.jar', 'flywheel-*.jar', 'Registrate-*.jar'])
 }
 
 tasks.withType(JavaCompile).configureEach {
