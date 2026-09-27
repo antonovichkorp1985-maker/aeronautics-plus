@@ -10,6 +10,9 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v3
+        with:
+          # ModDevGradle 2.x совместим с Gradle 8.x; не даём поставить 9-ю
+          gradle-version: '8.9'
       - name: Build
         run: gradle build --no-daemon
       - uses: actions/upload-artifact@v4
