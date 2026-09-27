@@ -32,8 +32,10 @@ neoForge {
 dependencies {
     // Create Aeronautics: код MIT — компилируемся против их публичных классов
     // (BasePropellerBlock / BasePropellerBlockEntity / PropellerActorBehaviour).
-    // Ассеты CA — All Rights Reserved: их текстуры/модели НЕ копируем.
-    compileOnly "maven.modrinth:create-aeronautics:1.3.2+mc1.21.1"
+    // ВАЖНО: на Modrinth лежит только JarJar-bundled jar (классы — во внутреннем jar),
+    // поэтому CI распаковывает внутренний aeronautics-*.jar в libs/ (см. build.yml),
+    // и здесь подключаем его напрямую. Ассеты CA — All Rights Reserved: не копируем.
+    compileOnly files('libs/create-aeronautics-inner-1.3.2.jar')
 }
 
 tasks.withType(JavaCompile).configureEach {
