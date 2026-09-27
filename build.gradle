@@ -1,6 +1,6 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.78'
+    id 'net.neoforged.moddev' version '2.0.147'
 }
 
 version = '0.1.0'
@@ -13,24 +13,27 @@ java {
 
 repositories {
     mavenCentral()
+    // Create Aeronautics (bundled jar) для compileOnly
     maven { url = 'https://api.modrinth.com/maven' }
-    maven { url = 'https://www.cursemaven.com' }
-}
-
-dependencies {
-    neoForge "net.neoforged:neoforge:21.1.251"
-    // Create Aeronautics (bundled) — компилируемся против их публичных классов (код MIT).
-    // Ассеты CA — All Rights Reserved: их текстуры/модели НЕ копируем.
-    compileOnly "maven.modrinth:create-aeronautics:1.3.2"
 }
 
 neoForge {
+    version = '21.1.251'
+
     runs {
         client { client() }
     }
+
     mods {
         aeronauticsplus { sourceSet sourceSets.main }
     }
+}
+
+dependencies {
+    // Create Aeronautics: код MIT — компилируемся против их публичных классов
+    // (BasePropellerBlock / BasePropellerBlockEntity / PropellerActorBehaviour).
+    // Ассеты CA — All Rights Reserved: их текстуры/модели НЕ копируем.
+    compileOnly "maven.modrinth:create-aeronautics:1.3.2"
 }
 
 tasks.withType(JavaCompile).configureEach {
