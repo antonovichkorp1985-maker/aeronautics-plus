@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+
+[[mods]]
+modId="aeronauticsplus"
+version="0.1.0"
+displayName="Aeronautics Plus"
+logoFile="icon.png"
+authors="LEEEONIDys"
+description='''Авиа-комплектующие для Create Aeronautics: авиационные пропеллеры, крылья, рули, закрылки, реактивные сопла, несущие и рулевые винты.
+Aircraft parts addon for Create Aeronautics. Code: MIT. Assets: our own (no CA/VW assets reused).'''
+
+[[dependencies.aeronauticsplus]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1.251,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.aeronauticsplus]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.1]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.aeronauticsplus]]
+    modId="aeronautics"
+    type="required"
+    versionRange="[1.3.2,)"
+    ordering="AFTER"
+    side="BOTH"
