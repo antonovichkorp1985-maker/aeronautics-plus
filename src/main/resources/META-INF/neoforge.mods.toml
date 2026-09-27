@@ -4,12 +4,12 @@ license="MIT"
 
 [[mods]]
 modId="aeronauticsplus"
-version="0.1.0"
+version="0.2.0-dev"
 displayName="Aeronautics Plus"
 logoFile="icon.png"
 authors="LEEEONIDys"
-description='''Авиа-комплектующие для Create Aeronautics: авиационные пропеллеры, крылья, рули, закрылки, реактивные сопла, несущие и рулевые винты.
-Aircraft parts addon for Create Aeronautics. Code: MIT. Assets: our own (no CA/VW assets reused).'''
+description='''Авиа-комплектующие для Create Aeronautics: авиационные пропеллеры, несущие/рулевые винты, крылья, рули, закрылки и интеграционные крепления под сторонние силовые установки.
+Aircraft parts addon for Create Aeronautics. Create Propulsion: Simulated / More Propulsion already provide generic jet engines, so this addon focuses on aircraft parts and compatibility instead of duplicating them. Code: MIT. Assets: our own (no CA/VW assets reused).'''
 
 [[dependencies.aeronauticsplus]]
     modId="neoforge"

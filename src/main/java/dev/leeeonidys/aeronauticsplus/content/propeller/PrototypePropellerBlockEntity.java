@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * createBehavior() is already concrete in the base class and wires the
  * PropellerActorBehaviour (thrust layers + entity push) for us.
  *
- * Prototype tuning (to be revisited in Э3 balancing):
+ * Prototype tuning (kept as a baseline while Э3 propeller-family balancing starts):
  *  thrust 150, airflow 2.5, radius 2 blocks.
  */
 public class PrototypePropellerBlockEntity extends BasePropellerBlockEntity {
