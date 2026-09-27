@@ -131,7 +131,7 @@ public final class AeronauticsPlus {
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
-        LOGGER.info("Aeronautics Plus 0.2.0-dev: prototype and aircraft propeller family registered.");
+        LOGGER.info("Aeronautics Plus 0.2.0: prototype and aircraft propeller family registered.");
     }
 
     private static PropellerEntry registerAircraftPropeller(PropellerSpec spec) {
