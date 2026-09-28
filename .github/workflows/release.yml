@@ -10,14 +10,16 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Validate resources and data
+        run: python3 scripts/validate_resources.py
       - name: Fetch Create Aeronautics + Ponder/Flywheel/Registrate (compile targets)
         run: |
           mkdir -p libs
@@ -43,25 +45,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "$GITHUB_REF_NAME" build/libs/*.jar \
-            --title "$GITHUB_REF_NAME" \
             --verify-tag \
-            --notes-file - <<'EOF'
-          ## Aeronautics Plus v0.2.0 — семейство авиационных винтов (Э3)
-
-          Авиа-комплектующие для **Create Aeronautics** (MC 1.21.1, NeoForge 21.1.251+, Java 21).
-
-          ### Что внутри
-          - **9 авиационных винтов**: дерево / алюминий / сталь × 2, 3 и 4 лопасти
-          - Все винты наследуют `BasePropellerBlock` Create Aeronautics — дружат с подшипниками, гаечным ключом, пондерами и физикой Sable
-          - Тяга / airflow / радиус задаются per-spec (`PropellerSpec`) — дальше балансируются в тест-мире
-          - Прототипный винт (Э2, v0.1) остаётся в моде
-          - Блокстейты, модели, текстуры (свои, 16×16), локализации en/ru, вкладка в креативе
-
-          ### Установка
-          Требуется: Minecraft 1.21.1 + NeoForge ≥ 21.1.251 + Create Aeronautics ≥ 1.3.2. Jar кинуть в `mods/`.
-
-          ### Дорожная карта
-          Э1 каркас ✓ → Э2 прототипный винт ✓ → **Э3 семейство винтов ✓ (этот релиз)** → Э4 несущие/рулевые винты → Э5 крылья/рули → Э6 реактивная интеграция.
-
-          Jar собран CI из тега `${{ github.ref_name }}` (workflow `release.yml`).
-          EOF
+            --title "Aeronautics Plus $GITHUB_REF_NAME" \
+            --generate-notes
