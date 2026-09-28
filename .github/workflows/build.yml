@@ -4,12 +4,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
         with:
           # ModDevGradle 2.x совместим с Gradle 8.x; не даём поставить 9-ю
           gradle-version: '8.9'
@@ -35,7 +35,7 @@ jobs:
           PY
       - name: Build
         run: gradle build --no-daemon
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: aeronauticsplus-jars
           path: build/libs/*.jar
