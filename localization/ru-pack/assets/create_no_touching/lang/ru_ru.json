@@ -1,0 +1,20 @@
+{
+  "block.create_no_touching.a_parry_s": "AParryS",
+  "block.create_no_touching.aps": "Комплекс активной защиты",
+  "block.create_no_touching.aps_auto_yaw": "Автонаведение комплекса активной защиты",
+  "block.create_no_touching.era": "Динамическая защита",
+  "block.create_no_touching.iron_fist": "Комплекс «Айрон Фист»",
+  "block.create_no_touching.tusk_era": "Динамическая защита «Туск»",
+  "block.createnotouching.aps_auto_yaw.tooltip": "Щёлкните ПКМ по сплошному блоку, чтобы применить его текстуру",
+  "block.createnotouching.aps_auto_yaw.tooltip.line2": "Shift + ПКМ — удалить текстуру",
+  "entity.create_no_touching.scattereds": "Осколки",
+  "item.create_no_touching.aps_round": "Боеприпас комплекса активной защиты",
+  "item.create_no_touching.ceramic_plate": "Керамическая пластина",
+  "item.create_no_touching.interceptors": "Перехватчики",
+  "item.create_no_touching.iron_pipe": "Железная труба",
+  "item.create_no_touching.reflective": "Отражатель",
+  "itemGroup.create_no_touching": "Create: Без контакта",
+  "item_group.create_no_touching.create_no_touching": "Create: Без контакта",
+  "subtitles.parry": "Комплекс активной защиты перехватывает снаряд",
+  "subtitles.pipe": "Металл звенит"
+}

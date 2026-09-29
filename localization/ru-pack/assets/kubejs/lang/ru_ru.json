@@ -1,0 +1,18 @@
+{
+  "item.kubejs.advanced_die": "Продвинутый кристалл микросхемы",
+  "item.kubejs.advanced_pcb": "Продвинутая печатная плата",
+  "item.kubejs.basic_die": "Базовый кристалл микросхемы",
+  "item.kubejs.basic_pcb": "Базовая печатная плата",
+  "item.kubejs.etched_wafer": "Протравленная кремниевая пластина",
+  "item.kubejs.insulated_copper_wire_3px": "Изолированный медный провод 3×3",
+  "item.kubejs.machine_controller_hv": "HV-контроллер машины",
+  "item.kubejs.machine_controller_lv": "LV-контроллер машины",
+  "item.kubejs.machine_controller_mv": "MV-контроллер машины",
+  "item.kubejs.psu_acdc_basic": "Базовый AC/DC-блок питания",
+  "item.kubejs.psu_dc_basic": "Базовый DC-блок питания",
+  "item.kubejs.silicon_wafer_blank": "Чистая кремниевая пластина",
+  "item.kubejs.smd_capacitor": "SMD-конденсатор",
+  "item.kubejs.smd_resistor": "SMD-резистор",
+  "item.kubejs.smd_transistor": "SMD-транзистор",
+  "item.kubejs.transformer_core_basic": "Базовый сердечник трансформатора"
+}

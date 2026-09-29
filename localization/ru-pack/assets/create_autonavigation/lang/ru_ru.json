@@ -1,0 +1,16 @@
+{
+  "block.create_autonavigation.navigation_workbench": "Умный навигационный стол",
+  "gui.create_autonavigation.confirm": "Подтвердить координаты",
+  "gui.create_autonavigation.coordinates": "Координаты",
+  "gui.create_autonavigation.coordinates_hint": "Введите координаты",
+  "gui.create_autonavigation.invalid_coordinates": "Введите X Y Z",
+  "itemGroup.create_autonavigation": "Create: Autonavigation",
+  "message.create_autonavigation.radar.already_linked": "Умный навигационный стол уже привязан к радиолокационной сети",
+  "message.create_autonavigation.radar.gui_locked": "Умный навигационный стол привязан к радиолокационной сети",
+  "message.create_autonavigation.radar.incompatible": "Не удалось подключиться к Create Radar 0.4.9.4",
+  "message.create_autonavigation.radar.invalid_network": "Выбранная радиолокационная сеть недоступна",
+  "message.create_autonavigation.radar.link_success": "Умный навигационный стол подключён к радиолокационной сети",
+  "message.create_autonavigation.radar.place_failed": "Не удалось установить передатчик радиолокационных данных",
+  "message.create_autonavigation.radar.too_far": "Умный навигационный стол находится слишком далеко от радиолокационной сети",
+  "screen.create_autonavigation.navigation_workbench": "Умный навигационный стол"
+}

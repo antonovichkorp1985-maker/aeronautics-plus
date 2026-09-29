@@ -1,0 +1,10 @@
+{
+  "description.agricraft.immersiveengineering.hemp": "Проверка: раз, два, три.",
+  "plant.agricraft.immersiveengineering.hemp": "Промышленная конопля",
+  "seed.agricraft.immersiveengineering.hemp": "Семена промышленной конопли",
+  "desc.immersiveengineering.info.bullet.flareColour": "Цвет сигнальной ракеты:",
+  "desc.immersiveengineering.info.colour": "Цвет:",
+  "desc.immersiveengineering.info.coresample.noTimestamp": "Время взятия образца неизвестно",
+  "desc.immersiveengineering.info.durability": "Прочность:",
+  "ie.manual.entry.minerals_desc": "%1$s\nСостав: %2$s\n\nПобочные породы: %3$s"
+}

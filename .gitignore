@@ -9,3 +9,5 @@ libs/
 __pycache__/
 *.py[cod]
 google_drive/
+
+.audit/
