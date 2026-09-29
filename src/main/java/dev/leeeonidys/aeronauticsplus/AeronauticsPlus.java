@@ -5,8 +5,10 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.AircraftPropellerBlockEn
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -131,7 +134,27 @@ public final class AeronauticsPlus {
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
-        LOGGER.info("Aeronautics Plus 0.2.1-dev: prototype and aircraft propeller family registered.");
+        modEventBus.addListener(AeronauticsPlus::onCommonSetup);
+        LOGGER.info("Aeronautics Plus 0.2.1-dev: propeller registration queued.");
+    }
+
+    private static void onCommonSetup(FMLCommonSetupEvent event) {
+        event.enqueueWork(() -> {
+            List<String> registeredItems = new ArrayList<>();
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(PROTOTYPE_PROPELLER_ITEM.get()).toString());
+            AIRCRAFT_PROPELLERS.forEach(entry ->
+                    registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
+
+            boolean allRegistered = registeredItems.size() == 10
+                    && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
+            if (allRegistered) {
+                LOGGER.info(
+                        "Aeronautics Plus registry ready: {} propeller items; creative tab {}:main; ids={}",
+                        registeredItems.size(), MODID, registeredItems);
+            } else {
+                LOGGER.error("Aeronautics Plus registry verification failed: ids={}", registeredItems);
+            }
+        });
     }
 
     private static PropellerEntry registerAircraftPropeller(PropellerSpec spec) {

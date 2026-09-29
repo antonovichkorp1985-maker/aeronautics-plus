@@ -27,6 +27,17 @@ Create Propulsion: Simulated и More Propulsion уже закрывают пол
 
 Все винты доступны в творческой вкладке Aeronautics Plus. В v0.2.1 добавлены survival-рецепты: материал лопастей (`minecraft:planks`, `c:ingots/aluminum`, `c:ingots/steel` или `c:ingots/iron` для прототипа) вокруг `create:shaft`.
 
+## Проверка установки
+
+1. В списке модов должна быть строка `Aeronautics Plus <версия> (aeronauticsplus)`; в `latest.log` — сообщение `Aeronautics Plus registry ready: 10 propeller items` (начиная с v0.2.1).
+2. В мире с командами проверить реестр напрямую:
+   - `/give @s aeronauticsplus:prototype_propeller`
+   - `/give @s aeronauticsplus:aluminum_three_blade_propeller`
+3. В творческом поиске искать `авиационный` или `винт`; отдельная вкладка называется **Aeronautics Plus** и имеет иконку алюминиевого трёхлопастного винта. Моды-организаторы вкладок могут перенести её на другую страницу.
+4. В EMI выбрать боковую страницу **Index**, а не **Craftables**, и искать `@aeronauticsplus`. Обычный поиск `Aeronautics Plus` не работает, если в EMI отключён поиск по имени мода.
+
+Важно: стабильный v0.2.0 не содержит survival-рецептов и loot tables, поэтому его предметы отсутствуют на странице EMI **Craftables**. Это исправлено в v0.2.1-dev.
+
 ## Сборка
 GitHub Actions собирает jar автоматически на каждый push (вкладка **Actions** → артефакт `aeronauticsplus-jars`).
 Локально: `gradle build` (JDK 21, Gradle 8.9).
