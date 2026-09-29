@@ -53,7 +53,10 @@ public final class AeronauticsPlus {
     // Э2: prototype aircraft propeller, built on CA's MIT-licensed propeller classes.
     public static final DeferredBlock<PrototypePropellerBlock> PROTOTYPE_PROPELLER =
             BLOCKS.register("prototype_propeller", () -> new PrototypePropellerBlock(
-                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f, 6.0f)));
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(2.0f, 6.0f)
+                            .noOcclusion()));
 
     public static final DeferredItem<BlockItem> PROTOTYPE_PROPELLER_ITEM =
             ITEMS.registerSimpleBlockItem(PROTOTYPE_PROPELLER);
@@ -162,7 +165,8 @@ public final class AeronauticsPlus {
                 spec,
                 BlockBehaviour.Properties.of()
                         .mapColor(spec.mapColor())
-                        .strength(spec.hardness(), spec.resistance())));
+                        .strength(spec.hardness(), spec.resistance())
+                        .noOcclusion()));
         DeferredItem<BlockItem> item = ITEMS.registerSimpleBlockItem(block);
         return new PropellerEntry(spec, block, item);
     }

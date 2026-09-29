@@ -85,10 +85,33 @@ def validate() -> None:
         load_json(path)
 
     ids = registered_block_ids()
+    source = JAVA_SOURCE.read_text(encoding="utf-8")
+    if source.count(".noOcclusion()") < 2:
+        fail("prototype and serial propeller properties must disable full-cube occlusion")
+
     languages = {
         locale: load_json(ASSETS / "lang" / f"{locale}.json")
         for locale in ("en_us", "ru_ru")
     }
+
+    template_dir = ASSETS / "models/block/templates"
+    expected_elements = {"two": 11, "three": 14, "four": 17}
+    for blade_name, element_count in expected_elements.items():
+        template_path = template_dir / f"propeller_{blade_name}_blade.json"
+        template = load_json(template_path)
+        elements = template.get("elements", [])
+        if template.get("ambientocclusion") is not False:
+            fail(f"{template_path.relative_to(ROOT)} must disable ambient occlusion")
+        if len(elements) != element_count:
+            fail(
+                f"{template_path.relative_to(ROOT)} has {len(elements)} elements, "
+                f"expected {element_count}"
+            )
+        names = [element.get("name") for element in elements]
+        if len(names) != len(set(names)) or "drive_shaft" not in names:
+            fail(f"invalid or duplicate element names in {template_path.relative_to(ROOT)}")
+        if any("cullface" in face for element in elements for face in element.get("faces", {}).values()):
+            fail(f"custom propeller faces must not cull neighbours: {template_path.relative_to(ROOT)}")
 
     for block_id in ids:
         blockstate_path = ASSETS / "blockstates" / f"{block_id}.json"
@@ -120,6 +143,14 @@ def validate() -> None:
         variants = blockstate.get("variants", {})
         if len(variants) != 12:
             fail(f"{block_id} must have 12 facing/reversed variants, found {len(variants)}")
+
+        blade_name = "four" if block_id == "prototype_propeller" else next(
+            name for name in ("two", "three", "four") if f"_{name}_blade_" in block_id
+        )
+        block_model = load_json(block_model_path)
+        expected_parent = f"aeronauticsplus:block/templates/propeller_{blade_name}_blade"
+        if block_model.get("parent") != expected_parent:
+            fail(f"{block_id} must inherit {expected_parent}")
 
         translation_key = f"block.aeronauticsplus.{block_id}"
         for locale, language in languages.items():
