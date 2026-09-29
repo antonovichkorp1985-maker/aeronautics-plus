@@ -44,7 +44,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          release_flags=()
+          if [[ "$GITHUB_REF_NAME" == *-test.* || "$GITHUB_REF_NAME" == *-rc.* ]]; then
+            release_flags+=(--prerelease)
+          fi
           gh release create "$GITHUB_REF_NAME" build/libs/*.jar \
             --verify-tag \
             --title "Aeronautics Plus $GITHUB_REF_NAME" \
-            --generate-notes
+            --generate-notes \
+            "${release_flags[@]}"
