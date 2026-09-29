@@ -33,7 +33,7 @@ betterstrongholds,partial,missing_keys,11,6,0,6,54.55,5,0,0,0,0,0,0,0,4,1,0,0,Yu
 betterwitchhuts,complete,ok,4,4,0,4,100.00,0,0,0,0,0,0,0,0,1,1,0,0,YungsBetterWitchHuts-1.21.1-NeoForge-4.1.1.jar
 bigwater,complete,ok,2,0,2,2,100.00,0,0,0,0,0,0,0,0,0,0,0,0,bigwater-1.2.0-neoforge+mc1.21.1.jar
 biomesoplenty,partial,missing_keys,583,374,33,407,69.81,176,4,4,0,429,296,32,14,2,2,0,0,AgriCraft-neoforge-1.21.1-4.0.17.jar; BiomesOPlenty-neoforge-1.21.1-21.1.0.14.jar
-burnt,none,missing_keys,584,0,0,0,0.00,584,0,0,0,382,0,72,0,52,0,0,0,burnt-1.10.5.1-neoforge-1.21.1.jar
+burnt,partial,missing_keys,584,0,202,202,34.59,382,0,0,0,382,0,72,72,52,52,0,0,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt_additions,complete,ok,180,0,180,180,100.00,0,0,0,0,77,77,21,21,34,34,0,0,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt_combined,no_en_us,ok,0,0,0,0,0.00,0,0,0,0,0,0,0,0,0,0,0,0,
 cannoncompressedarmor,complete,review_non_russian_values,1052,0,1052,1052,100.00,0,78,78,0,1032,1032,18,18,0,0,0,0,cannoncompressedarmor-1.0.0.jar

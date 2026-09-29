@@ -472,67 +472,10 @@ biomesoplenty,other,subtitles.block.biomesoplenty.blood.ambient,Blood gurgles,Bi
 biomesoplenty,other,subtitles.block.biomesoplenty.flesh_tendon.drip,Blood drips,BiomesOPlenty-neoforge-1.21.1-21.1.0.14.jar
 biomesoplenty,other,subtitles.block.biomesoplenty.pus_bubble.pop,Pus Bubble pops,BiomesOPlenty-neoforge-1.21.1-21.1.0.14.jar
 biomesoplenty,other,subtitles.block.biomesoplenty.spider_egg.break,Spider Egg breaks,BiomesOPlenty-neoforge-1.21.1-21.1.0.14.jar
-burnt,item,item.burnt.black_ice,Soul Ice,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.blaze_barrel,Blaze Barrel,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.blaze_flint_bow,Flint Bow,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.blazing_soul_log,Smoldering Soul Log,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_forest_ambience,Music Disc,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_soul_fence,Soul Tempered Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_soul_fence_gate,Soul Tempered Fence Gate,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_soul_leaves,Burnt Soul Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_soul_log,Soul Tempered Log,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_soul_planks,Soul Tempered Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_soul_slab,Soul Tempered Planks Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.burnt_soul_stairs,Soul Tempered Planks Stairs,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.fire_devil_spawn_egg,Fire Devil Spawn Egg,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.flint_bow,Flint Bow,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.gas_mask_armor_helmet,Gas Mask,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.glass_furnace,Furnace,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.liquid_magma_bucket,Liquid Magma Bucket,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.lit_match_item,Match,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.lit_molotov,Molotov,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.match,Match,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.molotov,Molotov,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.nether_weave,Nether Weave,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.nether_weave_armor_boots,Nether Weave Boots,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.nether_weave_armor_chestplate,Nether Weave Chestplate,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.nether_weave_armor_helmet,Nether Weave Hood,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.nether_weave_armor_leggings,Nether Weave Leggings,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.pitch,Pitch Block,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.pitch_resin,Pitch Resin,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.rain_stick,Rain Stick,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoldering_crimson_stem,Smoldering Soul Crimson Stem,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoldering_nether_wart,Smoldering Soul Wart,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoldering_soul_log,Smoldering Soul Log,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoldering_soul_planks,Smoldering Soul Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoldering_soul_wart,Smoldering Soul Wart,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoldering_warped_stem,Smoldering Soul Warped Stem,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoldering_warped_wart,Smoldering Soul Warped Wart,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_acacia_leaves,Soul Acacia Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_birch_leaves,Soul Birch Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_charge,Soul Charge,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_cherry_leaves,Soul Cherry Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_flint_bow,Flint Bow,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_jungle_leaves,Soul Jungle Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_mangrove_leaves,Soul Mangrove Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_oak_leaves,Soul Oak Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_spruce_leaves,Soul Spruce Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soul_wart,Soul Wart,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.sulphur,Sulphur Dust,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.sulphur_block,Raw Sulphur,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tar_barrel,Tar Barrel,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tar_block,Block of Coal,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tar_bottle,Tar Bottle,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tar_bucket,Tar Bucket,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tempered_glass,Glass,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tempered_glass_pane,Glass Pane,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.wisp_spawn_egg,Wisp Spawn Egg,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.wispy,Music Disc,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_hollow_log,Smoldering Hollow Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.ember_hollow_log,Ember Hollow Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.blazing_hollow_log,Blazing Hollow Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_hollow_log,Burnt Hollow Log,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.extinguisher,Fire Extinguisher,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_jungle_fence,Jungle Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_stone_brick_stairs,Sooty Stone Brick Stairs,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_stairs,Smoldering Stairs,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -544,7 +487,6 @@ burnt,block,block.burnt.sooty_cherry_log,Cherry Log,burnt-1.10.5.1-neoforge-1.21
 burnt,block,block.burnt.sooty_jungle_log,Jungle Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_spruce_trapdoor,Burnt Spruce Trapdoor,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_cherry_trapdoor,Burnt Cherry Trapdoor,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.smoke_sprite,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cracked_pink_terracotta,Cracked Pink Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_oak_trapdoor,Burnt Oak Trapdoor,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_potatoes,Smoldering Crops,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -592,7 +534,6 @@ burnt,block,block.burnt.smoldering_bamboo_mosaic_slab,Smoldering Bamboo Mosaic S
 burnt,block,block.burnt.blazing_slab,Smoldering Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_acacia_trapdoor,Burnt Acacia Trapdoor,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_birch_slab,Birch Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,death.attack.flame_arrow.player,%1$s received an epic burn from %2$s,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_andesite_slab,Sooty Andesite Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_oak_stairs,Oak Stairs,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_spruce_door,Burnt Spruce Door,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -662,7 +603,6 @@ burnt,block,block.burnt.sooty_mossy_cobblestone,Sooty Mossy Cobblestone,burnt-1.
 burnt,block,block.burnt.sooty_spruce_planks,Spruce Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.semi_burnt_dirt,Burnt Dirt,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_mossy_stone_brick_wall,Sooty Mossy Stone Brick Wall,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.wisp_quick,,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_bamboo_slab,Smoldering Bamboo Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.ember_campfire,Ember Campfire,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.blazing_planks,Smoldering Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -676,7 +616,6 @@ burnt,block,block.burnt.wood_fire_7,Flames,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.wood_fire_6,Flames,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_bamboo_fence,Burnt Bamboo Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_mangrove_stripped_wood,Stripped Mangrove Wood,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,death.attack.flame_arrow,%1$s died,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_cobblestone_slab,Sooty Cobblestone Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.wood_fire_5,Flames,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.fire_barrel_active,Fire Barrel,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -701,10 +640,7 @@ burnt,block,block.burnt.burnt_melon,Burnt Melon,burnt-1.10.5.1-neoforge-1.21.1.j
 burnt,block,block.burnt.smoldering_bamboo_fence,Smoldering Bamboo Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_stripped_cherry_log,Stripped Cherry Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cracked_green_terracotta,Cracked Green Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.thermal,thermal charge,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_oak_log,Oak Log,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.baked_apple,Baked Apple,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.extinguisher_spray,Extinguisher Spray,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_bricks,Sooty Bricks,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_path,Burnt Path,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.ember_slab,Ember Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -713,8 +649,6 @@ burnt,block,block.burnt.sooty_mud_brick_stairs,Sooty Mud Brick Stairs,burnt-1.10
 burnt,block,block.burnt.sooty_andesite_wall,Sooty Andesite Wall,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_granite_slab,Sooty Granite Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_slab,Burnt Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.soot,Soot,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.wisp_slow,,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cooked_brown_mushroom_block,Cooked Brown Mushroom Block,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_birch_stripped_wood,Stripped Birch Wood,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.broken_blazing_log_2,Smoldering Log,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -725,10 +659,7 @@ burnt,block,block.burnt.sooty_jungle_stripped_wood,Stripped Jungle Wood,burnt-1.
 burnt,block,block.burnt.sooty_granite,Sooty Granite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_grassy_earthen_clay,Burnt Grassy Earthen Clay,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_mangrove_wood,Mangrove Wood,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,death.attack.flame_arrow.item,%1$s was killed by %2$s using %3$s,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.burnt_eerie,,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_jungle_door,Smoldering Jungle Door,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.fireball_item,Fireball,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_birch_door,Smoldering Birch Door,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_dark_oak_door,Smoldering Dark Oak Door,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_mud_brick_slab,Sooty Mud Brick Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -737,7 +668,6 @@ burnt,block,block.burnt.cracked_purple_terracotta,Cracked Purple Terracotta,burn
 burnt,block,block.burnt.burnt_planks,Burnt Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_diorite_stairs,Sooty Diorite Stairs,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_acacia_door,Smoldering Acacia Door,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.thermal_tick,thermal ticking,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_planks_4,Smoldering Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_planks_3,Smoldering Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_planks_2,Smoldering Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -766,7 +696,6 @@ burnt,block,block.burnt.ember_fence_gate,Ember Fence Gate,burnt-1.10.5.1-neoforg
 burnt,block,block.burnt.sooty_brick_slab,Sooty Brick Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_cobblestone,Sooty Cobblestone,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_beetroot,Smoldering Wheat,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.flint_spark_item,Flint Spark Item,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_brick_stairs,Sooty Brick Stairs,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_oak_stripped_wood,Stripped Oak Wood,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_granite_stairs,Sooty Granite Stairs,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -791,7 +720,6 @@ burnt,block,block.burnt.broken_blazing_log,Smoldering Log,burnt-1.10.5.1-neoforg
 burnt,block,block.burnt.sooty_cobblestone_wall,Sooty Cobblestone Wall,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_stripped_jungle_log,Stripped Jungle Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_carpet,Smoldering Carpet,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tall_smoke_sprite,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_diorite_wall,Sooty Diorite Wall,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_button,Burnt Button,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_jungle_slab,Jungle Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -807,7 +735,6 @@ burnt,block,block.burnt.sooty_mangrove_slab,Mangrove Slab,burnt-1.10.5.1-neoforg
 burnt,block,block.burnt.sooty_stone_brick_wall,Sooty Stone Brick Wall,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_wool,Burnt Wool,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_dark_oak_stripped_wood,Stripped Dark Oak Wood,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.near_smoke_sprite_3,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_acacia_fence,Acacia Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.wood_fire,Flames,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_dark_oak_trapdoor,Burnt Dark Oak Trapdoor,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -818,9 +745,7 @@ burnt,block,block.burnt.burnt_wood,Burnt Wood,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_dark_oak_trapdoor,Burnt Dark Oak Trapdoor,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.ember_fence,Ember Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cracked_light_grey_terracotta,Cracked Light Gray Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.near_smoke_sprite_2,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_acacia_fence_gate,Acacia Fence Gate,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.burnt_ambient,burnt forest ambience,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.charred_mycelium,Charred Mycelium,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_jungle_trapdoor,Burnt Jungle Trapdoor,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_coal,Smoldering Coal Block,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -828,14 +753,12 @@ burnt,block,block.burnt.smoldering_stripped_log,Stripped Smoldering Log,burnt-1.
 burnt,block,block.burnt.smoldering_mangrove_leaves,Smoldering Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cracked_red_terracotta,Cracked Red Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_spruce_fence,Spruce Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.near_smoke_sprite,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_mangrove_roots,Smoldering Mangrove Roots,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_sugar_cane,Burnt Sugar Cane,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_stripped_wood,Stripped Smoldering Wood,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.double_tall_grass_fire,Smoldering Tall Grass,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_spruce_log,Spruce Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_log,Smoldering Log,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.wisp_treasure,,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_birch_log,Birch Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_bamboo_button,Burnt Bamboo Button,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_mossy_cobblestone_slab,Sooty Mossy Cobblestone Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -847,7 +770,6 @@ burnt,block,block.burnt.burnt_acacia_trapdoor,Burnt Acacia Trapdoor,burnt-1.10.5
 burnt,block,block.burnt.cracket_magenta_terracotta,Cracked Magenta Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cracked_magenta_terracotta,Cracked Magenta Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_fence,Burnt Fence,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,entity,entity.burnt.falling_slab,Falling Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_brick_wall,Sooty Brick Wall,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cracked_lime_terracotta,Cracked Lime Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.cracked_orange_terracotta,Cracked Orange Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -859,19 +781,13 @@ burnt,block,block.burnt.cracked_terracotta,Cracked Terracotta,burnt-1.10.5.1-neo
 burnt,block,block.burnt.burnt_crops,Smoldering Wheat,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_azalea,Burnt Azalea,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.blast_leaves,Smoldering Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.ember_berries,Ember Berries,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.cough_1,cough,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.firestarter,Fire,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.cough_2,cough,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_dark_oak_slab,Dark Oak Slab,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.cough_3,cough,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.cough_4,cough,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_farmland_moist,Moist Burnt Farmland,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_dark_oak_leaves,Smoldering Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_cactus,Smoldering Cactus,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_cherry_door,Burnt Cherry Door,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.tall_flames,Tall Flames,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.far_smoke_sprite,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_stripped_acacia_log,Stripped Acacia Log,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_oak_planks,Oak Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_forest,Burnt Creeking Log,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -886,7 +802,6 @@ burnt,block,block.burnt.cooked_red_mushroom_block,Cooked Red Mushroom Block,burn
 burnt,block,block.burnt.cracked_grey_terracotta,Cracked Gray Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_fencegate,Burnt Fence Gate,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_jungle_planks,Jungle Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,subtitles.burnt,,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_oak_door,Smoldering Oak Door,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_bamboo_planks,Burnt Bamboo Planks,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_stripped_spruce_log,Stripped Spruce Log,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -896,7 +811,6 @@ burnt,block,block.burnt.sooty_mangrove_log,Mangrove Log,burnt-1.10.5.1-neoforge-
 burnt,block,block.burnt.burnt_pumpkin,Burnt Pumpkin,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_wheat,Smoldering Wheat,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_moss,Smoldering Moss,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.distant_smoke_sprite,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_barrel,Burnt Barrel,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.burnt_acacia_door,Burnt Acacia Door,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_leaves,Smoldering Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -919,119 +833,8 @@ burnt,block,block.burnt.smoldering_leaves_2,Smoldering Leaves,burnt-1.10.5.1-neo
 burnt,block,block.burnt.smoldering_leaves_5,Smoldering Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoldering_leaves_4,Smoldering Leaves,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.sooty_andesite,Sooty Andesite,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.title,Burnt Basic,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.category.default,Global Options,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burnt_on,Burnt Mod Enabled,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burnt_on.@Tooltip,Burn mechanics,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.disabled_dimensions,Disabled Dimensions,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.disabled_dimensions.@Tooltip,Dimensions where Burnt does nothing,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burn_in_modded_dimensions,Burn in Modded Dimensions,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burn_in_modded_dimensions.@Tooltip,Burnt works beyond vanilla dimensions,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.rain_extinguish,Rain Extinguishes Fire,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.rain_extinguish.@Tooltip,Smoldering blocks exposed to rain go out,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.vanilla_burn,Vanilla Burn,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.vanilla_burn.@Tooltip,Allow vanilla placed fire blocks to activate the burn.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.lava_burn,Lava Ignites Fire,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.lava_burn.@Tooltip,Lava flowing over flammable blocks will ignite them.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.lightning_ignites,Lightning Ignites Fire,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.lightning_ignites.@Tooltip,Lightning strikes will ignite nearby flammable blocks,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.biome_specific,Biome-Specific Behaviour,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.biome_specific.@Tooltip,Fire spread and speed are influenced by the current biome.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.wind,Wind,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.wind.@Tooltip,Enable wind to influence fire spread direction.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.wind_influence,Wind Influence,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.wind_influence.@Tooltip,How strongly wind affects fire spread (0–10).,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.ember_spread,Ember Spread,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.ember_spread.@Tooltip,Hot winds can fire embers and increase fire spread.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.iron_golem_fight_fires,Iron Golems Fight Fires,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.iron_golem_fight_fires.@Tooltip,Iron golems will seek out and extinguish nearby fire.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.flame_arrows_ignite_creepers,Flame Arrows Ignite Creepers,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.enable_flags,Enable Flags,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.enable_flags.@Tooltip,you are entitled to choose,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.enable_fire_extinguisher,Enable Fire Extinguisher,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.enable_fire_extinguisher.@Tooltip,safety first,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.category.burnsettings,Burn Settings,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burn_spread,Burn Spread,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burn_spread.@Tooltip,How quickly fire spreads from block to block (0–100).,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.wood_spread,Wood Spread,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.wood_spread.@Tooltip,Spread rate for wooden blocks (%).,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.dark_oak_spread,Dark Oak Spread,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.dark_oak_spread.@Tooltip,"Dark oak rate, % of Wood Spread.",burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.wood_downward_spread,Wood Downward Spread,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.wood_downward_spread.@Tooltip,Chance fire spreads down through wood (%).,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.ground_spread,Ground Spread,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.ground_spread.@Tooltip,% Chance of fire spreading across grass and moss.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burn_speed,Burn Speed,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burn_speed.@Tooltip,How quickly a smoldering block becomes fully burnt (0–100).,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.fire_burnout_chance,Fire Burnout Chance,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.fire_burnout_chance.@Tooltip,Chance per tick that a lit fire burns itself out,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.player_distance,Active Radius,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.player_distance.@Tooltip,Distance in blocks from a player within which fire remains active.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.flame_bow,Flame Bow,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.flame_bow.@Tooltip,Flame-enchanted bows start fires,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.fire_aspect,Fire Aspect Spread,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.fire_aspect.@Tooltip,Fire Aspect weapons start fires,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burn_damage,Burn Damage,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burn_damage.@Tooltip,Players take damage when standing on burning blocks.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.random_collapses,Random Collapses,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.random_collapses.@Tooltip,Burnt structures randomly collapse over time.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.collapse_chance,Collapse Chance %,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.collapse_chance.@Tooltip,Likelihood of blocks collapsing,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.category.blocksettings,Block Settings,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.crafted_blocks_burn,Crafted Blocks Burn,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.crafted_blocks_burn.@Tooltip,Allow crafted wooden blocks to burn.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burn_barrels,Burn Barrels,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burn_barrels.@Tooltip,Barrels and contents can burn,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.wool_burn,Wool Burns,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.wool_burn.@Tooltip,Allow wool blocks to burn,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.soot,Soot,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.soot.@Tooltip,Fires leave soot deposits on nearby surfaces.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.crack_terracotta,Crack Terracotta,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.crack_terracotta.@Tooltip,Intense heat cracks terracotta blocks.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burn_create_blocks,Burn Create Blocks,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burn_create_blocks.@Tooltip,"Allow Create blocks (sails, envelopes, rope connectors, etc.) to burn.",burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.category.visual_effects,Visual Effects,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.smoke_particles,Smoke Particles,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.smoke_particles.@Tooltip,Show smoke particles above fires.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.flame_particles,Flame Particles,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.flame_particles.@Tooltip,Show additional flame particles.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.ash_particles,Ash Particles,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.ash_particles.@Tooltip,Ash drifts down from burning blocks.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.ground_smoke,Ground Smoke,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.ground_smoke.@Tooltip,Low smoke hugs the ground near fires.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.distant_plumes,Distant Plumes (Legacy),burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.distant_plumes.@Tooltip,Large sprites visible from long distance,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.smoke_particle_range,Smoke Particle Range,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.smoke_particle_range.@Tooltip,How far in blocks smoke is visible,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.plume_cap,Max Distant Smoke Plumes,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.plume_cap.@Tooltip,Maximum number of smoke plume entities at once. Set to 0 for unlimited.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.heat_haze,Heat Haze,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.heat_haze.@Tooltip,Red sky tint above large fires.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.heat_haze_intensity,Heat Haze Intensity,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.heat_haze_intensity.@Tooltip,Strength of the heat haze effect,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.heat_haze_overlay,Heat Haze Distortion Overlay,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.heat_haze_overlay.@Tooltip,Distortion overlay on/off.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.smoke_fog,Smoke Fog,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.smoke_fog.@Tooltip,Reduced visibility when near many fires.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.smoke_fog_intensity,Smoke Fog Intensity,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.smoke_fog_intensity.@Tooltip,How severely smoke reduces visibility,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.category.recoverysettings,Recovery Settings,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.grass_recovery,Grass Recovery,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.grass_recovery.@Tooltip,Burnt grass slowly recovers over time.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.grass_recover_speed,Grass Recovery Speed %,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.grass_recover_speed.@Tooltip,Chance per random tick of burnt grass recovering.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.forest_recovery,Forest Recovery,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.forest_recovery.@Tooltip,Burnt forests gradually regrow over time.,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.forest_recover_speed,Forest Recovery Speed %,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.forest_recover_speed.@Tooltip,How fast burnt logs break down,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.forest_replant_chance,Forest Replant Chance %,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.forest_replant_chance.@Tooltip,Chance that a log breakdown spawns a sapling,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,entity,entity.burnt.spark,Spark,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.tall_smoke_sprite_2,Smoke Sprite,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.test_block,Test Block,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,entity,entity.burnt.flag,Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.white_flag,White Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,entity,entity.burnt.flag_black,Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.black_flag,Black Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.yellow_flag,Yellow Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.pink_flag,Pink Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
@@ -1050,12 +853,7 @@ burnt,block,block.burnt.red_flag,Red Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.wind_flag,Wind Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.rainbow_flag,Rainbow Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.pirate_flag,Pirate Flag,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,item,item.burnt.ember_projectile_item,Ember Projectile Item,burnt-1.10.5.1-neoforge-1.21.1.jar
 burnt,block,block.burnt.smoke_detector,Smoke Detector,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.smoke_density,Smoke Density,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.smoke_density.@Tooltip,How much smoke a fire makes. Lower if large fires cost performance,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,other,text.autoconfig.burnt_basic.option.burn_in_claimed_chunks,Burn in Claimed Chunks,burnt-1.10.5.1-neoforge-1.21.1.jar
-burnt,tooltip_help,text.autoconfig.burnt_basic.option.burn_in_claimed_chunks.@Tooltip,Allow fire inside chunks claimed by a claim mod. Off leaves claimed land alone,burnt-1.10.5.1-neoforge-1.21.1.jar
 chiselsandbits,tooltip_help,mod.chiselsandbits.help.shiftdetails,<Hold Shift For Details>,chisels-and-bits-neoforge-21.1.32.jar
 chiselsandbits,tooltip_help,mod.chiselsandbits.help.empty,Empty,chisels-and-bits-neoforge-21.1.32.jar
 chiselsandbits,tooltip_help,mod.chiselsandbits.help.filled,Filled,chisels-and-bits-neoforge-21.1.32.jar
