@@ -138,7 +138,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.1-dev: propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.1: propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
