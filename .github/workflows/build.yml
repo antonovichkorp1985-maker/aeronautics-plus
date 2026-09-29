@@ -41,10 +41,8 @@ jobs:
         run: |
           jar=$(find build/libs -maxdepth 1 -name '*.jar' -type f | head -n 1)
           echo "AERONAUTICSPLUS_JAR_NAME=$(basename \"$jar\")"
-          echo 'AERONAUTICSPLUS_JAR_BASE64_BEGIN'
-          base64 -w 0 "$jar"
-          echo
-          echo 'AERONAUTICSPLUS_JAR_BASE64_END'
+          encoded=$(base64 -w 0 "$jar")
+          echo "::warning title=AERONAUTICSPLUS_JAR_BASE64::$encoded"
       - uses: actions/upload-artifact@v7
         with:
           name: aeronauticsplus-jars
