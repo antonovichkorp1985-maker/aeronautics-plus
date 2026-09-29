@@ -1,8 +1,5 @@
 name: build
 on: [push, workflow_dispatch]
-permissions:
-  contents: read
-  checks: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,38 +35,6 @@ jobs:
           PY
       - name: Build
         run: gradle build --no-daemon
-      # Temporary transport fallback for the Arena sandbox, which cannot reach
-      # the Azure-backed Actions artifact host. Removed after the test JAR is copied.
-      - name: Publish test JAR chunks as a temporary check
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const fs = require('fs');
-            const file = fs.readdirSync('build/libs').find(name => name.endsWith('.jar'));
-            const data = fs.readFileSync(`build/libs/${file}`).toString('base64');
-            const chunks = data.match(/.{1,3000}/g);
-            const annotations = chunks.map((message, index) => ({
-              path: 'build.gradle',
-              start_line: 1,
-              end_line: 1,
-              annotation_level: 'notice',
-              title: `AERONAUTICSPLUS_JAR_BASE64_${String(index).padStart(3, '0')}`,
-              message,
-            }));
-            const result = await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name: 'temporary-jar-transfer',
-              head_sha: context.sha,
-              status: 'completed',
-              conclusion: 'success',
-              output: {
-                title: file,
-                summary: `${annotations.length} ordered Base64 chunks`,
-                annotations,
-              },
-            });
-            core.info(`Temporary transfer check: ${result.data.id}`);
       - uses: actions/upload-artifact@v7
         with:
           name: aeronauticsplus-jars
