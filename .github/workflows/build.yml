@@ -40,6 +40,13 @@ jobs:
           python3 scripts/validate_deep_seas_localization.py \
             --jar /tmp/create-submarine.jar \
             --resource-pack localization/ru-pack
+      - name: Validate RU pack against Sable 2.0.5
+        run: |
+          curl -sL "https://api.modrinth.com/maven/maven/modrinth/sable/2.0.5+mc1.21.1/sable-2.0.5+mc1.21.1.jar" -o /tmp/sable.jar
+          echo "05f666e973d32baaaf405acb9bbed6615b909971  /tmp/sable.jar" | sha1sum --check
+          python3 scripts/validate_sable_localization.py \
+            --jar /tmp/sable.jar \
+            --resource-pack localization/ru-pack
       - name: Build
         run: gradle build --no-daemon
       - uses: actions/upload-artifact@v7

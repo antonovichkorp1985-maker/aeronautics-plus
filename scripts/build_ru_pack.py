@@ -9,7 +9,7 @@ import json
 import zipfile
 from pathlib import Path
 
-FIXED_ZIP_TIMESTAMP = (2026, 9, 29, 0, 0, 0)
+FIXED_ZIP_TIMESTAMP = (2026, 9, 30, 0, 0, 0)
 
 
 def validate(source: Path) -> tuple[int, int]:
