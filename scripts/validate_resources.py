@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 JAVA_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/AeronauticsPlus.java"
 RESOURCES = ROOT / "src/main/resources"
 ASSETS = RESOURCES / "assets/aeronauticsplus"
+GEOMETRY = ASSETS / "models/block/propellers/geometry"
 DATA = RESOURCES / "data/aeronauticsplus"
 
 
@@ -79,6 +80,68 @@ def expected_material_tag(block_id: str) -> str:
     raise AssertionError("unreachable")
 
 
+def validate_obj(path: Path, expected_blades: int) -> None:
+    lines = path.read_text(encoding="utf-8").splitlines()
+    current_object = ""
+    object_vertices: dict[str, list[tuple[float, float, float]]] = {}
+    vertices: list[tuple[float, float, float]] = []
+    texture_coordinates = 0
+    faces = 0
+
+    for line in lines:
+        if line.startswith("o "):
+            current_object = line[2:].strip()
+            object_vertices.setdefault(current_object, [])
+        elif line.startswith("v "):
+            try:
+                vertex = tuple(float(value) for value in line.split()[1:4])
+            except (ValueError, IndexError):
+                fail(f"invalid OBJ vertex in {path.relative_to(ROOT)}: {line}")
+            if len(vertex) != 3:
+                fail(f"invalid OBJ vertex in {path.relative_to(ROOT)}: {line}")
+            vertices.append(vertex)
+            object_vertices.setdefault(current_object, []).append(vertex)
+        elif line.startswith("vt "):
+            texture_coordinates += 1
+        elif line.startswith("f "):
+            references = line.split()[1:]
+            if len(references) != 3 or any("/" not in reference for reference in references):
+                fail(f"OBJ faces must be textured triangles in {path.relative_to(ROOT)}")
+            faces += 1
+
+    if not vertices or texture_coordinates != len(vertices) or faces < 100:
+        fail(f"incomplete OBJ mesh in {path.relative_to(ROOT)}")
+    if f"mtllib {path.stem}.mtl" not in lines or "usemtl propeller" not in lines:
+        fail(f"missing material binding in {path.relative_to(ROOT)}")
+
+    tip_objects = [name for name in object_vertices if re.fullmatch(r"blade_\d+_tip", name)]
+    body_objects = [name for name in object_vertices if re.fullmatch(r"blade_\d+_body", name)]
+    if len(tip_objects) != expected_blades or len(body_objects) != expected_blades:
+        fail(f"wrong blade count in {path.relative_to(ROOT)}")
+
+    blade_vertices = [
+        vertex
+        for name, values in object_vertices.items()
+        if name.startswith("blade_")
+        for vertex in values
+    ]
+    xy = [coordinate for vertex in blade_vertices for coordinate in vertex[:2]]
+    if min(xy) >= 0 or max(xy) <= 1:
+        fail(f"aircraft blades must extend beyond one block in {path.relative_to(ROOT)}")
+    if max(vertex[2] for vertex in blade_vertices) - min(vertex[2] for vertex in blade_vertices) > 0.09:
+        fail(f"aircraft blades are too thick in {path.relative_to(ROOT)}")
+
+    shaft_vertices = object_vertices.get("rear_drive_shaft", [])
+    if not shaft_vertices or min(vertex[2] for vertex in shaft_vertices) < 0.64:
+        fail(f"drive shaft must remain behind the hub in {path.relative_to(ROOT)}")
+    if max(vertex[2] for vertex in shaft_vertices) > 1.001:
+        fail(f"drive shaft exceeds the block boundary in {path.relative_to(ROOT)}")
+
+    material_path = path.with_suffix(".mtl")
+    if not material_path.is_file() or "map_Kd #texture0" not in material_path.read_text(encoding="utf-8"):
+        fail(f"invalid OBJ material in {material_path.relative_to(ROOT)}")
+
+
 def validate() -> None:
     json_files = sorted(RESOURCES.rglob("*.json"))
     for path in json_files:
@@ -94,24 +157,8 @@ def validate() -> None:
         for locale in ("en_us", "ru_ru")
     }
 
-    template_dir = ASSETS / "models/block/templates"
-    expected_elements = {"two": 11, "three": 14, "four": 17}
-    for blade_name, element_count in expected_elements.items():
-        template_path = template_dir / f"propeller_{blade_name}_blade.json"
-        template = load_json(template_path)
-        elements = template.get("elements", [])
-        if template.get("ambientocclusion") is not False:
-            fail(f"{template_path.relative_to(ROOT)} must disable ambient occlusion")
-        if len(elements) != element_count:
-            fail(
-                f"{template_path.relative_to(ROOT)} has {len(elements)} elements, "
-                f"expected {element_count}"
-            )
-        names = [element.get("name") for element in elements]
-        if len(names) != len(set(names)) or "drive_shaft" not in names:
-            fail(f"invalid or duplicate element names in {template_path.relative_to(ROOT)}")
-        if any("cullface" in face for element in elements for face in element.get("faces", {}).values()):
-            fail(f"custom propeller faces must not cull neighbours: {template_path.relative_to(ROOT)}")
+    for blade_name, blade_count in (("two", 2), ("three", 3), ("four", 4)):
+        validate_obj(GEOMETRY / f"propeller_{blade_name}_blade.obj", blade_count)
 
     for block_id in ids:
         blockstate_path = ASSETS / "blockstates" / f"{block_id}.json"
@@ -148,9 +195,25 @@ def validate() -> None:
             name for name in ("two", "three", "four") if f"_{name}_blade_" in block_id
         )
         block_model = load_json(block_model_path)
-        expected_parent = f"aeronauticsplus:block/templates/propeller_{blade_name}_blade"
-        if block_model.get("parent") != expected_parent:
-            fail(f"{block_id} must inherit {expected_parent}")
+        expected_geometry = (
+            f"aeronauticsplus:models/block/propellers/geometry/propeller_{blade_name}_blade.obj"
+        )
+        if block_model.get("loader") != "neoforge:obj":
+            fail(f"{block_id} must use NeoForge's OBJ model loader")
+        if block_model.get("model") != expected_geometry:
+            fail(f"{block_id} must use {expected_geometry}")
+        if block_model.get("automatic_culling") is not False:
+            fail(f"{block_id} must disable automatic OBJ culling")
+        if block_model.get("ambientocclusion") is not False:
+            fail(f"{block_id} must disable model ambient occlusion")
+        if "gui" not in block_model.get("display", {}):
+            fail(f"{block_id} is missing scaled item display settings")
+
+        item_model = load_json(item_model_path)
+        if item_model.get("loader") != "neoforge:obj" or item_model.get("model") != expected_geometry:
+            fail(f"{block_id} item must load the same OBJ geometry directly")
+        if item_model.get("textures") != block_model.get("textures"):
+            fail(f"{block_id} block and item texture bindings differ")
 
         translation_key = f"block.aeronauticsplus.{block_id}"
         for locale, language in languages.items():
@@ -194,7 +257,7 @@ def validate() -> None:
         ):
             fail(f"{block_id} loot table does not drop itself")
 
-        assert_png_dimensions(texture_path, (16, 16))
+        assert_png_dimensions(texture_path, (32, 32))
 
     assert_png_dimensions(RESOURCES / "icon.png", (32, 32))
     print(

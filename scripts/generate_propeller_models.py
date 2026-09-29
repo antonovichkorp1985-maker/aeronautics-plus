@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Generate the original Aeronautics Plus propeller models and palette textures.
+"""Generate original low-poly aircraft propellers for Aeronautics Plus.
 
-The models intentionally use only vanilla cuboids so they work with the Create
-Aeronautics kinetic renderer.  Three-blade rotors use a stepped 120-degree
-silhouette instead of the previous cross-like shaft/blade arrangement.
+The previous vanilla cuboid models could only approximate a tapered blade with
+visible rectangular steps.  NeoForge's built-in OBJ loader accepts triangulated
+arbitrary geometry, so this generator creates continuous pitched airfoils,
+low-poly round hubs, front spinners, and rear-only drive shafts.  No third-party
+models, textures, or mesh data are used.
 """
 
 from __future__ import annotations
 
 import json
+import math
 import struct
 import zlib
 from pathlib import Path
@@ -16,50 +19,101 @@ from typing import Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 MODELS = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/propellers"
-TEMPLATES = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/templates"
+ITEM_MODELS = ROOT / "src/main/resources/assets/aeronauticsplus/models/item"
+GEOMETRY = MODELS / "geometry"
 TEXTURES = ROOT / "src/main/resources/assets/aeronauticsplus/textures/block/propellers"
 PROTOTYPE_MODEL = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/prototype_propeller.json"
 PROTOTYPE_TEXTURE = ROOT / "src/main/resources/assets/aeronauticsplus/textures/block/prototype_propeller.png"
 
-
 PALETTES = {
     "wooden": {
-        "blade_dark": (74, 42, 20, 255),
-        "blade_mid": (132, 79, 34, 255),
-        "blade_light": (181, 119, 58, 255),
-        "edge": (55, 31, 18, 255),
-        "hub": (83, 91, 94, 255),
-        "hub_light": (145, 151, 150, 255),
-        "shaft": (46, 51, 54, 255),
+        "blade_dark": (48, 27, 18, 255),
+        "blade_mid": (92, 49, 25, 255),
+        "blade_light": (145, 86, 43, 255),
+        "edge": (34, 23, 20, 255),
+        "hub": (74, 81, 84, 255),
+        "hub_light": (139, 146, 145, 255),
+        "shaft": (38, 43, 46, 255),
+        "tip": (235, 177, 32, 255),
+        "tip_light": (255, 220, 71, 255),
+        "tip_dark": (123, 82, 15, 255),
     },
     "aluminum": {
-        "blade_dark": (82, 99, 108, 255),
-        "blade_mid": (145, 164, 171, 255),
-        "blade_light": (210, 225, 226, 255),
-        "edge": (61, 73, 80, 255),
-        "hub": (91, 105, 113, 255),
-        "hub_light": (184, 199, 202, 255),
-        "shaft": (50, 59, 64, 255),
+        "blade_dark": (65, 79, 87, 255),
+        "blade_mid": (126, 145, 153, 255),
+        "blade_light": (204, 219, 221, 255),
+        "edge": (43, 54, 61, 255),
+        "hub": (83, 98, 106, 255),
+        "hub_light": (188, 203, 205, 255),
+        "shaft": (43, 51, 56, 255),
+        "tip": (235, 177, 32, 255),
+        "tip_light": (255, 220, 71, 255),
+        "tip_dark": (123, 82, 15, 255),
     },
     "steel": {
-        "blade_dark": (45, 51, 57, 255),
-        "blade_mid": (82, 92, 101, 255),
-        "blade_light": (135, 146, 153, 255),
-        "edge": (31, 35, 40, 255),
-        "hub": (52, 59, 66, 255),
-        "hub_light": (112, 122, 129, 255),
-        "shaft": (24, 28, 32, 255),
+        "blade_dark": (28, 33, 38, 255),
+        "blade_mid": (55, 64, 72, 255),
+        "blade_light": (104, 116, 124, 255),
+        "edge": (19, 23, 27, 255),
+        "hub": (47, 55, 62, 255),
+        "hub_light": (116, 128, 135, 255),
+        "shaft": (20, 24, 28, 255),
+        "tip": (225, 165, 25, 255),
+        "tip_light": (255, 214, 60, 255),
+        "tip_dark": (111, 72, 12, 255),
     },
     "prototype": {
-        "blade_dark": (73, 83, 88, 255),
-        "blade_mid": (126, 139, 143, 255),
-        "blade_light": (190, 203, 204, 255),
-        "edge": (48, 55, 59, 255),
-        "hub": (79, 90, 95, 255),
-        "hub_light": (162, 174, 175, 255),
-        "shaft": (38, 44, 48, 255),
+        "blade_dark": (48, 57, 63, 255),
+        "blade_mid": (93, 107, 113, 255),
+        "blade_light": (171, 185, 188, 255),
+        "edge": (33, 39, 43, 255),
+        "hub": (69, 81, 87, 255),
+        "hub_light": (153, 166, 169, 255),
+        "shaft": (32, 38, 42, 255),
+        "tip": (224, 156, 24, 255),
+        "tip_light": (255, 207, 63, 255),
+        "tip_dark": (111, 67, 12, 255),
     },
 }
+
+# Normalized regions of the generated 32x32 atlas.
+BLADE_UV = (0.0, 0.0, 0.5, 0.375)
+TIP_UV = (0.0, 0.375, 0.5, 0.5625)
+HUB_UV = (0.0, 0.5625, 0.5, 1.0)
+SHAFT_UV = (0.5, 0.5625, 1.0, 1.0)
+
+DISPLAY = {
+    "gui": {"rotation": [30, 225, 0], "translation": [0, 0, 0], "scale": [0.48, 0.48, 0.48]},
+    "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.32, 0.32, 0.32]},
+    "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, 0], "scale": [0.48, 0.48, 0.48]},
+    "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.38, 0.38, 0.38]},
+    "thirdperson_lefthand": {"rotation": [75, 225, 0], "translation": [0, 2.5, 0], "scale": [0.38, 0.38, 0.38]},
+    "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.42, 0.42, 0.42]},
+    "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.42, 0.42, 0.42]},
+}
+
+# Tangential/radial coordinates in block units. The body widens through the
+# working section before tapering; the high-visibility tip continues the same
+# outline without the rectangular staircase of a vanilla cuboid model.
+BLADE_BODY = (
+    (-0.050, 0.105),
+    (-0.105, 0.290),
+    (-0.140, 0.520),
+    (-0.120, 0.680),
+    (-0.086, 0.790),
+    (0.074, 0.790),
+    (0.100, 0.550),
+    (0.076, 0.280),
+    (0.050, 0.105),
+)
+BLADE_TIP = (
+    (-0.087, 0.775),
+    (-0.066, 0.890),
+    (-0.036, 0.950),
+    (0.030, 0.950),
+    (0.056, 0.900),
+    (0.075, 0.775),
+)
 
 
 def png_chunk(kind: bytes, payload: bytes) -> bytes:
@@ -79,143 +133,308 @@ def write_png(path: Path, pixels: list[list[tuple[int, int, int, int]]]) -> None
     )
 
 
-def palette_texture(palette: dict[str, tuple[int, int, int, int]], *, wood_grain: bool) -> list[list[tuple[int, int, int, int]]]:
-    pixels = [[palette["blade_mid"] for _ in range(16)] for _ in range(16)]
+def palette_texture(
+    palette: dict[str, tuple[int, int, int, int]], *, wood_grain: bool
+) -> list[list[tuple[int, int, int, int]]]:
+    pixels = [[palette["edge"] for _ in range(32)] for _ in range(32)]
 
-    # Blade face: upper-left 8x8, light centre and dark leading edge.
-    for y in range(8):
-        for x in range(8):
-            if x in (0, 7) or y in (0, 7):
+    # Blade face, UV 0,0 -> 0.5,0.375.
+    for y in range(12):
+        for x in range(16):
+            if x < 2 or x > 14:
                 color = palette["blade_dark"]
-            elif (x + 2 * y) % 7 == 0:
+            elif x in (3, 4):
+                color = palette["blade_light"]
+            elif (x + y * 3) % 17 == 0:
                 color = palette["blade_light"]
             else:
                 color = palette["blade_mid"]
-            if wood_grain and y in (2, 5) and 1 < x < 7:
-                color = palette["blade_dark"] if x % 3 == 0 else color
+            if wood_grain and y in (3, 8) and 2 < x < 15:
+                color = palette["blade_dark"] if (x + y) % 4 < 2 else color
             pixels[y][x] = color
 
-    # Blade edge: upper-right 8x8.
-    for y in range(8):
-        for x in range(8, 16):
-            pixels[y][x] = palette["edge"] if y in (0, 7) or x in (8, 15) else palette["blade_dark"]
+    # Thin blade edge, top-right.
+    for y in range(12):
+        for x in range(16, 32):
+            pixels[y][x] = palette["edge"] if x < 19 or y in (0, 11) else palette["blade_dark"]
 
-    # Hub: lower-left 8x8 with a simple machined/riveted highlight.
-    for y in range(8, 16):
-        for x in range(8):
-            border = x in (0, 7) or y in (8, 15)
-            diagonal = (x + y) % 6 == 0
-            pixels[y][x] = palette["shaft"] if border else palette["hub_light"] if diagonal else palette["hub"]
-    for x, y in ((1, 9), (6, 9), (1, 14), (6, 14)):
+    # High-visibility tip, UV 0,0.375 -> 0.5,0.5625.
+    for y in range(12, 18):
+        for x in range(16):
+            if x < 2 or x > 14 or y in (12, 17):
+                color = palette["tip_dark"]
+            elif x in (4, 5):
+                color = palette["tip_light"]
+            else:
+                color = palette["tip"]
+            pixels[y][x] = color
+        for x in range(16, 32):
+            pixels[y][x] = palette["tip_dark"] if x < 20 or y in (12, 17) else palette["tip"]
+
+    # Hub/spinner, lower-left.
+    for y in range(18, 32):
+        for x in range(16):
+            border = x in (0, 1, 14, 15) or y in (18, 19, 30, 31)
+            highlight = (x - 5) ** 2 + (y - 24) ** 2 < 10
+            pixels[y][x] = palette["shaft"] if border else palette["hub_light"] if highlight else palette["hub"]
+    for x, y in ((3, 21), (12, 21), (3, 28), (12, 28)):
         pixels[y][x] = palette["hub_light"]
 
-    # Shaft: lower-right 8x8.
-    for y in range(8, 16):
-        for x in range(8, 16):
-            pixels[y][x] = palette["edge"] if x in (8, 15) else palette["shaft"]
+    # Rear shaft/collar, lower-right.
+    for y in range(18, 32):
+        for x in range(16, 32):
+            pixels[y][x] = palette["edge"] if x in (16, 17, 30, 31) else palette["shaft"]
     return pixels
 
 
-def faces(kind: str) -> dict[str, dict[str, object]]:
-    if kind == "blade":
-        broad_uv = [0, 0, 8, 8]
-        edge_uv = [8, 0, 16, 8]
-        texture = "#0"
-    elif kind == "hub":
-        broad_uv = edge_uv = [0, 8, 8, 16]
-        texture = "#0"
-    elif kind == "shaft":
-        broad_uv = edge_uv = [8, 8, 16, 16]
-        texture = "#0"
-    else:
-        raise ValueError(kind)
+class ObjMesh:
+    """Minimal triangulated Wavefront OBJ writer with per-face UVs."""
 
-    return {
-        "north": {"uv": broad_uv, "texture": texture},
-        "south": {"uv": broad_uv, "texture": texture},
-        "east": {"uv": edge_uv, "texture": texture},
-        "west": {"uv": edge_uv, "texture": texture},
-        "up": {"uv": edge_uv, "texture": texture},
-        "down": {"uv": edge_uv, "texture": texture},
-    }
+    def __init__(self, mtl_name: str) -> None:
+        self.lines = [f"mtllib {mtl_name}", "usemtl propeller", "s off"]
+        self.vertex_count = 0
+        self.uv_count = 0
+
+    def object(self, name: str) -> None:
+        self.lines.append(f"o {name}")
+
+    def triangle(
+        self,
+        points: Iterable[tuple[float, float, float]],
+        uvs: Iterable[tuple[float, float]],
+    ) -> None:
+        point_list = list(points)
+        uv_list = list(uvs)
+        if len(point_list) != 3 or len(uv_list) != 3:
+            raise ValueError("OBJ faces must be triangulated")
+        vertex_indices: list[int] = []
+        uv_indices: list[int] = []
+        for x, y, z in point_list:
+            self.lines.append(f"v {x:.6f} {y:.6f} {z:.6f}")
+            self.vertex_count += 1
+            vertex_indices.append(self.vertex_count)
+        for u, v in uv_list:
+            self.lines.append(f"vt {u:.6f} {v:.6f}")
+            self.uv_count += 1
+            uv_indices.append(self.uv_count)
+        refs = [f"{vertex_indices[i]}/{uv_indices[i]}" for i in range(3)]
+        self.lines.append("f " + " ".join(refs))
+
+    def text(self) -> str:
+        return "\n".join(self.lines) + "\n"
 
 
-def element(start: Iterable[float], end: Iterable[float], kind: str, *, name: str) -> dict[str, object]:
-    return {
-        "name": name,
-        "from": list(start),
-        "to": list(end),
-        "faces": faces(kind),
-    }
+def map_uv(
+    tangent: float,
+    radial: float,
+    points: tuple[tuple[float, float], ...],
+    region: tuple[float, float, float, float],
+) -> tuple[float, float]:
+    tangents = [point[0] for point in points]
+    radials = [point[1] for point in points]
+    u0, v0, u1, v1 = region
+    u = u0 + (tangent - min(tangents)) / (max(tangents) - min(tangents)) * (u1 - u0)
+    v = v0 + (radial - min(radials)) / (max(radials) - min(radials)) * (v1 - v0)
+    return u, v
 
 
-def common_hub() -> list[dict[str, object]]:
-    # Layered cuboids suggest a machined collar and spinner without relying on
-    # non-vanilla mesh loaders. The narrow dark shaft remains visually distinct
-    # from every blade, including when the block faces vertically.
-    return [
-        element((7.25, 7.25, 0), (8.75, 8.75, 16), "shaft", name="drive_shaft"),
-        element((6.0, 6.0, 9.5), (10.0, 10.0, 11.0), "shaft", name="rear_collar"),
-        element((5.4, 5.4, 7.0), (10.6, 10.6, 9.5), "hub", name="hub_body"),
-        element((6.3, 6.3, 5.4), (9.7, 9.7, 7.0), "hub", name="spinner"),
-        element((7.1, 7.1, 4.4), (8.9, 8.9, 5.4), "hub", name="spinner_tip"),
+def blade_point(tangent: float, radial: float, angle: float, z: float) -> tuple[float, float, float]:
+    theta = math.radians(angle)
+    x = 0.5 + tangent * math.cos(theta) + radial * math.sin(theta)
+    y = 0.5 - tangent * math.sin(theta) + radial * math.cos(theta)
+    return x, y, z
+
+
+def add_blade_prism(
+    mesh: ObjMesh,
+    points: tuple[tuple[float, float], ...],
+    angle: float,
+    region: tuple[float, float, float, float],
+    *,
+    name: str,
+) -> None:
+    mesh.object(name)
+    front: list[tuple[float, float, float]] = []
+    back: list[tuple[float, float, float]] = []
+    uvs = [map_uv(tangent, radial, points, region) for tangent, radial in points]
+    for tangent, radial in points:
+        # Pitch the airfoil around its radial axis and reduce twist toward the tip.
+        camber = tangent * (0.24 - radial * 0.09) + (radial - 0.1) * 0.008
+        half_thickness = 0.018 - radial * 0.006
+        front.append(blade_point(tangent, radial, angle, 0.5 + camber - half_thickness))
+        back.append(blade_point(tangent, radial, angle, 0.5 + camber + half_thickness))
+
+    # Front and back surfaces. Fan triangulation is valid for these convex profiles.
+    for index in range(1, len(points) - 1):
+        mesh.triangle(
+            (front[0], front[index + 1], front[index]),
+            (uvs[0], uvs[index + 1], uvs[index]),
+        )
+        mesh.triangle(
+            (back[0], back[index], back[index + 1]),
+            (uvs[0], uvs[index], uvs[index + 1]),
+        )
+
+    # Airfoil edge.
+    for index in range(len(points)):
+        next_index = (index + 1) % len(points)
+        mesh.triangle(
+            (front[index], back[next_index], front[next_index]),
+            (uvs[index], uvs[next_index], uvs[next_index]),
+        )
+        mesh.triangle(
+            (front[index], back[index], back[next_index]),
+            (uvs[index], uvs[index], uvs[next_index]),
+        )
+
+
+def radial_uv(
+    x: float,
+    y: float,
+    radius: float,
+    region: tuple[float, float, float, float],
+) -> tuple[float, float]:
+    u0, v0, u1, v1 = region
+    return (
+        u0 + (x / radius + 1) * 0.5 * (u1 - u0),
+        v0 + (y / radius + 1) * 0.5 * (v1 - v0),
+    )
+
+
+def add_frustum(
+    mesh: ObjMesh,
+    *,
+    name: str,
+    z_front: float,
+    radius_front: float,
+    z_back: float,
+    radius_back: float,
+    sides: int,
+    region: tuple[float, float, float, float],
+) -> None:
+    mesh.object(name)
+    front = [
+        (
+            0.5 + radius_front * math.cos(2 * math.pi * i / sides),
+            0.5 + radius_front * math.sin(2 * math.pi * i / sides),
+            z_front,
+        )
+        for i in range(sides)
     ]
-
-
-def two_blades() -> list[dict[str, object]]:
-    return [
-        element((6.2, 9.0, 6.4), (9.8, 11.5, 9.2), "blade", name="blade_top_root"),
-        element((6.7, 11.5, 5.9), (9.3, 14.0, 8.5), "blade", name="blade_top_mid"),
-        element((7.15, 14.0, 5.5), (8.85, 16.0, 7.7), "blade", name="blade_top_tip"),
-        element((6.2, 4.5, 6.8), (9.8, 7.0, 9.6), "blade", name="blade_bottom_root"),
-        element((6.7, 2.0, 7.5), (9.3, 4.5, 10.1), "blade", name="blade_bottom_mid"),
-        element((7.15, 0.0, 8.3), (8.85, 2.0, 10.5), "blade", name="blade_bottom_tip"),
+    back = [
+        (
+            0.5 + radius_back * math.cos(2 * math.pi * i / sides),
+            0.5 + radius_back * math.sin(2 * math.pi * i / sides),
+            z_back,
+        )
+        for i in range(sides)
     ]
+    center_uv = ((region[0] + region[2]) / 2, (region[1] + region[3]) / 2)
+    front_center = (0.5, 0.5, z_front)
+    back_center = (0.5, 0.5, z_back)
+
+    for index in range(sides):
+        next_index = (index + 1) % sides
+        angle = 2 * math.pi * index / sides
+        next_angle = 2 * math.pi * next_index / sides
+        front_uv = radial_uv(math.cos(angle), math.sin(angle), 1, region)
+        next_front_uv = radial_uv(math.cos(next_angle), math.sin(next_angle), 1, region)
+        mesh.triangle(
+            (front_center, front[next_index], front[index]),
+            (center_uv, next_front_uv, front_uv),
+        )
+        mesh.triangle(
+            (back_center, back[index], back[next_index]),
+            (center_uv, front_uv, next_front_uv),
+        )
+        mesh.triangle(
+            (front[index], front[next_index], back[next_index]),
+            (front_uv, next_front_uv, next_front_uv),
+        )
+        mesh.triangle(
+            (front[index], back[next_index], back[index]),
+            (front_uv, next_front_uv, front_uv),
+        )
 
 
-def three_blades() -> list[dict[str, object]]:
-    # One blade points up. Two stepped blades approximate 120°/240° without a
-    # custom renderer, avoiding the old cross-shaped silhouette.
-    return [
-        element((6.2, 9.0, 6.4), (9.8, 11.5, 9.2), "blade", name="blade_top_root"),
-        element((6.7, 11.5, 5.9), (9.3, 14.0, 8.5), "blade", name="blade_top_mid"),
-        element((7.15, 14.0, 5.5), (8.85, 16.0, 7.7), "blade", name="blade_top_tip"),
-        element((4.6, 5.6, 6.8), (7.0, 8.1, 9.6), "blade", name="blade_left_root"),
-        element((2.25, 3.5, 7.4), (5.2, 5.9, 10.0), "blade", name="blade_left_mid"),
-        element((0.0, 1.8, 8.1), (2.8, 3.8, 10.3), "blade", name="blade_left_tip"),
-        element((9.0, 5.6, 6.8), (11.4, 8.1, 9.6), "blade", name="blade_right_root"),
-        element((10.8, 3.5, 7.4), (13.75, 5.9, 10.0), "blade", name="blade_right_mid"),
-        element((13.2, 1.8, 8.1), (16.0, 3.8, 10.3), "blade", name="blade_right_tip"),
-    ]
+def blade_angles(blades: int) -> list[float]:
+    start = 22.5 if blades in (2, 4) else 0.0
+    return [start + index * 360 / blades for index in range(blades)]
 
 
-def four_blades() -> list[dict[str, object]]:
-    return two_blades() + [
-        element((9.0, 6.2, 6.4), (11.5, 9.8, 9.2), "blade", name="blade_right_root"),
-        element((11.5, 6.7, 5.9), (14.0, 9.3, 8.5), "blade", name="blade_right_mid"),
-        element((14.0, 7.15, 5.5), (16.0, 8.85, 7.7), "blade", name="blade_right_tip"),
-        element((4.5, 6.2, 6.8), (7.0, 9.8, 9.6), "blade", name="blade_left_root"),
-        element((2.0, 6.7, 7.5), (4.5, 9.3, 10.1), "blade", name="blade_left_mid"),
-        element((0.0, 7.15, 8.3), (2.0, 8.85, 10.5), "blade", name="blade_left_tip"),
-    ]
+def geometry(blades: int, mtl_name: str) -> ObjMesh:
+    mesh = ObjMesh(mtl_name)
+    for index, angle in enumerate(blade_angles(blades)):
+        add_blade_prism(mesh, BLADE_BODY, angle, BLADE_UV, name=f"blade_{index}_body")
+        add_blade_prism(mesh, BLADE_TIP, angle, TIP_UV, name=f"blade_{index}_tip")
 
-
-def template_model(blades: int) -> dict[str, object]:
-    blade_elements = {2: two_blades, 3: three_blades, 4: four_blades}[blades]()
-    return {
-        "credit": "Original Aeronautics Plus model",
-        "ambientocclusion": False,
-        "parent": "block/block",
-        "textures": {"particle": "#0"},
-        "elements": common_hub() + blade_elements,
-    }
+    # Rotor plane and spinner. Twelve sides are visually round in Minecraft but
+    # retain a deliberate low-poly style consistent with the reference build.
+    add_frustum(
+        mesh,
+        name="hub_body",
+        z_front=0.430,
+        radius_front=0.170,
+        z_back=0.570,
+        radius_back=0.170,
+        sides=12,
+        region=HUB_UV,
+    )
+    add_frustum(
+        mesh,
+        name="spinner_base",
+        z_front=0.350,
+        radius_front=0.105,
+        z_back=0.435,
+        radius_back=0.150,
+        sides=12,
+        region=HUB_UV,
+    )
+    add_frustum(
+        mesh,
+        name="spinner_nose",
+        z_front=0.290,
+        radius_front=0.035,
+        z_back=0.352,
+        radius_back=0.105,
+        sides=12,
+        region=HUB_UV,
+    )
+    add_frustum(
+        mesh,
+        name="rear_collar",
+        z_front=0.565,
+        radius_front=0.105,
+        z_back=0.675,
+        radius_back=0.105,
+        sides=10,
+        region=SHAFT_UV,
+    )
+    add_frustum(
+        mesh,
+        name="rear_drive_shaft",
+        z_front=0.650,
+        radius_front=0.030,
+        z_back=1.000,
+        radius_back=0.030,
+        sides=8,
+        region=SHAFT_UV,
+    )
+    return mesh
 
 
 def material_model(texture: str, blades: int) -> dict[str, object]:
     blade_name = {2: "two", 3: "three", 4: "four"}[blades]
     return {
-        "parent": f"aeronauticsplus:block/templates/propeller_{blade_name}_blade",
-        "textures": {"0": texture},
+        "loader": "neoforge:obj",
+        "model": f"aeronauticsplus:models/block/propellers/geometry/propeller_{blade_name}_blade.obj",
+        "automatic_culling": False,
+        "shade_quads": True,
+        "flip_v": True,
+        "emissive_ambient": False,
+        "ambientocclusion": False,
+        "textures": {"texture0": texture, "particle": texture},
+        "display": DISPLAY,
     }
 
 
@@ -225,13 +444,19 @@ def write_model(path: Path, data: dict[str, object]) -> None:
 
 def main() -> None:
     MODELS.mkdir(parents=True, exist_ok=True)
-    TEMPLATES.mkdir(parents=True, exist_ok=True)
+    ITEM_MODELS.mkdir(parents=True, exist_ok=True)
+    GEOMETRY.mkdir(parents=True, exist_ok=True)
     TEXTURES.mkdir(parents=True, exist_ok=True)
 
     for blades, blade_name in ((2, "two"), (3, "three"), (4, "four")):
-        write_model(
-            TEMPLATES / f"propeller_{blade_name}_blade.json",
-            template_model(blades),
+        stem = f"propeller_{blade_name}_blade"
+        mtl_name = f"{stem}.mtl"
+        (GEOMETRY / mtl_name).write_text(
+            "newmtl propeller\nKa 1.0 1.0 1.0\nKd 1.0 1.0 1.0\nKs 0.0 0.0 0.0\nd 1.0\nillum 1\nmap_Kd #texture0\n",
+            encoding="utf-8",
+        )
+        (GEOMETRY / f"{stem}.obj").write_text(
+            geometry(blades, mtl_name).text(), encoding="utf-8"
         )
 
     for material in ("wooden", "aluminum", "steel"):
@@ -239,17 +464,18 @@ def main() -> None:
         for blades, blade_name in ((2, "two"), (3, "three"), (4, "four")):
             block_id = f"{material}_{blade_name}_blade_propeller"
             texture_id = f"aeronauticsplus:block/propellers/{block_id}"
-            write_model(MODELS / f"{block_id}.json", material_model(texture_id, blades))
+            generated_model = material_model(texture_id, blades)
+            write_model(MODELS / f"{block_id}.json", generated_model)
+            write_model(ITEM_MODELS / f"{block_id}.json", generated_model)
             write_png(TEXTURES / f"{block_id}.png", texture)
 
     prototype_texture = palette_texture(PALETTES["prototype"], wood_grain=False)
-    write_model(
-        PROTOTYPE_MODEL,
-        material_model("aeronauticsplus:block/prototype_propeller", 4),
-    )
+    prototype_model = material_model("aeronauticsplus:block/prototype_propeller", 4)
+    write_model(PROTOTYPE_MODEL, prototype_model)
+    write_model(ITEM_MODELS / "prototype_propeller.json", prototype_model)
     write_png(PROTOTYPE_TEXTURE, prototype_texture)
 
-    print("Generated 10 original tapered propeller models and palette textures.")
+    print("Generated 10 original OBJ propellers with continuous airfoils and rear-only shafts.")
 
 
 if __name__ == "__main__":
