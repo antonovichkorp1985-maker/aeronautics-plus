@@ -430,7 +430,7 @@ def material_model(texture: str, blades: int) -> dict[str, object]:
         "model": f"aeronauticsplus:models/block/propellers/geometry/propeller_{blade_name}_blade.obj",
         "automatic_culling": False,
         "shade_quads": True,
-        "flip_v": True,
+        "flip_v": False,
         "emissive_ambient": False,
         "ambientocclusion": False,
         "textures": {"texture0": texture, "particle": texture},
