@@ -7,7 +7,12 @@
 - `../scripts/build_ru_pack.py` — валидация JSON и воспроизводимая сборка ZIP.
 - `../scripts/audit_ru_localization.py` — сравнение `en_us`/`ru_ru` из всех JAR
   с учётом встроенных Jar-in-Jar и наложения resource pack.
-- `../docs/localization-audit/` — полный результат последнего аудита.
+- `../scripts/audit_localization_values.py` — отдельная проверка смешанных и
+  полностью латинских значений, ключей и placeholders по exact JAR.
+- `../scripts/retranslate_chisel.py` — воспроизводимая сборка полного перевода
+  Chisel Modern 1.4.1 из вручную выверенных терминов.
+- `../docs/localization-audit/` — полный результат последнего аудита и CSV-очередь
+  ручной проверки значений.
 
 ## Сборка
 
@@ -29,6 +34,17 @@ python3 scripts/audit_ru_localization.py \
   --output docs/localization-audit
 ```
 
-Аудит считает покрытие строго по ключам. Английские значения в `ru_ru` отдельно
-попадают в `suspicious_values.csv`, поскольку бренды и аббревиатуры нельзя
-автоматически объявлять ошибкой без ручной проверки.
+Основной аудит считает покрытие строго по ключам. Качество самих значений
+проверяется отдельно и сохраняется как воспроизводимая CSV-очередь:
+
+```bash
+python3 scripts/audit_localization_values.py \
+  --jar /path/to/chisel.jar \
+  --jar /path/to/chipped.jar
+```
+
+Смешанная кириллица/латиница и полностью латинские значения не исправляются
+автоматически: в очередь попадают также допустимые бренды, аббревиатуры, формулы
+и единицы измерения. Решения ручной проверки хранятся отдельно в
+`docs/localization-audit/LATIN_SCRIPT_REVIEW.json`, поэтому не теряются при
+перегенерации CSV.

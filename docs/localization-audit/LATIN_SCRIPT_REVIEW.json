@@ -1,0 +1,42 @@
+{
+  "chisel|block.chisel.futura.ae2_controller": {
+    "status": "accepted",
+    "note": "AE2 — официальная аббревиатура мода Applied Energistics 2."
+  },
+  "chisel|chisel.mode.contiguous_2d": {
+    "status": "accepted",
+    "note": "2D — общеупотребимое обозначение двумерного режима."
+  },
+  "chisel|chisel.tooltip.ctm": {
+    "status": "accepted",
+    "note": "CTM — техническая аббревиатура Connected Textures Mod."
+  },
+  "chisel|chisel.tooltip.fuzzy.hint": {
+    "status": "accepted",
+    "note": "Ctrl и Shift — подписи клавиш, отображаемые игроку."
+  },
+  "chisel|chisel.tooltip.leftclick.2": {
+    "status": "accepted",
+    "note": "Shift — подпись клавиши, отображаемая игроку."
+  },
+  "chisel|chisel.tooltip.modes": {
+    "status": "accepted",
+    "note": "Shift — подпись клавиши, отображаемая игроку."
+  },
+  "chisel|chisel.tooltip.power.pertick": {
+    "status": "accepted",
+    "note": "FE — стандартное обозначение Forge Energy."
+  },
+  "chisel|chisel.tooltip.power.stored": {
+    "status": "accepted",
+    "note": "FE — стандартное обозначение Forge Energy."
+  },
+  "chisel|itemGroup.chisel": {
+    "status": "accepted",
+    "note": "Chisel — собственное имя мода в названии творческой вкладки."
+  },
+  "chipped|itemGroup.chipped.main": {
+    "status": "accepted",
+    "note": "Chipped — собственное имя мода в названии творческой вкладки."
+  }
+}
