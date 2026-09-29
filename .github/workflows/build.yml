@@ -35,6 +35,16 @@ jobs:
           PY
       - name: Build
         run: gradle build --no-daemon
+      # Temporary transport fallback for the Arena sandbox, which cannot reach
+      # the Azure-backed Actions artifact host. Removed after the test JAR is copied.
+      - name: Emit test JAR for transfer
+        run: |
+          jar=$(find build/libs -maxdepth 1 -name '*.jar' -type f | head -n 1)
+          echo "AERONAUTICSPLUS_JAR_NAME=$(basename \"$jar\")"
+          echo 'AERONAUTICSPLUS_JAR_BASE64_BEGIN'
+          base64 -w 0 "$jar"
+          echo
+          echo 'AERONAUTICSPLUS_JAR_BASE64_END'
       - uses: actions/upload-artifact@v7
         with:
           name: aeronauticsplus-jars
