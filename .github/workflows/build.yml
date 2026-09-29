@@ -41,8 +41,11 @@ jobs:
         run: |
           jar=$(find build/libs -maxdepth 1 -name '*.jar' -type f | head -n 1)
           echo "AERONAUTICSPLUS_JAR_NAME=$(basename \"$jar\")"
-          encoded=$(base64 -w 0 "$jar")
-          echo "::warning title=AERONAUTICSPLUS_JAR_BASE64::$encoded"
+          base64 -w 0 "$jar" | split -b 3500 -d -a 3 - /tmp/aeronauticsplus-jar-
+          for chunk in /tmp/aeronauticsplus-jar-*; do
+            suffix=${chunk##*-}
+            echo "::warning title=AERONAUTICSPLUS_JAR_BASE64_${suffix}::$(cat \"$chunk\")"
+          done
       - uses: actions/upload-artifact@v7
         with:
           name: aeronauticsplus-jars
