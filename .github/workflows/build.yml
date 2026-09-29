@@ -33,6 +33,13 @@ jobs:
                   open(out, 'wb').write(cr.read(n))
                   print('extracted:', n, '->', out)
           PY
+      - name: Validate RU pack against Create Deep Seas 2.2.4
+        run: |
+          curl -sL "https://cdn.modrinth.com/data/mva5q4qZ/versions/UcXaPVeD/create_submarine-2.2.4.jar" -o /tmp/create-submarine.jar
+          echo "fb4902c2ca3463ea3016efbae7011408eb008d89  /tmp/create-submarine.jar" | sha1sum --check
+          python3 scripts/validate_deep_seas_localization.py \
+            --jar /tmp/create-submarine.jar \
+            --resource-pack localization/ru-pack
       - name: Build
         run: gradle build --no-daemon
       - uses: actions/upload-artifact@v7
