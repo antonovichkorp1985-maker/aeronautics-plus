@@ -451,16 +451,16 @@ def geometry(blades: int, mtl_name: str) -> ObjMesh:
 
 
 def adapter_geometry(mtl_name: str) -> ObjMesh:
-    """Taper from the two-pixel propeller spindle to Create's six-pixel shaft."""
+    """Sleeve the slim propeller spindle and Create shaft with small clearances."""
     mesh = ObjMesh(mtl_name)
     full_uv = (0.0, 0.0, 1.0, 1.0)
     add_frustum(
         mesh,
         name="thin_propeller_output",
         z_front=0.000,
-        radius_front=0.040,
+        radius_front=0.035,
         z_back=0.270,
-        radius_back=0.040,
+        radius_back=0.035,
         sides=8,
         region=full_uv,
     )
@@ -468,9 +468,9 @@ def adapter_geometry(mtl_name: str) -> ObjMesh:
         mesh,
         name="forward_sleeve",
         z_front=0.180,
-        radius_front=0.075,
+        radius_front=0.045,
         z_back=0.320,
-        radius_back=0.075,
+        radius_back=0.045,
         sides=10,
         region=full_uv,
     )
@@ -478,9 +478,9 @@ def adapter_geometry(mtl_name: str) -> ObjMesh:
         mesh,
         name="tapered_reducer",
         z_front=0.300,
-        radius_front=0.075,
+        radius_front=0.045,
         z_back=0.660,
-        radius_back=0.180,
+        radius_back=0.200,
         sides=12,
         region=full_uv,
     )
@@ -488,9 +488,9 @@ def adapter_geometry(mtl_name: str) -> ObjMesh:
         mesh,
         name="locking_collar",
         z_front=0.620,
-        radius_front=0.220,
+        radius_front=0.205,
         z_back=0.790,
-        radius_back=0.220,
+        radius_back=0.205,
         sides=12,
         region=full_uv,
     )

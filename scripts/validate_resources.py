@@ -262,6 +262,7 @@ def validate_shaft_adapter(languages: dict[str, Any]) -> None:
         "implements IBE<SimpleKineticBlockEntity>",
         "face.getAxis() == getRotationAxis(state)",
         "RenderShape.ENTITYBLOCK_ANIMATED",
+        "Block.box(0, 4.5, 4.5, 16, 11.5, 11.5)",
         "facing.getOpposite()",
         "PROPELLER_SHAFT_ADAPTER_BE",
     )
@@ -332,11 +333,22 @@ def validate_shaft_adapter(languages: dict[str, Any]) -> None:
             for vertex in objects[name]
         )
 
-    if not 0.035 <= radial_extent("thin_propeller_output") <= 0.045:
-        fail("shaft adapter output no longer matches the slim propeller spindle")
-    if not 0.18 <= radial_extent("create_shaft_input") <= 0.19:
+    propeller_output_radius = radial_extent("thin_propeller_output")
+    forward_sleeve_radius = radial_extent("forward_sleeve")
+    reducer_radius = radial_extent("tapered_reducer")
+    create_input_radius = radial_extent("create_shaft_input")
+    locking_collar_radius = radial_extent("locking_collar")
+    if not 0.034 <= propeller_output_radius <= 0.036:
+        fail("shaft adapter output must remain only slightly wider than the propeller spindle")
+    if not 0.044 <= forward_sleeve_radius <= 0.046:
+        fail("shaft adapter forward sleeve is no longer a close fit around the propeller spindle")
+    if not 0.199 <= reducer_radius <= 0.201:
+        fail("shaft adapter reducer must finish only slightly outside the Create shaft")
+    if not 0.187 <= create_input_radius <= 0.188:
         fail("shaft adapter input no longer matches Create's six-pixel shaft")
-    if radial_extent("locking_collar") <= radial_extent("create_shaft_input"):
+    if not 0.204 <= locking_collar_radius <= 0.206:
+        fail("shaft adapter locking collar must remain only slightly wider than the Create shaft")
+    if locking_collar_radius <= create_input_radius:
         fail("shaft adapter needs a visible locking collar around the Create shaft")
     if "map_Kd #texture0" not in material_path.read_text(encoding="utf-8"):
         fail("shaft adapter OBJ material is not texture-bound")
