@@ -1,3 +1,23 @@
 {
-  "create.schedule.condition.time_of_day.digital_format": "%1$s:%3$s %4$s"
+  "create.gui.stock_keeper.click_to_cycle": "Нажмите для переключения",
+  "create.gui.stock_keeper.jei_sync.none": "Без синхронизации",
+  "create.gui.stock_keeper.jei_sync.none.description": "Поиск кладовщика и просмотрщика рецептов выполняется независимо",
+  "create.gui.stock_keeper.jei_sync.sync_both": "Двусторонняя синхронизация с просмотрщиком рецептов",
+  "create.gui.stock_keeper.jei_sync.sync_both.description": "Поиски кладовщика и просмотрщика рецептов будут синхронизированы",
+  "create.gui.stock_keeper.jei_sync.sync_from_jei": "Синхронизация из просмотрщика рецептов",
+  "create.gui.stock_keeper.jei_sync.sync_from_jei.description": "Поисковый запрос из просмотрщика рецептов будет передан кладовщику",
+  "create.gui.stock_keeper.jei_sync.sync_from_stock_keeper": "Синхронизация из кладовщика",
+  "create.gui.stock_keeper.jei_sync.sync_from_stock_keeper.description": "Поисковый запрос кладовщика будет передан просмотрщику рецептов",
+  "create.keyinfo.alt_modifier": "Клавиша Alt",
+  "create.keyinfo.ctrl_modifier": "Клавиша Ctrl",
+  "create.keyinfo.shift_modifier": "Клавиша Shift",
+  "create.schedule.condition.time_of_day.digital_format": "%1$s:%3$s %4$s",
+  "create.schematic.tool.flip.description.3": "",
+  "create.schematic.tool.move.description.3": "",
+  "create.schematic.tool.move_y.description.2": "",
+  "create.schematic.tool.move_y.description.3": "",
+  "create.schematic.tool.print.description.3": "",
+  "create.schematic.tool.rotate.description.2": "",
+  "create.schematic.tool.rotate.description.3": "",
+  "tag.item.c.foods.dough.wheat": "Пшеничное тесто"
 }

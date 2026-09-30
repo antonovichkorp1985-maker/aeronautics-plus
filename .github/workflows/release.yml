@@ -38,6 +38,11 @@ jobs:
                   open(out, 'wb').write(cr.read(n))
                   print('extracted:', n, '->', out)
           PY
+      - name: Validate RU pack against Create 6.0.10
+        run: |
+          python3 scripts/validate_create_localization.py \
+            --jar /tmp/create.jar \
+            --resource-pack localization/ru-pack
       - name: Build
         run: gradle build --no-daemon
       - name: Create GitHub Release with jar

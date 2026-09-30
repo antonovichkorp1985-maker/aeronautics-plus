@@ -33,6 +33,11 @@ jobs:
                   open(out, 'wb').write(cr.read(n))
                   print('extracted:', n, '->', out)
           PY
+      - name: Validate RU pack against Create 6.0.10
+        run: |
+          python3 scripts/validate_create_localization.py \
+            --jar /tmp/create.jar \
+            --resource-pack localization/ru-pack
       - name: Validate RU pack against Create Deep Seas 2.2.4
         run: |
           curl -sL "https://cdn.modrinth.com/data/mva5q4qZ/versions/UcXaPVeD/create_submarine-2.2.4.jar" -o /tmp/create-submarine.jar
