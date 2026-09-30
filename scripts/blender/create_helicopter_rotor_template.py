@@ -21,7 +21,7 @@ import bpy
 # With OBJ export Forward=-Z / Up=Y, Blender (x, y, z) maps to
 # Minecraft OBJ (x, z, -y). Thus Blender Y=-0.5 is Minecraft Z=+0.5.
 ROOT = (0.5, -0.5, 0.5)
-UPPER_PIVOT = (0.5, -0.5, 0.78)
+UPPER_PIVOT = (0.5, -0.5, 0.96)
 LOWER_PIVOT = (0.5, -0.5, 0.56)
 ROTOR_RADIUS = 2.5
 BLADE_ROOT = 0.29
@@ -229,7 +229,7 @@ def create_rotor(
     for polygon, index in zip(obj.data.polygons, face_materials):
         polygon.material_index = index
     obj["ap_role"] = "dynamic_rotor"
-    obj["ap_pivot_minecraft"] = "0.5,0.78,0.5" if "UPPER" in name else "0.5,0.56,0.5"
+    obj["ap_pivot_minecraft"] = "0.5,0.96,0.5" if "UPPER" in name else "0.5,0.56,0.5"
     obj["ap_rotation_axis_blender"] = "+Z"
     obj["ap_rotation_axis_minecraft"] = "+Y"
     obj["ap_rotation_direction_top_view"] = direction
@@ -259,7 +259,7 @@ def configure_scene() -> None:
     scene["ap_coordinate_system"] = "Blender +Z up; export Forward=-Z, Up=Y; Minecraft +Y up"
     scene["ap_scale"] = "1 Blender metre = 1 Minecraft block"
     scene["ap_runtime_pivot"] = "Each dynamic rotor rotates around its own object origin"
-    scene["ap_template_version"] = "1.0"
+    scene["ap_template_version"] = "1.1"
 
 
 def main() -> None:
@@ -276,7 +276,7 @@ def main() -> None:
     mechanism = material("AP_MECHANISM", (0.35, 0.18, 0.08, 1.0))
 
     mount = add_cylinder("STATIC_MOUNT", export, 0.30, 0.18, (0.5, -0.5, 0.22), metal)
-    mast = add_cylinder("STATIC_MAST", export, 0.075, 0.48, (0.5, -0.5, 0.51), metal, 16)
+    mast = add_cylinder("STATIC_MAST", export, 0.075, 0.79, (0.5, -0.5, 0.695), metal, 16)
     swash = add_cylinder("SWASHPLATE", export, 0.25, 0.075, (0.5, -0.5, 0.40), mechanism)
     swash.scale = (1.0, 1.0, 0.55)
     bpy.context.view_layer.objects.active = swash
