@@ -48,7 +48,9 @@ public final class AircraftPropellerRenderer<T extends BasePropellerBlockEntity>
         BlockState state = blockEntity.getBlockState();
         Direction direction = state.getValue(BlockStateProperties.FACING);
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.solid());
-        SuperByteBuffer propeller = CachedBuffers.partialFacing(getCurrentModel(blockEntity), state);
+        SuperByteBuffer propeller = CachedBuffers.partialFacing(
+                getCurrentModel(blockEntity), state, direction
+        );
 
         float angle = getAngle(partialTicks, direction, blockEntity);
         kineticRotationTransform(propeller, blockEntity, direction.getAxis(), angle, light);
