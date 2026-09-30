@@ -25,17 +25,17 @@ public class AircraftPropellerBlockEntity extends BasePropellerBlockEntity {
         }
 
         // Defensive fallback for unexpected states during data-fix/load edge cases.
-        return PropellerSpec.aluminum("fallback_aircraft_propeller", 3, 150.0, 2.5, 2.0f);
+        return PropellerSpec.aluminum("fallback_aircraft_propeller", 3, 1.50, 0.25, 2.0f);
     }
 
     @Override
     public double getConfigThrust() {
-        return spec().thrust();
+        return spec().thrustPerRpm();
     }
 
     @Override
     public double getConfigAirflow() {
-        return spec().airflow();
+        return spec().airflowPerRpm();
     }
 
     @Override

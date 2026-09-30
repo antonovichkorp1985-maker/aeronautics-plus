@@ -12,6 +12,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 JAVA_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/AeronauticsPlus.java"
+PROTOTYPE_BE_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/content/propeller/PrototypePropellerBlockEntity.java"
+CLIENT_EVENTS_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/client/AeronauticsPlusClientEvents.java"
+RENDERER_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/client/AircraftPropellerRenderer.java"
 RESOURCES = ROOT / "src/main/resources"
 ASSETS = RESOURCES / "assets/aeronauticsplus"
 GEOMETRY = ASSETS / "models/block/propellers/geometry"
@@ -142,6 +145,43 @@ def validate_obj(path: Path, expected_blades: int) -> None:
         fail(f"invalid OBJ material in {material_path.relative_to(ROOT)}")
 
 
+def validate_balance_constants(source: str) -> None:
+    specs = re.findall(
+        r'PropellerSpec\.(?:wooden|aluminum|steel)\('
+        r'"([^"]+)",\s*(\d+),\s*([0-9.]+),\s*([0-9.]+),\s*([0-9.]+)f\)',
+        source,
+    )
+    if len(specs) != 9:
+        fail(f"expected 9 serial propeller balance specs, found {len(specs)}")
+    for block_id, _blades, thrust, airflow, _radius in specs:
+        thrust_value = float(thrust)
+        airflow_value = float(airflow)
+        if not 0 < thrust_value <= 4:
+            fail(f"{block_id} thrust must be a per-RPM multiplier, got {thrust_value}")
+        if not 0 < airflow_value <= 1:
+            fail(f"{block_id} airflow must be a per-RPM multiplier, got {airflow_value}")
+
+    prototype_source = PROTOTYPE_BE_SOURCE.read_text(encoding="utf-8")
+    returns = [float(value) for value in re.findall(r"return\s+([0-9.]+);", prototype_source)]
+    if len(returns) < 2 or not 0 < returns[0] <= 4 or not 0 < returns[1] <= 1:
+        fail("prototype thrust/airflow must use per-RPM multipliers")
+
+
+def validate_client_animation() -> None:
+    if not CLIENT_EVENTS_SOURCE.is_file() or not RENDERER_SOURCE.is_file():
+        fail("missing client propeller renderer registration")
+    events = CLIENT_EVENTS_SOURCE.read_text(encoding="utf-8")
+    renderer = RENDERER_SOURCE.read_text(encoding="utf-8")
+    if events.count("registerBlockEntityRenderer(") != 2:
+        fail("both propeller block entity types must register a renderer")
+    if "PROTOTYPE_PROPELLER_BE" not in events or "AIRCRAFT_PROPELLER_BE" not in events:
+        fail("propeller renderer registration is incomplete")
+    if "getAngle(partialTicks" not in renderer or "kineticRotationTransform" not in renderer:
+        fail("propeller renderer must use the live kinetic angle")
+    if "VisualizationManager.supportsVisualization" in renderer:
+        fail("fallback renderer must remain active without a registered Flywheel visual")
+
+
 def validate() -> None:
     json_files = sorted(RESOURCES.rglob("*.json"))
     for path in json_files:
@@ -151,6 +191,8 @@ def validate() -> None:
     source = JAVA_SOURCE.read_text(encoding="utf-8")
     if source.count(".noOcclusion()") < 2:
         fail("prototype and serial propeller properties must disable full-cube occlusion")
+    validate_balance_constants(source)
+    validate_client_animation()
 
     languages = {
         locale: load_json(ASSETS / "lang" / f"{locale}.json")
@@ -165,9 +207,13 @@ def validate() -> None:
         item_model_path = ASSETS / "models/item" / f"{block_id}.json"
         if block_id == "prototype_propeller":
             block_model_path = ASSETS / "models/block" / f"{block_id}.json"
+            static_model_path = ASSETS / "models/block" / f"{block_id}_static.json"
+            static_model_id = f"aeronauticsplus:block/{block_id}_static"
             texture_path = ASSETS / "textures/block" / f"{block_id}.png"
         else:
             block_model_path = ASSETS / "models/block/propellers" / f"{block_id}.json"
+            static_model_path = ASSETS / "models/block/propellers" / f"{block_id}_static.json"
+            static_model_id = f"aeronauticsplus:block/propellers/{block_id}_static"
             texture_path = ASSETS / "textures/block/propellers" / f"{block_id}.png"
 
         recipe_path = DATA / "recipe" / f"{block_id}.json"
@@ -176,6 +222,7 @@ def validate() -> None:
         required_paths = (
             blockstate_path,
             block_model_path,
+            static_model_path,
             item_model_path,
             texture_path,
             recipe_path,
@@ -190,6 +237,8 @@ def validate() -> None:
         variants = blockstate.get("variants", {})
         if len(variants) != 12:
             fail(f"{block_id} must have 12 facing/reversed variants, found {len(variants)}")
+        if any(variant.get("model") != static_model_id for variant in variants.values()):
+            fail(f"{block_id} blockstate must use its particle-only static model")
 
         blade_name = "four" if block_id == "prototype_propeller" else next(
             name for name in ("two", "three", "four") if f"_{name}_blade_" in block_id
@@ -208,6 +257,12 @@ def validate() -> None:
             fail(f"{block_id} must disable model ambient occlusion")
         if "gui" not in block_model.get("display", {}):
             fail(f"{block_id} is missing scaled item display settings")
+
+        static_model = load_json(static_model_path)
+        if static_model.get("elements") != []:
+            fail(f"{block_id} static model must not contain a non-animated propeller")
+        if static_model.get("textures", {}).get("particle") != block_model.get("textures", {}).get("particle"):
+            fail(f"{block_id} static and animated model particle textures differ")
 
         item_model = load_json(item_model_path)
         if item_model.get("loader") != "neoforge:obj" or item_model.get("model") != expected_geometry:

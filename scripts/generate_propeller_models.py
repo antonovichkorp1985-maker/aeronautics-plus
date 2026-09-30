@@ -20,9 +20,11 @@ from typing import Iterable
 ROOT = Path(__file__).resolve().parents[1]
 MODELS = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/propellers"
 ITEM_MODELS = ROOT / "src/main/resources/assets/aeronauticsplus/models/item"
+BLOCKSTATES = ROOT / "src/main/resources/assets/aeronauticsplus/blockstates"
 GEOMETRY = MODELS / "geometry"
 TEXTURES = ROOT / "src/main/resources/assets/aeronauticsplus/textures/block/propellers"
 PROTOTYPE_MODEL = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/prototype_propeller.json"
+PROTOTYPE_STATIC_MODEL = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/prototype_propeller_static.json"
 PROTOTYPE_TEXTURE = ROOT / "src/main/resources/assets/aeronauticsplus/textures/block/prototype_propeller.png"
 
 PALETTES = {
@@ -438,13 +440,43 @@ def material_model(texture: str, blades: int) -> dict[str, object]:
     }
 
 
+def particle_only_model(texture: str) -> dict[str, object]:
+    """Chunk model used while the complete OBJ is rendered by the block entity."""
+    return {
+        "ambientocclusion": False,
+        "textures": {"particle": texture},
+        "elements": [],
+    }
+
+
+def animated_blockstate(model: str) -> dict[str, object]:
+    rotations: tuple[tuple[str, dict[str, int]], ...] = (
+        ("north", {}),
+        ("south", {"y": 180}),
+        ("west", {"y": 270}),
+        ("east", {"y": 90}),
+        ("down", {"x": 90}),
+        ("up", {"x": -90}),
+    )
+    variants: dict[str, object] = {}
+    for facing, rotation in rotations:
+        for reversed_value in ("true", "false"):
+            variants[f"facing={facing},reversed={reversed_value}"] = {
+                "model": model,
+                **rotation,
+            }
+    return {"variants": variants}
+
+
 def write_model(path: Path, data: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> None:
     MODELS.mkdir(parents=True, exist_ok=True)
     ITEM_MODELS.mkdir(parents=True, exist_ok=True)
+    BLOCKSTATES.mkdir(parents=True, exist_ok=True)
     GEOMETRY.mkdir(parents=True, exist_ok=True)
     TEXTURES.mkdir(parents=True, exist_ok=True)
 
@@ -466,13 +498,26 @@ def main() -> None:
             texture_id = f"aeronauticsplus:block/propellers/{block_id}"
             generated_model = material_model(texture_id, blades)
             write_model(MODELS / f"{block_id}.json", generated_model)
+            write_model(MODELS / f"{block_id}_static.json", particle_only_model(texture_id))
             write_model(ITEM_MODELS / f"{block_id}.json", generated_model)
+            write_model(
+                BLOCKSTATES / f"{block_id}.json",
+                animated_blockstate(f"aeronauticsplus:block/propellers/{block_id}_static"),
+            )
             write_png(TEXTURES / f"{block_id}.png", texture)
 
     prototype_texture = palette_texture(PALETTES["prototype"], wood_grain=False)
     prototype_model = material_model("aeronauticsplus:block/prototype_propeller", 4)
     write_model(PROTOTYPE_MODEL, prototype_model)
+    write_model(
+        PROTOTYPE_STATIC_MODEL,
+        particle_only_model("aeronauticsplus:block/prototype_propeller"),
+    )
     write_model(ITEM_MODELS / "prototype_propeller.json", prototype_model)
+    write_model(
+        BLOCKSTATES / "prototype_propeller.json",
+        animated_blockstate("aeronauticsplus:block/prototype_propeller_static"),
+    )
     write_png(PROTOTYPE_TEXTURE, prototype_texture)
 
     print("Generated 10 original OBJ propellers with continuous airfoils and rear-only shafts.")

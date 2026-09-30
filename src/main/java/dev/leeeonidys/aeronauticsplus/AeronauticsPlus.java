@@ -64,25 +64,25 @@ public final class AeronauticsPlus {
     // Э3 старт: family of larger aircraft propellers. These are not decorative blocks;
     // they reuse CA's BasePropellerBlockEntity/PropellerActorBehaviour thrust pipeline.
     public static final PropellerEntry WOODEN_TWO_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.wooden("wooden_two_blade_propeller", 2, 95.0, 1.8, 1.75f));
+            PropellerSpec.wooden("wooden_two_blade_propeller", 2, 0.95, 0.18, 1.75f));
     public static final PropellerEntry WOODEN_THREE_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.wooden("wooden_three_blade_propeller", 3, 120.0, 2.1, 2.0f));
+            PropellerSpec.wooden("wooden_three_blade_propeller", 3, 1.20, 0.21, 2.0f));
     public static final PropellerEntry WOODEN_FOUR_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.wooden("wooden_four_blade_propeller", 4, 140.0, 2.3, 2.0f));
+            PropellerSpec.wooden("wooden_four_blade_propeller", 4, 1.40, 0.23, 2.0f));
 
     public static final PropellerEntry ALUMINUM_TWO_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.aluminum("aluminum_two_blade_propeller", 2, 125.0, 2.2, 2.0f));
+            PropellerSpec.aluminum("aluminum_two_blade_propeller", 2, 1.25, 0.22, 2.0f));
     public static final PropellerEntry ALUMINUM_THREE_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.aluminum("aluminum_three_blade_propeller", 3, 155.0, 2.6, 2.25f));
+            PropellerSpec.aluminum("aluminum_three_blade_propeller", 3, 1.55, 0.26, 2.25f));
     public static final PropellerEntry ALUMINUM_FOUR_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.aluminum("aluminum_four_blade_propeller", 4, 180.0, 2.9, 2.25f));
+            PropellerSpec.aluminum("aluminum_four_blade_propeller", 4, 1.80, 0.29, 2.25f));
 
     public static final PropellerEntry STEEL_TWO_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.steel("steel_two_blade_propeller", 2, 150.0, 2.4, 2.25f));
+            PropellerSpec.steel("steel_two_blade_propeller", 2, 1.50, 0.24, 2.25f));
     public static final PropellerEntry STEEL_THREE_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.steel("steel_three_blade_propeller", 3, 185.0, 2.9, 2.5f));
+            PropellerSpec.steel("steel_three_blade_propeller", 3, 1.85, 0.29, 2.5f));
     public static final PropellerEntry STEEL_FOUR_BLADE_PROPELLER = registerAircraftPropeller(
-            PropellerSpec.steel("steel_four_blade_propeller", 4, 215.0, 3.2, 2.5f));
+            PropellerSpec.steel("steel_four_blade_propeller", 4, 2.15, 0.32, 2.5f));
 
     public static final List<PropellerEntry> AIRCRAFT_PROPELLERS = List.of(
             WOODEN_TWO_BLADE_PROPELLER,

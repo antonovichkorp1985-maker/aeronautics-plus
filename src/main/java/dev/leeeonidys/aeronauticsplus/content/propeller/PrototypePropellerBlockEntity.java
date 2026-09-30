@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * PropellerActorBehaviour (thrust layers + entity push) for us.
  *
  * Prototype tuning (kept as a baseline while Э3 propeller-family balancing starts):
- *  thrust 150, airflow 2.5, radius 2 blocks.
+ *  thrust-per-RPM 1.5, airflow-per-RPM 0.25, radius 2 blocks.
  */
 public class PrototypePropellerBlockEntity extends BasePropellerBlockEntity {
 
@@ -22,12 +22,12 @@ public class PrototypePropellerBlockEntity extends BasePropellerBlockEntity {
 
     @Override
     public double getConfigThrust() {
-        return 150.0;
+        return 1.50;
     }
 
     @Override
     public double getConfigAirflow() {
-        return 2.5;
+        return 0.25;
     }
 
     @Override

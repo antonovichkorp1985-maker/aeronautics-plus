@@ -1,0 +1,7 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "aeronauticsplus:block/prototype_propeller"
+  },
+  "elements": []
+}
