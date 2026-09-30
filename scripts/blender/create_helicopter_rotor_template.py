@@ -21,8 +21,8 @@ import bpy
 # With OBJ export Forward=-Z / Up=Y, Blender (x, y, z) maps to
 # Minecraft OBJ (x, z, -y). Thus Blender Y=-0.5 is Minecraft Z=+0.5.
 ROOT = (0.5, -0.5, 0.5)
-UPPER_PIVOT = (0.5, -0.5, 0.96)
-LOWER_PIVOT = (0.5, -0.5, 0.56)
+UPPER_PIVOT = (0.5, -0.5, 0.750)
+LOWER_PIVOT = (0.5, -0.5, 0.375)
 ROTOR_RADIUS = 2.5
 BLADE_ROOT = 0.29
 BLADE_TIP_START = 2.20
@@ -229,7 +229,7 @@ def create_rotor(
     for polygon, index in zip(obj.data.polygons, face_materials):
         polygon.material_index = index
     obj["ap_role"] = "dynamic_rotor"
-    obj["ap_pivot_minecraft"] = "0.5,0.96,0.5" if "UPPER" in name else "0.5,0.56,0.5"
+    obj["ap_pivot_minecraft"] = f"{pivot[0]:.3f},{pivot[2]:.3f},{-pivot[1]:.3f}"
     obj["ap_rotation_axis_blender"] = "+Z"
     obj["ap_rotation_axis_minecraft"] = "+Y"
     obj["ap_rotation_direction_top_view"] = direction
@@ -259,7 +259,7 @@ def configure_scene() -> None:
     scene["ap_coordinate_system"] = "Blender +Z up; export Forward=-Z, Up=Y; Minecraft +Y up"
     scene["ap_scale"] = "1 Blender metre = 1 Minecraft block"
     scene["ap_runtime_pivot"] = "Each dynamic rotor rotates around its own object origin"
-    scene["ap_template_version"] = "1.1"
+    scene["ap_template_version"] = "1.2-micro-assembly"
 
 
 def main() -> None:
@@ -275,16 +275,23 @@ def main() -> None:
     tip = material("AP_BLADE_TIP", (0.92, 0.72, 0.08, 1.0))
     mechanism = material("AP_MECHANISM", (0.35, 0.18, 0.08, 1.0))
 
-    mount = add_cylinder("STATIC_MOUNT", export, 0.30, 0.18, (0.5, -0.5, 0.22), metal)
-    mast = add_cylinder("STATIC_MAST", export, 0.075, 0.79, (0.5, -0.5, 0.695), metal, 16)
-    swash = add_cylinder("SWASHPLATE", export, 0.25, 0.075, (0.5, -0.5, 0.40), mechanism)
-    swash.scale = (1.0, 1.0, 0.55)
-    bpy.context.view_layer.objects.active = swash
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+    mount = add_cylinder("STATIC_MOUNT", export, 0.30, 0.1875, (0.5, -0.5, 0.09375), metal)
+    mast = add_cylinder("STATIC_MAST", export, 0.075, 0.66, (0.5, -0.5, 0.51), metal, 16)
+    swash_fixed = add_cylinder(
+        "SWASHPLATE_FIXED", export, 0.24, 0.030, (0.5, -0.5, 0.230), mechanism
+    )
+    swash_rotating = add_cylinder(
+        "SWASHPLATE_ROTATING", export, 0.205, 0.025, (0.5, -0.5, 0.265), mechanism
+    )
 
-    for obj, role in ((mount, "static_mount"), (mast, "static_mast"), (swash, "tilting_swashplate")):
+    for obj, role, separate in (
+        (mount, "micro_static_mount", False),
+        (mast, "static_inner_support", False),
+        (swash_fixed, "swashplate_fixed", True),
+        (swash_rotating, "swashplate_rotating", True),
+    ):
         obj["ap_role"] = role
-        obj["ap_export_separately"] = obj is swash
+        obj["ap_export_separately"] = separate
 
     create_rotor(
         "ROTOR_LOWER",
