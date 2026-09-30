@@ -207,6 +207,8 @@ def validate_client_animation() -> None:
         fail("propeller renderer must use the live kinetic angle")
     if "CachedBuffers.partialFacing" not in renderer or "direction.getAxis()" not in renderer:
         fail("propeller renderer must align the canonical OBJ axis with the shaft")
+    if "direction.getOpposite()" not in renderer:
+        fail("rear drive shaft must face the kinetic connection opposite FACING")
     after_kinetic_rotation = renderer.split("kineticRotationTransform", 1)[1].split(
         "propeller.renderInto", 1
     )[0]

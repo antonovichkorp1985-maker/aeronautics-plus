@@ -49,18 +49,19 @@ public final class AircraftPropellerRenderer<T extends BasePropellerBlockEntity>
         Direction direction = state.getValue(BlockStateProperties.FACING);
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.solid());
         SuperByteBuffer propeller = CachedBuffers.partialFacing(
-                getCurrentModel(blockEntity), state, direction
+                getCurrentModel(blockEntity), state, direction.getOpposite()
         );
 
         float angle = getAngle(partialTicks, direction, blockEntity);
         kineticRotationTransform(propeller, blockEntity, direction.getAxis(), angle, light);
 
-        // Our OBJ is authored around the Z axis through the exact block centre.
-        // partialFacing() has already aligned that axis with FACING, so applying
-        // Create Aeronautics' additional stock-model rotations here would tilt
-        // the mesh away from the shaft (most visibly for UP/DOWN placements).
-        // Keep the live kinetic rotation as the final transform: its centred
-        // axis is then exactly the shaft axis for all six facing directions.
+        // Our OBJ is authored around the Z axis through the exact block centre,
+        // with its rear drive shaft pointing toward +Z. BasePropellerBlock
+        // connects to the kinetic shaft opposite FACING, so partialFacing()
+        // deliberately maps +Z to direction.getOpposite(). The line of that axis
+        // is still direction.getAxis(), which keeps the live kinetic rotation
+        // centred on the shaft for all six facing directions. Do not apply the
+        // stock model's later tilts or offsets: its canonical axis is different.
         propeller.renderInto(poseStack, vertexConsumer);
     }
 }
