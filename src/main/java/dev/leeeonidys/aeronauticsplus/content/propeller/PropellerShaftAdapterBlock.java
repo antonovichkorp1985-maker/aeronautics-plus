@@ -1,13 +1,11 @@
 package dev.leeeonidys.aeronauticsplus.content.propeller;
 
-import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -26,7 +24,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * flips the reducer without changing its axis.</p>
  */
 public final class PropellerShaftAdapterBlock extends DirectionalKineticBlock
-        implements IBE<SimpleKineticBlockEntity>, IWrenchable {
+        implements IBE<SimpleKineticBlockEntity> {
     private static final VoxelShape X_SHAPE = Block.box(0, 4, 4, 16, 12, 12);
     private static final VoxelShape Y_SHAPE = Block.box(4, 0, 4, 12, 16, 12);
     private static final VoxelShape Z_SHAPE = Block.box(4, 4, 0, 12, 12, 16);
@@ -76,16 +74,7 @@ public final class PropellerShaftAdapterBlock extends DirectionalKineticBlock
         if (targetedFace.getAxis() == facing.getAxis()) {
             return state.setValue(FACING, facing.getOpposite());
         }
-        return IWrenchable.super.getRotatedBlockState(state, targetedFace);
-    }
-
-    @Override
-    public BlockState updateAfterWrenched(BlockState newState, UseOnContext context) {
-        return Block.updateFromNeighbourShapes(
-                newState,
-                context.getLevel(),
-                context.getClickedPos()
-        );
+        return state.setValue(FACING, facing.getClockWise(targetedFace.getAxis()));
     }
 
     @Override

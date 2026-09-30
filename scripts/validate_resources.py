@@ -259,7 +259,7 @@ def validate_shaft_adapter(languages: dict[str, Any]) -> None:
     block_source = ADAPTER_BLOCK_SOURCE.read_text(encoding="utf-8")
     required_block_fragments = (
         "extends DirectionalKineticBlock",
-        "implements IBE<SimpleKineticBlockEntity>, IWrenchable",
+        "implements IBE<SimpleKineticBlockEntity>",
         "face.getAxis() == getRotationAxis(state)",
         "RenderShape.ENTITYBLOCK_ANIMATED",
         "facing.getOpposite()",
