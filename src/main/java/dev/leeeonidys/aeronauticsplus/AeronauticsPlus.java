@@ -2,6 +2,8 @@ package dev.leeeonidys.aeronauticsplus;
 
 import dev.leeeonidys.aeronauticsplus.content.propeller.AircraftPropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.AircraftPropellerBlockEntity;
+import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
+import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
@@ -61,6 +63,18 @@ public final class AeronauticsPlus {
     public static final DeferredItem<BlockItem> PROTOTYPE_PROPELLER_ITEM =
             ITEMS.registerSimpleBlockItem(PROTOTYPE_PROPELLER);
 
+    // Compact inline reducer: Create shaft diameter at the drive end and the
+    // slimmer Aeronautics Plus propeller shaft at the output end.
+    public static final DeferredBlock<PropellerShaftAdapterBlock> PROPELLER_SHAFT_ADAPTER =
+            BLOCKS.register("propeller_shaft_adapter", () -> new PropellerShaftAdapterBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(2.5f, 6.0f)
+                            .noOcclusion()));
+
+    public static final DeferredItem<BlockItem> PROPELLER_SHAFT_ADAPTER_ITEM =
+            ITEMS.registerSimpleBlockItem(PROPELLER_SHAFT_ADAPTER);
+
     // Э3 старт: family of larger aircraft propellers. These are not decorative blocks;
     // they reuse CA's BasePropellerBlockEntity/PropellerActorBehaviour thrust pipeline.
     public static final PropellerEntry WOODEN_TWO_BLADE_PROPELLER = registerAircraftPropeller(
@@ -100,6 +114,11 @@ public final class AeronauticsPlus {
             BLOCK_ENTITIES.register("prototype_propeller", () -> BlockEntityType.Builder.of(
                     AeronauticsPlus::createPrototypePropellerBE, PROTOTYPE_PROPELLER.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SimpleKineticBlockEntity>> PROPELLER_SHAFT_ADAPTER_BE =
+            BLOCK_ENTITIES.register("propeller_shaft_adapter", () -> BlockEntityType.Builder.of(
+                    AeronauticsPlus::createPropellerShaftAdapterBE,
+                    PROPELLER_SHAFT_ADAPTER.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AircraftPropellerBlockEntity>> AIRCRAFT_PROPELLER_BE =
             BLOCK_ENTITIES.register("aircraft_propeller", () -> BlockEntityType.Builder.of(
                     AeronauticsPlus::createAircraftPropellerBE,
@@ -118,6 +137,13 @@ public final class AeronauticsPlus {
         return new PrototypePropellerBlockEntity(PROTOTYPE_PROPELLER_BE.get(), pos, state);
     }
 
+    private static SimpleKineticBlockEntity createPropellerShaftAdapterBE(
+            BlockPos pos,
+            BlockState state
+    ) {
+        return new SimpleKineticBlockEntity(PROPELLER_SHAFT_ADAPTER_BE.get(), pos, state);
+    }
+
     private static AircraftPropellerBlockEntity createAircraftPropellerBE(BlockPos pos, BlockState state) {
         return new AircraftPropellerBlockEntity(AIRCRAFT_PROPELLER_BE.get(), pos, state);
     }
@@ -127,6 +153,7 @@ public final class AeronauticsPlus {
                     .title(Component.translatable("itemGroup.aeronauticsplus"))
                     .icon(() -> new ItemStack(ALUMINUM_THREE_BLADE_PROPELLER.item().get()))
                     .displayItems((params, output) -> {
+                        output.accept(PROPELLER_SHAFT_ADAPTER_ITEM.get());
                         output.accept(PROTOTYPE_PROPELLER_ITEM.get());
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
                     })
@@ -138,21 +165,22 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-dev: propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-dev: propeller and shaft-adapter registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             List<String> registeredItems = new ArrayList<>();
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(PROPELLER_SHAFT_ADAPTER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(PROTOTYPE_PROPELLER_ITEM.get()).toString());
             AIRCRAFT_PROPELLERS.forEach(entry ->
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
 
-            boolean allRegistered = registeredItems.size() == 10
+            boolean allRegistered = registeredItems.size() == 11
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(
-                        "Aeronautics Plus registry ready: {} propeller items; creative tab {}:main; ids={}",
+                        "Aeronautics Plus registry ready: {} items; creative tab {}:main; ids={}",
                         registeredItems.size(), MODID, registeredItems);
             } else {
                 LOGGER.error("Aeronautics Plus registry verification failed: ids={}", registeredItems);

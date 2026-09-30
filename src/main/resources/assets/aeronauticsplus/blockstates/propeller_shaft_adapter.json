@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "aeronauticsplus:block/propeller_shaft_adapter"
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/propeller_shaft_adapter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/propeller_shaft_adapter",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/propeller_shaft_adapter",
+      "y": 90
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/propeller_shaft_adapter",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "aeronauticsplus:block/propeller_shaft_adapter",
+      "x": -90
+    }
+  }
+}

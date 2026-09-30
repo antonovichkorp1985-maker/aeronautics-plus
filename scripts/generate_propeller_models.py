@@ -26,6 +26,11 @@ TEXTURES = ROOT / "src/main/resources/assets/aeronauticsplus/textures/block/prop
 PROTOTYPE_MODEL = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/prototype_propeller.json"
 PROTOTYPE_STATIC_MODEL = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/prototype_propeller_static.json"
 PROTOTYPE_TEXTURE = ROOT / "src/main/resources/assets/aeronauticsplus/textures/block/prototype_propeller.png"
+ADAPTER_MODEL = ROOT / "src/main/resources/assets/aeronauticsplus/models/block/propeller_shaft_adapter.json"
+ADAPTER_ITEM_MODEL = ROOT / "src/main/resources/assets/aeronauticsplus/models/item/propeller_shaft_adapter.json"
+ADAPTER_BLOCKSTATE = ROOT / "src/main/resources/assets/aeronauticsplus/blockstates/propeller_shaft_adapter.json"
+ADAPTER_TEXTURE = ROOT / "src/main/resources/assets/aeronauticsplus/textures/block/propeller_shaft_adapter.png"
+ADAPTER_GEOMETRY = GEOMETRY / "propeller_shaft_adapter.obj"
 
 PALETTES = {
     "wooden": {
@@ -186,6 +191,26 @@ def palette_texture(
     for y in range(18, 32):
         for x in range(16, 32):
             pixels[y][x] = palette["edge"] if x in (16, 17, 30, 31) else palette["shaft"]
+    return pixels
+
+
+def adapter_texture() -> list[list[tuple[int, int, int, int]]]:
+    """Original dark-steel coupling texture with restrained axial bands."""
+    dark = (31, 37, 42, 255)
+    mid = (67, 76, 82, 255)
+    light = (128, 139, 143, 255)
+    edge = (18, 22, 25, 255)
+    pixels = [[mid for _ in range(32)] for _ in range(32)]
+    for y in range(32):
+        for x in range(32):
+            ring = x in (0, 1, 7, 8, 15, 16, 24, 25, 30, 31)
+            diagonal_highlight = (x + y) % 19 in (0, 1)
+            if ring:
+                pixels[y][x] = edge
+            elif diagonal_highlight:
+                pixels[y][x] = light
+            elif (x * 3 + y) % 11 < 3:
+                pixels[y][x] = dark
     return pixels
 
 
@@ -425,6 +450,63 @@ def geometry(blades: int, mtl_name: str) -> ObjMesh:
     return mesh
 
 
+def adapter_geometry(mtl_name: str) -> ObjMesh:
+    """Taper from the two-pixel propeller spindle to Create's six-pixel shaft."""
+    mesh = ObjMesh(mtl_name)
+    full_uv = (0.0, 0.0, 1.0, 1.0)
+    add_frustum(
+        mesh,
+        name="thin_propeller_output",
+        z_front=0.000,
+        radius_front=0.040,
+        z_back=0.270,
+        radius_back=0.040,
+        sides=8,
+        region=full_uv,
+    )
+    add_frustum(
+        mesh,
+        name="forward_sleeve",
+        z_front=0.180,
+        radius_front=0.075,
+        z_back=0.320,
+        radius_back=0.075,
+        sides=10,
+        region=full_uv,
+    )
+    add_frustum(
+        mesh,
+        name="tapered_reducer",
+        z_front=0.300,
+        radius_front=0.075,
+        z_back=0.660,
+        radius_back=0.180,
+        sides=12,
+        region=full_uv,
+    )
+    add_frustum(
+        mesh,
+        name="locking_collar",
+        z_front=0.620,
+        radius_front=0.220,
+        z_back=0.790,
+        radius_back=0.220,
+        sides=12,
+        region=full_uv,
+    )
+    add_frustum(
+        mesh,
+        name="create_shaft_input",
+        z_front=0.750,
+        radius_front=0.1875,
+        z_back=1.000,
+        radius_back=0.1875,
+        sides=8,
+        region=full_uv,
+    )
+    return mesh
+
+
 def material_model(texture: str, blades: int) -> dict[str, object]:
     blade_name = {2: "two", 3: "three", 4: "four"}[blades]
     return {
@@ -437,6 +519,29 @@ def material_model(texture: str, blades: int) -> dict[str, object]:
         "ambientocclusion": False,
         "textures": {"texture0": texture, "particle": texture},
         "display": DISPLAY,
+    }
+
+
+def adapter_model() -> dict[str, object]:
+    texture = "aeronauticsplus:block/propeller_shaft_adapter"
+    return {
+        "loader": "neoforge:obj",
+        "model": "aeronauticsplus:models/block/propellers/geometry/propeller_shaft_adapter.obj",
+        "automatic_culling": False,
+        "shade_quads": True,
+        "flip_v": False,
+        "emissive_ambient": False,
+        "ambientocclusion": False,
+        "textures": {"texture0": texture, "particle": texture},
+        "display": {
+            "gui": {"rotation": [30, 225, 0], "translation": [0, 0, 0], "scale": [0.72, 0.72, 0.72]},
+            "ground": {"rotation": [0, 0, 0], "translation": [0, 3, 0], "scale": [0.46, 0.46, 0.46]},
+            "fixed": {"rotation": [0, 180, 0], "translation": [0, 0, 0], "scale": [0.68, 0.68, 0.68]},
+            "thirdperson_righthand": {"rotation": [75, 45, 0], "translation": [0, 2.5, 0], "scale": [0.56, 0.56, 0.56]},
+            "thirdperson_lefthand": {"rotation": [75, 225, 0], "translation": [0, 2.5, 0], "scale": [0.56, 0.56, 0.56]},
+            "firstperson_righthand": {"rotation": [0, 45, 0], "translation": [0, 0, 0], "scale": [0.62, 0.62, 0.62]},
+            "firstperson_lefthand": {"rotation": [0, 225, 0], "translation": [0, 0, 0], "scale": [0.62, 0.62, 0.62]},
+        },
     }
 
 
@@ -466,6 +571,23 @@ def animated_blockstate(model: str) -> dict[str, object]:
                 **rotation,
             }
     return {"variants": variants}
+
+
+def directional_blockstate(model: str) -> dict[str, object]:
+    rotations: tuple[tuple[str, dict[str, int]], ...] = (
+        ("north", {}),
+        ("south", {"y": 180}),
+        ("west", {"y": 270}),
+        ("east", {"y": 90}),
+        ("down", {"x": 90}),
+        ("up", {"x": -90}),
+    )
+    return {
+        "variants": {
+            f"facing={facing}": {"model": model, **rotation}
+            for facing, rotation in rotations
+        }
+    }
 
 
 def write_model(path: Path, data: dict[str, object]) -> None:
@@ -520,7 +642,26 @@ def main() -> None:
     )
     write_png(PROTOTYPE_TEXTURE, prototype_texture)
 
-    print("Generated 10 original OBJ propellers with continuous airfoils and rear-only shafts.")
+    adapter_mtl = ADAPTER_GEOMETRY.with_suffix(".mtl")
+    adapter_mtl.write_text(
+        "newmtl propeller\nKa 1.0 1.0 1.0\nKd 1.0 1.0 1.0\nKs 0.0 0.0 0.0\nd 1.0\nillum 1\nmap_Kd #texture0\n",
+        encoding="utf-8",
+    )
+    ADAPTER_GEOMETRY.write_text(
+        adapter_geometry(adapter_mtl.name).text(), encoding="utf-8"
+    )
+    generated_adapter_model = adapter_model()
+    write_model(ADAPTER_MODEL, generated_adapter_model)
+    write_model(ADAPTER_ITEM_MODEL, generated_adapter_model)
+    write_model(
+        ADAPTER_BLOCKSTATE,
+        directional_blockstate("aeronauticsplus:block/propeller_shaft_adapter"),
+    )
+    write_png(ADAPTER_TEXTURE, adapter_texture())
+
+    print(
+        "Generated 10 original OBJ propellers and one tapered propeller-shaft adapter."
+    )
 
 
 if __name__ == "__main__":

@@ -23,5 +23,9 @@ public final class AeronauticsPlusClientEvents {
                 AeronauticsPlus.AIRCRAFT_PROPELLER_BE.get(),
                 AircraftPropellerRenderer::new
         );
+        event.registerBlockEntityRenderer(
+                AeronauticsPlus.PROPELLER_SHAFT_ADAPTER_BE.get(),
+                PropellerShaftAdapterRenderer::new
+        );
     }
 }

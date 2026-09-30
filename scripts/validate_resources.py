@@ -15,6 +15,8 @@ JAVA_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/AeronauticsPl
 PROTOTYPE_BE_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/content/propeller/PrototypePropellerBlockEntity.java"
 CLIENT_EVENTS_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/client/AeronauticsPlusClientEvents.java"
 RENDERER_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/client/AircraftPropellerRenderer.java"
+ADAPTER_BLOCK_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/content/propeller/PropellerShaftAdapterBlock.java"
+ADAPTER_RENDERER_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/client/PropellerShaftAdapterRenderer.java"
 RESOURCES = ROOT / "src/main/resources"
 ASSETS = RESOURCES / "assets/aeronauticsplus"
 GEOMETRY = ASSETS / "models/block/propellers/geometry"
@@ -199,10 +201,12 @@ def validate_client_animation() -> None:
         fail("missing client propeller renderer registration")
     events = CLIENT_EVENTS_SOURCE.read_text(encoding="utf-8")
     renderer = RENDERER_SOURCE.read_text(encoding="utf-8")
-    if events.count("registerBlockEntityRenderer(") != 2:
-        fail("both propeller block entity types must register a renderer")
+    if events.count("registerBlockEntityRenderer(") != 3:
+        fail("both propeller types and the shaft adapter must register renderers")
     if "PROTOTYPE_PROPELLER_BE" not in events or "AIRCRAFT_PROPELLER_BE" not in events:
         fail("propeller renderer registration is incomplete")
+    if "PROPELLER_SHAFT_ADAPTER_BE" not in events or "PropellerShaftAdapterRenderer" not in events:
+        fail("shaft-adapter renderer registration is incomplete")
     if "getAngle(partialTicks" not in renderer or "kineticRotationTransform" not in renderer:
         fail("propeller renderer must use the live kinetic angle")
     if "CachedBuffers.partialFacing" not in renderer or "direction.getAxis()" not in renderer:
@@ -216,6 +220,143 @@ def validate_client_animation() -> None:
         fail("propeller renderer must not tilt or offset the model after shaft rotation")
     if "VisualizationManager.supportsVisualization" in renderer:
         fail("fallback renderer must remain active without a registered Flywheel visual")
+
+
+def validate_shaft_adapter(languages: dict[str, Any]) -> None:
+    block_id = "propeller_shaft_adapter"
+    blockstate_path = ASSETS / "blockstates" / f"{block_id}.json"
+    block_model_path = ASSETS / "models/block" / f"{block_id}.json"
+    item_model_path = ASSETS / "models/item" / f"{block_id}.json"
+    geometry_path = GEOMETRY / f"{block_id}.obj"
+    material_path = GEOMETRY / f"{block_id}.mtl"
+    texture_path = ASSETS / "textures/block" / f"{block_id}.png"
+    recipe_path = DATA / "recipe" / f"{block_id}.json"
+    advancement_path = DATA / "advancement/recipes/misc" / f"{block_id}.json"
+    loot_path = DATA / "loot_table/blocks" / f"{block_id}.json"
+
+    for path in (
+        ADAPTER_BLOCK_SOURCE,
+        ADAPTER_RENDERER_SOURCE,
+        blockstate_path,
+        block_model_path,
+        item_model_path,
+        geometry_path,
+        material_path,
+        texture_path,
+        recipe_path,
+        advancement_path,
+        loot_path,
+    ):
+        if not path.is_file():
+            fail(f"missing shaft-adapter resource: {path.relative_to(ROOT)}")
+
+    registration = JAVA_SOURCE.read_text(encoding="utf-8")
+    if registration.count('"propeller_shaft_adapter"') < 2:
+        fail("shaft adapter block and block entity must both be registered")
+    if "PROPELLER_SHAFT_ADAPTER_ITEM" not in registration:
+        fail("shaft adapter item must be registered and added to the creative tab")
+
+    block_source = ADAPTER_BLOCK_SOURCE.read_text(encoding="utf-8")
+    required_block_fragments = (
+        "extends DirectionalKineticBlock",
+        "implements IBE<SimpleKineticBlockEntity>, IWrenchable",
+        "face.getAxis() == getRotationAxis(state)",
+        "RenderShape.ENTITYBLOCK_ANIMATED",
+        "facing.getOpposite()",
+        "PROPELLER_SHAFT_ADAPTER_BE",
+    )
+    for fragment in required_block_fragments:
+        if fragment not in block_source:
+            fail(f"shaft adapter is missing kinetic contract: {fragment}")
+
+    adapter_renderer = ADAPTER_RENDERER_SOURCE.read_text(encoding="utf-8")
+    if "renderRotatingBuffer(" not in adapter_renderer or "getRotatedModel(" not in adapter_renderer:
+        fail("shaft adapter renderer must use live Create kinetic rotation")
+    if "VisualizationManager.supportsVisualization" in adapter_renderer:
+        fail("shaft adapter fallback renderer must remain active under Flywheel")
+
+    blockstate = load_json(blockstate_path)
+    variants = blockstate.get("variants", {})
+    expected_variants = {f"facing={facing}" for facing in ("north", "south", "west", "east", "down", "up")}
+    if set(variants) != expected_variants:
+        fail(f"shaft adapter must have six directional variants, found {sorted(variants)}")
+    expected_model = "aeronauticsplus:block/propeller_shaft_adapter"
+    if any(variant.get("model") != expected_model for variant in variants.values()):
+        fail("shaft adapter blockstate references the wrong model")
+
+    block_model = load_json(block_model_path)
+    item_model = load_json(item_model_path)
+    expected_geometry = (
+        "aeronauticsplus:models/block/propellers/geometry/propeller_shaft_adapter.obj"
+    )
+    if block_model.get("loader") != "neoforge:obj" or block_model.get("model") != expected_geometry:
+        fail("shaft adapter must use its generated OBJ model")
+    if block_model.get("ambientocclusion") is not False:
+        fail("shaft adapter model must disable ambient occlusion")
+    if item_model != block_model:
+        fail("shaft adapter item and rotating block models must match")
+
+    objects: dict[str, list[tuple[float, float, float]]] = {}
+    current_object = ""
+    for line in geometry_path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("o "):
+            current_object = line[2:].strip()
+            objects.setdefault(current_object, [])
+        elif line.startswith("v "):
+            vertex = tuple(float(value) for value in line.split()[1:4])
+            objects.setdefault(current_object, []).append(vertex)
+    expected_objects = {
+        "thin_propeller_output",
+        "forward_sleeve",
+        "tapered_reducer",
+        "locking_collar",
+        "create_shaft_input",
+    }
+    if set(objects) != expected_objects or any(not vertices for vertices in objects.values()):
+        fail(f"shaft adapter OBJ parts are incomplete: {sorted(objects)}")
+    all_vertices = [vertex for vertices in objects.values() for vertex in vertices]
+    if min(vertex[2] for vertex in all_vertices) < -1e-6 or max(vertex[2] for vertex in all_vertices) > 1.000001:
+        fail("shaft adapter must remain inside its one-block axial envelope")
+    for object_name, vertices in objects.items():
+        for coordinate in (0, 1):
+            center = (
+                min(vertex[coordinate] for vertex in vertices)
+                + max(vertex[coordinate] for vertex in vertices)
+            ) / 2
+            if abs(center - 0.5) > 1e-6:
+                fail(f"shaft adapter part {object_name} is off the Z axis")
+
+    def radial_extent(name: str) -> float:
+        return max(
+            max(abs(vertex[0] - 0.5), abs(vertex[1] - 0.5))
+            for vertex in objects[name]
+        )
+
+    if not 0.035 <= radial_extent("thin_propeller_output") <= 0.045:
+        fail("shaft adapter output no longer matches the slim propeller spindle")
+    if not 0.18 <= radial_extent("create_shaft_input") <= 0.19:
+        fail("shaft adapter input no longer matches Create's six-pixel shaft")
+    if radial_extent("locking_collar") <= radial_extent("create_shaft_input"):
+        fail("shaft adapter needs a visible locking collar around the Create shaft")
+    if "map_Kd #texture0" not in material_path.read_text(encoding="utf-8"):
+        fail("shaft adapter OBJ material is not texture-bound")
+    assert_png_dimensions(texture_path, (32, 32))
+
+    translation_key = f"block.aeronauticsplus.{block_id}"
+    for locale, catalogue in languages.items():
+        if translation_key not in catalogue:
+            fail(f"missing {locale} shaft-adapter translation")
+
+    recipe = load_json(recipe_path)
+    recipe_items = {
+        ingredient.get("item")
+        for ingredient in recipe.get("key", {}).values()
+        if isinstance(ingredient, dict)
+    }
+    if recipe_items != {"create:andesite_alloy", "create:shaft"}:
+        fail(f"unexpected shaft-adapter recipe ingredients: {sorted(recipe_items)}")
+    if recipe.get("result", {}).get("id") != "aeronauticsplus:propeller_shaft_adapter":
+        fail("shaft-adapter recipe has the wrong result")
 
 
 def validate() -> None:
@@ -234,6 +375,7 @@ def validate() -> None:
         locale: load_json(ASSETS / "lang" / f"{locale}.json")
         for locale in ("en_us", "ru_ru")
     }
+    validate_shaft_adapter(languages)
 
     for blade_name, blade_count in (("two", 2), ("three", 3), ("four", 4)):
         validate_obj(GEOMETRY / f"propeller_{blade_name}_blade.obj", blade_count)
@@ -352,8 +494,8 @@ def validate() -> None:
 
     assert_png_dimensions(RESOURCES / "icon.png", (32, 32))
     print(
-        f"Validated {len(ids)} propellers and {len(json_files)} JSON files: "
-        "assets, translations, recipes, advancements, loot tables and PNG dimensions are consistent."
+        f"Validated {len(ids)} propellers, 1 shaft adapter and {len(json_files)} JSON files: "
+        "kinetics, assets, translations, recipes, advancements, loot tables and PNG dimensions are consistent."
     )
 
 
