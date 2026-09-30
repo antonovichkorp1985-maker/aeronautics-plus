@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import dev.eriksonn.aeronautics.content.blocks.propeller.small.BasePropellerBlockEntity;
 import dev.eriksonn.aeronautics.content.blocks.propeller.small.SimplePropellerRenderer;
-import net.createmod.catnip.math.AngleHelper;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -54,24 +53,12 @@ public final class AircraftPropellerRenderer<T extends BasePropellerBlockEntity>
         float angle = getAngle(partialTicks, direction, blockEntity);
         kineticRotationTransform(propeller, blockEntity, direction.getAxis(), angle, light);
 
-        if (direction.getAxis().isHorizontal()) {
-            propeller.rotateCentered(
-                    AngleHelper.rad(AngleHelper.horizontalAngle(direction.getOpposite())),
-                    Direction.UP
-            );
-        }
-        if (direction.getAxis().isVertical()) {
-            propeller.rotateCentered(
-                    AngleHelper.rad(AngleHelper.verticalAngle(direction.getOpposite())),
-                    Direction.EAST
-            );
-        }
-
-        propeller.translate(0, 0, -3 / 16f)
-                .rotateCentered(
-                        AngleHelper.rad(-90 - AngleHelper.verticalAngle(direction)),
-                        Direction.EAST
-                );
+        // Our OBJ is authored around the Z axis through the exact block centre.
+        // partialFacing() has already aligned that axis with FACING, so applying
+        // Create Aeronautics' additional stock-model rotations here would tilt
+        // the mesh away from the shaft (most visibly for UP/DOWN placements).
+        // Keep the live kinetic rotation as the final transform: its centred
+        // axis is then exactly the shaft axis for all six facing directions.
         propeller.renderInto(poseStack, vertexConsumer);
     }
 }

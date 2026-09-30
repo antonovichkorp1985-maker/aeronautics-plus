@@ -140,6 +140,33 @@ def validate_obj(path: Path, expected_blades: int) -> None:
     if max(vertex[2] for vertex in shaft_vertices) > 1.001:
         fail(f"drive shaft exceeds the block boundary in {path.relative_to(ROOT)}")
 
+    # The renderer treats +Z through (0.5, 0.5) as the canonical shaft line,
+    # then partialFacing maps it to the block's FACING direction.  Guard both
+    # the drive shaft and the rotationally symmetric hub pieces against an
+    # off-centre export that would make the propeller orbit around the shaft.
+    axis_objects = ("hub_body", "spinner_base", "spinner_nose", "rear_collar", "rear_drive_shaft")
+    for object_name in axis_objects:
+        values = object_vertices.get(object_name, [])
+        if not values:
+            fail(f"missing axis object {object_name} in {path.relative_to(ROOT)}")
+        for coordinate in (0, 1):
+            bounds_center = (
+                min(vertex[coordinate] for vertex in values)
+                + max(vertex[coordinate] for vertex in values)
+            ) / 2
+            if abs(bounds_center - 0.5) > 1e-6:
+                fail(
+                    f"{object_name} is off the Z shaft axis in {path.relative_to(ROOT)}: "
+                    f"coordinate {coordinate} is centred at {bounds_center}"
+                )
+
+    blade_centroid = tuple(
+        sum(vertex[coordinate] for vertex in blade_vertices) / len(blade_vertices)
+        for coordinate in (0, 1)
+    )
+    if any(abs(value - 0.5) > 1e-6 for value in blade_centroid):
+        fail(f"blade assembly is off the Z shaft axis in {path.relative_to(ROOT)}")
+
     material_path = path.with_suffix(".mtl")
     if not material_path.is_file() or "map_Kd #texture0" not in material_path.read_text(encoding="utf-8"):
         fail(f"invalid OBJ material in {material_path.relative_to(ROOT)}")
@@ -178,6 +205,13 @@ def validate_client_animation() -> None:
         fail("propeller renderer registration is incomplete")
     if "getAngle(partialTicks" not in renderer or "kineticRotationTransform" not in renderer:
         fail("propeller renderer must use the live kinetic angle")
+    if "CachedBuffers.partialFacing" not in renderer or "direction.getAxis()" not in renderer:
+        fail("propeller renderer must align the canonical OBJ axis with the shaft")
+    after_kinetic_rotation = renderer.split("kineticRotationTransform", 1)[1].split(
+        "propeller.renderInto", 1
+    )[0]
+    if re.search(r"propeller\.(?:rotate|translate|transform|center|uncenter)", after_kinetic_rotation):
+        fail("propeller renderer must not tilt or offset the model after shaft rotation")
     if "VisualizationManager.supportsVisualization" in renderer:
         fail("fallback renderer must remain active without a registered Flywheel visual")
 
