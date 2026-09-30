@@ -16,8 +16,10 @@
 - несовпадений форматных параметров: **0**.
 
 Проверка закреплена скриптом `scripts/validate_create_localization.py` и CI.
-RU-pack содержит **34 912** записей. Подробный отчёт:
-`docs/localization-audit/CREATE_6_0_10.md`.
+RU-pack содержит **34 912** записей. Опубликованный ZIP: Drive ID
+`1E813rFsIw6MbPaTgviJLVDKaT7gPBEfu`, SHA-256
+`773eebe4775770c38dd2a69e8ecd79667100531dfa3afb6f72ce45a08cc4f56f`.
+Подробный отчёт: `docs/localization-audit/CREATE_6_0_10.md`.
 
 ---
 
