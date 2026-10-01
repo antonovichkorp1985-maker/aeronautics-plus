@@ -1,4 +1,68 @@
 {
+  "aeronauticswinds|itemGroup.aeronauticswinds": {
+    "status": "accepted",
+    "note": "Aeronautics: Winds & Weather — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "aeronauticswinds|itemGroup.aeronauticswinds.main": {
+    "status": "accepted",
+    "note": "Aeronautics: Winds — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "agricraft|itemGroup.agricraft.main": {
+    "status": "accepted",
+    "note": "AgriCraft — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "agricraft|itemGroup.agricraft.seeds": {
+    "status": "accepted",
+    "note": "AgriCraft Seeds — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "alexsmobs|itemGroup.alexsmobs": {
+    "status": "accepted",
+    "note": "Alex's Mobs Continued — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "burnt_additions|itemGroup.burnt_additions": {
+    "status": "accepted",
+    "note": "Burnt Additions — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "burnt_combined|itemGroup.burnt": {
+    "status": "accepted",
+    "note": "Burnt — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "burnt_combined|itemGroup.burnt_additions": {
+    "status": "accepted",
+    "note": "Burnt Additions — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "burnt_combined|itemGroup.burnt_combined": {
+    "status": "accepted",
+    "note": "Burnt — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "burnt|itemGroup.burnt": {
+    "status": "accepted",
+    "note": "Burnt — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "burnt|itemGroup.burnt_additions": {
+    "status": "accepted",
+    "note": "Burnt Additions — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "cannoncompressedarmor|itemGroup.cannoncompressedarmor": {
+    "status": "accepted",
+    "note": "CannonCompressedArmor — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "cbcmoreshells|itemGroup.cbcmoreshells": {
+    "status": "accepted",
+    "note": "CBC Military Supplement — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "chipped|itemGroup.chipped.main": {
+    "status": "accepted",
+    "note": "Chipped — собственное имя мода в названии творческой вкладки."
+  },
+  "chiselsandbits|itemGroup.chiselsandbits": {
+    "status": "accepted",
+    "note": "Chisels & Bits — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "chiselsandbits|itemGroup.chiselsandbits.chiselsandbits": {
+    "status": "accepted",
+    "note": "Chisels & Bits — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
   "chisel|block.chisel.futura.ae2_controller": {
     "status": "accepted",
     "note": "AE2 — официальная аббревиатура мода Applied Energistics 2."
@@ -35,8 +99,100 @@
     "status": "accepted",
     "note": "Chisel — собственное имя мода в названии творческой вкладки."
   },
-  "chipped|itemGroup.chipped.main": {
+  "create_aero_radar|itemGroup.create_aero_radar.main": {
     "status": "accepted",
-    "note": "Chipped — собственное имя мода в названии творческой вкладки."
+    "note": "Create Aero Radar — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "create_connected|itemGroup.create_connected.main": {
+    "status": "accepted",
+    "note": "Create: Connected — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "create_hypertube|itemGroup.create_hypertube": {
+    "status": "accepted",
+    "note": "Create Hypertube — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "create_no_touching|itemGroup.create_no_touching": {
+    "status": "accepted",
+    "note": "Create: No Touching — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "create_radar_mobile_radars|itemGroup.create_radar_mobile_radars": {
+    "status": "accepted",
+    "note": "Create Radar: Mobile Radars — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "create_radar_mobile_radars|itemGroup.create_radar_mobile_radars.main": {
+    "status": "accepted",
+    "note": "Create Radar: Mobile Radars — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "create_radar|itemGroup.create_radar.radar": {
+    "status": "accepted",
+    "note": "Create: Radars — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "create_submarine|create_submarine.ponder.tag.deep_seas": {
+    "status": "accepted",
+    "note": "Create: Deep Seas — исходное название мода; названия модов не переводятся."
+  },
+  "create_tsr|itemGroup.create_tsr": {
+    "status": "accepted",
+    "note": "Create: Track Switch Radio — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "createendertransmission|itemGroup.ender_transmission": {
+    "status": "accepted",
+    "note": "Create Ender Transmission — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "createfirefightingadd|itemGroup.createfirefightingadd": {
+    "status": "accepted",
+    "note": "Create Firefighting Add — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "createmobfarming|itemGroup.createmobfarming": {
+    "status": "accepted",
+    "note": "Create: Mob Farming — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "exnihilosequentia|itemGroup.exnihilosequentia": {
+    "status": "accepted",
+    "note": "Ex Nihilo: Sequentia — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "ftbquests|itemGroup.ftbquests": {
+    "status": "accepted",
+    "note": "FTB Quests — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "ftbquests|itemGroup.ftbquests.ftbquests": {
+    "status": "accepted",
+    "note": "FTB Quests — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "pamhc2crops|itemGroup.pamhc2crops": {
+    "status": "accepted",
+    "note": "Pam's HarvestCraft - Crops — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "pamhc2foodcore|itemGroup.pamhc2foodcore": {
+    "status": "accepted",
+    "note": "Pam's HarvestCraft - Food Core — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "pamhc2trees|itemGroup.pamhc2trees": {
+    "status": "accepted",
+    "note": "Pam's HarvestCraft - Trees — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "radiologistics|itemGroup.radiologistics_tab": {
+    "status": "accepted",
+    "note": "Create: Radiologistics — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "radiologistics|itemGroup.vista_tab": {
+    "status": "accepted",
+    "note": "Vista — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "simulated|itemGroup.simulated.group": {
+    "status": "accepted",
+    "note": "Create Propulsion: Simulated — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "sophisticatedcore|itemGroup.sophisticatedcore": {
+    "status": "accepted",
+    "note": "Sophisticated Core — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "tfmg|itemGroup.tfmg.base": {
+    "status": "accepted",
+    "note": "Create: The Factory Must Grow — исходное название мода или его вкладки; собственные названия не переводятся."
+  },
+  "tfmg|itemGroup.tfmg.building": {
+    "status": "accepted",
+    "note": "Create: TFMG — строительные блоки — исходное название мода или его вкладки; собственные названия не переводятся."
   }
 }

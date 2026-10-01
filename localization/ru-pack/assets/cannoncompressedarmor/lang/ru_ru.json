@@ -1050,5 +1050,5 @@
   "item.cannoncompressedarmor.toughness_template_4": "Toughness Template IV",
   "item.cannoncompressedarmor.toughness_template_5": "Toughness Template V",
   "item.cannoncompressedarmor.toughness_template_6": "Toughness Template VI",
-  "itemGroup.cannoncompressedarmor": "Сжатая броня для пушек"
+  "itemGroup.cannoncompressedarmor": "CannonCompressedArmor"
 }

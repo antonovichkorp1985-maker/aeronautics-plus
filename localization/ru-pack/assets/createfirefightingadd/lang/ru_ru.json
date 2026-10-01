@@ -294,7 +294,7 @@
   "item.createfirefightingadd.pneumatic_hammer.tooltip.condition3": "При атаке заряженным молотом",
   "item.createfirefightingadd.pneumatic_hammer.tooltip.summary": "Тяжёлый инструмент, работающий на _воздухе ранцевого баллона_. В обычном состоянии действует как базовый инструмент, а после зарядки разрушает область _3×3_ или выполняет атаку по площади.",
   "item.createfirefightingadd.traffic_cone": "Дорожный конус",
-  "itemGroup.createfirefightingadd": "Create: пожарное дополнение",
+  "itemGroup.createfirefightingadd": "Create Firefighting Add",
   "jade.createfirefightingadd.water_intake_fluid": "Вода: %s",
   "message.createfirefightingadd.bind_too_far": "Слишком далеко от привязанного водозаборника!",
   "message.createfirefightingadd.intake_bound": "Водозаборник привязан к контроллеру водосброса",

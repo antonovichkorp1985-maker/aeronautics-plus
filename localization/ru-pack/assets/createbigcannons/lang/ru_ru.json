@@ -1,5 +1,8 @@
 {
   "block.createbigcannons.mortar_stone.tooltip.maximumCharges": "Maximum Firing Force",
   "block.createbigcannons.mortar_stone.tooltip.maximumCharges.value": "This mortar stone can be fired with a maximum of _3_ powder charges",
-  "block.createbigcannons.mortar_stone.tooltip.summary": "Powerful stone that _explodes on impact._ _Flies further_ than other projectiles. Good for attacking _walls and fortifications._ _Cannot be fuzed and detonated._ Will _break_ if fired with too much propellant."
+  "block.createbigcannons.mortar_stone.tooltip.summary": "Powerful stone that _explodes on impact._ _Flies further_ than other projectiles. Good for attacking _walls and fortifications._ _Cannot be fuzed and detonated._ Will _break_ if fired with too much propellant.",
+  "createbigcannons.ponder.cannon_crafting/moving_cannons.text_2": "Подвижные конструкции Create можно использовать для перемещения орудий разными способами.",
+  "createbigcannons.ponder.cannon_loader/base_contraption_loading.header": "Заряжание больших орудий базовыми подвижными конструкциями Create",
+  "createbigcannons.ponder.munitions/using_autocannon_ammo_container.text_6": "С установленной на собранной автопушке ёмкостью можно взаимодействовать, только если она пуста: снимите её, замените другой или нажмите ПКМ, удерживая Shift."
 }

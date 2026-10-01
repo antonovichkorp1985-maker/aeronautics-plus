@@ -3438,7 +3438,7 @@
   "nuclearcraftneohaul.music_disc.money_for_nothing.credit": "8-битный кавер от 'Omnigrad'",
   "nuclearcraftneohaul.music_disc.wanderer": "Dion - The Wanderer",
   "nuclearcraftneohaul.music_disc.wanderer.credit": "8-битный кавер от '8 Bit Universe'",
-  "nuclearcraftneohaul.ponder.bearing_ponder.header": "Create Turbine Bearing Attachment",
+  "nuclearcraftneohaul.ponder.bearing_ponder.header": "Подключение турбины к подшипнику Create",
   "nuclearcraftneohaul.radiation_badge": "Информирует игрока о том, насколько он был облучен во время ношения каждые %s перенесенного излучения, максимум до %s.",
   "nuclearcraftneohaul.radiation_badge.broken": "Ваш радиационный значок распался...",
   "nuclearcraftneohaul.radiation_badge.exposure": "Ваш радиационный значок подвергся воздействию радиации %s",

@@ -41,5 +41,9 @@
   "create_submarine.display_source.mode.depth_only": "Только глубина",
   "create_submarine.display_source.mode.danger_only": "Только предупреждения",
   "create_submarine.display_source.mode.both": "Глубина и предупреждения",
-  "create_submarine.ponder.tag.deep_seas.description": "Все компоненты Create: Deep Seas"
+  "create_submarine.ponder.tag.deep_seas.description": "Подводная инженерия и механика",
+  "create_submarine.ponder.electrolyzer.text_2": "Для работы ему требуется энергия Forge (FE).",
+  "create_submarine.ponder.electrolyzer.text_4": "Электричество можно получать из Create Crafts & Additions, Create New Age или Create Power Grid.",
+  "create_submarine.ponder.steel_cable_electrified.text_1": "При наличии электрического мода, например Create: Addition, подайте FE напрямую на канатную лебёдку, удерживающую трос, чтобы наэлектризовать его.",
+  "create_submarine.ponder.tag.deep_seas": "Create: Deep Seas"
 }

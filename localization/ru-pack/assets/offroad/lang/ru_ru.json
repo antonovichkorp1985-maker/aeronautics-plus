@@ -39,7 +39,7 @@
   "offroad.ponder.borehead_bearing_intro.text_2": "При наличии Контейнера хранения и Камнерезных колёс его можно использовать как Бур",
   "offroad.ponder.borehead_bearing_intro.text_3": "Камнерезные колёса автоматически прикрепляются к блокам и друг к другу без Супер-клея",
   "offroad.ponder.borehead_bearing_intro.text_4": "Буровой подшипник инвертирует направление Вращения...",
-  "offroad.ponder.borehead_bearing_intro.text_5": "...и вращается со скоростью 0.25x от поданной",
+  "offroad.ponder.borehead_bearing_intro.text_5": "...и вращается со скоростью, равной 0,25× поданной скорости вращения",
   "offroad.ponder.borehead_bearing_intro.text_6": "Скорость бурения зависит от входного вращения...",
   "offroad.ponder.borehead_bearing_intro.text_7": "...а добытые предметы автоматически собираются в хранилище бура",
   "offroad.ponder.borehead_bearing_intro.text_8": "Когда хранилище бура заполнено, он не сможет продолжать ломать блоки",

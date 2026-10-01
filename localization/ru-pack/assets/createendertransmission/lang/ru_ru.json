@@ -5,7 +5,7 @@
   "block.createendertransmission.item_transmitter": "предмет Передатчик",
   "create.gui.transmitter.channel_title": "сеть",
   "createendertransmission.chunk_loader.loaded": "Chunk loader loaded %1$s chunks nearby",
-  "itemGroup.ender_transmission": "Create: Эндер-передача",
+  "itemGroup.ender_transmission": "Create Ender Transmission",
   "transmitter.network.1": "1",
   "transmitter.network.10": "10",
   "transmitter.network.2": "2",

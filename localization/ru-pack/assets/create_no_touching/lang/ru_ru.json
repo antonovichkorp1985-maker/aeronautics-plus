@@ -13,7 +13,7 @@
   "item.create_no_touching.interceptors": "Перехватчики",
   "item.create_no_touching.iron_pipe": "Железная труба",
   "item.create_no_touching.reflective": "Отражатель",
-  "itemGroup.create_no_touching": "Create: Без контакта",
+  "itemGroup.create_no_touching": "Create: No Touching",
   "item_group.create_no_touching.create_no_touching": "Create: Без контакта",
   "subtitles.parry": "Комплекс активной защиты перехватывает снаряд",
   "subtitles.pipe": "Металл звенит"

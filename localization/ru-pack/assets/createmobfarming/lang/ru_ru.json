@@ -1,5 +1,5 @@
 {
-  "itemGroup.createmobfarming": "Create: Фермы мобов",
+  "itemGroup.createmobfarming": "Create: Mob Farming",
 
   "block.createmobfarming.mechanical_blade": "Механическое лезвие",
   "item.createmobfarming.mechanical_blade": "Механическое лезвие",
@@ -85,7 +85,7 @@
   "config.jade.plugin_createmobfarming.critterport_cargo": "Груз зверопорта",
 
   "createmobfarming.ponder.mob_gate.header": "Сортировка мобов воротами для мобов",
-  "createmobfarming.ponder.mob_gate.text_1": "Поставленные рядом ворота для мобов образуют одни большие ворота, вплоть до 3x3",
+  "createmobfarming.ponder.mob_gate.text_1": "Установленные рядом ворота для мобов объединяются в одни большие ворота размером до 3×3",
   "createmobfarming.ponder.mob_gate.text_2": "Один фильтр сущностей настраивает всю конструкцию. Без него проходит любой моб",
   "createmobfarming.ponder.mob_gate.text_3": "Подходящие мобы проваливаются прямо вниз. Все остальные остаются стоять сверху",
   "createmobfarming.ponder.mob_gate.text_4": "Телёнок продолжает расти в загоне, пока сам не станет подходить под фильтр",

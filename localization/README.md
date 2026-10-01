@@ -19,7 +19,7 @@
 ```bash
 python3 scripts/build_ru_pack.py \
   --source localization/ru-pack \
-  --output AeronauticsPlus-RU-Pack-v0.12-test.zip
+  --output AeronauticsPlus-RU-Pack-v0.14-test.zip
 ```
 
 ## Повторный аудит
@@ -30,7 +30,7 @@ JAR-файлы сторонних модов намеренно не добав�
 ```bash
 python3 scripts/audit_ru_localization.py \
   --mods /path/to/instance/mods \
-  --resource-pack AeronauticsPlus-RU-Pack-v0.12-test.zip \
+  --resource-pack AeronauticsPlus-RU-Pack-v0.14-test.zip \
   --output docs/localization-audit
 ```
 

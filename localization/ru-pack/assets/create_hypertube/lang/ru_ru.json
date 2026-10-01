@@ -40,7 +40,7 @@
   "item.create_hypertube.redstone_detector_tube_attachment": "Трубный датчик редстоуна",
   "item.create_hypertube.tube_scanner_attachment": "Трубный сканер",
   "item.create_hypertube.tube_scanner_unfinished": "Незавершённый трубный сканер",
-  "itemGroup.create_hypertube": "Create: Гипертрубы",
+  "itemGroup.create_hypertube": "Create Hypertube",
   "key.categories.hypertube": "Create: Гипертрубы",
   "key.hypertube.tube_escape": "Гипертруба Escape Button",
   "placement.create_hypertube.angle_too_high": "Угол между точками слишком велик",

@@ -23,7 +23,7 @@
   "item.radiologistics.wired_inertia_fuze.tooltip.chance.value": "При ударе взрыватель срабатывает с вероятностью _%s%%_.",
   "item.radiologistics.wired_inertia_fuze.tooltip.durability": "Стойкость при пробитии",
   "item.radiologistics.wired_inertia_fuze.tooltip.durability.value": "До разрушения взрыватель способен пробить _%s_ блоков.",
-  "itemGroup.radiologistics_tab": "Create: радиологистика",
+  "itemGroup.radiologistics_tab": "Create: Radiologistics",
   "itemGroup.vista_tab": "Vista",
   "message.radiologistics.cassette_extracted": "Кассета извлечена из компьютера.",
   "message.radiologistics.cassette_inserted": "Кассета вставлена в компьютер.",

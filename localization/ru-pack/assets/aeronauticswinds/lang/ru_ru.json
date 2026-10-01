@@ -1,7 +1,7 @@
 {
   "item.aeronauticswinds.cotton_seeds": "Семена хлопка",
-  "itemGroup.aeronauticswinds": "Aeronautics: Ветры и погода",
-  "itemGroup.aeronauticswinds.main": "Aeronautics: Ветры",
+  "itemGroup.aeronauticswinds": "Aeronautics: Winds & Weather",
+  "itemGroup.aeronauticswinds.main": "Aeronautics: Winds",
   "block.aeronauticswinds.anemometer.tooltip.condition1": "При размещении на открытом воздухе",
   "block.aeronauticswinds.anemometer.tooltip.condition2": "При надетых инженерных очках",
   "item.aeronauticswinds.anemometer.tooltip.condition1": "При размещении на открытом воздухе",

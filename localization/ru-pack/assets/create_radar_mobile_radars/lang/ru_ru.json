@@ -27,8 +27,8 @@
   "item.create_radar_mobile_radars.radar_goggles.tooltip_help": "магистраль: right-click блок • Optics: right-click • Stow: shift+right-click • G aim mode • Left-click цель • Z zoom • Unpair: shift+RC (stowed)",
   "item.create_radar_mobile_radars.radar_goggles.tooltip_stowed": "Optics stowed",
   "item.create_radar_mobile_radars.radar_goggles.tooltip_unbound": "связать at a радар сеть магистраль блок.",
-  "itemGroup.create_radar_mobile_radars": "Create: мобильные радары",
-  "itemGroup.create_radar_mobile_radars.main": "Create: мобильные радары",
+  "itemGroup.create_radar_mobile_radars": "Create Radar: Mobile Radars",
+  "itemGroup.create_radar_mobile_radars.main": "Create Radar: Mobile Radars",
   "key.categories.create_radar_mobile_radars": "Create радар: мобильный радары",
   "key.create_radar_mobile_radars.radar_mode_cycle": "Cycle радар aim mode",
   "key.create_radar_mobile_radars.radar_zoom": "радар optics zoom"

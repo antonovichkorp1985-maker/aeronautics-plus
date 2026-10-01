@@ -26,7 +26,7 @@
   "item.create_tsr.track_switch_radio.tooltip.control1": "While aiming at a Путь Стрелка",
   "item.create_tsr.track_switch_radio.tooltip.control2": "While holding the radio",
   "item.create_tsr.track_switch_radio.tooltip.summary": "A handheld radio that lets you remotely flip track switches from a дистанция.",
-  "itemGroup.create_tsr": "Create: Радиоуправление стрелками",
+  "itemGroup.create_tsr": "Create: Track Switch Radio",
   "key.create_tsr.category": "Create: Радиоуправление стрелками",
   "key.create_tsr.cycle_left": "Стрелка Leftward",
   "key.create_tsr.cycle_right": "Стрелка Rightward",

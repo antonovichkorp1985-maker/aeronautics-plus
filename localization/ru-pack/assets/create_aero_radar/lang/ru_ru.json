@@ -44,5 +44,5 @@
   "item.create_aero_radar.radar_link.weapon_group_denied": "Weapon group link failed — this controller is already used by another filter сеть",
   "item.create_aero_radar.radar_link.weapon_group_linked": "Контроллер added to Create: Радары weapon group for filterer %s, %s, %s",
   "item.create_aero_radar.white_monster": "белый Monster",
-  "itemGroup.create_aero_radar.main": "Create: Авиарадар"
+  "itemGroup.create_aero_radar.main": "Create Aero Radar"
 }
