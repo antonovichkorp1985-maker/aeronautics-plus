@@ -13,9 +13,11 @@
 > Проектирование оружия, получение оружейных материалов и соответствующие практические
 > инструкции сюда не входят.
 
-Место химии среди остальных дисциплин, ещё не закрытые области и порядок их углубления
-зафиксированы в общей
-[карте научного покрытия](SCIENCE_COVERAGE_MAP_RU.md).
+Место химии среди остальных дисциплин и порядок углубления зафиксированы в общей
+[карте научного покрытия](SCIENCE_COVERAGE_MAP_RU.md). Детальные companion routes:
+[поверхности, сложные потоки и энергетическая физика](INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md),
+[Земля, специальные материалы и environment](EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md),
+[метрология, systems и надёжность](MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md).
 
 ---
 
@@ -788,6 +790,274 @@ pressure, octane, viscosity и flash point требуют разных mixing ru
 - связывать структуру с реакционной способностью;
 - заранее знать, где эмпирическая игровая модель перестаёт работать;
 - строить offline-таблицы из проверенных расчётов или экспериментальных данных.
+
+---
+
+## 8A. Coordination, organometallic, photo-, supramolecular и computational chemistry
+
+Это мост между общей/квантовой химией, catalysis, extraction, sensors, electronic
+materials и environmental chemistry. Раздел остаётся theory/model route: он не содержит
+пошаговых синтезов, reagent quantities или лабораторных условий опасных реакций.
+
+### 8A.1 Coordination chemistry
+
+Изучить:
+
+- ligands, denticity и chelation;
+- coordination number/geometry;
+- oxidation state и formal electron count;
+- crystal/ligand-field splitting;
+- high/low spin;
+- spectrochemical trends и их limits;
+- Jahn–Teller distortion;
+- substitution mechanisms;
+- thermodynamic stability против kinetic inertness;
+- complex formation/speciation;
+- metal–ligand equilibria;
+- electronic, vibrational и magnetic evidence;
+- metal–organic frameworks as a later materials branch.
+
+Formal oxidation state и electron counting — bookkeeping models, не literal atomic
+charges. Geometry, spin и reactivity должны опираться на structure/spectroscopy или
+validated electronic-structure calculation.
+
+Binding equilibrium при согласованных standard states:
+
+`ΔG° = -RT ln K`.
+
+Conditional formation constant зависит от pH, ionic strength, competing ligands,
+protonation, redox и phase state.
+
+Игровые применения:
+
+- selective leaching/extraction;
+- metal-ion sensors;
+- electroplating baths;
+- water treatment;
+- catalyst state;
+- pigment/color;
+- battery/electrolyte speciation;
+- corrosion/passivation.
+
+### 8A.2 Organometallic chemistry
+
+Нужны concepts:
+
+- metal–carbon bonding;
+- hapticity;
+- electron counting and common stability patterns;
+- oxidative addition/reductive elimination;
+- migratory insertion/elimination;
+- ligand association/dissociation/substitution;
+- transmetallation;
+- σ-bond metathesis;
+- homogeneous catalytic cycle;
+- resting state/off-cycle species;
+- selectivity;
+- catalyst decomposition/poisoning;
+- separation and metal recovery.
+
+Catalytic cycle на paper не доказывает dominant mechanism. Нужны kinetics,
+stoichiometric evidence, spectroscopy, isotope/label evidence where appropriate,
+computational support и mass balance.
+
+В игровой модели catalyst хранит metal/ligand family, oxidation/state proxy, activity,
+selectivity, poison/deactivation и recovery loss, а не действует вечно одним тегом.
+
+### 8A.3 Photochemistry
+
+Различать:
+
+- absorption и electronic excitation;
+- Franck–Condon picture;
+- vibrational relaxation/internal conversion;
+- intersystem crossing;
+- fluorescence/phosphorescence;
+- excited-state electron/proton/energy transfer;
+- photodissociation/photoisomerization;
+- sensitization/quenching;
+- photoredox;
+- atmospheric photolysis;
+- material/photo-oxidative degradation;
+- reactor optical transport.
+
+Quantum yield:
+
+`Φ = number of specified events / number of photons absorbed`.
+
+`Φ` зависит от wavelength, state, environment и chosen event; оно может отличаться от
+one-to-one из-за chain/multiple/deactivation pathways.
+
+Photochemical rate зависит не только от lamp power, но и от spectrum, absorption,
+optical path, scattering, geometry, quantum yield и mass transfer.
+
+### 8A.4 Supramolecular chemistry
+
+Нужны:
+
+- hydrogen bonding;
+- ion pairing;
+- π-interactions;
+- van der Waals/hydrophobic effects;
+- host–guest recognition;
+- cooperativity;
+- self-assembly;
+- molecular machines/switches at conceptual level;
+- dynamic combinatorial systems;
+- solvent/counterion effects;
+- multivalency;
+- kinetic traps.
+
+Применения:
+
+- selective separation;
+- adsorption;
+- sensors;
+- controlled transport/release;
+- membranes;
+- responsive materials;
+- crystal engineering.
+
+Association constant without solvent, temperature, ionic strength, stoichiometry and
+method is incomplete.
+
+### 8A.5 Nanoscience
+
+Nanoscale branch needs:
+
+- surface-to-volume scaling;
+- finite-size/quantum confinement;
+- nucleation/growth;
+- shape/facets;
+- defects;
+- ligand/surface chemistry;
+- aggregation;
+- dissolution/transformation;
+- optical/magnetic/electronic size effects;
+- transport and environmental fate;
+- characterization bias.
+
+For sphere:
+
+`A/V = 3/r`.
+
+Поэтому decreasing radius increases interface importance, но слово `nano` само по себе
+не гарантирует catalytic, medical или mechanical superiority.
+
+Нельзя переносить property monodisperse pristine particles на aged agglomerated material
+без morphology, coating, medium и measurement data.
+
+### 8A.6 Computational chemistry hierarchy
+
+Основные families — это не универсальная лестница автоматически растущей точности:
+
+1. empirical correlations/cheminformatics;
+2. molecular mechanics;
+3. semiempirical electronic methods;
+4. Hartree–Fock;
+5. DFT families;
+6. correlated wave-function methods;
+7. multireference/relativistic treatments where needed;
+8. periodic electronic structure;
+9. molecular dynamics/Monte Carlo;
+10. QM/MM и coarse-graining.
+
+Выбор определяется target property, elements/bonding, system size, temperature,
+solvent/solid environment и error budget.
+
+### 8A.7 Workflow
+
+1. определить observable и required accuracy;
+2. выбрать molecular/periodic model, charge/spin/state;
+3. проверить geometry/conformation/phase;
+4. выбрать method/basis/pseudopotential/dispersion/solvation;
+5. проверить numerical convergence;
+6. искать competing minima/states;
+7. выполнить frequency/stability checks where applicable;
+8. рассчитать property;
+9. сравнить с experiment и более высоким level на subset;
+10. зафиксировать software/version/input/provenance;
+11. оценить model discrepancy;
+12. не экстраполировать за validated chemical space.
+
+### 8A.8 Главные ловушки расчётов
+
+- basis-set incompleteness/superposition;
+- self-interaction/delocalization errors;
+- dispersion omission/double counting;
+- wrong spin/oxidation state;
+- inadequate conformational search;
+- implicit solvent where explicit structure matters;
+- finite-size/k-point errors;
+- pseudopotential inconsistency;
+- entropy/standard-state errors;
+- transition state not connected to intended minima;
+- force field outside parameter domain;
+- short/non-equilibrated MD;
+- training/test leakage in ML potentials;
+- красивое число без uncertainty/experiment.
+
+### 8A.9 Simulation methods
+
+Molecular dynamics integrates trajectories from a force model; it does not automatically
+sample equilibrium. Нужно контролировать timestep, thermostat/barostat, equilibration,
+finite-size effects, correlation time и rare events.
+
+Monte Carlo samples a specified distribution; convergence and ergodicity must be checked.
+Free-energy methods require a defined path/collective variable and uncertainty.
+
+Computed reaction barrier is not directly a plant rate without partition functions,
+solvent/diffusion, competing pathways, catalyst state и transport.
+
+### 8A.10 Tools and data
+
+- ORCA: https://www.faccts.de/orca/
+- Psi4: https://psicode.org/
+- CP2K: https://www.cp2k.org/
+- Quantum ESPRESSO: https://www.quantum-espresso.org/
+- Atomic Simulation Environment: https://ase-lib.org/
+- NOMAD materials data/infrastructure: https://nomad-lab.eu/
+- Materials Project: https://materialsproject.org/
+- NIST Computational Chemistry Comparison and Benchmark Database:
+  https://cccbdb.nist.gov/
+
+Проверять license каждой программы, basis set, pseudopotential и dataset. Output не
+копировать в project data без provenance и разрешённой лицензии.
+
+### 8A.11 Книги
+
+- Miessler, Fischer & Tarr, *Inorganic Chemistry*;
+- Housecroft & Sharpe, *Inorganic Chemistry*;
+- Cotton, *Chemical Applications of Group Theory*;
+- Crabtree, *The Organometallic Chemistry of the Transition Metals*;
+- Elschenbroich, *Organometallics*;
+- Hartwig, *Organotransition Metal Chemistry*;
+- Turro, Ramamurthy & Scaiano, *Modern Molecular Photochemistry of Organic Molecules*;
+- Steed & Atwood, *Supramolecular Chemistry*;
+- Leach, *Molecular Modelling*;
+- Jensen, *Introduction to Computational Chemistry*;
+- Cramer, *Essentials of Computational Chemistry*;
+- Frenkel & Smit, *Understanding Molecular Simulation*;
+- Martin, *Electronic Structure*.
+
+### 8A.12 Игровой data layer
+
+```text
+MolecularOrSolidModel
+  composition_charge_spin_phase
+  structure_or_ensemble
+  method_basis_pseudopotential
+  environment_temperature_pressure
+  software_version_input_hash
+  convergence_checks
+  target_properties
+  benchmark_experiment
+  uncertainty_model_discrepancy
+  license_source_valid_range
+```
+
+Realtime game uses validated tables/surrogates, not quantum solver per tick. A computed
+property is promoted to production data only after independent method/experiment check.
 
 ---
 

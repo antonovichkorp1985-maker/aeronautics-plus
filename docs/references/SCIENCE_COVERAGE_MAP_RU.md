@@ -96,6 +96,7 @@
 - общая и неорганическая химия;
 - органика и механизмы;
 - физическая, молекулярная и квантовая химия;
+- coordination/organometallic, photo/supramolecular, nano и computational chemistry;
 - термодинамика, равновесие, кинетика и катализ;
 - аналитика и спектроскопия;
 - электрохимия, батареи и коррозия;
@@ -108,14 +109,43 @@
 - экология, токсикология, GHS/SDS и process safety;
 - нефтехимия, природный газ, топлива и переработка нефти.
 
+### 1.4 Метрология, systems и надёжность — A/B, P0–P2
+
+Маршрут:
+[`MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md`](MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md)
+
+Покрыты measurement uncertainty, sensors/DSP, experiment design, numerical V&V/UQ,
+systems engineering, plantwide control/process safety, fracture/fatigue/reliability,
+manufacturing/NDT, human factors и lifecycle decisions.
+
+### 1.5 Интерфейсы и сложная энергетическая физика — A/B, P1–P3
+
+Маршрут:
+[`INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md`](INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md)
+
+Покрыты surfaces/wetting/adsorption, colloids, rheology, multiphase/granular/porous flow,
+tribology, combustion/fire science, acoustics, plasma, vacuum и cryogenics.
+
+### 1.6 Земля, специальные материалы и environment — A/B, P1–P3
+
+Маршрут:
+[`EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md`](EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md)
+
+Покрыты geology/mineralogy/geochemistry/geophysics, resource estimation, mining и
+mineral processing, ceramics/glass/cement/refractories, condensed/electronic materials,
+optics/photonics, water/atmosphere/environment/LCA и безопасные conditional bio/agro
+branches.
+
 ---
 
-## 2. Главные области, которых ещё не хватает
+## 2. Важные пробелы первого аудита и их текущее покрытие
 
-Ниже — не список «добавить всё в мод». Это области, которые должны получить отдельное
-углубление **до** реализации связанной механики.
+Ниже сохранён полный перечень обнаруженных пробелов. После второго этапа для них уже
+созданы связанные учебные маршруты, формулы, источники, data models и acceptance
+criteria. Это **не** означает автоматическую готовность всех игровых механик: перед кодом
+всё равно нужны domain-specific data, benchmark и review.
 
-### 2.1 Поверхностные явления, коллоидная химия и интерфейсы — B/P1
+### 2.1 Поверхностные явления, коллоидная химия и интерфейсы — A/B, P1
 
 Почему важны:
 
@@ -144,7 +174,7 @@
 идеальная смесь; filter cake, froth flotation, catalyst area и coating adhesion должны
 иметь физическую причину.
 
-### 2.2 Реология, многофазные потоки и гранулированные среды — B/P1
+### 2.2 Реология, многофазные потоки и гранулированные среды — A/B, P1
 
 Обычная Newtonian liquid model недостаточна для:
 
@@ -171,12 +201,12 @@
 
 Это отдельный мост между fluid mechanics, polymer physics, metallurgy и process design.
 
-### 2.3 Наука о горении и реакционноспособные потоки — B/P1
+### 2.3 Наука о горении и реакционноспособные потоки — A/B, P1
 
-В справочниках есть термодинамика, кинетика, топливо и двигатели, но нет цельного курса
-combustion science.
+На первом аудите были термодинамика, кинетика, топливо и двигатели, но не было цельного
+курса combustion science. Теперь он добавлен в межфазно-энергетический маршрут.
 
-Нужны:
+Обязательное содержание:
 
 - stoichiometry и equivalence ratio;
 - adiabatic flame temperature;
@@ -194,7 +224,7 @@ combustion science.
 Граница безопасности: моделировать энергию, emissions, ignition risk и защиту; не
 публиковать рецептуры или практические инструкции по изготовлению взрывчатых составов.
 
-### 2.4 Трибология, смазки, контакт и износ — C/P1
+### 2.4 Трибология, смазки, контакт и износ — A/B, P1
 
 Для валов, подшипников, редукторов, уплотнений, насосов и роторов критичны:
 
@@ -213,9 +243,9 @@ combustion science.
 Без трибологии «подшипник» остаётся вечным магическим соединителем. Для микромодульного
 ротора эта область имеет высокий приоритет.
 
-### 2.5 Разрушение, усталость, ползучесть и инженерная надёжность — B/P1
+### 2.5 Разрушение, усталость, ползучесть и инженерная надёжность — A/B, P1
 
-Сопротивление материалов уже есть, но нужна самостоятельная ветвь:
+К сопротивлению материалов теперь добавлена самостоятельная ветвь:
 
 - stress concentration;
 - fracture mechanics и crack growth;
@@ -234,9 +264,9 @@ combustion science.
 Это связывает материал, нагрузочную историю и обслуживание, а не только мгновенный
 предел прочности.
 
-### 2.6 Метрология, приборостроение и обработка сигналов — B/P0
+### 2.6 Метрология, приборостроение и обработка сигналов — A/B, P0
 
-Аналитическая химия и uncertainty есть, но всему проекту нужен общий measurement layer:
+К аналитической химии и uncertainty теперь добавлен общий project-wide measurement layer:
 
 - SI realization и traceability;
 - calibration и reference standards;
@@ -253,7 +283,7 @@ combustion science.
 Без этого UI показывает «истинное число мира», а приборы не являются частью инженерной
 системы.
 
-### 2.7 Геология, минералогия, геохимия и месторождения — C/P2
+### 2.7 Геология, минералогия, геохимия и месторождения — A/B, P2
 
 Металлургия начинается не с универсального блока «руда».
 
@@ -274,7 +304,7 @@ combustion science.
 
 Эта ветвь должна предшествовать глубокой добыче, обогащению и реалистичным рудам.
 
-### 2.8 Горное дело и обогащение полезных ископаемых — C/P2
+### 2.8 Горное дело и обогащение полезных ископаемых — A/B, P2
 
 Отдельно от металлургии:
 
@@ -295,7 +325,7 @@ combustion science.
 Игровая ценность: качество руды, liberation size, recovery и tailings становятся важнее
 умножения руды одной машиной.
 
-### 2.9 Керамика, стекло, цемент и огнеупоры — B/P2
+### 2.9 Керамика, стекло, цемент и огнеупоры — A/B, P2
 
 Материаловедение не ограничивается металлами и полимерами.
 
@@ -316,10 +346,10 @@ combustion science.
 
 Это необходимо для печей, реакторов, изоляции, строительства и высоких температур.
 
-### 2.10 Физика конденсированного состояния и электронные материалы — B/P2
+### 2.10 Физика конденсированного состояния и электронные материалы — A/B, P2
 
-Кристаллохимия и основы твёрдого тела уже есть, но цельной физической и технологической
-ветви пока нет:
+Кристаллохимия и основы твёрдого тела уже были; теперь цельная физическая и
+технологическая ветвь добавлена:
 
 - symmetry, lattices и reciprocal space;
 - bonding и electronic structure;
@@ -345,9 +375,9 @@ combustion science.
 электрических компонентов должны зависеть от структуры, дефектов, материала и
 температуры.
 
-### 2.11 Оптика, фотоника и физика излучения — C/P2
+### 2.11 Оптика, фотоника и физика излучения — A/B, P2
 
-Спектроскопия упомянута как аналитический метод, но нужна физическая база:
+К аналитической спектроскопии теперь добавлена самостоятельная физическая база:
 
 - geometrical optics;
 - interference, diffraction и polarization;
@@ -363,9 +393,9 @@ combustion science.
 Применения: аналитические приборы, navigation sensors, thermal imaging, communication,
 solar energy и atmospheric measurements.
 
-### 2.12 Акустика, виброакустика и шум — B/P1
+### 2.12 Акустика, виброакустика и шум — A/B, P1
 
-Вибрации есть, но не полный путь от источника до sound field:
+К vibrations теперь добавлен полный путь от источника до sound field:
 
 - wave equation;
 - impedance;
@@ -381,7 +411,7 @@ solar energy и atmospheric measurements.
 
 Для вертолётной и подводной тем эта область принципиальна.
 
-### 2.13 Plasma physics, high-temperature и ionized-gas chemistry — C/P3
+### 2.13 Plasma physics, high-temperature и ionized-gas chemistry — B, P3
 
 Нужны перед плазменной обработкой, дугами, высокотемпературной металлургией или
 экзотическими силовыми установками:
@@ -402,7 +432,7 @@ solar energy и atmospheric measurements.
 Не смешивать plasma с обычным горячим газом и не считать любой разряд бесплатным
 источником энергии.
 
-### 2.14 Вакуумная и криогенная техника — C/P2
+### 2.14 Вакуумная и криогенная техника — A/B, P2
 
 Это инженерная область на стыке термодинамики, surfaces и materials:
 
@@ -421,9 +451,9 @@ solar energy и atmospheric measurements.
 Нужна для LNG, industrial gases, space/vacuum equipment, superconductivity и части
 ядерных технологий.
 
-### 2.15 Водная химия и очистка воды — B/P1
+### 2.15 Водная химия и очистка воды — A/B, P1
 
-В растворах и экологии основы есть, но industrial water — отдельная система:
+К основам растворов и экологии теперь добавлена самостоятельная industrial-water system:
 
 - alkalinity/hardness;
 - carbonate system;
@@ -444,7 +474,7 @@ solar energy и atmospheric measurements.
 Практически каждая химическая, нефтяная, металлургическая и энергетическая линия зависит
 от воды и создаёт отдельные water loops.
 
-### 2.16 Атмосферная и экологическая химия, LCA — B/P1–P2
+### 2.16 Атмосферная и экологическая химия, LCA — A/B, P1–P2
 
 Нужны:
 
@@ -464,7 +494,7 @@ solar energy и atmospheric measurements.
 Экология — не универсальный «штраф загрязнения», а материальные потоки и последствия во
 времени и пространстве.
 
-### 2.17 Биохимия, микробиология и биотехнология — C/P3
+### 2.17 Биохимия, микробиология и биотехнология — B/C, P3
 
 Нужны только если проект пойдёт в fermentation, bioleaching, wastewater, agriculture,
 biofuels или biomaterials:
@@ -483,7 +513,7 @@ biofuels или biomaterials:
 
 Это самостоятельный большой маршрут, а не подраздел органической химии.
 
-### 2.18 Агрохимия, почвоведение и растениеводство — C/P3
+### 2.18 Агрохимия, почвоведение и растениеводство — B/C, P3
 
 Для интеграции с AgriCraft потенциально нужны:
 
@@ -503,9 +533,9 @@ biofuels или biomaterials:
 
 Не добавлять эту ветвь только ради ещё одного удобрения с multiplier.
 
-### 2.19 Вычислительная химия и molecular simulation — B/P3
+### 2.19 Вычислительная химия и molecular simulation — A/B, P3
 
-Квантовые основы и программы упомянуты, но полноценный путь требует:
+К квантовым основам и списку программ теперь добавлен полноценный workflow:
 
 - electronic-structure approximations;
 - basis sets/pseudopotentials;
@@ -522,7 +552,7 @@ biofuels или biomaterials:
 
 Realtime DFT в игре не нужен. Эти методы полезны для offline-данных и понимания limits.
 
-### 2.20 Системная инженерия — C/P0
+### 2.20 Системная инженерия — A/B, P0
 
 Физика и химия сами по себе не удержат большой проект.
 
@@ -545,10 +575,10 @@ Realtime DFT в игре не нужен. Эти методы полезны д�
 Это защита от ситуации, когда каждая отдельная машина «правильная», но вся система
 создаёт вещество или энергию из ничего.
 
-### 2.21 Вычислительная наука, software engineering и information layer — B/P0
+### 2.21 Вычислительная наука, software engineering и information layer — A/B, P0
 
-Математический справочник охватывает algorithms для численных задач, но монументальному
-проекту нужна самостоятельная дисциплина вычислительной достоверности:
+К математическим algorithms теперь добавлена самостоятельная дисциплина вычислительной
+достоверности:
 
 - algorithms, data structures и computational complexity;
 - floating-point arithmetic;
@@ -569,7 +599,7 @@ Realtime DFT в игре не нужен. Эти методы полезны д�
 Более сложный solver не обязательно точнее. Он полезен только при контролируемых input,
 сеточной/временной сходимости, benchmark и измеримой цене вычисления.
 
-### 2.22 Process systems engineering, управление и безопасность — B/P1
+### 2.22 Process systems engineering, управление и безопасность — A/B, P1
 
 Отдельные аппараты и PID не создают согласованный завод. Нужны:
 
@@ -592,9 +622,10 @@ Realtime DFT в игре не нужен. Эти методы полезны д�
 Эта дисциплина связывает химию, термодинамику, transport, control, economics,
 reliability и process safety.
 
-### 2.23 Специализированные химические ветви — C/P2–P4
+### 2.23 Специализированные химические ветви — A/B для project-relevant, C/P4 conditional
 
-Они не являются первыми blockers, но должны быть видны на карте:
+Project-relevant branches теперь добавлены в раздел 8A химического маршрута; P4
+branches сохранены на карте как условные:
 
 - coordination и organometallic chemistry — catalysts, extraction, advanced materials;
 - photochemistry — atmosphere, coatings, degradation, sensors;
@@ -609,7 +640,7 @@ reliability и process safety.
 Упоминание в карте не означает готовность добавлять recipes. Каждая такая ветвь требует
 своего маршрута, данных, этических и safety-границ.
 
-### 2.24 Физиология среды, occupational health и cognitive ergonomics — C/P2
+### 2.24 Физиология среды, occupational health и cognitive ergonomics — B, P2
 
 Для авиации, подлодок, шума, вибрации и опасной промышленной среды нужны хотя бы:
 
@@ -634,22 +665,22 @@ reliability и process safety.
 |---|---:|---:|---|
 | Математика | A | P0 | всего проекта |
 | Вычислительные методы | A/B | P0 | все динамические модели |
-| Computer/data/software science | B | P0 | solvers, schemas, reproducibility |
-| Метрология и uncertainty | B | P0 | все данные и приборы |
-| Системная инженерия/V&V | C | P0 | архитектура проекта |
+| Computer/data/software science | A/B | P0 | solvers, schemas, reproducibility |
+| Метрология и uncertainty | A/B | P0 | все данные и приборы |
+| Системная инженерия/V&V | A/B | P0 | архитектура проекта |
 | Классическая механика | A | P0 | аппараты, транспорт, роторы |
 | Сплошные среды | A/B | P1 | aero/hydro/process |
 | Термодинамика/теплоперенос | A | P0 | химия, двигатели, энергетика |
 | Statistical physics | B | P2 | thermo/materials/quantum |
-| Condensed matter physics | B | P2 | materials/electronics/high-T |
+| Condensed matter physics | A/B | P2 | materials/electronics/high-T |
 | Электромагнетизм | A/B | P1 | сети, машины, electrochem |
-| Optics/photonics | C | P2 | sensors, spectroscopy, solar |
-| Acoustics | B | P1 | rotors, submarines, machinery |
+| Optics/photonics | A/B | P2 | sensors, spectroscopy, solar |
+| Acoustics | A/B | P1 | rotors, submarines, machinery |
 | Quantum/atomic physics | B | P2 | chemistry, materials, nuclear |
 | Nuclear/radiation | A/B | P3 | peaceful energy/detection |
-| Plasma/MHD | C | P3 | arcs, high-temperature branches |
-| Meteorology/oceanography | B | P2 | flight, ships, environment |
-| Geophysics/geodesy | C | P3 | resources/navigation/Earth model |
+| Plasma/MHD | B | P3 | arcs, high-temperature branches |
+| Meteorology/oceanography | A/B | P2 | flight, ships, environment |
+| Geophysics/geodesy | B | P3 | resources/navigation/Earth model |
 | Relativity | C | P4 | precision/context, не первая механика |
 | General/inorganic chemistry | A | P0 | reactions/materials |
 | Organic chemistry | A | P1 | fuels, polymers, synthesis |
@@ -658,31 +689,31 @@ reliability и process safety.
 | Electrochemistry | A | P1 | batteries, corrosion, refining |
 | Polymers | A/B | P2 | structural/functional materials |
 | Petroleum/refining/petrochemistry | A/B | P2 | TFMG, fuels, polymers |
-| Surface/colloid chemistry | B | P1 | catalysis, separation, coatings |
-| Combustion | B | P1 | engines, furnaces, emissions |
-| Water chemistry | B | P1 | utilities, environment, reactors |
-| Atmospheric/environmental chemistry | B | P2 | emissions/ecology |
+| Surface/colloid chemistry | A/B | P1 | catalysis, separation, coatings |
+| Combustion | A/B | P1 | engines, furnaces, emissions |
+| Water chemistry | A/B | P1 | utilities, environment, reactors |
+| Atmospheric/environmental chemistry | A/B | P2 | emissions/ecology |
 | Crystal/solid-state chemistry | A/B | P1 | materials/electronics |
 | Metallurgy | A/B | P1 | alloys/process equipment |
-| Ceramics/glass/cement | B | P2 | refractory/building/high-T |
-| Semiconductor/electronic materials | B | P2 | electronics/power |
-| Nanoscience | C | P3 | catalysts/coatings/electronics |
-| Tribology/lubrication | C | P1 | shafts, bearings, seals |
-| Fracture/fatigue/reliability | B | P1 | safe machinery/structures |
-| Geology/mineralogy/geochemistry | C | P2 | believable resources |
-| Mining/mineral processing | C | P2 | ore-to-concentrate chain |
-| Vacuum/cryogenics | C | P2 | LNG, gases, advanced systems |
+| Ceramics/glass/cement | A/B | P2 | refractory/building/high-T |
+| Semiconductor/electronic materials | A/B | P2 | electronics/power |
+| Nanoscience | A/B | P3 | catalysts/coatings/electronics |
+| Tribology/lubrication | A/B | P1 | shafts, bearings, seals |
+| Fracture/fatigue/reliability | A/B | P1 | safe machinery/structures |
+| Geology/mineralogy/geochemistry | A/B | P2 | believable resources |
+| Mining/mineral processing | A/B | P2 | ore-to-concentrate chain |
+| Vacuum/cryogenics | A/B | P2 | LNG, gases, advanced systems |
 | Chemical/process engineering | A/B | P1 | reactors/separations/utilities |
-| Process systems/control/safety | B | P1 | integrated factories |
-| Manufacturing science | C | P2 | turning materials into parts |
-| Coordination/organometallic chemistry | C | P2–P3 | catalysis/extraction/materials |
-| Photochemistry/supramolecular chemistry | C | P3 | atmosphere/sensors/separation |
-| Biochemistry/biotechnology | C | P3 | optional bio-branch |
-| Soil/agrochemistry | C | P3 | optional AgriCraft branch |
-| Environmental/occupational physiology | C | P2 | flight, diving, industrial hazards |
-| Human factors/ergonomics | D | P2 | alarms, controls, maintenance |
-| Operations research/logistics | C | P2 | planning, scheduling, supply chains |
-| Engineering economics/LCA | B/C | P2 | trade-offs and sustainability |
+| Process systems/control/safety | A/B | P1 | integrated factories |
+| Manufacturing science | A/B | P2 | turning materials into parts |
+| Coordination/organometallic chemistry | A/B | P2–P3 | catalysis/extraction/materials |
+| Photochemistry/supramolecular chemistry | A/B | P3 | atmosphere/sensors/separation |
+| Biochemistry/biotechnology | B/C | P3 | optional bio-branch |
+| Soil/agrochemistry | B/C | P3 | optional AgriCraft branch |
+| Environmental/occupational physiology | B | P2 | flight, diving, industrial hazards |
+| Human factors/ergonomics | B | P2 | alarms, controls, maintenance |
+| Operations research/logistics | B | P2 | planning, scheduling, supply chains |
+| Engineering economics/LCA | A/B | P2 | trade-offs and sustainability |
 
 ---
 
@@ -903,34 +934,73 @@ UI реалистичного мода должен обучать причин�
 
 ---
 
-## 7. Какие самостоятельные справочники ещё нужны
+## 7. Как закрыты важные пробелы
 
-### P0–P1
+### 7.1 Сквозной фундамент P0–P2
 
-1. **Метрология, приборы, signal processing и uncertainty**.
-2. **Трибология, усталость, разрушение и надёжность машин**.
-3. **Поверхности, коллоиды, реология и многофазные системы**.
-4. **Горение, fire safety и реакционноспособные потоки**.
-5. **Process systems, plantwide control и process safety**.
-6. **Computational/software science, systems engineering, V&V и научные данные**.
+[`MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md`](MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md)
+закрывает единым маршрутом:
 
-### P2
+1. метрологию, sensors, signal processing и uncertainty;
+2. experiment design и system identification;
+3. computational/software credibility, V&V и UQ;
+4. systems engineering и configuration/traceability;
+5. process systems, plantwide control и process safety;
+6. fracture, fatigue, creep, reliability и maintenance;
+7. manufacturing, tolerances, quality и NDT;
+8. human factors/environmental physiology;
+9. operations research, economics и lifecycle decisions.
 
-7. **Геология, минералогия, добыча и обогащение**.
-8. **Керамика, стекло, цемент и огнеупоры**.
-9. **Водная/экологическая химия и lifecycle assessment**.
-10. **Электронные материалы, полупроводники, оптика и фотоника**.
-11. **Manufacturing, joining, tolerances и nondestructive testing**.
+### 7.2 Межфазная и энергетическая физика P1–P3
 
-### P3
+[`INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md`](INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md)
+закрывает:
 
-12. **Plasma, MHD, vacuum и cryogenics**.
-13. **Биохимия, микробиология и biotechnology**.
-14. **Почвы, агрохимия и растениеводство**.
-15. **Space/planetary physics**, если появится космическая ветвь.
+1. surfaces, wetting, adsorption, colloids и surfactants;
+2. rheology/viscoelasticity;
+3. multiphase, porous и granular media;
+4. tribology, lubrication, wear и seals;
+5. combustion/reactive flows и fire-safety boundary;
+6. acoustics/vibroacoustics;
+7. plasma/MHD;
+8. vacuum и cryogenics.
 
-Нефтехимия теперь включена отдельным большим разделом в химический справочник; отдельный
-файл понадобится только если эта ветвь станет самостоятельным модулем разработки.
+### 7.3 Земля, материалы и environment P1–P3
+
+[`EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md`](EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md)
+закрывает:
+
+1. geology, petrology, mineralogy, geochemistry и geophysics;
+2. sampling, resources/reserves и spatial uncertainty;
+3. mining, geotechnics и mineral processing;
+4. ceramics, glass, cement/concrete и refractories;
+5. condensed matter, semiconductors, dielectrics и magnetics;
+6. optics/photonics;
+7. industrial water, wastewater и environmental fate;
+8. atmospheric chemistry/dispersion и LCA/circularity;
+9. безопасные conditional routes по biotechnology и soil/agrochemistry.
+
+### 7.4 Специализированная химия
+
+В [`CHEMISTRY_MOD_STUDY_GUIDE_RU.md`](CHEMISTRY_MOD_STUDY_GUIDE_RU.md) добавлен раздел
+8A: coordination/organometallic chemistry, photochemistry, supramolecular chemistry,
+nanoscience и computational chemistry/molecular simulation с method hierarchy,
+verification workflow, data model и safety boundary.
+
+### 7.5 Что остаётся условным, а не забытым
+
+Отдельный глубокий справочник пока не нужен для branches, которых нет в scope:
+
+- medicinal/pharmaceutical и food science;
+- full biotechnology/genetics;
+- relativistic/particle/astrophysics;
+- planetary/space systems;
+- специализированная nanofabrication;
+- отраслевое legal/regulatory compliance конкретной страны.
+
+Они явно отмечены как P3/P4 и получают самостоятельный маршрут только перед реальной
+механикой. Нефтехимия уже включена большим разделом в химический справочник; отдельный
+файл понадобится, если она станет самостоятельным модулем разработки.
 
 ---
 
@@ -1025,13 +1095,15 @@ geotechnics и reactor physics. Но проект обязан иметь про
 
 ## Итог
 
-Главные обнаруженные пробелы: **поверхности и коллоиды, реология/многофазные среды,
-горение, трибология, разрушение и надёжность, метрология/приборы, геология и добыча,
-керамика/стекло/цемент, электронные материалы, оптика, акустика, plasma,
-vacuum/cryogenics, водная/экологическая химия, biotechnology, environmental physiology,
-вычислительная достоверность, process systems и systems engineering**.
+Все важные пробелы первого аудита теперь получили самостоятельное глубокое покрытие:
+**поверхности и коллоиды, реология/многофазные среды, горение, трибология, разрушение и
+надёжность, метрология/приборы, geology/mining, керамика/стекло/цемент, condensed и
+электронные материалы, coordination/organometallic/photo/supramolecular/nanochemistry,
+computational chemistry, оптика, акустика, plasma, vacuum/cryogenics, water/environment,
+conditional biotechnology/agro, вычислительная достоверность, process systems и systems
+engineering**.
 
-Нефтехимия действительно требовала отдельного углубления и теперь добавлена в
-химический справочник. Следующая рациональная цель — не расширять список бесконечно, а
-последовательно закрыть P0/P1: измерения, поверхности/многофазность, tribology,
-reliability, combustion и systems V&V.
+Это закрывает пробел в **учебной архитектуре**, но не объявляет все mechanics
+верифицированными. Следующий рациональный шаг — применять P0/P1-ядро к одному
+вертикальному срезу: измерения и V&V → rotor interaction/RPM thrust → tribology/fatigue/
+acoustics → verified gameplay simplification.

@@ -72,10 +72,20 @@ proof и точный генератор Blender-шаблона находятс
 ядерной энергетике находится в
 [`docs/references/CHEMISTRY_MOD_STUDY_GUIDE_RU.md`](docs/references/CHEMISTRY_MOD_STUDY_GUIDE_RU.md).
 Он включает русские и международные книги, официальные базы данных, формулы,
-практические проекты, отдельную ветвь нефтехимии/нефтепереработки и матрицу интеграции с
+практические проекты, отдельные ветви нефтехимии/нефтепереработки, coordination/
+organometallic, photo/supramolecular, nano/computational chemistry и матрицу интеграции с
 уже установленными индустриальными модами.
 
-Общий аудит рассмотренных и ещё не закрытых наук, их приоритетов и зависимостей:
+Оставшиеся важные междисциплинарные области добавлены в три связанных маршрута:
+
+- [`docs/references/MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md`](docs/references/MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md) — метрология, DSP, V&V/UQ,
+  systems/process engineering, надёжность, manufacturing и human factors;
+- [`docs/references/INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md`](docs/references/INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md) — поверхности, коллоиды, rheology,
+  многофазность, tribology, combustion, acoustics, plasma, vacuum и cryogenics;
+- [`docs/references/EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md`](docs/references/EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md) — науки о Земле, добыча/обогащение,
+  ceramics/glass/cement, электронные материалы, optics, water/environment и LCA.
+
+Общий аудит научного покрытия, приоритетов и зависимостей:
 [`docs/references/SCIENCE_COVERAGE_MAP_RU.md`](docs/references/SCIENCE_COVERAGE_MAP_RU.md).
 Карта отделяет обязательное глубокое ядро от отраслевых и справочных областей и задаёт
 критерии готовности научной механики к реализации.
