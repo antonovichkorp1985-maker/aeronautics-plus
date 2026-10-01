@@ -10,9 +10,9 @@ Base Create is excluded and audited separately in `CREATE_6_0_10.md`.
 - add-on namespaces with Ponder keys: **29**
 - Ponder keys: **2160**
 - missing effective Russian values: **169**
-- values identical to English: **180**
+- values identical to English: **127**
 - other Latin-only values: **1**
-- mixed Cyrillic/Latin values requiring editorial review: **246**
+- mixed Cyrillic/Latin values requiring editorial review: **174**
 - placeholder mismatches: **0**
 - conflicting duplicate catalogue keys: **0**
 - archive/JSON errors: **0**
@@ -49,7 +49,7 @@ contain untranslated fragments even when the key itself is present.
 | `nuclearcraftneohaul` | 1 | 0 | 1 | 0 | 0 | 0 | 0 |
 | `offroad` | 15 | 0 | 0 | 0 | 1 | 14 | 0 |
 | `powergrid` | 321 | 120 | 0 | 0 | 3 | 198 | 0 |
-| `radiologistics` | 283 | 0 | 53 | 0 | 114 | 116 | 0 |
+| `radiologistics` | 283 | 0 | 0 | 0 | 42 | 241 | 0 |
 | `railways` | 40 | 0 | 0 | 0 | 0 | 40 | 0 |
 | `ratatouille` | 32 | 6 | 0 | 0 | 0 | 26 | 0 |
 | `simulated` | 227 | 0 | 0 | 0 | 4 | 223 | 0 |
@@ -69,6 +69,21 @@ Ponder: названия, интерфейсы конфигуратора, со�
 Единицы нагрузки `SU` переведены официальным термином Create `ЕН`. Оставшаяся
 латиница не является непереведёнными английскими фрагментами. Placeholders и
 число ключей сохранены.
+
+## Завершённый ручной проход `radiologistics`
+
+В рабочем RU-pack вычитаны все **338/338** значений `CreateRadiologistics-1.1.2`:
+названия и подсказки блоков, настройка компьютерной сети, редактор узлов,
+совместимые порты, радиосвязь, память, звук, экраны, шлем пилота, сервомеханизмы,
+оптический датчик и интеграция с большими орудиями.
+
+В Ponder закрыты все **53** английских и **114** смешанных машинных значения;
+итог — **283/283** строк без пропусков и совпадений с английскими предложениями.
+Оставшиеся 42 формально mixed-script строки проверены вручную. Латиница в них —
+это марки входов и координат `A/B/X/Y/Z`, клавиши `W/Esc`, технические форматы
+`RGB/JSON/URL/MP3/WAV`, сокращение `CBC` и названия модов Create. Английских
+фрагментов интерфейса или пояснений среди них нет. Placeholders и управляющие
+коды `§` совпадают с точным каталогом JAR.
 
 ## Interpretation
 
