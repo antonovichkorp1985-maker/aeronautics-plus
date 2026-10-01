@@ -1,5 +1,9 @@
 # Create Deep Seas 2.2.4 — проверка русификации
 
+> **Архивный отчёт RU-pack v0.11-test.** Он сохраняет исходную проверку каталога
+> Create Deep Seas, но не описывает текущую версию всего RU-pack. Актуальная проверка
+> ключей и placeholders выполняется `scripts/validate_deep_seas_localization.py` в CI.
+
 Дата проверки: 2026-09-30.
 
 ## Что проверено

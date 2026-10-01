@@ -22,6 +22,12 @@ SUBJECTS = {
 MAP = REF / "SCIENCE_COVERAGE_MAP_RU.md"
 CURRICULUM = REF / "INTEGRATED_SCIENCE_CURRICULUM_RU.md"
 DOCS = [*SUBJECTS, MAP, CURRICULUM]
+ALL_MARKDOWN = [
+    ROOT / "README.md",
+    ROOT / "CHANGELOG.md",
+    *sorted((ROOT / "docs").rglob("*.md")),
+    *sorted((ROOT / "localization").rglob("*.md")),
+]
 
 TOC_START = "<!-- TOC:START -->"
 TOC_END = "<!-- TOC:END -->"
@@ -91,7 +97,24 @@ def validate_structure(path: Path, text: str, errors: list[str]) -> None:
             fail(errors, path, f"anchor #{anchor} missing from generated contents")
 
 
+def validate_relative_files(path: Path, text: str, errors: list[str]) -> None:
+    """Ensure every relative Markdown file destination exists."""
+
+    for destination in LINK_RE.findall(text):
+        destination = destination.strip("<>")
+        if destination.startswith(("http://", "https://", "mailto:")):
+            continue
+        raw_path = destination.partition("#")[0]
+        if not raw_path:
+            continue
+        target = (path.parent / unquote(raw_path)).resolve()
+        if not target.exists():
+            fail(errors, path, f"broken relative link: {destination}")
+
+
 def validate_links(path: Path, text: str, errors: list[str]) -> None:
+    """Additionally verify explicit fragments used by the generated science docs."""
+
     own_anchors = set(ANCHOR_RE.findall(text))
     for destination in LINK_RE.findall(text):
         destination = destination.strip("<>")
@@ -100,7 +123,6 @@ def validate_links(path: Path, text: str, errors: list[str]) -> None:
         raw_path, separator, fragment = destination.partition("#")
         target = path if not raw_path else (path.parent / unquote(raw_path)).resolve()
         if raw_path and not target.exists():
-            fail(errors, path, f"broken relative link: {destination}")
             continue
         if not separator or not fragment:
             continue
@@ -116,6 +138,10 @@ def validate_links(path: Path, text: str, errors: list[str]) -> None:
 
 def main() -> int:
     errors: list[str] = []
+    for path in ALL_MARKDOWN:
+        text = path.read_text(encoding="utf-8")
+        validate_relative_files(path, text, errors)
+
     texts: dict[Path, str] = {}
     for path in DOCS:
         if not path.exists():
@@ -176,8 +202,9 @@ def main() -> int:
 
     anchor_count = sum(len(ANCHOR_RE.findall(text)) for text in texts.values())
     print(
-        f"Science docs OK: {len(DOCS)} files, {anchor_count} explicit anchors, "
-        f"{total_references} subject source entries, all local links resolved."
+        f"Science docs OK: {len(DOCS)} science files, {anchor_count} explicit anchors, "
+        f"{total_references} subject source entries; relative links resolve across "
+        f"{len(ALL_MARKDOWN)} Markdown files."
     )
     return 0
 
