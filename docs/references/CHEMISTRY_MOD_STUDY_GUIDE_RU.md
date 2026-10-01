@@ -13,6 +13,10 @@
 > Проектирование оружия, получение оружейных материалов и соответствующие практические
 > инструкции сюда не входят.
 
+Место химии среди остальных дисциплин, ещё не закрытые области и порядок их углубления
+зафиксированы в общей
+[карте научного покрытия](SCIENCE_COVERAGE_MAP_RU.md).
+
 ---
 
 ## 0. Как пользоваться справочником
@@ -440,6 +444,300 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 - стабильность при хранении.
 
 Мод не должен становиться лабораторным сборником пошаговых синтезов опасных веществ.
+
+---
+
+## 7A. Нефтехимия, природный газ, топливо и переработка нефти
+
+Нефтехимия раньше была затронута только через органическое сырьё, полимеры и TFMG. Для
+монументального химико-технологического проекта этого недостаточно: это самостоятельная
+ветвь на стыке органической и физической химии, катализаторов, термодинамики смесей,
+процессов разделения, материаловедения, энергетики, экологии и промышленной безопасности.
+
+### 7A.1 Не смешивать четыре области
+
+1. **Upstream petroleum engineering** — геология месторождений, свойства пласта,
+   бурение, добыча и многофазный приток.
+2. **Midstream** — сбор, подготовка, компримирование, хранение и транспорт нефти,
+   природного газа и LNG/LPG.
+3. **Refining** — разделение и превращение сырой нефти в топлива, масла, битум,
+   нефтяной кокс, серу и сырьевые фракции.
+4. **Petrochemistry** — превращение газов и нефтяных фракций в базовые химические
+   продукты, мономеры, растворители, поверхностно-активные вещества и полимеры.
+
+Химическому моду в первую очередь нужны пункты 3–4 и подготовка сырья из пункта 2.
+Upstream следует моделировать только после отдельного изучения геологии, porous-media
+flow и well/process safety.
+
+### 7A.2 Состав и характеристика сырья
+
+Изучить:
+
+- natural gas, associated gas, condensate и crude oil;
+- normal/iso-paraffins, cycloalkanes, aromatics и olefins;
+- resins и asphaltenes;
+- sulfur-, nitrogen- и oxygen-containing compounds;
+- water, salts, sediment и trace metals;
+- dissolved gases и light ends;
+- boiling-range distribution вместо фиктивной одной температуры кипения;
+- density/specific gravity/API gravity;
+- viscosity и её сильную зависимость от температуры;
+- vapor pressure;
+- pour/cloud/freezing/flash points как разные свойства;
+- sulfur, acidity, carbon residue и ash;
+- octane/cetane quality как method-dependent характеристики, а не «процент мощности»;
+- crude assay, TBP/ASTM-type distillation и simulated distillation;
+- pseudo-components и characterization factors для process simulation.
+
+Традиционная шкала API:
+
+`°API = 141.5 / SG₆₀/₆₀°F - 131.5`
+
+Здесь `SG₆₀/₆₀°F` — безразмерная relative density при convention 60 °F/60 °F;
+использованный метод и reference conditions всё равно должны быть указаны. Это
+классификационный показатель плотности, а не универсальная мера ценности или химического
+состава нефти.
+
+Термодинамическая основа модели:
+
+- vapor–liquid и liquid–liquid equilibrium;
+- bubble/dew points;
+- isothermal/adiabatic flash calculations;
+- enthalpy, heat capacity, density, viscosity и thermal conductivity;
+- cubic equations of state, например Peng–Robinson/SRK, для подходящих hydrocarbon
+  systems;
+- activity-coefficient models для существенно неидеальных polar mixtures;
+- petroleum correlations только в их published valid range;
+- lumping/de-lumping и pseudo-component characterization тяжёлых фракций;
+- отдельный property package для water/electrolyte/acid-gas systems, когда hydrocarbon
+  EOS недостаточно.
+
+Выбор property method должен быть явным и проверенным на phase envelope/experimental
+data. Один universal equation of state для газа, воды, электролита и асфальтенов —
+неправдоподобное упрощение.
+
+### 7A.3 Подготовка и первичное разделение
+
+На уровне process model нужны:
+
+- inlet separation;
+- gas dehydration и removal of acid-gas impurities;
+- crude dehydration/desalting;
+- stabilization;
+- atmospheric и vacuum distillation;
+- gas fractionation;
+- absorption/stripping;
+- hydrocarbon dew-point control и NGL recovery;
+- LPG/NGL fractionation;
+- LNG chain и cryogenic separation как отдельная поздняя ветвь;
+- heat-recovery train;
+- steam, refinery fuel gas, electricity, cooling-water и treatment networks;
+- storage, vapor recovery и representative sampling.
+
+Нефть должна быть смесью/assay с фракционным составом. Один предмет `crude_oil`, который
+в любом аппарате всегда распадается на одинаковые проценты, физически слаб. Для газа
+аналогично нужны composition, water/acid-gas content, dew points, heating value/Wobbe
+index и допустимые product specifications, а не только предмет `natural_gas`.
+
+### 7A.4 Конверсионные и очистные процессы
+
+Изучать на уровне chemistry + balances + reactor/separation logic:
+
+- thermal cracking и visbreaking;
+- catalytic cracking;
+- hydrocracking;
+- catalytic reforming;
+- isomerization;
+- alkylation на обзорном технологическом уровне;
+- hydrotreating/hydrodesulfurization;
+- coking;
+- hydrogen production/management;
+- sulfur recovery;
+- solvent extraction, dewaxing и lubricant finishing;
+- blending и product certification;
+- catalyst activation, poisoning, coking и regeneration;
+- corrosion by water, sulfur species, acids и high-temperature environments;
+- relief/flare и vapor-control systems только на уровне safety architecture;
+- wastewater, sour water, spent catalysts, sludge, coke/particulate и VOC management.
+
+Различать product pools:
+
+- refinery gas, LPG и NGL;
+- naphtha/gasoline components;
+- kerosene/jet-fuel components;
+- diesel и gas oils;
+- residual/marine fuel components;
+- lubricant base oils, waxes и greases;
+- bitumen/asphalt;
+- petroleum coke и recovered sulfur;
+- petrochemical feedstocks.
+
+Документировать назначение процесса, входные/выходные классы, atom/element balances,
+hydrogen consumption, heat duty, catalyst state, separation и waste — но не превращать
+справочник в пошаговую инструкцию по эксплуатации опасного реального объекта. H₂S,
+flammable vapor, hot oil, hydrogen, high pressure и oxygen-deficient atmospheres должны
+существовать как разные hazard classes с prevention/detection/mitigation layers.
+
+### 7A.5 Нефтехимические платформы
+
+Строить дерево не из сотен несвязанных рецептов, а из нескольких платформ:
+
+- **C1:** methane/synthesis-gas platform, methanol и производные;
+- **C2:** ethane/ethylene platform;
+- **C3:** propane/propylene platform;
+- **C4:** butanes, butenes и butadiene platform;
+- **BTX:** benzene, toluene, xylenes;
+- **aromatic derivatives:** styrene, phenol/acetone и intermediates;
+- **oxygenates:** alcohols, aldehydes, ketones, acids, esters;
+- **nitrogen products:** ammonia-derived intermediates — только с отдельной
+  process-safety моделью;
+- **polymers:** PE, PP, PVC, PS, PET, elastomers и engineering plastics;
+- **functional products:** solvents, lubricants, waxes, surfactants, resins, coatings.
+
+Каждый переход должен вести к balance, selectivity, separation, recycle, energy,
+corrosion, emissions и quality test.
+
+### 7A.6 Топливо и горение
+
+Нефтепереработка не заканчивается предметом «бензин». Нужны:
+
+- fuel specification и blending;
+- volatility и cold-flow behavior;
+- ignition quality;
+- heating value и stoichiometric air requirement;
+- flame temperature как thermodynamic limit;
+- kinetics, mixing и transport limitations;
+- soot/particulate, sulfur/nitrogen emissions и incomplete combustion;
+- knock/pre-ignition различия на концептуальном уровне;
+- aviation/marine fuels как отдельные specification systems;
+- lubricant, seal и material compatibility;
+- storage stability, oxidation и contamination.
+
+Горение и explosion safety следует изучать как отдельную физико-химическую дисциплину.
+Игровая документация должна объяснять energy/emissions/safety, но не давать практические
+рецептуры опасных топлив или взрывчатых смесей.
+
+### 7A.7 Книги и курсы
+
+Открытые курсы:
+
+- Penn State FSC 432, Petroleum Refining:
+  https://courses.ems.psu.edu/fsc432/
+- NPTEL Petroleum Refinery Engineering, IIT Delhi:
+  https://nptel.ac.in/courses/103102022
+- NPTEL Petroleum Technology:
+  https://onlinecourses.nptel.ac.in/noc23_ch64/preview
+
+Международная полка:
+
+- Kaiser, de Klerk, Gary & Handwerk, *Petroleum Refining: Technology, Economics, and
+  Markets*;
+- Speight, *The Chemistry and Technology of Petroleum*;
+- Speight, *Handbook of Petroleum Refining*;
+- Fahim, Alsahhaf & Elkilani, *Fundamentals of Petroleum Refining*;
+- Jones & Pujadó, *Handbook of Petroleum Processing*;
+- Riazi, *Characterization and Properties of Petroleum Fractions*;
+- Meyers, *Handbook of Petroleum Refining Processes*;
+- Wauquier, *Petroleum Refining*;
+- Weissermel & Arpe, *Industrial Organic Chemistry* — нефтехимические platform chains.
+
+Сильные русские вузовские источники:
+
+- **А. К. Мановян, «Технология первичной переработки нефти и природного газа»** —
+  подготовка, атмосферно-вакуумное разделение и газовые процессы. Карточка РГБ:
+  https://search.rsl.ru/ru/record/01000687885 **[В, С–П]**
+- **С. А. Ахметов, «Физико-химическая технология глубокой переработки нефти и газа»** —
+  конверсионные и очистные процессы. Карточка РГБ:
+  https://search.rsl.ru/ru/record/01000841217 **[В, С–П]**
+- **Е. В. Смидович, «Технология переработки нефти и газа»** — классический отраслевой
+  курс; старые process data и нормы обязательно обновлять. **[В, И–П]**
+- **Р. З. Магарил, «Теоретические основы химических процессов переработки нефти»** —
+  kinetics/thermochemistry технологических превращений. **[В, С–П]**
+- профильные современные курсы РГУ нефти и газа имени И. М. Губкина и УГНТУ.
+
+Эти русские книги маркированы как сильные профильные источники, а не автоматически как
+международно признанные учебники. Международные edition, data и стандарты проверяются
+отдельно.
+
+### 7A.8 Данные и стандарты
+
+- ASTM Petroleum Standards:
+  https://store.astm.org/products-services/standards-and-publications/standards/petroleum-standards.html
+- NIST Chemistry WebBook: https://webbook.nist.gov/chemistry/
+- NIST Thermophysical Properties of Hydrocarbon Mixtures Database:
+  https://www.nist.gov/srd/nist-standard-reference-database-4
+- NIST ThermoData Engine public dataset:
+  https://catalog.data.gov/dataset/thermodata-engine-free-public-version
+- API standards catalog: https://www.api.org/products-and-services/standards
+- GPA Midstream standards: https://www.gpamidstream.org/publications/
+- CCPS process safety: https://www.aiche.org/ccps
+
+Для модели полезно различать методы:
+
+- ASTM D86 — atmospheric distillation curve;
+- ASTM D2887 — simulated distillation;
+- ASTM D4052 — density/relative density/API gravity;
+- ASTM D445 — kinematic viscosity;
+- ASTM D93 — flash point;
+- ASTM D4294 — sulfur by X-ray fluorescence;
+- ASTM D2699/D2700 — research/motor octane;
+- ASTM D613 — cetane number.
+
+Номер редакции и область метода проверять по текущему каталогу ASTM. Полные тексты
+часто платные; нельзя копировать их в репозиторий без лицензии.
+
+### 7A.9 Игровая модель
+
+Минимальная партия petroleum feed хранит:
+
+- assay/source identity;
+- density и reference temperature;
+- boiling-range distribution;
+- light/middle/heavy fraction distribution;
+- sulfur/nitrogen/water/salt classes;
+- viscosity curve;
+- acidity/corrosivity category;
+- contaminant/metals category;
+- measurement uncertainty.
+
+Процесс хранит:
+
+- separation/conversion model;
+- temperature/pressure window;
+- material and energy balances;
+- hydrogen/steam/electricity/cooling demand;
+- catalyst activity;
+- coke/fouling/corrosion state;
+- gas/liquid/solid waste streams;
+- product specification tests;
+- source and valid range каждого correlation;
+- feed/product value, utility demand и capacity constraints для planning layer.
+
+Для refinery-wide модели дополнительно нужны recycle/purge, hydrogen network, sulfur
+balance, steam/power balance, cooling demand, heat integration и constrained blending.
+Linear programming может планировать потоки только поверх проверенных unit models и
+корректных blend-property constraints.
+
+Нельзя применять одно линейное правило ко всем свойствам смеси. Масса и количество
+каждого элемента аддитивны; volume может меняться при смешении, а heating value, vapor
+pressure, octane, viscosity и flash point требуют разных mixing rules. Для каждого
+свойства нужна собственная модель или явно маркированное приближение.
+
+### 7A.10 Интеграция с TFMG
+
+Перед добавлением нефтехимической машины сначала аудировать реальные recipes и fluids
+`tfmg`. Предпочтительная роль нового химического слоя:
+
+- assays и composition-aware batches;
+- thermodynamic/quality data;
+- catalysts и deactivation;
+- separation purity/recovery;
+- corrosion/material compatibility;
+- laboratory certification;
+- emissions, recycle и waste;
+- adapters к существующим TFMG-машинам.
+
+Это лучше, чем создавать вторую визуально похожую refinery chain без новой физики.
 
 ---
 
