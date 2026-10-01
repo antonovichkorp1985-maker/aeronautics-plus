@@ -1,5 +1,34 @@
 # Метрология, вычислительная достоверность, системы и надёжность
 
+<!-- TOC:START -->
+## Оглавление
+
+- [0. Уровни и правило допуска к реализации](#measure-0)
+- [1. Какой результат должен дать маршрут](#measure-1)
+- [2. Порядок обучения](#measure-2)
+- [3. Метрология](#measure-3)
+- [4. Sensors и instrumentation](#measure-4)
+- [5. Sampling и signal processing](#measure-5)
+- [6. Experiment design и system identification](#measure-6)
+- [7. Numerical credibility и software engineering](#measure-7)
+- [8. Uncertainty и sensitivity](#measure-8)
+- [9. Systems engineering](#measure-9)
+- [10. Process systems engineering и control](#measure-10)
+- [11. Fracture, fatigue и creep](#measure-11)
+- [12. Reliability, maintenance и diagnostics](#measure-12)
+- [13. Manufacturing, tolerances и quality](#measure-13)
+- [14. Human factors и environmental physiology](#measure-14)
+- [15. Operations research, economics и lifecycle decisions](#measure-15)
+- [16. Общая модель данных](#measure-16)
+- [16A. Сильная русскоязычная полка](#measure-16a)
+- [17. Практические проекты](#measure-17)
+- [18. Критерии завершения](#measure-18)
+- [Сводный список источников](#measure-sources)
+
+> [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#measure-sources)
+<!-- TOC:END -->
+
+
 Статус: обязательный сквозной маршрут для всех физических, химических и инженерных
 механик проекта. Дата аудита источников: **1 октября 2026 года**.
 
@@ -20,6 +49,7 @@ engineering, process control/safety, fracture/fatigue/reliability, manufacturing
 
 ---
 
+<a id="measure-0"></a>
 ## 0. Уровни и правило допуска к реализации
 
 - **Б** — термины, единицы и расчёты по одной формуле;
@@ -42,6 +72,7 @@ engineering, process control/safety, fracture/fatigue/reliability, manufacturing
 
 ---
 
+<a id="measure-1"></a>
 ## 1. Какой результат должен дать маршрут
 
 Разработчик должен уметь:
@@ -64,6 +95,7 @@ engineering, process control/safety, fracture/fatigue/reliability, manufacturing
 
 ---
 
+<a id="measure-2"></a>
 ## 2. Порядок обучения
 
 | Этап | Тема | Проектный результат | Уровень |
@@ -86,6 +118,7 @@ engineering, process control/safety, fracture/fatigue/reliability, manufacturing
 
 ---
 
+<a id="measure-3"></a>
 ## 3. Метрология
 
 ### 3.1 Базовые различия
@@ -192,6 +225,7 @@ identifiers и допустимые metadata.
 
 ---
 
+<a id="measure-4"></a>
 ## 4. Sensors и instrumentation
 
 ### 4.1 Static model
@@ -252,6 +286,7 @@ quality flag.
 
 ---
 
+<a id="measure-5"></a>
 ## 5. Sampling и signal processing
 
 ### 5.1 Sampling
@@ -333,6 +368,7 @@ Kalman filter объединяет prediction и measurement через covarian
 
 ---
 
+<a id="measure-6"></a>
 ## 6. Experiment design и system identification
 
 ### 6.1 Планирование эксперимента
@@ -393,6 +429,7 @@ Kalman filter объединяет prediction и measurement через covarian
 
 ---
 
+<a id="measure-7"></a>
 ## 7. Numerical credibility и software engineering
 
 ### 7.1 Четыре разных вопроса
@@ -486,6 +523,7 @@ conversion contract.
 
 ---
 
+<a id="measure-8"></a>
 ## 8. Uncertainty и sensitivity
 
 ### 8.1 Классы uncertainty
@@ -543,6 +581,7 @@ validation. Если данных мало, применять cross-validation/
 
 ---
 
+<a id="measure-9"></a>
 ## 9. Systems engineering
 
 ### 9.1 Иерархия
@@ -615,6 +654,7 @@ Version control недостаточен без:
 
 ---
 
+<a id="measure-10"></a>
 ## 10. Process systems engineering и control
 
 ### 10.1 Flowsheet thinking
@@ -724,6 +764,7 @@ Derivative filtering, actuator limits и sample time являются часть
 
 ---
 
+<a id="measure-11"></a>
 ## 11. Fracture, fatigue и creep
 
 ### 11.1 Stress concentration
@@ -810,6 +851,7 @@ fracture целиком.
 
 ---
 
+<a id="measure-12"></a>
 ## 12. Reliability, maintenance и diagnostics
 
 ### 12.1 Probability model
@@ -896,6 +938,7 @@ failure labels.
 
 ---
 
+<a id="measure-13"></a>
 ## 13. Manufacturing, tolerances и quality
 
 ### 13.1 Process–structure–property chain
@@ -976,6 +1019,7 @@ false-call rate, calibration block и qualification requirement.
 
 ---
 
+<a id="measure-14"></a>
 ## 14. Human factors и environmental physiology
 
 ### 14.1 Почему это engineering input
@@ -1037,6 +1081,7 @@ Operator error часто является следствием design:
 
 ---
 
+<a id="measure-15"></a>
 ## 15. Operations research, economics и lifecycle decisions
 
 ### 15.1 Optimization
@@ -1101,6 +1146,7 @@ environmental damage.
 
 ---
 
+<a id="measure-16"></a>
 ## 16. Общая модель данных
 
 Минимальный scientific result:
@@ -1148,6 +1194,7 @@ ModelPassport
 
 ---
 
+<a id="measure-16a"></a>
 ## 16A. Сильная русскоязычная полка
 
 Обозначения: **[М]** — подтверждённое международное влияние/переводы; **[В]** — сильный
@@ -1184,6 +1231,7 @@ sources; они дают сильную теоретическую и терми
 
 ---
 
+<a id="measure-17"></a>
 ## 17. Практические проекты
 
 ### Проект A — виртуальный стенд ротора
@@ -1236,6 +1284,7 @@ mesh/timestep study, experimental comparison, uncertainty, hazards и acceptance
 
 ---
 
+<a id="measure-18"></a>
 ## 18. Критерии завершения
 
 Область считается реально добавленной в проект, когда:
@@ -1258,3 +1307,111 @@ mesh/timestep study, experimental comparison, uncertainty, hazards и acceptance
 
 > **Измерить → оценить uncertainty → построить модель → проверить код и решение →
 > сравнить с независимыми данными → принять решение с учётом отказов и последствий.**
+
+---
+
+<!-- SOURCES:START -->
+<a id="measure-sources"></a>
+## Сводный список источников
+
+Этот раздел намеренно дублирует источники, приведённые рядом с темами. Список собран в одном месте для последовательного чтения и аудита ссылок.
+
+### Книги, отчёты и стандарты
+
+- ISO/IEC 17025 — competence of testing/calibration laboratories;
+- ISO 10012 — measurement management systems;
+- Doebelin & Manik, *Measurement Systems*;
+- Bentley, *Principles of Measurement Systems*;
+- Beckwith, Marangoni & Lienhard, *Mechanical Measurements*.
+- Oppenheim & Schafer, *Discrete-Time Signal Processing*;
+- Lyons, *Understanding Digital Signal Processing*;
+- Bendat & Piersol, *Random Data*;
+- Welch, Bishop, *An Introduction to the Kalman Filter*;
+- Grewal & Andrews, *Kalman Filtering*.
+- Montgomery, *Design and Analysis of Experiments*;
+- Box, Hunter & Hunter, *Statistics for Experimenters*;
+- Ljung, *System Identification*;
+- Coleman & Steele, *Experimentation, Validation, and Uncertainty Analysis for Engineers*.
+- Higham, *Accuracy and Stability of Numerical Algorithms*;
+- Oberkampf & Roy, *Verification and Validation in Scientific Computing*;
+- Roache, *Verification and Validation in Computational Science and Engineering*;
+- NASA-HDBK-7009 series — implementation guidance;
+- ASME V&V standards — выбирать документ по application domain.
+- Saltelli et al., *Global Sensitivity Analysis*;
+- Smith, *Uncertainty Quantification*;
+- JCGM 101 — Monte Carlo propagation of distributions.
+- INCOSE, *Systems Engineering Handbook*;
+- Blanchard & Fabrycky, *Systems Engineering and Analysis*;
+- Leveson, *Engineering a Safer World*;
+- ISO/IEC/IEEE 15288 — system life-cycle processes.
+- Seborg et al., *Process Dynamics and Control*;
+- Skogestad & Postlethwaite, *Multivariable Feedback Control*;
+- Biegler, Grossmann & Westerberg, *Systematic Methods of Chemical Process Design*;
+- Towler & Sinnott, *Chemical Engineering Design*;
+- IEC 61511 — safety instrumented systems for process industry.
+- Anderson, *Fracture Mechanics*;
+- Dowling, *Mechanical Behavior of Materials*;
+- Suresh, *Fatigue of Materials*;
+- Stephens et al., *Metal Fatigue in Engineering*;
+- ASTM E399/E1820/E647/E466 families — проверять current scope/edition;
+- ASM Handbooks, *Fatigue and Fracture*.
+- Modarres, Kaminskiy & Krivtsov, *Reliability Engineering and Risk Analysis*;
+- O’Connor & Kleyner, *Practical Reliability Engineering*;
+- Rausand & Høyland, *System Reliability Theory*;
+- Jardine & Tsang, *Maintenance, Replacement, and Reliability*;
+- IEC 60812 — FMEA/FMECA;
+- ISO 31000 — risk management principles.
+- Groover, *Fundamentals of Modern Manufacturing*;
+- Kalpakjian & Schmid, *Manufacturing Engineering and Technology*;
+- Shigley, *Mechanical Engineering Design*;
+- ASME Y14.5 / ISO GPS family — geometric tolerancing;
+- Wickens et al., *Engineering Psychology and Human Performance*;
+- Salvendy, *Handbook of Human Factors and Ergonomics*;
+- ISO 11064 — control-centre ergonomics;
+- IEC 62682 / ISA-18.2 — alarm management context.
+- Hillier & Lieberman, *Introduction to Operations Research*;
+- Winston, *Operations Research*;
+- Turton et al., *Analysis, Synthesis, and Design of Chemical Processes*;
+- Blank & Tarquin, *Engineering Economy*;
+- ISO 14040/14044 — LCA framework, подробнее в Earth/environment guide.
+- **П. В. Новицкий, И. А. Зограф, «Оценка погрешностей результатов измерений»** — классическая школа
+  measurement-error analysis; терминологию приводить к VIM/GUM. **[В, И]**
+- **В. А. Грановский, Т. Н. Сирая, «Методы обработки экспериментальных данных при измерениях»** —
+  статистическая обработка и measurement models. **[В]**
+- **П. П. Орнатский, «Теоретические основы информационно-измерительной техники»** — signals,
+  преобразования и instrument chains; hardware examples обновлять. **[В, И]**
+- **В. А. Бесекерский, Е. П. Попов, «Теория систем автоматического регулирования»** — классический
+  курс feedback/control. **[В, И]**
+- **Е. С. Вентцель, «Исследование операций: задачи, принципы, методология»** — русскоязычный вход в
+  optimization и decision models. **[В]**
+- **Б. В. Гнеденко, Ю. К. Беляев, А. Д. Соловьёв, «Математические методы в теории надёжности»** —
+  фундаментальная probabilistic reliability school, издававшаяся за рубежом. **[М]**
+- **В. В. Болотин, «Прогнозирование ресурса машин и конструкций»** — stochastic strength, fatigue и
+  lifetime. **[М, В]**
+- **Г. П. Черепанов, «Механика хрупкого разрушения»** — отечественная fracture-mechanics школа,
+  работа известна в международной литературе. **[М]**
+- **В. П. Когаев, Н. А. Махутов, А. П. Гусенков, «Расчёты деталей машин и конструкций на прочность и
+  долговечность»** — fatigue и engineering life calculations. **[В]**
+- **И. А. Биргер, Б. Ф. Шорр, Г. Б. Иосилевич, «Расчёт на прочность деталей машин»** — связка stress
+  concentration, fatigue и machine elements. **[В]**
+- **Б. М. Базров, «Основы технологии машиностроения»** — manufacturing route, dimensional chains и
+  process accuracy. **[В]**
+
+### Онлайн-курсы, базы данных и официальные страницы
+
+- BIPM, *SI Brochure*: https://www.bipm.org/en/publications/si-brochure
+- JCGM, GUM/VIM и supplements: https://www.bipm.org/en/committees/jc/jcgm/publications
+- NIST/SEMATECH, *e-Handbook of Statistical Methods*: https://www.itl.nist.gov/div898/handbook/
+- NIST Technical Note 1297: https://www.nist.gov/pml/nist-technical-note-1297
+- NASA Models and Simulations standards: https://standards.nasa.gov/systems-and-subsystem-test
+- NASA, *Systems Engineering Handbook*: https://www.nasa.gov/reference/systems-engineering-handbook/
+- NASA Systems Engineering standards: https://standards.nasa.gov/
+- CCPS: https://www.aiche.org/ccps
+- OSHA PSM hazard resources: https://www.osha.gov/process-safety-management/hazards
+- U.S. Chemical Safety Board incident investigations: https://www.csb.gov/
+- ASNT resources: https://www.asnt.org/
+- NIST Smart Manufacturing: https://www.nist.gov/topics/smart-manufacturing
+- FAA Human Factors: https://www.faa.gov/about/initiatives/maintenance_hf
+- NIOSH aviation safety: https://www.cdc.gov/niosh/aviation/
+- NIOSH aircrew noise: https://www.cdc.gov/niosh/aviation/prevention/aircrew-noise.html
+<!-- SOURCES:END -->

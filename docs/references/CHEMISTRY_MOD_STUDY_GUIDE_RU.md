@@ -1,5 +1,49 @@
 # Учебно-проектный справочник по химическому и материаловедческому моду
 
+<!-- TOC:START -->
+## Оглавление
+
+- [0. Как пользоваться справочником](#chem-0)
+- [1. Какой результат должен дать этот маршрут](#chem-1)
+- [2. Порядок обучения с нуля](#chem-2)
+- [3. Обязательное ядро и углублённые ветви](#chem-3)
+- [4. Проверенная русскоязычная полка](#chem-4)
+- [5. Математика, вычисления и качество данных](#chem-5)
+- [6. Общая и неорганическая химия](#chem-6)
+- [7. Органическая химия и механизмы](#chem-7)
+- [7A. Нефтехимия, природный газ, топливо и переработка нефти](#chem-7a)
+- [8. Физическая, молекулярная и квантовая химия](#chem-8)
+- [8A. Coordination, organometallic, photo-, supramolecular и computational chemistry](#chem-8a)
+- [9. Равновесие, кинетика и катализ](#chem-9)
+- [10. Аналитическая химия и спектроскопия](#chem-10)
+- [11. Электрохимия, батареи, электролиз и коррозия](#chem-11)
+- [12. Высокомолекулярные соединения и полимеры](#chem-12)
+- [13. Кристаллохимия, твёрдое тело и материаловедение](#chem-13)
+- [14. Металлургия и фазовые диаграммы](#chem-14)
+- [15. Химическая технология и процессы аппаратов](#chem-15)
+- [16. Электричество, электромагнетизм и электрические машины](#chem-16)
+- [17. Атомная и ядерная физика, радиохимия и мирная энергетика](#chem-17)
+- [18. Экология, токсикология и промышленная безопасность](#chem-18)
+- [19. Официальные базы данных](#chem-19)
+- [20. Расчётные программы](#chem-20)
+- [21. Формулы первого игрового этапа](#chem-21)
+- [22. Предлагаемая модель данных](#chem-22)
+- [23. Уровни игрового реализма](#chem-23)
+- [24. Матрица «механика → источник → проверка»](#chem-24)
+- [25. Интеграция с реальными модами сборки](#chem-25)
+- [26. Практические проекты](#chem-26)
+- [27. Предлагаемый 16-недельный маршрут](#chem-27)
+- [28. Критерии проверки каждой механики](#chem-28)
+- [29. Рекомендуемая структура репозитория данных](#chem-29)
+- [30. Первая вертикальная версия химического направления](#chem-30)
+- [31. Краткая матрица книг по задачам](#chem-31)
+- [32. Финальный принцип](#chem-32)
+- [Сводный список источников](#chem-sources)
+
+> [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#chem-sources)
+<!-- TOC:END -->
+
+
 Статус: рабочая база для проектирования отдельного химико-технологического мода и его
 интеграций со сборкой. Документ хранится в этом репозитории как исследовательская база,
 но сам по себе не требует встраивать всю химию в авиационный аддон Aeronautics Plus.
@@ -21,6 +65,7 @@
 
 ---
 
+<a id="chem-0"></a>
 ## 0. Как пользоваться справочником
 
 ### 0.1 Обозначения уровня
@@ -56,6 +101,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-1"></a>
 ## 1. Какой результат должен дать этот маршрут
 
 После обязательного ядра разработчик должен уметь:
@@ -85,6 +131,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-2"></a>
 ## 2. Порядок обучения с нуля
 
 Не нужно читать все книги подряд. Каждая ступень должна завершаться маленькой расчётной
@@ -130,6 +177,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-3"></a>
 ## 3. Обязательное ядро и углублённые ветви
 
 ### 3.1 Обязательное ядро
@@ -168,6 +216,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-4"></a>
 ## 4. Проверенная русскоязычная полка
 
 ### 4.1 Оригинальные работы с международным признанием
@@ -313,6 +362,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-5"></a>
 ## 5. Математика, вычисления и качество данных
 
 Полный обязательный маршрут находится в
@@ -363,6 +413,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-6"></a>
 ## 6. Общая и неорганическая химия
 
 ### 6.1 Что знать
@@ -405,6 +456,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-7"></a>
 ## 7. Органическая химия и механизмы
 
 ### 7.1 Порядок изучения
@@ -449,6 +501,7 @@ Wikipedia, игровые wiki и ответы форумов допустимы
 
 ---
 
+<a id="chem-7a"></a>
 ## 7A. Нефтехимия, природный газ, топливо и переработка нефти
 
 Нефтехимия раньше была затронута только через органическое сырьё, полимеры и TFMG. Для
@@ -743,6 +796,7 @@ pressure, octane, viscosity и flash point требуют разных mixing ru
 
 ---
 
+<a id="chem-8"></a>
 ## 8. Физическая, молекулярная и квантовая химия
 
 ### 8.1 Термодинамика
@@ -793,6 +847,7 @@ pressure, octane, viscosity и flash point требуют разных mixing ru
 
 ---
 
+<a id="chem-8a"></a>
 ## 8A. Coordination, organometallic, photo-, supramolecular и computational chemistry
 
 Это мост между общей/квантовой химией, catalysis, extraction, sensors, electronic
@@ -1061,6 +1116,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-9"></a>
 ## 9. Равновесие, кинетика и катализ
 
 ### 9.1 Не смешивать три разных вопроса
@@ -1101,6 +1157,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-10"></a>
 ## 10. Аналитическая химия и спектроскопия
 
 ### 10.1 Зачем это моду
@@ -1156,6 +1213,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-11"></a>
 ## 11. Электрохимия, батареи, электролиз и коррозия
 
 ### 11.1 Обязательная теория
@@ -1211,6 +1269,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-12"></a>
 ## 12. Высокомолекулярные соединения и полимеры
 
 ### 12.1 Что изучить
@@ -1251,6 +1310,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-13"></a>
 ## 13. Кристаллохимия, твёрдое тело и материаловедение
 
 ### 13.1 Структура
@@ -1303,6 +1363,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-14"></a>
 ## 14. Металлургия и фазовые диаграммы
 
 ### 14.1 Производственная цепочка
@@ -1364,6 +1425,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-15"></a>
 ## 15. Химическая технология и процессы аппаратов
 
 ### 15.1 Балансы
@@ -1425,6 +1487,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-16"></a>
 ## 16. Электричество, электромагнетизм и электрические машины
 
 ### 16.1 Что нужно химику-разработчику
@@ -1471,6 +1534,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-17"></a>
 ## 17. Атомная и ядерная физика, радиохимия и мирная энергетика
 
 ### 17.1 Порядок обучения
@@ -1558,6 +1622,7 @@ property is promoted to production data only after independent method/experiment
 
 ---
 
+<a id="chem-18"></a>
 ## 18. Экология, токсикология и промышленная безопасность
 
 ### 18.1 Иерархия мер контроля
@@ -1648,6 +1713,7 @@ Charpy impact, fatigue, creep, corrosion и grain-size measurement. Значен
 
 ---
 
+<a id="chem-19"></a>
 ## 19. Официальные базы данных
 
 | Данные | Основной источник | Для чего |
@@ -1685,6 +1751,7 @@ Charpy impact, fatigue, creep, corrosion и grain-size measurement. Значен
 
 ---
 
+<a id="chem-20"></a>
 ## 20. Расчётные программы
 
 ### 20.1 Обязательный минимальный набор
@@ -1727,6 +1794,7 @@ Charpy impact, fatigue, creep, corrosion и grain-size measurement. Значен
 
 ---
 
+<a id="chem-21"></a>
 ## 21. Формулы первого игрового этапа
 
 Ниже — не полный курс, а проверяемое ядро для первой реализации.
@@ -1920,6 +1988,7 @@ Lever rule в двухфазной области:
 
 ---
 
+<a id="chem-22"></a>
 ## 22. Предлагаемая модель данных
 
 ### 22.1 Разделять понятия
@@ -2015,6 +2084,7 @@ Lever rule в двухфазной области:
 
 ---
 
+<a id="chem-23"></a>
 ## 23. Уровни игрового реализма
 
 ### Tier 0 — учебная лаборатория
@@ -2079,6 +2149,7 @@ Lever rule в двухфазной области:
 
 ---
 
+<a id="chem-24"></a>
 ## 24. Матрица «механика → источник → проверка»
 
 | Механика | Теория/данные | Проверка |
@@ -2110,6 +2181,7 @@ Lever rule в двухфазной области:
 
 ---
 
+<a id="chem-25"></a>
 ## 25. Интеграция с реальными модами сборки
 
 В текущей сборке уже присутствуют связанные namespace: `tfmg`, `mekanism`,
@@ -2196,6 +2268,7 @@ Mekanism.
 
 ---
 
+<a id="chem-26"></a>
 ## 26. Практические проекты
 
 ### Проект 1. Проверяемый калькулятор единиц
@@ -2365,6 +2438,7 @@ Mekanism.
 
 ---
 
+<a id="chem-27"></a>
 ## 27. Предлагаемый 16-недельный маршрут
 
 Это **не** обещание изучить с нуля всю математику, физику и химию за 16 недель. Это
@@ -2398,6 +2472,7 @@ Mekanism.
 
 ---
 
+<a id="chem-28"></a>
 ## 28. Критерии проверки каждой механики
 
 ### 28.1 Научная корректность
@@ -2461,6 +2536,7 @@ Mekanism.
 
 ---
 
+<a id="chem-29"></a>
 ## 29. Рекомендуемая структура репозитория данных
 
 ```text
@@ -2506,6 +2582,7 @@ chemistry/
 
 ---
 
+<a id="chem-30"></a>
 ## 30. Первая вертикальная версия химического направления
 
 Не начинать со ста веществ и двадцати машин. Первый убедительный срез:
@@ -2528,6 +2605,7 @@ measurement и safety base — nuclear educational slice.
 
 ---
 
+<a id="chem-31"></a>
 ## 31. Краткая матрица книг по задачам
 
 | Задача | Русская траектория | Международная траектория |
@@ -2551,6 +2629,7 @@ measurement и safety base — nuclear educational slice.
 
 ---
 
+<a id="chem-32"></a>
 ## 32. Финальный принцип
 
 Хорошая химическая механика отвечает не только на вопрос «что положить в машину», но и
@@ -2569,3 +2648,315 @@ measurement и safety base — nuclear educational slice.
 - не реализована ли эта функция уже другим модом.
 
 Именно такая цепочка превращает набор рецептов в учебный инженерный мод.
+
+---
+
+<!-- SOURCES:START -->
+<a id="chem-sources"></a>
+## Сводный список источников
+
+Этот раздел намеренно дублирует источники, приведённые рядом с темами. Список собран в одном месте для последовательного чтения и аудита ссылок.
+
+### Книги, отчёты и стандарты
+
+- **Л. Д. Ландау, Е. М. Лифшиц**, тома 3 «Квантовая механика», 5 «Статистическая физика», 8
+  «Электродинамика сплошных сред» и 10 «Физическая кинетика» — мировая теоретическая база для
+  физической химии и материалов. **[М, П]**
+- **В. А. Фок, «Начала квантовой механики»** — исторически важная основа квантовой теории; имя Фока
+  закреплено в международной терминологии Hartree–Fock и Fock space. **[М, И–П]**
+- **Д. В. Сивухин, «Общий курс физики»**, особенно тома 3 и 5 — электричество, атомная и ядерная
+  физика. **[В, Б–С]**
+- **И. Е. Тамм, «Основы теории электричества»** — сильный теоретический курс с международными
+  переводами, но не первое введение. **[М, П]**
+- **П. Эткинс, Х. де Паула, «Физическая химия»** — термодинамика, квантовая химия, спектроскопия и
+  кинетика. **[ПР, Б–П]**
+- **Дж. Клейден, Н. Гривз, С. Уоррен, «Органическая химия»** — механизмы вместо заучивания перечня
+  реакций. **[ПР, Б–П]**
+- **Ф. Кэри, Р. Сандберг, «Углублённый курс органической химии»** или **Дж. Марч, «Органическая
+  химия. Реакции, механизмы и структура»** — продвинутая ветвь. **[ПР, П]**
+- **Н. Гринвуд, А. Эрншо, «Химия элементов»** — систематическая неорганика. **[ПР, С–П]**
+- **Д. Шрайвер, П. Эткинс и др., «Неорганическая химия»** — современная структура, связь и
+  реакционная способность. **[ПР, С–П]**
+- **Д. Харрис, «Количественный химический анализ»** и **Д. Скуг и др., «Основы аналитической химии»
+  / «Принципы инструментального анализа»**. **[ПР, Б–П]**
+- **Д. Мак-Куорри, «Квантовая химия»** — классический русский перевод для перехода к молекулярным
+  расчётам; новые методы сверять с актуальным англоязычным изданием и современной вычислительной
+  литературой. **[ПР, С–П]**
+- **Ф. Дэниелс, Р. Олберти, физическая химия**, **Г. Кастеллан, «Физическая химия»** — классические
+  альтернативы, если доступны в библиотеке. **[ПР, С]**
+- **О. Левеншпиль, «Инженерное оформление химических процессов»**, **Х. Фоглер, «Расчёты химических
+  реакторов»**, **У. Маккейб, Дж. Смит, П. Харриотт, «Процессы разделения»** — химическая инженерия.
+  **[ПР, С–П]**
+- **У. Каллистер, Д. Ретвиш, «Материаловедение: от технологии к применению»** — доступная связь
+  структуры и свойств материалов. **[ПР, Б–С]**
+- **Д. Портер, К. Истерлинг, М. Шериф, «Фазовые превращения в металлах и сплавах»** — продвинутая
+  металлургическая ветвь. **[ПР, П]**
+- **Ф. Родригес и др., «Принципы полимерных систем»**, **Л. Сперлинг, «Введение в физику
+  полимеров»** — структура, свойства и переработка полимеров. **[ПР, С–П]**
+- **Д. Гриффитс, «Введение в электродинамику»**, **Э. Парселл, Д. Морин, «Электричество и
+  магнетизм»** — полевая основа. **[ПР, С–П]**
+- **Дж. Ламарш, «Введение в теорию ядерных реакторов»** — классический русский перевод более раннего
+  международного курса; использовать как теорию, а не источник действующих эксплуатационных норм.
+  Современные англоязычные Lamarsh & Baratta и Shultis & Faw читать вместе с IAEA, NNDC и
+  актуальными нормами безопасности. **[ПР, И–П]**
+- Clayden, Greeves, Warren, *Organic Chemistry*;
+- Carey & Sundberg, *Advanced Organic Chemistry*;
+- March, *Advanced Organic Chemistry*;
+- Smith, *Organic Chemistry*;
+- Реутов, Курц, Бутин, «Органическая химия».
+- Kaiser, de Klerk, Gary & Handwerk, *Petroleum Refining: Technology, Economics, and Markets*;
+- Speight, *The Chemistry and Technology of Petroleum*;
+- Speight, *Handbook of Petroleum Refining*;
+- Fahim, Alsahhaf & Elkilani, *Fundamentals of Petroleum Refining*;
+- Jones & Pujadó, *Handbook of Petroleum Processing*;
+- Riazi, *Characterization and Properties of Petroleum Fractions*;
+- Meyers, *Handbook of Petroleum Refining Processes*;
+- Wauquier, *Petroleum Refining*;
+- Weissermel & Arpe, *Industrial Organic Chemistry* — нефтехимические platform chains.
+- **Е. В. Смидович, «Технология переработки нефти и газа»** — классический отраслевой курс; старые
+  process data и нормы обязательно обновлять. **[В, И–П]**
+- **Р. З. Магарил, «Теоретические основы химических процессов переработки нефти»** —
+  kinetics/thermochemistry технологических превращений. **[В, С–П]**
+- ASTM D86 — atmospheric distillation curve;
+- ASTM D2887 — simulated distillation;
+- ASTM D4052 — density/relative density/API gravity;
+- ASTM D445 — kinematic viscosity;
+- ASTM D93 — flash point;
+- ASTM D4294 — sulfur by X-ray fluorescence;
+- ASTM D2699/D2700 — research/motor octane;
+- ASTM D613 — cetane number.
+- Atkins & de Paula, *Physical Chemistry*;
+- McQuarrie & Simon, *Physical Chemistry: A Molecular Approach*;
+- McQuarrie, *Quantum Chemistry*;
+- Levine, *Quantum Chemistry*;
+- Miessler, Fischer & Tarr, *Inorganic Chemistry*;
+- Housecroft & Sharpe, *Inorganic Chemistry*;
+- Cotton, *Chemical Applications of Group Theory*;
+- Crabtree, *The Organometallic Chemistry of the Transition Metals*;
+- Elschenbroich, *Organometallics*;
+- Hartwig, *Organotransition Metal Chemistry*;
+- Turro, Ramamurthy & Scaiano, *Modern Molecular Photochemistry of Organic Molecules*;
+- Steed & Atwood, *Supramolecular Chemistry*;
+- Leach, *Molecular Modelling*;
+- Jensen, *Introduction to Computational Chemistry*;
+- Cramer, *Essentials of Computational Chemistry*;
+- Frenkel & Smit, *Understanding Molecular Simulation*;
+- Martin, *Electronic Structure*.
+- Espenson, *Chemical Kinetics and Reaction Mechanisms*;
+- Fogler, *Elements of Chemical Reaction Engineering*;
+- Masel, *Chemical Kinetics and Catalysis*.
+- Harris, *Quantitative Chemical Analysis*;
+- Skoog, Holler, Crouch, *Principles of Instrumental Analysis*;
+- Bard & Faulkner, *Electrochemical Methods*;
+- Newman & Thomas-Alyea, *Electrochemical Systems*;
+- Bagotsky, *Fundamentals of Electrochemistry*;
+- Дамаскин, Петрий, Цирлина, «Электрохимия»;
+- Young & Lovell, *Introduction to Polymers*;
+- Odian, *Principles of Polymerization*;
+- Sperling, *Introduction to Physical Polymer Science*;
+- Flory, *Principles of Polymer Chemistry*;
+- Callister & Rethwisch, *Materials Science and Engineering*;
+- Askeland & Wright, *The Science and Engineering of Materials*;
+- Porter, Easterling & Sherif, *Phase Transformations in Metals and Alloys*.
+- A. P. Gуляев, «Металловедение»;
+- David R. Gaskell & David E. Laughlin, *Introduction to the Thermodynamics of Materials*;
+- Felder, Rousseau & Bullard, *Elementary Principles of Chemical Processes*;
+- Bird, Stewart & Lightfoot, *Transport Phenomena*;
+- Incropera et al., *Fundamentals of Heat and Mass Transfer*;
+- Levenspiel, *Chemical Reaction Engineering*;
+- McCabe, Smith & Harriott, *Unit Operations of Chemical Engineering*;
+- Seader, Henley & Roper, *Separation Process Principles*;
+- Towler & Sinnott, *Chemical Engineering Design*;
+- Касаткин, «Основные процессы и аппараты химической технологии».
+- Purcell & Morin, *Electricity and Magnetism*;
+- Griffiths, *Introduction to Electrodynamics*;
+- Chapman, *Electric Machinery Fundamentals*;
+- Horowitz & Hill, *The Art of Electronics* — для электроники и измерительных трактов;
+- Сивухин, том 3; Тамм, «Основы теории электричества»; Иродов, задачи по электромагнетизму.
+
+### Онлайн-курсы, базы данных и официальные страницы
+
+- **Д. И. Менделеев, «Основы химии»** — исторический источник по периодическому закону и развитию
+  общей химии. Книга переводилась на английский, немецкий и французский; метаданные раннего
+  английского издания: https://openlibrary.org/books/OL14035579M/The_principles_of_chemistry. Для
+  современных атомных данных и номенклатуры применять IUPAC/NIST, а не старые таблицы. **[М, И]**
+- **Н. Н. Семёнов, «Цепные реакции» и «О некоторых проблемах химической кинетики и реакционной
+  способности»** — основа теории цепных процессов; Семёнов получил Нобелевскую премию по химии 1956
+  года совместно с Сирилом Хиншелвудом: https://www.nobelprize.org/prizes/chemistry/1956/summary/
+  **[М, П]**
+- **А. Н. Фрумкин, избранные труды по электрохимической кинетике** — международно признанная школа
+  двойного электрического слоя и электродных процессов; обзор школы и переводов:
+  https://link.springer.com/article/10.1007/s10008-014-2480-5 **[М, П]**
+- **В. С. Баготский, «Основы электрохимии»** — имеет международное английское издание *Fundamentals
+  of Electrochemistry* в серии Electrochemical Society/Wiley:
+  https://iopscience.iop.org/article/10.1149/2.F01061IF **[М, С–П]**
+- **А. Н. и Н. А. Несмеяновы, «Начала органической химии»** — вышли на английском в четырёх томах
+  как *Fundamentals of Organic Chemistry* (Mir Publishers); метаданные искать через WorldCat:
+  https://search.worldcat.org/search?q=ti%3AFundamentals%20of%20Organic%20Chemistry%20au%3ANesmeyanov
+  Учебные данные сверять с современными Clayden, March и IUPAC. **[М, И–С]**
+- **А. П. Гуляев, «Металловедение»** — выходил в английском переводе как *Physical Metallurgy* (Mir
+  Publishers) и присутствует в зарубежных университетских каталогах:
+  http://opac.duls.du.ac.in/bib/87777. Хорошая связь состава, структуры, обработки и свойств. **[М,
+  С–П]**
+- **А. Н. Климов, «Ядерная физика и ядерные реакторы»** — переводился Mir Publishers как *Nuclear
+  Physics and Nuclear Reactors*; библиографическая запись OSTI: https://www.osti.gov/biblio/4285248.
+  Полезен как исторический системный курс, но данные и безопасность должны идти из IAEA/NNDC и
+  современных изданий. **[М, И–С]**
+- **Н. С. Ахметов, «Общая и неорганическая химия»** — цельный базовый курс. Карточка РГБ:
+  https://search.rsl.ru/ru/record/01007551840 **[В, Б–С]**
+- **Ю. Д. Третьяков и др., «Неорганическая химия» в 3 томах** — современная школа МГУ:
+  https://www.chem.msu.ru/rus/books/2001-2010/inorg-book-vol1/welcome.html **[В, С–П]**
+- **О. А. Реутов, А. Л. Курц, К. П. Бутин, «Органическая химия» в 4 частях** — механизмы и логика
+  органических превращений. Карточка РГБ: https://search.rsl.ru/ru/record/01003082497 **[В, С–П]**
+- **Е. Н. Ерёмин, «Основы химической термодинамики»**, а затем современный курс **В. В. Ерёмина, С.
+  И. Каргова, И. А. Успенской и др., «Основы физической химии»** — хорошая русская траектория к
+  физической химии; карточка нового издания МФТИ: https://books.mipt.ru/book/307198 **[В, С]**
+- **Б. Б. Дамаскин, О. А. Петрий, Г. А. Цирлина, «Электрохимия»** — современный университетский
+  курс. Карточка РГБ: https://search.rsl.ru/ru/record/01007886855 **[В, С–П]**
+- **В. Г. Воскобойников, В. А. Кудрин, А. М. Якушев, «Общая металлургия»**, а также профильные
+  учебники МИСИС — база рудоподготовки и основных металлургических производств; библиотечная
+  карточка СФУ: https://bik.sfu-kras.ru/elib/view?id=BOOK1-669%2F%D0%9276-747321 **[В, С]**
+- **А. Г. Касаткин, «Основные процессы и аппараты химической технологии»** — классический русский
+  курс. Уравнения полезны, но свойства, нормы и коэффициенты старых изданий требуют обновления.
+  Карточка РГБ: https://search.rsl.ru/ru/record/01002569897 **[В, С–П]**
+- **В. И. Бекман, «Радиохимия», т. 1–2** — радиоактивность, радионуклиды, дозиметрия, защита и
+  прикладная радиохимия. Официальная страница химфака МГУ:
+  https://www.chem.msu.ru/rus/books/2014/bekman/welcome.html **[В, С–П]**
+- Российская государственная библиотека: https://search.rsl.ru/
+- Национальная электронная библиотека: https://rusneb.ru/
+- каталог химического факультета МГУ: https://www.chem.msu.ru/rus/books/
+- WorldCat: https://search.worldcat.org/
+- Google Books — для метаданных и доступного издателем preview: https://books.google.com/
+- MIT OCW 18.01 Single Variable Calculus:
+  https://ocw.mit.edu/courses/18-01sc-single-variable-calculus-fall-2010/
+- MIT OCW 18.02 Multivariable Calculus:
+  https://ocw.mit.edu/courses/18-02sc-multivariable-calculus-fall-2010/
+- MIT OCW 18.03 Differential Equations:
+  https://ocw.mit.edu/courses/18-03sc-differential-equations-fall-2011/
+- MIT OCW 18.06 Linear Algebra: https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/
+- NIST/SEMATECH e-Handbook of Statistical Methods: https://www.itl.nist.gov/div898/handbook/
+- NIST CODATA constants: https://physics.nist.gov/cuu/Constants/
+- MIT 5.111 Principles of Chemical Science:
+  https://ocw.mit.edu/courses/5-111sc-principles-of-chemical-science-fall-2014/
+- OpenStax Chemistry 2e: https://openstax.org/details/books/chemistry-2e
+- Chemistry LibreTexts: https://chem.libretexts.org/
+- IUPAC Periodic Table: https://iupac.org/what-we-do/periodic-table-of-elements/
+- IUPAC Gold Book: https://goldbook.iupac.org/
+- IUPAC Colour Books and nomenclature: https://iupac.org/what-we-do/books/
+- MIT OCW search: Organic Chemistry: https://ocw.mit.edu/search/?q=organic%20chemistry
+- OpenStax Organic Chemistry: https://openstax.org/details/books/organic-chemistry
+- IUPAC Blue Book resources: https://iupac.org/what-we-do/books/bluebook/
+- PubChem: https://pubchem.ncbi.nlm.nih.gov/
+- Penn State FSC 432, Petroleum Refining: https://courses.ems.psu.edu/fsc432/
+- NPTEL Petroleum Refinery Engineering, IIT Delhi: https://nptel.ac.in/courses/103102022
+- NPTEL Petroleum Technology: https://onlinecourses.nptel.ac.in/noc23_ch64/preview
+- **А. К. Мановян, «Технология первичной переработки нефти и природного газа»** — подготовка,
+  атмосферно-вакуумное разделение и газовые процессы. Карточка РГБ:
+  https://search.rsl.ru/ru/record/01000687885 **[В, С–П]**
+- **С. А. Ахметов, «Физико-химическая технология глубокой переработки нефти и газа»** —
+  конверсионные и очистные процессы. Карточка РГБ: https://search.rsl.ru/ru/record/01000841217 **[В,
+  С–П]**
+- ASTM Petroleum Standards:
+  https://store.astm.org/products-services/standards-and-publications/standards/petroleum-standards.html
+- NIST Chemistry WebBook: https://webbook.nist.gov/chemistry/
+- NIST Thermophysical Properties of Hydrocarbon Mixtures Database:
+  https://www.nist.gov/srd/nist-standard-reference-database-4
+- NIST ThermoData Engine public dataset:
+  https://catalog.data.gov/dataset/thermodata-engine-free-public-version
+- API standards catalog: https://www.api.org/products-and-services/standards
+- GPA Midstream standards: https://www.gpamidstream.org/publications/
+- CCPS process safety: https://www.aiche.org/ccps
+- MIT OCW search: Physical Chemistry: https://ocw.mit.edu/search/?q=physical%20chemistry
+- MIT OCW search: Quantum Mechanics: https://ocw.mit.edu/search/?q=quantum%20chemistry
+- NIST-JANAF Thermochemical Tables: https://janaf.nist.gov/
+- NIST ThermoML: https://trc.nist.gov/ThermoML.html
+- ORCA: https://www.faccts.de/orca/
+- Psi4: https://psicode.org/
+- CP2K: https://www.cp2k.org/
+- Quantum ESPRESSO: https://www.quantum-espresso.org/
+- Atomic Simulation Environment: https://ase-lib.org/
+- NOMAD materials data/infrastructure: https://nomad-lab.eu/
+- Materials Project: https://materialsproject.org/
+- NIST Computational Chemistry Comparison and Benchmark Database: https://cccbdb.nist.gov/
+- MIT OCW search: Chemical Kinetics: https://ocw.mit.edu/search/?q=chemical%20kinetics
+- Cantera documentation: https://cantera.org/documentation/
+- International Association for Chemical Kinetics: https://www.iack.net/
+- NIST Chemistry WebBook spectra: https://webbook.nist.gov/chemistry/
+- NIST Atomic Spectra Database: https://physics.nist.gov/PhysRefData/ASD/
+- SDBS, AIST spectral database: https://sdbs.db.aist.go.jp/
+- NIST mass spectral library information: https://chemdata.nist.gov/
+- IUPAC Orange Book resources: https://iupac.org/what-we-do/books/orangebook/
+- MIT 10.626 Electrochemical Energy Systems:
+  https://ocw.mit.edu/courses/10-626-electrochemical-energy-systems-spring-2014/
+- Electrochemical Society: https://www.electrochem.org/
+- NIST Standard Reference Data: https://www.nist.gov/srd
+- PyBaMM battery models: https://www.pybamm.org/
+- IUPAC Purple Book: https://iupac.org/what-we-do/books/purplebook/
+- IUPAC Polymer Division: https://iupac.org/who-we-are/divisions/division-details/?body_code=400
+- Polymer Database: https://polymerdatabase.com/
+- MIT 3.091 Introduction to Solid-State Chemistry:
+  https://ocw.mit.edu/courses/3-091-introduction-to-solid-state-chemistry-fall-2018/
+- Crystallography Open Database: https://www.crystallography.net/cod/
+- International Union of Crystallography: https://www.iucr.org/
+- NIST Materials Data resources: https://www.nist.gov/materials-science
+- ASM International: https://www.asminternational.org/
+- NIST phase-equilibria and materials programs: https://www.nist.gov/mml
+- pycalphad: https://pycalphad.org/
+- OpenCalphad: https://www.opencalphad.com/
+- MIT OpenCourseWare, Chemical Engineering: https://ocw.mit.edu/search/?d=Chemical%20Engineering
+- LearnChemE simulations and screencasts: https://learncheme.com/
+- NPTEL courses: https://nptel.ac.in/courses
+- MIT 8.02 Electricity and Magnetism: https://ocw.mit.edu/search/?q=electricity%20and%20magnetism
+- MIT 6.002 Circuits and Electronics:
+  https://ocw.mit.edu/courses/6-002-circuits-and-electronics-spring-2007/
+- OpenStax University Physics, volume 2:
+  https://openstax.org/details/books/university-physics-volume-2
+- MIT 22.01 Introduction to Nuclear Engineering and Ionizing Radiation:
+  https://ocw.mit.edu/courses/22-01-introduction-to-nuclear-engineering-and-ionizing-radiation-fall-2016/
+- IAEA, Fundamentals of Reactor Physics with Python:
+  https://www.iaea.org/online-learning/courses/1337/fundamentals-of-reactor-physics-with-python
+- IAEA Nuclear Data Services: https://www-nds.iaea.org/
+- IAEA LiveChart of Nuclides: https://www-nds.iaea.org/relnsd/vcharthtml/VChartHTML.html
+- NNDC evaluated nuclear databases: https://www.nndc.bnl.gov/databases/
+- NuDat 3: https://www.nndc.bnl.gov/nudat3/
+- ENDF: https://www.nndc.bnl.gov/endf/
+- IAEA Safety Standards: https://www.iaea.org/resources/safety-standards
+- U.S. NRC student resources: https://www.nrc.gov/reading-rm/basic-ref/students
+- UNSCEAR: https://www.unscear.org/
+- ICRP: https://www.icrp.org/
+- В. И. Бекман, «Радиохимия»: https://www.chem.msu.ru/rus/books/2014/bekman/welcome.html
+- UNECE GHS Rev. 11 (2025): https://unece.org/sites/default/files/2025-09/GHS%20Rev11e.pdf
+- OSHA Hazard Communication / SDS: https://www.osha.gov/hazcom
+- NIOSH Pocket Guide: https://www.cdc.gov/niosh/npg/
+- ECHA Information on Chemicals: https://echa.europa.eu/information-on-chemicals
+- OECD eChemPortal: https://www.echemportal.org/echemportal/
+- EPA CompTox Chemicals Dashboard: https://comptox.epa.gov/dashboard/
+- ATSDR Toxicological Profiles: https://wwwn.cdc.gov/TSP/index.aspx
+- AIChE Center for Chemical Process Safety: https://www.aiche.org/ccps
+- GROMACS: https://www.gromacs.org/
+- OpenFOAM: https://www.openfoam.com/
+- OpenModelica: https://openmodelica.org/
+- Reaktoro: https://reaktoro.org/
+- RMG-Py: https://reactionmechanismgenerator.github.io/
+- https://www.acs.org/content/dam/acsorg/about/governance/committees/chemicalsafety/publications/acs-safety-guidelines-academic.pdf
+- https://www.bipm.org/en/publications/si-brochure
+- https://www.bipm.org/en/committees/jc/jcgm/publications
+- https://www.iso.org/standard/66912.html
+- https://www.iso.org/standard/14001
+- https://www.iso.org/standard/63787.html
+- https://www.iso.org/standard/65694.html
+- https://www.osha.gov/process-safety-management
+- https://www.python.org/
+- https://scipy.org/
+- https://pint.readthedocs.io/
+- https://pandas.pydata.org/
+- https://jupyter.org/
+- https://cantera.org/
+- https://dwsim.org/
+- https://www.rdkit.org/
+- https://avogadro.cc/
+- https://www.usgs.gov/software/phreeqc-version-3
+- https://openmc.org/
+- https://geant4.web.cern.ch/
+- https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=1"
+<!-- SOURCES:END -->

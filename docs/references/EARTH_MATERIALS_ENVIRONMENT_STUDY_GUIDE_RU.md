@@ -1,5 +1,40 @@
 # Земля, ресурсы, специальные материалы и окружающая среда
 
+<!-- TOC:START -->
+## Оглавление
+
+- [0. Уровни и результат](#earth-0)
+- [1. Порядок обучения](#earth-1)
+- [2. Earth system, geology и petrology](#earth-2)
+- [3. Crystallography и mineralogy](#earth-3)
+- [4. Geochemistry и hydrogeochemistry](#earth-4)
+- [5. Geophysics, geodesy и inverse problems](#earth-5)
+- [6. Sampling, resources и spatial uncertainty](#earth-6)
+- [7. Mining и geotechnical engineering](#earth-7)
+- [8. Mineral processing](#earth-8)
+- [9. Ceramics](#earth-9)
+- [10. Glass](#earth-10)
+- [11. Cement, concrete и binders](#earth-11)
+- [12. Refractories и high-temperature materials](#earth-12)
+- [13. Condensed matter physics](#earth-13)
+- [14. Electronic, dielectric и magnetic materials](#earth-14)
+- [15. Optics и photonics](#earth-15)
+- [16. Water chemistry](#earth-16)
+- [17. Atmospheric chemistry, meteorology и dispersion](#earth-17)
+- [18. Environmental fate, ecotoxicology и remediation](#earth-18)
+- [19. Life-cycle assessment и circular materials](#earth-19)
+- [20. Biotechnology — conditional branch](#earth-20)
+- [21. Soil science и agrochemistry — conditional branch](#earth-21)
+- [22. Cross-domain data model](#earth-22)
+- [22A. Сильная русскоязычная полка](#earth-22a)
+- [23. Практические проекты](#earth-23)
+- [24. Acceptance criteria](#earth-24)
+- [Сводный список источников](#earth-sources)
+
+> [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#earth-sources)
+<!-- TOC:END -->
+
+
 Статус: маршрут по geology/mineralogy/geochemistry, geophysics, mining/mineral
 processing, ceramics/glass/cement/refractories, condensed matter, electronic materials,
 optics/photonics, water/atmospheric chemistry, LCA и условным bio/agro branches.
@@ -24,6 +59,7 @@ optics/photonics, water/atmospheric chemistry, LCA и условным bio/agro 
 
 ---
 
+<a id="earth-0"></a>
 ## 0. Уровни и результат
 
 - **Б** — определения, карты, phases, units и first-order balances;
@@ -45,6 +81,7 @@ optics/photonics, water/atmospheric chemistry, LCA и условным bio/agro 
 
 ---
 
+<a id="earth-1"></a>
 ## 1. Порядок обучения
 
 | Этап | Тема | Результат |
@@ -65,6 +102,7 @@ optics/photonics, water/atmospheric chemistry, LCA и условным bio/agro 
 
 ---
 
+<a id="earth-2"></a>
 ## 2. Earth system, geology и petrology
 
 ### 2.1 Не смешивать понятия
@@ -156,6 +194,7 @@ Bowen reaction series — teaching framework, not complete simulator of every ma
 
 ---
 
+<a id="earth-3"></a>
 ## 3. Crystallography и mineralogy
 
 ### 3.1 Crystal description
@@ -229,6 +268,7 @@ MineralPhase
 
 ---
 
+<a id="earth-4"></a>
 ## 4. Geochemistry и hydrogeochemistry
 
 ### 4.1 Foundation
@@ -318,6 +358,7 @@ Do not predict acid mine drainage only from total sulfur.
 
 ---
 
+<a id="earth-5"></a>
 ## 5. Geophysics, geodesy и inverse problems
 
 ### 5.1 Methods
@@ -374,6 +415,7 @@ Better instruments improve SNR/resolution but do not remove nonuniqueness.
 
 ---
 
+<a id="earth-6"></a>
 ## 6. Sampling, resources и spatial uncertainty
 
 ### 6.1 Representative sample
@@ -448,6 +490,7 @@ Project must not label geological inventory as guaranteed recoverable material.
 
 ---
 
+<a id="earth-7"></a>
 ## 7. Mining и geotechnical engineering
 
 ### 7.1 Scope
@@ -523,6 +566,7 @@ Conceptual model:
 
 ---
 
+<a id="earth-8"></a>
 ## 8. Mineral processing
 
 ### 8.1 Flowsheet
@@ -624,6 +668,7 @@ Tailings are a designed long-lived system, not disposable item deletion.
 
 ---
 
+<a id="earth-9"></a>
 ## 9. Ceramics
 
 ### 9.1 Families
@@ -692,6 +737,7 @@ stat hides mechanism.
 
 ---
 
+<a id="earth-10"></a>
 ## 10. Glass
 
 ### 10.1 Structure and transition
@@ -735,6 +781,7 @@ growth, residual stress, edge condition and thermal gradients.
 
 ---
 
+<a id="earth-11"></a>
 ## 11. Cement, concrete и binders
 
 ### 11.1 Chemistry
@@ -788,6 +835,7 @@ Track:
 
 ---
 
+<a id="earth-12"></a>
 ## 12. Refractories и high-temperature materials
 
 ### 12.1 Selection variables
@@ -831,6 +879,7 @@ compatibility, wear rate range, joints and inspection history.
 
 ---
 
+<a id="earth-13"></a>
 ## 13. Condensed matter physics
 
 ### 13.1 Foundation
@@ -912,6 +961,7 @@ Computed database values require method/version/convergence and experimental com
 
 ---
 
+<a id="earth-14"></a>
 ## 14. Electronic, dielectric и magnetic materials
 
 ### 14.1 Semiconductors
@@ -1000,6 +1050,7 @@ Keep this conceptual until a dedicated fabrication module exists.
 
 ---
 
+<a id="earth-15"></a>
 ## 15. Optics и photonics
 
 ### 15.1 Geometrical optics
@@ -1098,6 +1149,7 @@ response. Do not mix W, lumen, lux, irradiance, radiance and exposure.
 
 ---
 
+<a id="earth-16"></a>
 ## 16. Water chemistry
 
 ### 16.1 Water is not inert utility
@@ -1199,6 +1251,7 @@ presented as public-health advice.
 
 ---
 
+<a id="earth-17"></a>
 ## 17. Atmospheric chemistry, meteorology и dispersion
 
 ### 17.1 Atmospheric structure
@@ -1279,6 +1332,7 @@ Sources:
 
 ---
 
+<a id="earth-18"></a>
 ## 18. Environmental fate, ecotoxicology и remediation
 
 ### 18.1 Source–pathway–receptor
@@ -1344,6 +1398,7 @@ Sources:
 
 ---
 
+<a id="earth-19"></a>
 ## 19. Life-cycle assessment и circular materials
 
 ### 19.1 LCA phases
@@ -1425,6 +1480,7 @@ Mass recycled is not equivalent to retained function/value.
 
 ---
 
+<a id="earth-20"></a>
 ## 20. Biotechnology — conditional branch
 
 Эта область нужна для wastewater biology, fermentation, bioleaching, biomaterials,
@@ -1492,6 +1548,7 @@ Books/sources:
 
 ---
 
+<a id="earth-21"></a>
 ## 21. Soil science и agrochemistry — conditional branch
 
 ### 21.1 Soil system
@@ -1570,6 +1627,7 @@ Sources:
 
 ---
 
+<a id="earth-22"></a>
 ## 22. Cross-domain data model
 
 ```text
@@ -1616,6 +1674,7 @@ LifecycleRecord
 
 ---
 
+<a id="earth-22a"></a>
 ## 22A. Сильная русскоязычная полка
 
 Обозначения: **[М]** — международное влияние/переводы; **[В]** — сильный вузовский
@@ -1654,6 +1713,7 @@ LifecycleRecord
 
 ---
 
+<a id="earth-23"></a>
 ## 23. Практические проекты
 
 ### A. Ore-to-concentrate
@@ -1726,6 +1786,7 @@ LifecycleRecord
 
 ---
 
+<a id="earth-24"></a>
 ## 24. Acceptance criteria
 
 - rock/mineral/ore/resource/reserve terms not mixed;
@@ -1749,3 +1810,150 @@ LifecycleRecord
 > **Геологическая история создаёт неоднородное сырьё; processing создаёт структуру;
 > структура создаёт свойства; эксплуатация создаёт degradation; lifecycle определяет,
 > куда перешли масса, энергия и последствия.**
+
+---
+
+<!-- SOURCES:START -->
+<a id="earth-sources"></a>
+## Сводный список источников
+
+Этот раздел намеренно дублирует источники, приведённые рядом с темами. Список собран в одном месте для последовательного чтения и аудита ссылок.
+
+### Книги, отчёты и стандарты
+
+- Tarbuck, Lutgens & Tasa, *Earth: An Introduction to Physical Geology*;
+- Marshak, *Essentials of Geology* и *Earth: Portrait of a Planet*;
+- Winter, *Principles of Igneous and Metamorphic Petrology*;
+- Nichols, *Sedimentology and Stratigraphy*;
+- Fossen, *Structural Geology*;
+- Klein & Dutrow, *Manual of Mineral Science*;
+- Nesse, *Introduction to Mineralogy*;
+- Putnis, *Introduction to Mineral Sciences*;
+- Giacovazzo et al., *Fundamentals of Crystallography*.
+- White, *Geochemistry*;
+- Faure, *Principles and Applications of Geochemistry*;
+- Drever, *The Geochemistry of Natural Waters*;
+- Appelo & Postma, *Geochemistry, Groundwater and Pollution*;
+- Stumm & Morgan, *Aquatic Chemistry*.
+- Lowrie, *Fundamentals of Geophysics*;
+- Kearey, Brooks & Hill, *An Introduction to Geophysical Exploration*;
+- Menke, *Geophysical Data Analysis: Discrete Inverse Theory*;
+- Telford, Geldart & Sheriff, *Applied Geophysics*.
+- Rossi & Deutsch, *Mineral Resource Estimation*;
+- Journel & Huijbregts, *Mining Geostatistics*;
+- Hoek & Bray, *Rock Slope Engineering*;
+- Brady & Brown, *Rock Mechanics for Underground Mining*;
+- Jaeger, Cook & Zimmerman, *Fundamentals of Rock Mechanics*;
+- Das, *Principles of Geotechnical Engineering*;
+- Wills & Finch, *Wills’ Mineral Processing Technology*;
+- Fuerstenau & Han, *Principles of Mineral Processing*;
+- SME, *Mineral Processing and Extractive Metallurgy Handbook*;
+- Napier-Munn et al., *Mineral Comminution Circuits*;
+- Kingery, Bowen & Uhlmann, *Introduction to Ceramics*;
+- Barsoum, *Fundamentals of Ceramics*;
+- Carter & Norton, *Ceramic Materials*;
+- Rahaman, *Ceramic Processing and Sintering*;
+- ASTM C-series standards for ceramic tests — current method/scope.
+- Shelby, *Introduction to Glass Science and Technology*;
+- Varshneya & Mauro, *Fundamentals of Inorganic Glasses*;
+- Taylor, *Cement Chemistry*;
+- Mehta & Monteiro, *Concrete: Microstructure, Properties, and Materials*;
+- Hewlett & Liska, *Lea’s Chemistry of Cement and Concrete*;
+- Neville, *Properties of Concrete*.
+- Schacht, *Refractories Handbook*;
+- Routschka & Wuthnow, *Pocket Manual of Refractory Materials*;
+- Kittel, *Introduction to Solid State Physics*;
+- Ashcroft & Mermin, *Solid State Physics*;
+- Callister & Rethwisch, *Materials Science and Engineering*;
+- Porter, Easterling & Sherif, *Phase Transformations in Metals and Alloys*;
+- Sze & Ng, *Physics of Semiconductor Devices*;
+- Pierret, *Semiconductor Device Fundamentals*;
+- Streetman & Banerjee, *Solid State Electronic Devices*;
+- Schroder, *Semiconductor Material and Device Characterization*;
+- Cullity & Graham, *Introduction to Magnetic Materials*;
+- Kasap, *Principles of Electronic Materials and Devices*;
+- Hecht, *Optics*;
+- Saleh & Teich, *Fundamentals of Photonics*;
+- Goodman, *Introduction to Fourier Optics*;
+- Boyd, *Nonlinear Optics*;
+- Snoeyink & Jenkins, *Water Chemistry*;
+- Crittenden et al., *MWH’s Water Treatment*;
+- Metcalf & Eddy, *Wastewater Engineering*;
+- Seinfeld & Pandis, *Atmospheric Chemistry and Physics*;
+- Wallace & Hobbs, *Atmospheric Science*;
+- Schwarzenbach et al., *Environmental Organic Chemistry*;
+- Manahan, *Environmental Chemistry*;
+- ISO 14040/14044 — framework/requirements;
+- ISO 14067 — product carbon footprint context;
+- Nelson & Cox, *Lehninger Principles of Biochemistry*;
+- Shuler, Kargi & DeLisa, *Bioprocess Engineering*;
+- Doran, *Bioprocess Engineering Principles*;
+- Brady & Weil, *The Nature and Properties of Soils*;
+- Hillel, *Introduction to Environmental Soil Physics*;
+- Havlin et al., *Soil Fertility and Fertilizers*;
+- **В. И. Вернадский, «Очерки геохимии» и «Биосфера»** — фундаментальная geochemical/ biosphere
+  perspective, переводы и мировое влияние; quantitative data исторические. **[М, И]**
+- **А. Е. Ферсман, «Геохимия»** — развитие geochemical classification и resource thinking; читать
+  вместе с современной thermodynamics/speciation. **[М, И]**
+- **Д. С. Коржинский, «Физико-химические основы анализа парагенезисов минералов»** — thermodynamic
+  petrology и open-component systems; международно признанная школа. **[М]**
+- **А. И. Перельман, Н. С. Касимов, «Геохимия ландшафта»** — migration/barriers и environmental
+  geochemistry. **[В]**
+- **В. А. Авдохин, «Основы обогащения полезных ископаемых»** — mineral preparation, separation и
+  flowsheets. **[В]**
+- **А. А. Абрамов, «Переработка, обогащение и комплексное использование твёрдых полезных
+  ископаемых»** — системная отечественная школа mineral processing. **[В]**
+- **П. П. Будников, Д. Н. Полубояринов, «Химическая технология керамики и огнеупоров»** и профильные
+  продолжения школы — исторически сильная ceramic base; оборудование, energy и standards обновлять.
+  **[В, И]**
+- **Ю. М. Баженов, «Технология бетона»** — concrete composition, process и durability. **[В]**
+- **А. Ф. Иоффе, «Физика полупроводников»** — исторически влиятельная semiconductor physics school с
+  зарубежным изданием; device data устарели. **[М, И]**
+- **Г. С. Ландсберг, «Оптика»** — сильный университетский курс wave/geometrical optics. **[В]**
+- **О. А. Алекин, «Основы гидрохимии»** — natural-water composition/classification; speciation и
+  environmental standards сверять с современными sources. **[В, И]**
+- **Ю. А. Израэль, «Экология и контроль состояния природной среды»** — monitoring и
+  environmental-system perspective; нормативные части исторические. **[В, И]**
+- **Д. С. Орлов, «Химия почв»** — soil organic/mineral chemistry и sorption. **[В]**
+
+### Онлайн-курсы, базы данных и официальные страницы
+
+- USGS education/data: https://www.usgs.gov/
+- National Geologic Map Database: https://ngmdb.usgs.gov/ngmdb/ngmdb_home.html
+- OneGeology: https://onegeology.org/
+- RRUFF mineral spectra/XRD/chemistry: https://www.rruff.net/
+- Crystallography Open Database: https://www.crystallography.net/cod/
+- IMA mineral nomenclature/classification: https://www.ima-mineralogy.org/
+- USGS PHREEQC: https://www.usgs.gov/software/phreeqc-version-3
+- EarthChem: https://www.earthchem.org/
+- USGS water data: https://waterdata.usgs.gov/
+- current CRIRSCO-family reporting definitions for context: https://www.crirsco.com/
+- NIOSH Mining: https://www.cdc.gov/niosh/mining/
+- USGS minerals information/material flow:
+  https://www.usgs.gov/programs/mineral-resources-program/science/minerals-information-and-material-flow
+- NIST Materials Data Resources: https://www.nist.gov/mgi/materials-data-resources
+- Materials Project: https://materialsproject.org/
+- NIST materials repository: https://materialsdata.nist.gov/
+- NIST Atomic Spectra Database: https://physics.nist.gov/asd
+- NIST optical metrology: https://www.nist.gov/topics/optics-and-photonics
+- WHO, *Guidelines for Drinking-water Quality*, fourth edition incorporating the first and second
+  addenda: https://www.who.int/publications/i/item/9789240045064
+- U.S. EPA Water Research: https://www.epa.gov/water-research
+- Jacob, *Introduction to Atmospheric Chemistry*:
+  https://acmg.seas.harvard.edu/education/intro-atmos-chem-book
+- NOAA Global Monitoring Laboratory: https://gml.noaa.gov/
+- NASA Earthdata: https://www.earthdata.nasa.gov/
+- IPCC reports: https://www.ipcc.ch/reports/
+- U.S. EPA CompTox: https://comptox.epa.gov/dashboard/
+- ECHA chemicals information: https://echa.europa.eu/information-on-chemicals
+- UNEP resources: https://www.unep.org/
+- openLCA: https://www.openlca.org/
+- Argonne GREET: https://greet.anl.gov/
+- ecoinvent: https://ecoinvent.org/ — licensed inventory, respect terms;
+- U.S. EPA sustainability/LCA tools: https://www.epa.gov/e3/e3-sustainability-tools
+- IPCC assessment/GWP basis: https://www.ipcc.ch/reports/
+- OpenStax Biology: https://openstax.org/details/books/biology-2e
+- WHO Laboratory Biosafety Manual: https://www.who.int/publications/i/item/9789240011311
+- USDA NRCS soils: https://www.nrcs.usda.gov/resources/data-and-reports/soils
+- FAO Soils Portal: https://www.fao.org/soils-portal/
+<!-- SOURCES:END -->

@@ -1,5 +1,34 @@
 # Поверхности, сложные потоки, трибология и энергетическая физика
 
+<!-- TOC:START -->
+## Оглавление
+
+- [0. Почему эти области связаны](#interface-0)
+- [1. Результат и порядок обучения](#interface-1)
+- [2. Surface thermodynamics и wetting](#interface-2)
+- [3. Adsorption, surfaces и heterogeneous catalysis](#interface-3)
+- [4. Colloid science](#interface-4)
+- [5. Rheology](#interface-5)
+- [6. Multiphase flow](#interface-6)
+- [7. Porous media, filtration и membranes](#interface-7)
+- [8. Granular materials и powders](#interface-8)
+- [9. Tribology](#interface-9)
+- [10. Combustion и reactive flows](#interface-10)
+- [11. Fire и explosion safety boundary](#interface-11)
+- [12. Acoustics и vibroacoustics](#interface-12)
+- [13. High-temperature gas и plasma](#interface-13)
+- [14. Vacuum science](#interface-14)
+- [15. Cryogenics](#interface-15)
+- [16. Coupled reduced-order architecture](#interface-16)
+- [16A. Сильная русскоязычная полка](#interface-16a)
+- [17. Практические проекты](#interface-17)
+- [18. Acceptance criteria](#interface-18)
+- [Сводный список источников](#interface-sources)
+
+> [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#interface-sources)
+<!-- TOC:END -->
+
+
 Статус: углублённый физико-химический маршрут по интерфейсам, коллоидам, rheology,
 multiphase/granular/porous media, tribology, combustion, acoustics, plasma, vacuum и
 cryogenics. Дата аудита источников: **1 октября 2026 года**.
@@ -18,6 +47,7 @@ cryogenics. Дата аудита источников: **1 октября 2026 
 
 ---
 
+<a id="interface-0"></a>
 ## 0. Почему эти области связаны
 
 Поверхность catalyst, oil film подшипника, пузырь в колонне, flame front и plasma sheath
@@ -34,6 +64,7 @@ cryogenics. Дата аудита источников: **1 октября 2026 
 
 ---
 
+<a id="interface-1"></a>
 ## 1. Результат и порядок обучения
 
 После маршрута разработчик должен уметь:
@@ -69,6 +100,7 @@ cryogenics. Дата аудита источников: **1 октября 2026 
 
 ---
 
+<a id="interface-2"></a>
 ## 2. Surface thermodynamics и wetting
 
 ### 2.1 Interface quantities
@@ -132,6 +164,7 @@ Limits: static equilibrium, simple geometry, negligible inertia/evaporation, kno
 
 ---
 
+<a id="interface-3"></a>
 ## 3. Adsorption, surfaces и heterogeneous catalysis
 
 ### 3.1 Adsorption
@@ -190,6 +223,7 @@ Apparent activation energy и reaction order могут не совпадать 
 
 ---
 
+<a id="interface-4"></a>
 ## 4. Colloid science
 
 ### 4.1 Dispersed systems
@@ -287,6 +321,7 @@ surfactant/interface и residence time.
 
 ---
 
+<a id="interface-5"></a>
 ## 5. Rheology
 
 ### 5.1 Newtonian baseline
@@ -368,6 +403,7 @@ Dimensionless:
 
 ---
 
+<a id="interface-6"></a>
 ## 6. Multiphase flow
 
 ### 6.1 Regime before correlation
@@ -460,6 +496,7 @@ concentrated suspension, non-Newtonian fluid и Brownian regime.
 
 ---
 
+<a id="interface-7"></a>
 ## 7. Porous media, filtration и membranes
 
 ### 7.1 Darcy law
@@ -522,6 +559,7 @@ Porosity alone does not determine flow.
 
 ---
 
+<a id="interface-8"></a>
 ## 8. Granular materials и powders
 
 ### 8.1 Почему это не liquid
@@ -587,6 +625,7 @@ DEM contact parameters требуют calibration и timestep verification.
 
 ---
 
+<a id="interface-9"></a>
 ## 9. Tribology
 
 ### 9.1 Contact and friction
@@ -701,6 +740,7 @@ Model state:
 
 ---
 
+<a id="interface-10"></a>
 ## 10. Combustion и reactive flows
 
 ### 10.1 Three coupled layers
@@ -813,6 +853,7 @@ Mechanism license, version, species naming и validation range хранить р
 
 ---
 
+<a id="interface-11"></a>
 ## 11. Fire и explosion safety boundary
 
 ### 11.1 Concepts
@@ -855,6 +896,7 @@ Mechanism license, version, species naming и validation range хранить р
 
 ---
 
+<a id="interface-12"></a>
 ## 12. Acoustics и vibroacoustics
 
 ### 12.1 Wave equation
@@ -933,6 +975,7 @@ Document:
 
 ---
 
+<a id="interface-13"></a>
 ## 13. High-temperature gas и plasma
 
 ### 13.1 Не всякий hot gas — plasma
@@ -1011,6 +1054,7 @@ Sources:
 
 ---
 
+<a id="interface-14"></a>
 ## 14. Vacuum science
 
 ### 14.1 Regimes
@@ -1096,6 +1140,7 @@ State:
 
 ---
 
+<a id="interface-15"></a>
 ## 15. Cryogenics
 
 ### 15.1 Thermodynamic foundation
@@ -1180,6 +1225,7 @@ No real operating instructions are included.
 
 ---
 
+<a id="interface-16"></a>
 ## 16. Coupled reduced-order architecture
 
 ### 16.1 Common state objects
@@ -1242,6 +1288,7 @@ Realtime tick model может использовать:
 
 ---
 
+<a id="interface-16a"></a>
 ## 16A. Сильная русскоязычная полка
 
 Обозначения: **[М]** — международное влияние/зарубежные издания; **[В]** — сильный
@@ -1280,6 +1327,7 @@ Realtime tick model может использовать:
 
 ---
 
+<a id="interface-17"></a>
 ## 17. Практические проекты
 
 ### A. Emulsion separator
@@ -1339,6 +1387,7 @@ Realtime tick model может использовать:
 
 ---
 
+<a id="interface-18"></a>
 ## 18. Acceptance criteria
 
 - interface sign/curvature convention documented;
@@ -1359,3 +1408,110 @@ Realtime tick model может использовать:
 
 > **Phase + interface + transport + timescale + regime + measurement define behavior;
 > название жидкости, материала или машины само по себе ничего не рассчитывает.**
+
+---
+
+<!-- SOURCES:START -->
+<a id="interface-sources"></a>
+## Сводный список источников
+
+Этот раздел намеренно дублирует источники, приведённые рядом с темами. Список собран в одном месте для последовательного чтения и аудита ссылок.
+
+### Книги, отчёты и стандарты
+
+- Israelachvili, *Intermolecular and Surface Forces*;
+- Adamson & Gast, *Physical Chemistry of Surfaces*;
+- Hunter, *Foundations of Colloid Science*;
+- Hiemenz & Rajagopalan, *Principles of Colloid and Surface Chemistry*;
+- Russel, Saville & Schowalter, *Colloidal Dispersions*;
+- Bird, Armstrong & Hassager, *Dynamics of Polymeric Liquids*;
+- Macosko, *Rheological Principles, Measurements, and Applications*;
+- Barnes, Hutton & Walters, *An Introduction to Rheology*;
+- Larson, *The Structure and Rheology of Complex Fluids*.
+- Brennen, *Fundamentals of Multiphase Flow*;
+- Clift, Grace & Weber, *Bubbles, Drops, and Particles*;
+- Crowe et al., *Multiphase Flows with Droplets and Particles*;
+- Ishii & Hibiki, *Thermo-Fluid Dynamics of Two-Phase Flow*;
+- Wallis, *One-Dimensional Two-Phase Flow*.
+- Bear, *Dynamics of Fluids in Porous Media*;
+- Dullien, *Porous Media*;
+- Crittenden et al., *MWH’s Water Treatment*;
+- Baker, *Membrane Technology and Applications*;
+- Mulder, *Basic Principles of Membrane Technology*.
+- Nedderman, *Statics and Kinematics of Granular Materials*;
+- Rhodes, *Introduction to Particle Technology*;
+- de Gennes, *Granular Matter: A Tentative View*;
+- Schulze, *Powders and Bulk Solids*.
+- Stachowiak & Batchelor, *Engineering Tribology*;
+- Hamrock, Schmid & Jacobson, *Fundamentals of Fluid Film Lubrication*;
+- Hutchings & Shipway, *Tribology: Friction and Wear*;
+- Bhushan, *Introduction to Tribology*;
+- ASTM G-series wear/erosion standards — проверять method scope.
+- Turns, *An Introduction to Combustion*;
+- Law, *Combustion Physics*;
+- Glassman, Yetter & Glumac, *Combustion*;
+- Williams, *Combustion Theory*;
+- Poinsot & Veynante, *Theoretical and Numerical Combustion*;
+- Heywood, *Internal Combustion Engine Fundamentals*.
+- SFPE, *Handbook of Fire Protection Engineering*;
+- Drysdale, *An Introduction to Fire Dynamics*;
+- NFPA standards — current edition/scope через официальный каталог.
+- Kinsler et al., *Fundamentals of Acoustics*;
+- Pierce, *Acoustics*;
+- Fahy & Gardonio, *Sound and Structural Vibration*;
+- Goldstein, *Aeroacoustics*;
+- Chen, *Introduction to Plasma Physics and Controlled Fusion*;
+- Lieberman & Lichtenberg, *Principles of Plasma Discharges and Materials Processing*;
+- Fridman, *Plasma Chemistry*;
+- Bittencourt, *Fundamentals of Plasma Physics*;
+- O’Hanlon, *A User’s Guide to Vacuum Technology*;
+- Roth, *Vacuum Technology*;
+- Jousten, *Handbook of Vacuum Technology*;
+- Barron, *Cryogenic Systems*;
+- Flynn, *Cryogenic Engineering*;
+- Weisend, *Handbook of Cryogenic Engineering*;
+- **Б. В. Дерягин, Н. В. Чураев, В. М. Муллер, «Поверхностные силы»** — disjoining pressure, thin
+  films и colloidal interactions; есть международная версия *Surface Forces*. **[М]**
+- **Е. Д. Щукин, А. В. Перцов, Е. А. Амелина, «Коллоидная химия»** — surfaces, dispersions, wetting
+  и stability. **[В]**
+- **Ю. Г. Фролов, «Курс коллоидной химии»** — системный русскоязычный университетский курс. **[В]**
+- **К. С. Урьев, «Физико-химическая динамика дисперсных систем»** — rheology и processing
+  concentrated dispersions. **[В]**
+- **Л. Д. Ландау, Е. М. Лифшиц, «Гидродинамика»** — continuum fluids, waves, instabilities и
+  transport foundation; многочисленные зарубежные издания. **[М]**
+- **С. С. Кутателадзе, «Основы теории теплообмена»** — heat transfer и boiling-school context;
+  correlations сверять с current data. **[М, И]**
+- **И. В. Крагельский, М. Н. Добычин, В. С. Комбалов, «Основы расчётов на трение и износ»** —
+  mechanistic tribology; издавалась на английском. **[М]**
+- **Д. Н. Гаркунов, «Триботехника»** — friction, wear и lubrication для машин. **[В]**
+- **Я. Б. Зельдович, Г. И. Баренблатт, В. Б. Либрович, Г. М. Махвиладзе, «Математическая теория
+  горения и взрыва»** — международно известная mathematical combustion school; использовать для
+  theory/safety, не для operational recipes. **[М]**
+- **Ю. П. Райзер, «Физика газового разряда»** — plasma/discharge physics, доступна в международных
+  изданиях. **[М]**
+- **Л. М. Бреховских, «Волны в слоистых средах»** — wave propagation и acoustics, переведена и
+  широко цитируется. **[М]**
+- **Л. Н. Розанов, «Вакуумная техника»** — сильный инженерный курс; components и нормы обновлять.
+  **[В, И]**
+- **А. М. Архаров и соавт., «Криогенные системы»** — thermodynamics, equipment и engineering context
+  cryogenics. **[В]**
+
+### Онлайн-курсы, базы данных и официальные страницы
+
+- IUPAC Gold Book: https://goldbook.iupac.org/
+- STLE: https://www.stle.org/
+- Cantera: https://cantera.org/
+- NASA CEA: https://www1.grc.nasa.gov/research-and-engineering/ceaweb/
+- NIST Chemistry WebBook: https://webbook.nist.gov/chemistry/
+- Burcat thermochemical data: https://burcat.technion.ac.il/
+- LLNL combustion mechanisms: https://combustion.llnl.gov/mechanisms
+- CCPS combustible/reactivity resources: https://www.aiche.org/ccps
+- U.S. CSB investigations: https://www.csb.gov/
+- NASA aeroacoustics research: https://www.nasa.gov/aeronautics/
+- PlasmaPy: https://www.plasmapy.org/
+- NIST Atomic Spectra Database: https://physics.nist.gov/asd
+- NIST vacuum metrology: https://www.nist.gov/pml/sensor-science/fluid-metrology
+- NIST REFPROP: https://www.nist.gov/srd/refprop
+- NIST Cryogenic Materials Properties Reference List:
+  https://www.nist.gov/mml/acmd/cryogenic-materials-properties-reference-list
+<!-- SOURCES:END -->

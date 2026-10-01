@@ -13,6 +13,8 @@ jobs:
         with:
           # ModDevGradle 2.x совместим с Gradle 8.x; не даём поставить 9-ю
           gradle-version: '8.9'
+      - name: Validate science documentation
+        run: python3 scripts/validate_science_docs.py
       - name: Validate resources and data
         run: python3 scripts/validate_resources.py
       - name: Fetch Create Aeronautics + Ponder/Flywheel/Registrate (compile targets)
