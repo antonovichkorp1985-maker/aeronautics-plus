@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "tag": "c:ingots/iron"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MSM",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:prototype_propeller"
+  }
+}

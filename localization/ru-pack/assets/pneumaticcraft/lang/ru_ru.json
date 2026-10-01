@@ -1,0 +1,9 @@
+{
+  "pneumaticcraft.death.drone": "Ваш дрон погиб в %s [%s, %s %s]",
+  "pneumaticcraft.death.drone.named": "Ваш дрон «%s» погиб в %s [%s, %s %s]",
+  "pneumaticcraft.gui.redstoneModule.operation_counter.tooltip": "На переднем фронте сигнала канала %s выход увеличивается на 1. Если новый выход больше MIN(%d, 15), он сбрасывается до 0.",
+  "pneumaticcraft.gui.remote.tooltip.boundToSecurityStation": "Привязано к станции безопасности: %s",
+  "pneumaticcraft.gui.tab.minigun.slotInfo": "Обычно миниган берёт боеприпасы из ячейки с наименьшим номером.\n\nНажмите §a%s§f по ячейке, чтобы переключить её блокировку: из заблокированной ячейки миниган будет брать боеприпасы исключительно.\n\nЭто удобно при переноске нескольких типов боеприпасов.",
+  "pneumaticcraft.gui.tab.problems.security_station.rebooting": "§fСтанция перезагружается\nДо завершения перезагрузки станция не обеспечивает безопасность (%s).",
+  "pneumaticcraft.message.camo.notEnoughBlocks": "Не хватает: %s!"
+}

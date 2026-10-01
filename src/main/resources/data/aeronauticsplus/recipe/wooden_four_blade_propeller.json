@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "tag": "minecraft:planks"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MSM",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:wooden_four_blade_propeller"
+  }
+}

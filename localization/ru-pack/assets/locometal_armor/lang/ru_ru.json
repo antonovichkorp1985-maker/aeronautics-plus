@@ -1,0 +1,8 @@
+{
+  "block.locometal_armor.example_block": "Пример блока",
+  "item.locometal_armor.example_item": "Пример предмета",
+  "itemGroup.locometal_armor": "Броня из локометалла",
+  "locometal_armor.configuration.section.locometal_armor.common.toml": "Конфигурация Create: Locometal Armor",
+  "locometal_armor.configuration.section.locometal_armor.common.toml.title": "Конфигурация Create: Locometal Armor",
+  "locometal_armor.configuration.title": "Конфигурация Create: Locometal Armor"
+}

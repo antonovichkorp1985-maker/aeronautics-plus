@@ -1,0 +1,123 @@
+{
+  "screen.tab_organizer.title": "Органайзер вкладок креатива",
+
+  "screen.tab_organizer.config.open_organizer": "Открыть органайзер вкладок креатива",
+
+  "screen.tab_organizer.mode": "Режим порядка",
+  "screen.tab_organizer.move_selected": "Переместить выбранное",
+
+  "screen.tab_organizer.mode.default": "По умолчанию",
+  "screen.tab_organizer.mode.custom": "Свой",
+  "screen.tab_organizer.mode.az": "А-Я",
+  "screen.tab_organizer.mode.za": "Я-А",
+
+  "screen.tab_organizer.selected": "Выбрано",
+  "screen.tab_organizer.page": "Страница",
+  "screen.tab_organizer.position": "Позиция",
+  "screen.tab_organizer.visible": "Видимо",
+  "screen.tab_organizer.hidden": "Скрыто",
+  "screen.tab_organizer.no_selection": "Вкладка не выбрана",
+
+  "screen.tab_organizer.page_number": "Страница %s",
+  "screen.tab_organizer.selected_page": "Страница: %s / %s",
+  "screen.tab_organizer.selected_position": "Общая позиция: %s / %s",
+
+  "screen.tab_organizer.selected_page_slot": "Слот страницы: %s / %s",
+  "screen.tab_organizer.tooltip.items_label": "Предметы",
+
+  "screen.tab_organizer.pause_button": "Упорядочить вкладки",
+
+  "screen.tab_organizer.hide_selected": "Скрыть вкладку",
+  "screen.tab_organizer.show_selected": "Показать вкладку",
+  "screen.tab_organizer.reset_page": "Сбросить страницу",
+  "screen.tab_organizer.restore_default_order": "Вернуть порядок по умолчанию",
+
+  "screen.tab_organizer.multiple_selected": "Выбрано вкладок: %s",
+  "screen.tab_organizer.multiple_visible": "Видимо: %s",
+  "screen.tab_organizer.multiple_hidden": "Скрыто: %s",
+  "screen.tab_organizer.help.input.shift_click": "Shift + ЛКМ",
+  "screen.tab_organizer.help.action.multi_select": "Добавить или убрать вкладку из выбора",
+
+  "screen.tab_organizer.empty_tab": "Пустая вкладка",
+  "screen.tab_organizer.empty_tab.description": "Эта вкладка пуста и может не отображаться в меню креатива.",
+
+  "screen.tab_organizer.ctl_controlled": "Управляется CTL",
+  "screen.tab_organizer.ctl_controlled.description": "Содержимым этой вкладки управляет Creative Tab Layouts.",
+
+  "screen.tab_organizer.ctl_subtab": "Подвкладка CTL",
+  "screen.tab_organizer.ctl_subtab.description": "Эта вкладка использует систему подвкладок Creative Tab Layouts.",
+  "screen.tab_organizer.ctl_subtab.parent": "Родительская вкладка: ",
+
+  "screen.tab_organizer.save": "Сохранить",
+  "screen.tab_organizer.saved": "Сохранено",
+  "screen.tab_organizer.cancel": "Отмена",
+  "screen.tab_organizer.back.tooltip": "Закрыть",
+
+  "screen.tab_organizer.unsaved": "Есть несохранённые изменения",
+  "screen.tab_organizer.no_unsaved_changes": "Нет ожидающих изменений",
+
+  "screen.tab_organizer.config.title": "Настройки Creative Tab Organizer",
+
+  "screen.tab_organizer.config.creative_menu_button": "Кнопка в инвентаре креатива",
+  "screen.tab_organizer.config.creative_menu_button.tooltip": "Показывает кнопку CTO в инвентаре креатива.",
+
+  "screen.tab_organizer.config.survival_menu_button": "Кнопка в инвентаре выживания",
+  "screen.tab_organizer.config.survival_menu_button.tooltip": "Показывает кнопку CTO в инвентаре выживания.",
+
+  "screen.tab_organizer.config.organizer_config_button": "Кнопка настроек органайзера",
+  "screen.tab_organizer.config.organizer_config_button.tooltip": "Показывает кнопку настроек на экране органайзера вкладок.",
+
+  "screen.tab_organizer.config.jei_tab_browser": "Обозреватель вкладок JEI",
+  "screen.tab_organizer.config.jei_tab_browser.tooltip": "Заменяет плоский список ингредиентов JEI обозревателем, упорядоченным по вкладкам креатива.",
+
+  "screen.tab_organizer.config.jei_gaps": "Пустые места в JEI",
+  "screen.tab_organizer.config.jei_gaps.tooltip": "Сохраняет пустые слоты раскладки CTO в обозревателе вкладок JEI.",
+
+  "screen.tab_organizer.config.ctl_jei": "Creative Tab Layouts в JEI",
+  "screen.tab_organizer.config.ctl_jei.tooltip": "Включает интеграцию Creative Tab Layouts в JEI.",
+
+  "screen.tab_organizer.config.ctl_layouts_jei": "Раскладки CTL",
+  "screen.tab_organizer.config.ctl_layouts_jei.tooltip": "Показывает страницы, заголовки, баннеры, секции и раскладки CTL в JEI.",
+
+  "screen.tab_organizer.config.ctl_subtabs_jei": "Подвкладки CTL",
+  "screen.tab_organizer.config.ctl_subtabs_jei.tooltip": "Показывает сгруппированные подвкладки CTL в JEI.",
+
+  "screen.tab_organizer.config.access_section": "Доступ",
+  "screen.tab_organizer.config.jei_section": "Just Enough Items (JEI)",
+  "screen.tab_organizer.config.ctl_section": "Creative Tab Layouts",
+
+  "screen.tab_organizer.help.open": "Открыть справку по управлению",
+  "screen.tab_organizer.help.title": "Управление",
+
+  "screen.tab_organizer.help.input.left_arrow": "ЛКМ по стрелкам",
+  "screen.tab_organizer.help.input.right_arrow": "ПКМ по стрелкам",
+  "screen.tab_organizer.help.input.right_click_tab": "ПКМ по вкладке",
+  "screen.tab_organizer.help.input.scroll": "Колесо мыши",
+  "screen.tab_organizer.help.input.ctrl_scroll": "Ctrl + колесо мыши",
+  "screen.tab_organizer.help.input.alt_hover": "Alt + наведение",
+
+  "screen.tab_organizer.add_gap": "Добавить разрыв",
+  "screen.tab_organizer.add_gap.tooltip": "Добавляет пустой слот перед выбранной вкладкой. Ctrl + клик по вкладке — быстрое добавление.",
+
+  "screen.tab_organizer.help.input.ctrl_click": "Ctrl + клик",
+  "screen.tab_organizer.help.action.add_gap": "Добавить пустой слот перед выбранной вкладкой",
+  "screen.tab_organizer.help.input.click_gap": "Клик по пустому слоту",
+  "screen.tab_organizer.help.action.remove_gap": "Убрать пустой слот",
+  "screen.tab_organizer.help.action.gap_info": "Пустой слот — ЛКМ, чтобы убрать",
+
+  "screen.tab_organizer.help.action.move_one": "Переместить выбранную вкладку на одну позицию",
+  "screen.tab_organizer.help.action.move_page": "Переместить выбранную вкладку на целую страницу",
+  "screen.tab_organizer.help.action.toggle_visibility": "Скрыть или показать выбранную вкладку",
+  "screen.tab_organizer.help.action.scroll": "Листать доступные страницы",
+  "screen.tab_organizer.help.action.ctrl_scroll": "Перемещать выбранную вкладку по порядку",
+  "screen.tab_organizer.help.action.details": "Показать подробную информацию о вкладке",
+
+  "tab_organizer.config.manage_vanilla_tabs": "Управлять ванильными вкладками",
+  "tab_organizer.config.show_creative_menu_button": "Показывать кнопку в инвентаре креатива",
+  "tab_organizer.config.show_survival_menu_button": "Показывать кнопку в инвентаре выживания",
+  "tab_organizer.config.show_organizer_config_button": "Показывать кнопку настроек органайзера",
+  "tab_organizer.config.show_gaps_in_jei": "Показывать пустые места в JEI",
+  "tab_organizer.config.enable_ctl_in_jei": "Включить интеграцию CTL в JEI",
+  "tab_organizer.config.enable_ctl_layouts_in_jei": "Включить раскладки CTL в JEI",
+  "tab_organizer.config.show_ctl_subtabs_in_jei": "Показывать подвкладки CTL в JEI"
+}

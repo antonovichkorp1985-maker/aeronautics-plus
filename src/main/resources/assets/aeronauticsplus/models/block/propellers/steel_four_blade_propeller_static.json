@@ -1,0 +1,7 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "aeronauticsplus:block/propellers/steel_four_blade_propeller"
+  },
+  "elements": []
+}

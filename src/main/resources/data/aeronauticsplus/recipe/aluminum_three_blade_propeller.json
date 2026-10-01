@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "tag": "c:ingots/aluminum"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MSM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:aluminum_three_blade_propeller"
+  }
+}

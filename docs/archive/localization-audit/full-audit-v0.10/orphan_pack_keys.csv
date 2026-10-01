@@ -1,0 +1,339 @@
+﻿namespace,key,russian_value,pack_sources
+alexsmobs,alexsmobs.sound.subtitle.roadrunner_hurts,Кукушка пищит,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt,itemGroup.burnt,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt,itemGroup.burnt_additions,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt,item_group.burnt,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt,item_group.burnt_additions,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt_combined,itemGroup.burnt,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt_combined,itemGroup.burnt_additions,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt_combined,itemGroup.burnt_combined,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt_combined,item_group.burnt,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt_combined,item_group.burnt_additions,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+burnt_combined,item_group.burnt_combined,Burnt: дополнения,AeronauticsPlus-RU-Pack-v0.8-test.zip
+chiselsandbits,itemGroup.chiselsandbits.chiselsandbits,Долота и биты,AeronauticsPlus-RU-Pack-v0.8-test.zip
+create_no_touching,itemGroup.create_no_touching,Create: Без контакта,AeronauticsPlus-RU-Pack-v0.8-test.zip
+create_radar,block.create_radar.id_block,Регистратор идентификатора корабля,AeronauticsPlus-RU-Pack-v0.8-test.zip
+create_radar,block.create_radar.radar_guidance_block,Головка радиолокационного наведения ракеты,AeronauticsPlus-RU-Pack-v0.8-test.zip
+create_radar,create_radar.data_link.no_source,Источник не является радаром,AeronauticsPlus-RU-Pack-v0.8-test.zip
+create_radar,create_radar.data_link.no_target,Визуализатор не является монитором,AeronauticsPlus-RU-Pack-v0.8-test.zip
+create_radar_mobile_radars,itemGroup.create_radar_mobile_radars,Create: мобильные радары,AeronauticsPlus-RU-Pack-v0.8-test.zip
+create_radar_mobile_radars,itemGroup.create_radar_mobile_radars.main,Create: мобильные радары,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,block.botania:flower.excompressum.orechidEvolved,Развитая орхидея,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,block.botania:flower.excompressum.orechidEvolved.reference,Орхидея: Развитая: Skyblock: The Movie,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,block.excompressum.compressed_ender_gravel,Дроблёный сжатый эндерняк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,block.excompressum.compressed_nether_gravel,Дроблёный сжатый незерак,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,block.excompressum.mana_sieve,Мана сито,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,excompressum.compressedMob,Сжатый %s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,excompressum.entry.evolved_orechid,Развитая орхидея,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,excompressum.page.orechidEvolved0,"Ты был предупреждён, что ты не можешь копать руды в этом мире. $(item)Развитая орхидея$(0) будет использовать $(thing)Мана$(0) синтезировать $(thing)руды$(0) возле $(item)Камень$(0) блоки быстрее и дешевле чем $(item)Орхидея$(0).<br>Руды генерируются рандомно, но редкие руды генерируются реже.",AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,excompressum.page.orechidEvolved1,"$(o)RA-TA-TA-TA-TA, TA-TA-TA-TA$().",AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,excompressum.tagline.orechidEvolved,Создаёт руды из камня,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,gui.excompressum.autoSieve.incorrectMesh,Неверная сетка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,gui.excompressum.autoSieve.noMesh,Без сетки,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.compressed_hammer_diamond,Алмазный сжатый молот,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.compressed_hammer_gold,Золотой сжатый молот,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.compressed_hammer_iron,Железный сжатый молот,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.compressed_hammer_netherite,Незеритовый сжатый молот,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.compressed_hammer_stone,Каменный сжатый молот,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.compressed_hammer_wood,Деревянный сжатый молот,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.hammer_mana,Мана молот,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,item.excompressum.universal_hammer_head,Универсальное навершие молота,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,itemGroup.excompressum,Ex Compressum,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,modifier.excompressum.compressing,Сжатие,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,modifier.excompressum.smashingii,Разрушение II,AeronauticsPlus-RU-Pack-v0.8-test.zip
+excompressum,tooltip.excompressum.mana_sieve,%s в магической коробке,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,block.exnihilosequentia.barrel_stone,Каменная бочка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,block.exnihilosequentia.barrel_wood,Деревянная бочка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,block.exnihilosequentia.crucible_fired,Обожженный тигель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,block.exnihilosequentia.crucible_unfired,Необожженный тигель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,block.exnihilosequentia.crucible_wood,Деревянный тигель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,block.exnihilosequentia.sieve,Сито,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,block.exnihilosequentia.witchwater,Ведьминая вода,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,fluid.exnihilosequentia.sea_water,Морская вода,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,fluid.exnihilosequentia.witchwater,Ведьминовая вода,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ancient_spores,Древние споры,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.bucket_sea_water,Ведро Морская вода,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.bucket_witchwater,Ведро Ведьминая вода,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_aluminum,Кусок алюминиевой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_copper,Кусок медной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_gold,Кусок золотой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_iron,Кусок железной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_lead,Кусок свинцовой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_nickel,Кусок никелевой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_platinum,Кусок платиновой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_silver,Кусок серебряной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_tin,Кусок оловянной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_uranium,Кусок урановой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.chunk_zinc,Кусок цинковой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_andesite,Андезитовый крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_bone,Костяной крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_diamond,Алмазный крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_diorite,Диоритовый крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_gold,Золотый крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_granite,Гранитовый крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_iron,Железный крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_stone,Каменный крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.crook_wood,Деревянный крюк,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.doll_bee,Жужжащая кукла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.doll_blaze,Пылающая кукла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.doll_crafting,Фарфоровая кукла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.doll_enderman,Ползучая кукла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.doll_guardian,Защитная кукла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.doll_shulker,Плавающая кукла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.hammer_diamond,Алмазный молоток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.hammer_gold,Золотый молоток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.hammer_iron,Железный молоток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.hammer_netherite,Незеритовый молоток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.hammer_stone,Каменный молоток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.hammer_wood,Деревянный молоток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_aluminum,Алюминиевый слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_copper,Медный слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_lead,Свинцовый слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_nickel,Никелевый слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_platinum,Платиновый слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_silver,Серебряный слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_tin,Оловянный слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_uranium,Урановый слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.ingot_zinc,Цинковый слиток,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.item_stick_stone,Каменная палка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.mesh_diamond,Алмазная сетка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.mesh_emerald,Изумрудная сетка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.mesh_flint,Кремневая сетка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.mesh_iron,Железная сетка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.mesh_netherite,Незеритовая сетка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.mesh_string,Струнная сетка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.pebble_andesite,Андезитая галька,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.pebble_basalt,Базальтая галька,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.pebble_blackstone,Чернитая галька,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.pebble_diorite,Диоритая галька,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.pebble_granite,Гранитная галька,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.pebble_stone,Каменная галька,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_aluminum,Кусок алюминиевой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_copper,Кусок медной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_gold,Кусок золотой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_iron,Кусок железной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_lead,Кусок свинцовой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_nickel,Кусок никелевой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_platinum,Кусок платиновой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_silver,Кусок серебряной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_tin,Кусок оловянной руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_uranium,Кусок урановой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.piece_zinc,Кусок цинковой руды,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_acacia,Семена акации,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_bamboo,Бамбуковое семя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_berry,Семена сладких ягод,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_birch,Березовое семя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_blue_coral,Трубчатое коралловое семя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_cactus,Семена кактуса,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_carrot,Семена моркови,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_darkoak,Семена темного дуба,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_fern,Семена папоротника,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_jungle,Семя джунглей,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_kelp,Семена ламинарии,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_large_fern,Большое семя папоротника,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_oak,Семена дуба,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_pickle,Яйцо из морских солений,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_pink_coral,Семена мозгового коралла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_potato,Картофельные семена,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_purple_coral,Пузырьковые Коралловые Семена,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_red_coral,Семя огненного коралла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_spruce,Семена ели,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_sugarcane,Семена сахарного тростника,AeronauticsPlus-RU-Pack-v0.8-test.zip
+exnihilosequentia,item.exnihilosequentia.seed_yellow_coral,Роговое Коралловое Семя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,block.ftbquests.screen,Экран,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.auto_pin.usage,/ftbquests auto_pin,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.change_consumable.usage,/ftbquests change_consumable <*|часть> <true|false>,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.change_progress.invalid_id,Неверный ID объекта!,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.change_progress.usage,/ftbquests change_progress <тип> <команда|*> [ID объекта],AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.change_team_rewards.usage,/ftbquests change_team_rewards <*|глава> <true|false>,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.editing_mode.usage,/ftbquests editing_mode [true|false|toggle] [игрок],AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.usage,/ftbquests [команда],AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,commands.ftbquests.weigh_from_emc.usage,/ftbquests weigh_from_emc <таблица_вознаграждений> [отсутствующий_вес_emc],AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.image.click,Клик,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.circle,Круг,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.default,По умолчанию,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.diamond,Алмаз,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.gear,Шестерня,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.heart,Сердце,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.hexagon,Шестиугольник,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.octagon,Восьмиугольник,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.pentagon,Пятиугольник,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.rsquare,Скругленная площадь,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.appearance.shape.square,Площадь,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.dependencies.dependency_requirement.all_completed,Всё выполнено,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.dependencies.dependency_requirement.all_started,Все начаты,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.dependencies.dependency_requirement.one_completed,Один завершён,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.dependencies.dependency_requirement.one_started,Один начат,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.dependencies.dependency_requirement.tooltip,"Игнорируется, если требуется минимум зависимостей > 0",AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.dependencies.min_required_dependencies.tooltip,"Если вы установите для этого значения больше 0, он станет квестом ИЛИ, где для разблокировки требуется только определенное количество зависимостей.",AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.visibility.hide,"Скрыть квест, пока не станут видны зависимости",AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.quest.visibility.hide_dependency_lines,Скрыть линии зависимости,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.reward.ftbquests.command.player,Запустить как игрока,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.task.ftbquests.observation.match,Сочетание,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.task.ftbquests.observation.properties,Свойства,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,ftbquests.task.ftbquests.observation.type,Тип,AeronauticsPlus-RU-Pack-v0.8-test.zip
+ftbquests,itemGroup.ftbquests,Квесты FTB,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.advanced_die,Продвинутый кристалл микросхемы,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.advanced_pcb,Продвинутая печатная плата,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.basic_die,Базовый кристалл микросхемы,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.basic_pcb,Базовая печатная плата,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.etched_wafer,Протравленная кремниевая пластина,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.insulated_copper_wire_3px,Изолированный медный провод 3×3,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.machine_controller_hv,HV-контроллер машины,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.machine_controller_lv,LV-контроллер машины,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.machine_controller_mv,MV-контроллер машины,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.psu_acdc_basic,Базовый AC/DC-блок питания,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.psu_dc_basic,Базовый DC-блок питания,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.silicon_wafer_blank,Чистая кремниевая пластина,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.smd_capacitor,SMD-конденсатор,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.smd_resistor,SMD-резистор,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.smd_transistor,SMD-транзистор,AeronauticsPlus-RU-Pack-v0.8-test.zip
+kubejs,item.kubejs.transformer_core_basic,Базовый сердечник трансформатора,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.bin.description,Создайте универсальную корзину,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.bin.title,В никуда,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.enricher.description,Создайте жидкостный обогатитель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.enricher.title,Самогонный аппарат,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.extractor.description,Создайте жидкостный экстрактор,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.extractor.title,Выжимаем,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.infuser.description,Создайте впрыскиватель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.infuser.title,Впитывание,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.salt_mixer.description,Создайте смеситель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,advancement.nuclearcraftneohaul.salt_mixer.title,"Смешать, но не взбалтывать",AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.music_disc.end_of_the_world,Skeeter Davis - The End of the World,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.music_disc.end_of_the_world.credit,8-битный кавер от 'GermanPikachuGaming',AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.music_disc.hyperspace,Ur-Quan Masters - Hyperspace,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.music_disc.money_for_nothing,Dire Straits - Money For Nothing,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.music_disc.money_for_nothing.credit,8-битный кавер от 'Omnigrad',AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.music_disc.wanderer,Dion - The Wanderer,AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.music_disc.wanderer.credit,8-битный кавер от '8 Bit Universe',AeronauticsPlus-RU-Pack-v0.8-test.zip
+nuclearcraftneohaul,nuclearcraftneohaul.tooltip.salt_fission_controller.heating_speed_multiplier,Средняя скорость нагрева: %s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+simulated,simulated.merging_glue.invalid_directions,Недопустимые направления!,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,_,No Problem))))))spend 4 hours........,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.cast_iron_distillation_controller,Чугунный контроллер дистиллятора,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.cast_iron_distillation_output,Чугунный выход дистиллятора,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.casting_spout,Литейный дозатор,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.caution_block,Желтый сигнальный блок,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.copper_encased_aluminum_pipe,Алюминиевая труба в медном корпусе,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.copper_encased_brass_pipe,Латунная труба в медном корпусе,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.copper_encased_cast_iron_pipe,Чугунная труба в медном корпусе,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.copper_encased_plastic_pipe,Пластиковая труба в медном корпусе,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.copper_encased_steel_pipe,Стальная труба в медном корпусе,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.crude_oil_fluid,Сырая нефть,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.diesel_engine,Дизельный двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.diesel_engine_expansion,Расширенный ввод для дизельного двигателя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.factory_floor_slab,Плита из заводского пола,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.factory_floor_stairs,Ступеньки из заводского пола,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.formwork_block,Опалубка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.gasoline_engine,Бензиновый двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.gasoline_engine_back,Задняя часть бензинового двигателя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.limesand,Известняковый песок,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.liquid_plastic,Жидкий пластик,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.lpg_engine,СНГ двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.lpg_engine_back,Задняя часть СНГ двигателя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.molten_metal,Расплавленный металл,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.pumpjack_hammer_holder,Балансир нефтяного насоса,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.rebar_formwork_block,Арматурная опалубка,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,block.tfmg.turbine_engine_back,Задняя часть турбинного двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.distillation_tower.heat,Нагрев,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.distillation_tower.size,Размер,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.diameter.one,Диаметр: 1,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.diameter.two,Диаметр: 2,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.fuel_amount,Количество топлива: %1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.height,Высота: %1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.invalid,Доменная печь недействительна,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.item_count,Количество предметов: %1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.nothing_lol,,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.size_stats,Размер:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.stats,Доменная печь:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.status.off,Статус: Неактивена,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.blast_furnace.status.running,Статус: Работает,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.coke_oven.fluid_amount_exhaust,Углекислый газ: %1$s mb,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.coke_oven.fluid_amount_output,Внутреннее содержимое резервуара: %1$s mb,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.coke_oven.invalid,Коксовая печь недействительна,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.coke_oven.item_count,Внутренне содержимое: %1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.coke_oven.progress,Коксование: %1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.coke_oven.status,Коксовая печь:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.coke_oven.tank_full,Внутренний резервуар заполнен,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.diesel_engine.info,Дизельный двигатель:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.distillation_tower.found_outputs,Количество выходов: %1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.distillation_tower.level,Уровень дистилляционной башни: %1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.distillation_tower.no_outputs,Блоки вывода не найдены,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.distillation_tower.not_tall_enough,Жидкостный бак слишком низкий,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.distillation_tower.status,Информация о дистилляционной башне:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.distillation_tower.tank_not_found,Стальной жидкостный бак не найден,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.engine.backpartmissing,Задняя часть отсутствует:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.engine.efficiency,Эффективность:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.engine.stress,%1$sЕН,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.engine_exhaust_stats,Статистика выхлопа двигателя:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.engine_redstone_input,Скорость:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.engine_stats,Статистика двигателя:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.fluid_in_tank,Содержимое бака:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.fuel_container,Хранение жидкости,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.get_engine_efficiency,%1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.machine_input.info,Информация о машинном вводе,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.machine_input.no_rot,Подключите вращение!,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.machine_input.power_level,Уровень мощности:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.misc.dot_one,.,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.misc.dot_three,...,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.misc.dot_two,..,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.misc.number,%1$s,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.misc.percent_symbol,%,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.misc.storage_info,Информация о хранилище:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.pumpjack.deposit_info,Информация о месторождении:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.pumpjack.fluid_amount,Количество жидкости:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.pumpjack.part_missing,Насос или балансир отсутствует,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.pumpjack.wrong_rotation1,"Основа повёрнута неправильно, красный маркер должен",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.pumpjack.wrong_rotation2,смотреть ОТ балансира,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.pumpjack_fluid_storage,Информация о жидкостном баке:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.pumpjack_info,Информация о нефтяном насосе:,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.surface_scanner.deposit_found,Найдено месторождение нефти!,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.surface_scanner.distance,Дистанция: %1$s блоков,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.surface_scanner.no_deposit,Месторождений нефти не найдено,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.surface_scanner.no_rotation,Подключите вращение,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.surface_scanner.scanning_surface,Сканирование поверхности...,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.goggles.zero,Месторождение не найдено,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.pumpjack_deposit_amount,%1$s Buckets,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,create.tooltip.engine_analog_strength,%1$s/15,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,fluid.tfmg.crude_oil_fluid,Сырая нефть,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,fluid.tfmg.liquid_plastic,Жидкий пластик,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.blasting_mixture,Смесь для плавки,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.block_mold,Форма блока для выплавки,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.charcoal_dust,Пыль древесного угля,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.crude_oil_fluid_bucket,Ведро сырой нефти,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.engine_base,Основа двигателя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.engine_chamber,Камера сгорания,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.ingot_mold,Форма слитка для выплавки,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.liquid_plastic_bucket,Ведро расплавленного пластика,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.unfinished_gasoline_engine,Незаконченный бензиновый двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.unfinished_lpg_engine,Незаконченный СНГ двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,item.tfmg.unfinished_turbine_engine,Незаконченный турбинный двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,itemGroup.tfmg.base,Create: Фабрика должна расти,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,itemGroup.tfmg.building,Create: TFMG — строительные блоки,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.blast_furnace,Строительство доменной печи,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.casting.header,Литье металла,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.casting.text_1,Литье — это процесс заливки Жидкого металла в Литейную форму с помощью Литейного дозатора,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.casting.text_2,"Литейная чаша, очевидно, требует Формы литья для работы",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.diesel_engine.header,Сборка дизельного двигателя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.diesel_engine.text_1,Дизельные двигатели собираются путем размещения Вала перед блоком дизельного Двигателя,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.diesel_engine.text_2,"Двигатель вырабатывает выхлопные газы, которые необходимо отводить с помощью труб и Выхлопной трубы",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.diesel_engine.text_3,"Для работы двигателя необходим Воздух, поэтому нужен Воздухозаборник",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.diesel_engine_expansion.header,Расширение дизельных двигателей,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.diesel_engine_expansion.text_1,Расширенный ввод дизельного двигателя может предоставить Дизельному двигателю два новых входных слота для Смазочного масла и Охлаждающей жидкости,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.distillation_tower.text_10,Керосин,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.distillation_tower.text_11,Дизель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.distillation_tower.text_12,Мазут,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.distillation_tower.text_6,Каждый Выходной блок обеспечивает выход одного из побочных продуктов нефти,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.distillation_tower.text_7,СНГ,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.distillation_tower.text_8,Безнин,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.distillation_tower.text_9,Лигроин,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.small_engines.header,Создание небольших двигателей,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.small_engines.text_1,"Чтобы создать небольшой двигатель, расположите переднюю и заднюю части рядом друг с другом",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.small_engines.text_2,"Топливо подается в переднюю часть, а выхлопные газы необходимо отводить из задней части с помощью труб и Выхлопной трубы",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.small_engines.text_3,Подача сигнала редстоуна на переднюю часть запускает двигатель,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.small_engines.text_4,"К малогабаритным двигателям относятся двигатели, работающие на Сжиженном Нефтяном Газе, Керосине и Кензине",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.surface_scanner.header,Поиск нефти,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.surface_scanner.text_1,Сканер поверхности используется для обнаружения Месторождений сырой нефти,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.surface_scanner.text_2,Подача вращения к Сканеру позволяет ему сканировать ближайшее месторождение,AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.surface_scanner.text_3,"Если месторождение обнаружено, компас на Сканере укажет на его местонахождение",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.tag.oil,"Машины, связанные с нефтью",AeronauticsPlus-RU-Pack-v0.8-test.zip
+tfmg,tfmg.ponder.tag.oil.description,"Машины, которые добывают, перерабатывают или используют сырую нефть и ее побочные продукты",AeronauticsPlus-RU-Pack-v0.8-test.zip
