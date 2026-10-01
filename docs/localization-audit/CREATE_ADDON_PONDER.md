@@ -10,9 +10,9 @@ Base Create is excluded and audited separately in `CREATE_6_0_10.md`.
 - add-on namespaces with Ponder keys: **29**
 - Ponder keys: **2160**
 - missing effective Russian values: **169**
-- values identical to English: **214**
+- values identical to English: **180**
 - other Latin-only values: **1**
-- mixed Cyrillic/Latin values requiring editorial review: **265**
+- mixed Cyrillic/Latin values requiring editorial review: **246**
 - placeholder mismatches: **0**
 - conflicting duplicate catalogue keys: **0**
 - archive/JSON errors: **0**
@@ -41,7 +41,7 @@ contain untranslated fragments even when the key itself is present.
 | `createaddition` | 50 | 0 | 0 | 0 | 4 | 46 | 0 |
 | `createbigcannons` | 185 | 0 | 0 | 0 | 3 | 182 | 0 |
 | `createdieselgenerators` | 55 | 0 | 0 | 0 | 0 | 55 | 0 |
-| `createfirefightingadd` | 62 | 0 | 34 | 0 | 28 | 0 | 0 |
+| `createfirefightingadd` | 62 | 0 | 0 | 0 | 9 | 53 | 0 |
 | `createmobfarming` | 31 | 0 | 0 | 0 | 1 | 30 | 0 |
 | `createoreexcavation` | 21 | 0 | 0 | 0 | 0 | 21 | 0 |
 | `createpropulsion` | 79 | 0 | 0 | 0 | 11 | 68 | 0 |
@@ -55,6 +55,20 @@ contain untranslated fragments even when the key itself is present.
 | `simulated` | 227 | 0 | 0 | 0 | 4 | 223 | 0 |
 | `sliceanddice` | 7 | 0 | 0 | 0 | 0 | 7 | 0 |
 | `tfmg` | 124 | 0 | 54 | 0 | 47 | 23 | 0 |
+
+## Завершённый ручной проход `createfirefightingadd`
+
+В рабочем RU-pack вручную вычитаны все **306/306** значений namespace, а не только
+Ponder: названия, интерфейсы конфигуратора, сообщения рукавов и лестницы, справочник
+пожарного, подсказки предметов, субтитры и 62 строки анимаций-инструкций.
+
+Для Ponder закрыты все 34 английских и 28 смешанных значения. Оставшиеся девять
+формально mixed-script строк проверены вручную: латиница в них относится только к
+названиям `Create`/`Create: Dragons Plus`, точному имени параметра
+`HighPressurePump.amplificationMultiplier` и обозначениям точек `A/B/C`.
+Единицы нагрузки `SU` переведены официальным термином Create `ЕН`. Оставшаяся
+латиница не является непереведёнными английскими фрагментами. Placeholders и
+число ключей сохранены.
 
 ## Interpretation
 
