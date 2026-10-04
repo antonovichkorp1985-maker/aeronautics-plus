@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "M": {
-      "tag": "c:ingots/steel"
+      "tag": "aeronauticsplus:blade_materials/steel"
     },
     "S": {
       "item": "create:shaft"

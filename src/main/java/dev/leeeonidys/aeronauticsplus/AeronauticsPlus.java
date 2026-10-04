@@ -1,8 +1,9 @@
 package dev.leeeonidys.aeronauticsplus;
 
+import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
+import dev.leeeonidys.aeronauticsplus.compat.CompatibilityManager;
 import dev.leeeonidys.aeronauticsplus.content.propeller.AircraftPropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.AircraftPropellerBlockEntity;
-import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
@@ -165,11 +166,13 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-dev: propeller and shaft-adapter registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.8: propeller and shaft-adapter registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            CompatibilityManager.initialize();
+
             List<String> registeredItems = new ArrayList<>();
             registeredItems.add(BuiltInRegistries.ITEM.getKey(PROPELLER_SHAFT_ADAPTER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(PROTOTYPE_PROPELLER_ITEM.get()).toString());

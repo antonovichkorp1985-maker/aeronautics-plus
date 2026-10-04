@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "M": {
-      "tag": "minecraft:planks"
+      "tag": "aeronauticsplus:blade_materials/wood"
     },
     "S": {
       "item": "create:shaft"

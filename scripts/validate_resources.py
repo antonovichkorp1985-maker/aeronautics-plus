@@ -12,6 +12,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 JAVA_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/AeronauticsPlus.java"
+COMPAT_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/compat/CompatibilityManager.java"
+BUILD_FILE = ROOT / "build.gradle"
+MOD_METADATA = ROOT / "src/main/resources/META-INF/neoforge.mods.toml"
 PROTOTYPE_BE_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/content/propeller/PrototypePropellerBlockEntity.java"
 CLIENT_EVENTS_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/client/AeronauticsPlusClientEvents.java"
 RENDERER_SOURCE = ROOT / "src/main/java/dev/leeeonidys/aeronauticsplus/client/AircraftPropellerRenderer.java"
@@ -74,15 +77,91 @@ def assert_png_dimensions(path: Path, expected: tuple[int, int]) -> None:
 
 def expected_material_tag(block_id: str) -> str:
     if block_id == "prototype_propeller":
-        return "c:ingots/iron"
-    if block_id.startswith("wooden_"):
-        return "minecraft:planks"
-    if block_id.startswith("aluminum_"):
-        return "c:ingots/aluminum"
-    if block_id.startswith("steel_"):
-        return "c:ingots/steel"
-    fail(f"unknown propeller material for {block_id}")
-    raise AssertionError("unreachable")
+        material = "iron"
+    elif block_id.startswith("wooden_"):
+        material = "wood"
+    elif block_id.startswith("aluminum_"):
+        material = "aluminum"
+    elif block_id.startswith("steel_"):
+        material = "steel"
+    else:
+        fail(f"unknown propeller material for {block_id}")
+        raise AssertionError("unreachable")
+    return f"aeronauticsplus:blade_materials/{material}"
+
+
+def validate_version_consistency() -> None:
+    build_text = BUILD_FILE.read_text(encoding="utf-8")
+    metadata = MOD_METADATA.read_text(encoding="utf-8")
+    source = JAVA_SOURCE.read_text(encoding="utf-8")
+
+    build_match = re.search(r"^version = '([^']+)'$", build_text, re.MULTILINE)
+    metadata_match = re.search(r'^version="([^"]+)"$', metadata, re.MULTILINE)
+    if build_match is None or metadata_match is None:
+        fail("cannot read the project version from build.gradle or neoforge.mods.toml")
+
+    build_version = build_match.group(1)
+    metadata_version = metadata_match.group(1)
+    if build_version != metadata_version:
+        fail(
+            f"version mismatch: build.gradle={build_version}, "
+            f"neoforge.mods.toml={metadata_version}"
+        )
+    if f"Aeronautics Plus {build_version}:" not in source:
+        fail(f"startup log does not identify Aeronautics Plus {build_version}")
+
+
+def validate_compatibility_layer() -> None:
+    expected_tag_values = {
+        "wood": "#minecraft:planks",
+        "iron": "#c:ingots/iron",
+        "aluminum": "#c:ingots/aluminum",
+        "steel": "#c:ingots/steel",
+    }
+    tag_root = DATA / "tags/item/blade_materials"
+    for material, common_tag in expected_tag_values.items():
+        path = tag_root / f"{material}.json"
+        if not path.is_file():
+            fail(f"missing blade-material compatibility tag: {path.relative_to(ROOT)}")
+        data = load_json(path)
+        if data != {"replace": False, "values": [common_tag]}:
+            fail(
+                f"{path.relative_to(ROOT)} must extend exactly {common_tag}; found {data}"
+            )
+        if any(str(value).lstrip("#").startswith("tfc:") for value in data["values"]):
+            fail(f"{path.relative_to(ROOT)} must not hardcode TerraFirmaCraft items")
+
+    if not COMPAT_SOURCE.is_file():
+        fail("missing optional-mod compatibility manager")
+    compat_source = COMPAT_SOURCE.read_text(encoding="utf-8")
+    required_compat_fragments = (
+        'TERRAFIRMACRAFT_MOD_ID = "tfc"',
+        "ModList.get().isLoaded(TERRAFIRMACRAFT_MOD_ID)",
+        'bladeMaterialTag("wood")',
+        'bladeMaterialTag("iron")',
+        'bladeMaterialTag("aluminum")',
+        'bladeMaterialTag("steel")',
+    )
+    for fragment in required_compat_fragments:
+        if fragment not in compat_source:
+            fail(f"compatibility manager is missing contract: {fragment}")
+
+    main_source = JAVA_SOURCE.read_text(encoding="utf-8")
+    if main_source.count("CompatibilityManager.initialize();") != 1:
+        fail("compatibility manager must initialize exactly once during common setup")
+
+    metadata = MOD_METADATA.read_text(encoding="utf-8")
+    tfc_dependency = re.search(
+        r'\[\[dependencies\.aeronauticsplus\]\]\s*'
+        r'modId="tfc"\s*'
+        r'type="optional"\s*'
+        r'versionRange="\[4\.2\.11,5\)"\s*'
+        r'ordering="AFTER"\s*'
+        r'side="BOTH"',
+        metadata,
+    )
+    if tfc_dependency is None:
+        fail("neoforge.mods.toml is missing the guarded optional TFC 4.2.11 dependency")
 
 
 def validate_obj(path: Path, expected_blades: int) -> None:
@@ -380,8 +459,10 @@ def validate() -> None:
     source = JAVA_SOURCE.read_text(encoding="utf-8")
     if source.count(".noOcclusion()") < 2:
         fail("prototype and serial propeller properties must disable full-cube occlusion")
+    validate_version_consistency()
     validate_balance_constants(source)
     validate_client_animation()
+    validate_compatibility_layer()
 
     languages = {
         locale: load_json(ASSETS / "lang" / f"{locale}.json")
@@ -507,7 +588,8 @@ def validate() -> None:
     assert_png_dimensions(RESOURCES / "icon.png", (32, 32))
     print(
         f"Validated {len(ids)} propellers, 1 shaft adapter and {len(json_files)} JSON files: "
-        "kinetics, assets, translations, recipes, advancements, loot tables and PNG dimensions are consistent."
+        "kinetics, optional-mod compatibility, material tags, assets, translations, recipes, "
+        "advancements, loot tables and PNG dimensions are consistent."
     )
 
 

@@ -8,6 +8,8 @@
 
 - [`architecture/MICRO_ASSEMBLED_ROTOR.md`](architecture/MICRO_ASSEMBLED_ROTOR.md) —
   действующая архитектура собираемого соосного ротора из микродеталей.
+- [`architecture/COMPATIBILITY_LAYER.md`](architecture/COMPATIBILITY_LAYER.md) —
+  границы ответственности Aeronautics Plus и большого научного мода, правила optional-интеграций и поэтапный план TerraFirmaCraft.
 - [`modeling/HELICOPTER_ROTOR_BLENDER_SPEC.md`](modeling/HELICOPTER_ROTOR_BLENDER_SPEC.md) —
   действующий контракт геометрии, осей, объектов и ассетов ротора.
 

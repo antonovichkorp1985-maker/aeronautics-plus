@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "M": {
-      "tag": "c:ingots/aluminum"
+      "tag": "aeronauticsplus:blade_materials/aluminum"
     },
     "S": {
       "item": "create:shaft"
