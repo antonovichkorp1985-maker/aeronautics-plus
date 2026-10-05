@@ -25,7 +25,7 @@ jobs:
       - name: Download standard translations
         uses: actions/download-artifact@v4
         with:
-          name: machine-translations-partial
+          name: machine-translations
           path: standard
           run-id: 37265343585
           github-token: ${{ github.token }}
@@ -54,7 +54,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
       - name: Install offline translation engine
         run: pip install argostranslate==1.9.6
       - name: Translate exact-JAR resources
