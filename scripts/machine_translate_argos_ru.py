@@ -27,7 +27,6 @@ PLACEHOLDER_RE = re.compile(
     r"|\b[a-z0-9_.-]+:[a-z0-9_./-]+\b"
     r")"
 )
-TOKEN_RE = re.compile(r"ZXQPH(\d{4})QXZ")
 
 
 def install_model() -> None:
@@ -53,39 +52,16 @@ def install_model() -> None:
     argostranslate.package.install_from_path(package.download())
 
 
-def protect(text: str) -> tuple[str, list[str]]:
-    placeholders: list[str] = []
-
-    def replace(match: re.Match[str]) -> str:
-        index = len(placeholders)
-        placeholders.append(match.group(0))
-        return f" ZXQPH{index:04d}QXZ "
-
-    return PLACEHOLDER_RE.sub(replace, text), placeholders
-
-
-def restore(text: str, placeholders: list[str]) -> str:
-    # Models occasionally insert spaces into an all-caps token. Normalize them.
-    normalized = re.sub(
-        r"Z\s*X\s*Q\s*P\s*H\s*(\d\s*\d\s*\d\s*\d)\s*Q\s*X\s*Z",
-        lambda match: "ZXQPH" + re.sub(r"\s", "", match.group(1)) + "QXZ",
-        text,
-        flags=re.IGNORECASE,
-    )
-    seen: set[int] = set()
-
-    def replace(match: re.Match[str]) -> str:
-        index = int(match.group(1))
-        if index >= len(placeholders):
-            raise ValueError(f"unknown placeholder id {index}")
-        seen.add(index)
-        return placeholders[index]
-
-    result = TOKEN_RE.sub(replace, normalized)
-    expected = set(range(len(placeholders)))
-    if seen != expected:
-        raise ValueError(f"placeholder loss: expected {sorted(expected)}, got {sorted(seen)}")
-    return re.sub(r"[ \t]{2,}", " ", result).strip()
+def translate_preserving_placeholders(translation: Any, text: str) -> str:
+    """Translate only the text spans between immutable technical tokens."""
+    parts: list[str] = []
+    cursor = 0
+    for match in PLACEHOLDER_RE.finditer(text):
+        parts.append(translation.translate(text[cursor : match.start()]))
+        parts.append(match.group(0))
+        cursor = match.end()
+    parts.append(translation.translate(text[cursor:]))
+    return "".join(parts).strip()
 
 
 def save(path: Path, source: dict[str, Any], translated: dict[str, str]) -> None:
@@ -130,9 +106,9 @@ def main() -> int:
     pending = [item for item in source["items"] if item["id"] not in existing]
     print(f"items={len(source['items'])} cached={len(existing)} pending={len(pending)}", flush=True)
     for index, item in enumerate(pending, start=1):
-        protected, placeholders = protect(item["text"])
-        draft = translation.translate(protected)
-        existing[item["id"]] = restore(draft, placeholders)
+        existing[item["id"]] = translate_preserving_placeholders(
+            translation, item["text"]
+        )
         if index % args.checkpoint_every == 0 or index == len(pending):
             save(args.output, source, existing)
             print(
