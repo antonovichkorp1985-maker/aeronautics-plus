@@ -1,0 +1,35 @@
+name: temporary machine translation
+
+on:
+  push:
+    branches:
+      - arena/01a0ea08-aeronautics-plus
+    paths:
+      - .github/workflows/temporary-machine-translate.yml
+
+permissions:
+  contents: read
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check requests
+      - name: Translate queue
+        run: >-
+          python scripts/machine_translate_ru.py
+          --input translation/TRANSLATION_INPUT.json
+          --output translation/MACHINE_TRANSLATIONS.json
+      - name: Upload translation draft
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: machine-translations
+          path: translation/MACHINE_TRANSLATIONS.json
+          if-no-files-found: error
+          retention-days: 1
