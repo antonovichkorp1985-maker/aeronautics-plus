@@ -13,16 +13,16 @@ permissions:
 jobs:
   translate:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check requests
+      - run: python -m pip install --disable-pip-version-check argostranslate
       - name: Translate queue
         run: >-
-          python scripts/machine_translate_ru.py
+          python scripts/machine_translate_argos_ru.py
           --input translation/TRANSLATION_INPUT.json
           --output translation/MACHINE_TRANSLATIONS.json
       - name: Upload translation draft
