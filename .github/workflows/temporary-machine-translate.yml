@@ -1,43 +1,90 @@
-name: temporary machine translation
+name: Finish all localization translations
 
 on:
-  push:
-    branches:
-      - arena/01a0ea08-aeronautics-plus
-    paths:
-      - .github/workflows/temporary-machine-translate.yml
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  actions: read
 
 jobs:
-  translate:
+  standard-lang:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    steps:
+      - name: Wait for the checkpointed standard-lang run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run watch 37265343585 --repo "${{ github.repository }}" --exit-status
+      - name: Download standard translations
+        uses: actions/download-artifact@v4
+        with:
+          name: machine-translations-partial
+          path: standard
+          run-id: 37265343585
+          github-token: ${{ github.token }}
+      - name: Re-upload for collector
+        uses: actions/upload-artifact@v4
+        with:
+          name: completed-standard-lang
+          path: standard/MACHINE_TRANSLATIONS.json
+          retention-days: 7
+
+  translate-resources:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: nonstandard
+            input: nonstandard-source.tar.gz
+          - group: ae-guides
+            input: ae-guides-source.tar.gz
+          - group: ie-manual
+            input: ie-manual-source.tar.gz
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check argostranslate
-      - name: Restore partial translation cache
-        continue-on-error: true
-        uses: actions/download-artifact@v4
+          python-version: "3.11"
+          cache: pip
+      - name: Install offline translation engine
+        run: pip install argostranslate==1.9.6
+      - name: Translate exact-JAR resources
+        run: |
+          mkdir -p /tmp/source /tmp/output
+          tar -xzf "translation/ci-inputs/${{ matrix.input }}" -C /tmp/source
+          python scripts/translate_nonstandard_argos.py \
+            --input /tmp/source \
+            --resource-pack /tmp/output
+          tar -czf "${{ matrix.group }}-ru-assets.tar.gz" -C /tmp/output .
+      - uses: actions/upload-artifact@v4
         with:
-          name: machine-translations
-          path: translation
-          run-id: 37264941957
-          github-token: ${{ github.token }}
-      - name: Translate queue
-        run: >-
-          python scripts/machine_translate_argos_ru.py
-          --input translation/TRANSLATION_INPUT.json
-          --output translation/MACHINE_TRANSLATIONS.json
-      - name: Upload translation draft
-        if: always()
-        uses: actions/upload-artifact@v4
+          name: translated-${{ matrix.group }}
+          path: ${{ matrix.group }}-ru-assets.tar.gz
+          retention-days: 7
+
+  collect:
+    needs: [standard-lang, translate-resources]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: machine-translations
-          path: translation/MACHINE_TRANSLATIONS.json
-          if-no-files-found: error
-          retention-days: 1
+          pattern: translated-*
+          path: downloads
+          merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: completed-standard-lang
+          path: downloads/standard
+      - name: Commit completed translation artifacts
+        run: |
+          mkdir -p translation/ci-results
+          cp downloads/standard/MACHINE_TRANSLATIONS.json translation/ci-results/
+          cp downloads/*-ru-assets.tar.gz translation/ci-results/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add translation/ci-results
+          git commit -m "chore: collect completed localization translations"
+          git push origin "HEAD:${{ github.ref_name }}"
