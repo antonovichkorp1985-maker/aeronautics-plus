@@ -2,6 +2,13 @@ name: Finish all localization translations
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - arena/01a0ea08-aeronautics-plus
+    paths:
+      - ".github/workflows/temporary-machine-translate.yml"
+      - "scripts/translate_nonstandard_argos.py"
+      - "translation/ci-inputs/**"
 
 permissions:
   contents: write
