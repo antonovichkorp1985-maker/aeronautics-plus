@@ -56,7 +56,7 @@ def main() -> None:
             # not used as a brittle gate across patch releases.
             orphan = sorted(set(pack) - set(english))
             if orphan:
-                raise SystemExit(f"{namespace}: pack has unknown keys: {orphan}")
+                print(f"{namespace}: ignoring {len(orphan)} forward-compatible overlay keys")
 
             effective = {**russian, **pack}
             missing = sorted(set(english) - set(effective))
