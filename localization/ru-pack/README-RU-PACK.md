@@ -1,4 +1,4 @@
-# Aeronautics Plus RU Pack v0.26-test
+# Aeronautics Plus RU Pack v0.27-test
 
 ## Create addons exact-JAR pass and previous batches
 

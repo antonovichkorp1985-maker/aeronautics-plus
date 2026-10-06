@@ -30,7 +30,9 @@ def validate(source: Path) -> tuple[int, int]:
             continue
         rel = path.relative_to(source).as_posix()
         if not rel.endswith("/lang/ru_ru.json"):
-            raise SystemExit(f"unexpected JSON outside ru_ru catalogue: {rel}")
+            # Patchouli, GuideME and other nonstandard translated resources are
+            # valid pack members; only lang catalogues contribute to the key count.
+            continue
         data = json.loads(path.read_text(encoding="utf-8-sig"))
         if not isinstance(data, dict):
             raise SystemExit(f"catalogue is not an object: {rel}")
