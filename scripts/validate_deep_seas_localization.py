@@ -10,7 +10,7 @@ import zipfile
 from pathlib import Path
 
 EXPECTED = {
-    "create_submarine": {"english": 191, "built_in_russian": 149, "pack": 47},
+    "create_submarine": {"english": 191, "built_in_russian": 149, "pack": 87},
     "create_abyss": {"english": 12, "built_in_russian": 12, "pack": 2},
 }
 PLACEHOLDER = re.compile(r"%(?:\d+\$)?[a-zA-Z]|\{\d+\}")
