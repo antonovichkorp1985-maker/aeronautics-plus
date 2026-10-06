@@ -2165,4 +2165,129 @@ prerequisites, а не по случайному интересу или пор�
 - WHO Laboratory Biosafety Manual: https://www.who.int/publications/i/item/9789240011311
 - USDA NRCS soils: https://www.nrcs.usda.gov/resources/data-and-reports/soils
 - FAO Soils Portal: https://www.fao.org/soils-portal/
+
+### Углублённая библиография
+
+- M. Spivak, *Calculus*, Vols. I–II — строгий курс анализа с задачами.
+- T. M. Apostol, *Calculus*, Vols. I–II — анализ, многомерное исчисление, линейная алгебра и приложения.
+- W. Rudin, *Principles of Mathematical Analysis* — строгий honours/graduate bridge.
+- R. Courant, F. John, *Introduction to Calculus and Analysis*, Vols. I–II.
+- S. Axler, *Linear Algebra Done Right*.
+- P. Lax, *Linear Algebra and Its Applications*.
+- M. Artin, *Algebra* — группы, кольца, поля и линейная алгебра.
+- J. M. Lee, *Introduction to Smooth Manifolds* — многообразия и дифференциальная геометрия.
+- V. I. Arnold, *Ordinary Differential Equations*.
+- L. Perko, *Differential Equations and Dynamical Systems*.
+- L. C. Evans, *Partial Differential Equations*.
+- M. E. Taylor, *Partial Differential Equations I–III*.
+- R. Courant, D. Hilbert, *Methods of Mathematical Physics*, Vols. I–II.
+- R. Durrett, *Probability: Theory and Examples*.
+- A. W. van der Vaart, *Asymptotic Statistics*.
+- E. Süli, D. F. Mayers, *An Introduction to Numerical Analysis*.
+- E. Hairer, S. P. Nørsett, G. Wanner, *Solving Ordinary Differential Equations I–II*.
+- R. J. LeVeque, *Finite Difference Methods for Ordinary and Partial Differential Equations*.
+- J. Nocedal, S. Wright, *Numerical Optimization*.
+- S. Boyd, L. Vandenberghe, *Convex Optimization*.
+- H. Brezis, *Functional Analysis, Sobolev Spaces and Partial Differential Equations*.
+- L. C. Evans, *Measure Theory and Fine Properties of Functions*.
+- I. M. Gelfand, S. V. Fomin, *Calculus of Variations*.
+- R. Temam, *Navier–Stokes Equations*.
+- C. Canuto et al., *Spectral Methods: Fundamentals in Single Domains*.
+- L. D. Landau, E. M. Lifshitz, *Mechanics*; *Fluid Mechanics*; *Theory of Elasticity*.
+- G. K. Batchelor, *An Introduction to Fluid Dynamics*.
+- C. Truesdell, W. Noll, *The Non-Linear Field Theories of Mechanics*.
+- J. N. Reddy, *An Introduction to Continuum Mechanics*.
+- S. P. Timoshenko, J. M. Gere, *Theory of Elastic Stability*.
+- J. D. Anderson, *Fundamentals of Aerodynamics*; *Modern Compressible Flow*.
+- J. Katz, A. Plotkin, *Low-Speed Aerodynamics*.
+- J. D. Anderson, *Aircraft Performance and Design*.
+- E. L. Houghton et al., *Aerodynamics for Engineering Students*.
+- J. Seddon, E. L. Goldsmith, *Introduction to Aircraft Flight Mechanics*.
+- M. J. Lighthill, *Waves in Fluids*.
+- J. N. Newman, *Marine Hydrodynamics*.
+- R. H. Faltinsen, *Sea Loads on Ships and Offshore Structures*.
+- R. B. Munson et al., *Fundamentals of Fluid Mechanics*.
+- H. B. Callen, *Thermodynamics and an Introduction to Thermostatistics*.
+- E. M. Lifshitz, L. P. Pitaevskii, *Statistical Physics*.
+- F. P. Incropera et al., *Fundamentals of Heat and Mass Transfer*.
+- S. K. Kothandaraman, *Fundamentals of Heat and Mass Transfer*.
+- S. Glasstone, R. H. Lovberg, *Controlled Thermonuclear Reactions*.
+- K. Ogata, *Modern Control Engineering*.
+- H. K. Khalil, *Nonlinear Systems*.
+- K. J. Åström, R. M. Murray, *Feedback Systems*.
+- P. J. Roache, *Verification and Validation in Computational Science and Engineering*.
+- J. C. Blazek, *Computational Fluid Dynamics: Principles and Applications*.
+- P. W. Atkins, J. de Paula, *Physical Chemistry*.
+- I. N. Levine, *Physical Chemistry*.
+- J. E. McMurry, *Organic Chemistry* — базовый университетский курс с механизмами.
+- R. T. Morrison, R. N. Boyd, *Organic Chemistry*.
+- F. A. Cotton, G. Wilkinson et al., *Advanced Inorganic Chemistry*.
+- I. N. Levine, *Quantum Chemistry*.
+- D. A. McQuarrie, J. D. Simon, *Physical Chemistry: A Molecular Approach*.
+- R. A. Masel, *Chemical Kinetics and Catalysis*.
+- J. M. Smith, H. C. Van Ness, M. M. Abbott, *Introduction to Chemical Engineering Thermodynamics*.
+- J. M. Thomas, W. J. Thomas, *Principles and Practice of Heterogeneous Catalysis*.
+- D. A. Skoog et al., *Principles of Instrumental Analysis*.
+- A. J. Bard, L. R. Faulkner, *Electrochemical Methods*.
+- C. M. A. Brett, A. M. O. Brett, *Electrochemistry: Principles, Methods, and Applications*.
+- W. D. Callister, D. G. Rethwisch, *Materials Science and Engineering*.
+- R. W. Cahn, P. Haasen, E. J. Kramer, *Materials Science and Technology*.
+- O. Levenspiel, *Chemical Reaction Engineering*.
+- J. M. Coulson, J. F. Richardson, *Chemical Engineering*, multi-volume set.
+- R. K. Sinnott, G. Towler, *Chemical Engineering Design*.
+- R. H. Perry, D. W. Green, *Perry's Chemical Engineers' Handbook*.
+- JCGM 100:2008, *Evaluation of Measurement Data — Guide to the Expression of Uncertainty in Measurement (GUM)*.
+- JCGM 101:2008, *Supplement 1 to the GUM — Monte Carlo Method*.
+- B. N. Taylor, C. E. Kuyatt, *NIST Technical Note 1297*.
+- D. C. Montgomery, *Design and Analysis of Experiments*.
+- A. V. Oppenheim, A. S. Willsky, S. H. Nawab, *Signals and Systems*.
+- S. M. Kay, *Fundamentals of Statistical Signal Processing*.
+- L. Ljung, *System Identification: Theory for the User*.
+- E. E. Lewis, *Introduction to Reliability Engineering*.
+- M. Rausand, A. Høyland, *System Reliability Theory*.
+- P. D. T. O'Connor, A. Kleyner, *Practical Reliability Engineering*.
+- T. L. Anderson, *Fracture Mechanics: Fundamentals and Applications*.
+- J. Schijve, *Fatigue of Structures and Materials*.
+- INCOSE, *Systems Engineering Handbook*.
+- E. Balagurusamy, *Reliability Engineering*.
+- M. G. Xie et al., *Statistical Methods for Reliability Data*.
+- J. N. Israelachvili, *Intermolecular and Surface Forces*.
+- A. W. Adamson, A. P. Gast, *Physical Chemistry of Surfaces*.
+- R. J. Hunter, *Foundations of Colloid Science*.
+- J. C. Berg, *An Introduction to Interfaces and Colloids*.
+- R. B. Bird, W. E. Stewart, E. N. Lightfoot, *Transport Phenomena*.
+- R. B. Bird et al., *Dynamics of Polymeric Liquids*.
+- M. C. Potter, D. C. Wiggert, *Mechanics of Fluids*.
+- M. Kaviany, *Principles of Heat Transfer in Porous Media*.
+- C. T. Crowe et al., *Multiphase Flows with Droplets and Particles*.
+- C. W. Macosko, *Rheology: Principles, Measurements, and Applications*.
+- N. P. Cheremisinoff, *An Introduction to Polymer Rheology*.
+- R. A. Mashelkar, *Transport Phenomena in Multiphase Systems*.
+- B. Bhushan, *Introduction to Tribology*.
+- M. J. Adams, *Powder and Bulk Solids*.
+- S. R. Turns, *An Introduction to Combustion*.
+- C. K. Law, *Combustion Physics*.
+- F. F. Chen, *Introduction to Plasma Physics and Controlled Fusion*.
+- J. F. O'Hanlon, *A User's Guide to Vacuum Technology*.
+- K. D. Timmerhaus, T. M. Flynn, *Cryogenic Process Engineering*.
+- F. J. Pettijohn, *Sedimentary Rocks*.
+- W. D. Nesse, *Introduction to Mineralogy*.
+- C. Klein, B. Dutrow, *The Manual of Mineral Science*.
+- H. Rollinson, *Using Geochemical Data*.
+- W. M. White, *Geochemistry*.
+- W. M. Telford et al., *Applied Geophysics*.
+- J. M. Reynolds, *An Introduction to Applied and Environmental Geophysics*.
+- H. K. W. Hoek, E. T. Brown, *Underground Excavations in Rock*.
+- W. A. Hustrulid, *Underground Mining Methods*.
+- B. A. Wills, J. Finch, *Wills' Mineral Processing Technology*.
+- M. W. Barsoum, *Fundamentals of Ceramics*.
+- J. S. Reed, *Principles of Ceramics Processing*.
+- W. D. Kingery et al., *Introduction to Ceramics*.
+- J. E. Shelby, *Introduction to Glass Science and Technology*.
+- A. M. Neville, *Properties of Concrete*.
+- C. N. Sawyer, P. L. McCarty, G. F. Parkin, *Chemistry for Environmental Engineering and Science*.
+- W. J. Weber, *Environmental Systems and Processes*.
+- M. A. Haith, *Environmental Systems Optimization*.
+- J. B. Guinée et al., *Handbook on Life Cycle Assessment*.
+
 <!-- SOURCES:END -->

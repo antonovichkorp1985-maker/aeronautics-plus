@@ -11,7 +11,7 @@ categories:
 # Разработчик Fluix
 
 <Row>
-! [Fluix Researcher](../assets/diagrams/ae2_villager.png)
+> Иллюстрация находится в оригинальном руководстве мода.
 <BlockImage id="charger" scale="8" />
 </Row>
 

@@ -29,6 +29,7 @@
 - [22A. Сильная русскоязычная полка](#earth-22a)
 - [23. Практические проекты](#earth-23)
 - [24. Acceptance criteria](#earth-24)
+- [Углублённая университетская и исследовательская литература](#earth-deep)
 - [Сводный список источников](#earth-sources)
 
 > [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#earth-sources)
@@ -1814,6 +1815,40 @@ LifecycleRecord
 ---
 
 <!-- SOURCES:START -->
+<a id="earth-deep"></a>
+## Углублённая университетская и исследовательская литература
+
+Вводные источники не заменяют университетскую подготовку. Для глубокого маршрута нужны следующие дисциплины и монографии.
+
+### Геология, минералогия и геохимия
+- F. J. Pettijohn, *Sedimentary Rocks*.
+- W. D. Nesse, *Introduction to Mineralogy*.
+- C. Klein, B. Dutrow, *The Manual of Mineral Science*.
+- H. Rollinson, *Using Geochemical Data*.
+- W. M. White, *Geochemistry*.
+
+### Геофизика, ресурсы и горное дело
+- W. M. Telford et al., *Applied Geophysics*.
+- J. M. Reynolds, *An Introduction to Applied and Environmental Geophysics*.
+- H. K. W. Hoek, E. T. Brown, *Underground Excavations in Rock*.
+- W. A. Hustrulid, *Underground Mining Methods*.
+- B. A. Wills, J. Finch, *Wills' Mineral Processing Technology*.
+
+### Материалы, керамика, стекло и цемент
+- M. W. Barsoum, *Fundamentals of Ceramics*.
+- J. S. Reed, *Principles of Ceramics Processing*.
+- W. D. Kingery et al., *Introduction to Ceramics*.
+- J. E. Shelby, *Introduction to Glass Science and Technology*.
+- A. M. Neville, *Properties of Concrete*.
+
+### Окружающая среда и жизненный цикл
+- C. N. Sawyer, P. L. McCarty, G. F. Parkin, *Chemistry for Environmental Engineering and Science*.
+- W. J. Weber, *Environmental Systems and Processes*.
+- M. A. Haith, *Environmental Systems Optimization*.
+- J. B. Guinée et al., *Handbook on Life Cycle Assessment*.
+
+Критерий уровня: минералогическая идентификация, mass balance, uncertainty of reserves, transport/reaction model, exposure pathway, LCA inventory и sensitivity analysis.
+
 <a id="earth-sources"></a>
 ## Сводный список источников
 
@@ -1956,38 +1991,27 @@ LifecycleRecord
 - WHO Laboratory Biosafety Manual: https://www.who.int/publications/i/item/9789240011311
 - USDA NRCS soils: https://www.nrcs.usda.gov/resources/data-and-reports/soils
 - FAO Soils Portal: https://www.fao.org/soils-portal/
-<!-- SOURCES:END -->
 
-## Углублённая университетская и исследовательская литература
+### Углублённая библиография
 
-Вводные источники не заменяют университетскую подготовку. Для глубокого маршрута нужны следующие дисциплины и монографии.
-
-### Геология, минералогия и геохимия
 - F. J. Pettijohn, *Sedimentary Rocks*.
 - W. D. Nesse, *Introduction to Mineralogy*.
 - C. Klein, B. Dutrow, *The Manual of Mineral Science*.
 - H. Rollinson, *Using Geochemical Data*.
 - W. M. White, *Geochemistry*.
-
-### Геофизика, ресурсы и горное дело
 - W. M. Telford et al., *Applied Geophysics*.
 - J. M. Reynolds, *An Introduction to Applied and Environmental Geophysics*.
 - H. K. W. Hoek, E. T. Brown, *Underground Excavations in Rock*.
 - W. A. Hustrulid, *Underground Mining Methods*.
 - B. A. Wills, J. Finch, *Wills' Mineral Processing Technology*.
-
-### Материалы, керамика, стекло и цемент
 - M. W. Barsoum, *Fundamentals of Ceramics*.
 - J. S. Reed, *Principles of Ceramics Processing*.
 - W. D. Kingery et al., *Introduction to Ceramics*.
 - J. E. Shelby, *Introduction to Glass Science and Technology*.
 - A. M. Neville, *Properties of Concrete*.
-
-### Окружающая среда и жизненный цикл
 - C. N. Sawyer, P. L. McCarty, G. F. Parkin, *Chemistry for Environmental Engineering and Science*.
 - W. J. Weber, *Environmental Systems and Processes*.
 - M. A. Haith, *Environmental Systems Optimization*.
 - J. B. Guinée et al., *Handbook on Life Cycle Assessment*.
 
-Критерий уровня: минералогическая идентификация, mass balance, uncertainty of reserves, transport/reaction model, exposure pathway, LCA inventory и sensitivity analysis.
-
+<!-- SOURCES:END -->

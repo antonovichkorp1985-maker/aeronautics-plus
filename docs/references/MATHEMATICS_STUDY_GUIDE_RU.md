@@ -27,6 +27,7 @@
 - [21. Рекомендуемый темп](#math-21)
 - [22. Критерии готовности перед сильной физической моделью](#math-22)
 - [Итоговый принцип](#math-summary)
+- [Углублённая университетская и исследовательская литература](#math-deep)
 - [Сводный список источников](#math-sources)
 
 > [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#math-sources)
@@ -1265,6 +1266,48 @@ Fit response curve с train/validation split, residual plot и confidence interv
 ---
 
 <!-- SOURCES:START -->
+<a id="math-deep"></a>
+## Углублённая университетская и исследовательская литература
+
+Разделы 0–1 и `math-3` являются только входными prerequisites. Они не считаются достаточной математической подготовкой. Основной маршрут должен проходиться по строгим университетским учебникам с решением задач и самостоятельным выводом результатов.
+
+### Анализ и основы
+- M. Spivak, *Calculus*, Vols. I–II — строгий курс анализа с задачами.
+- T. M. Apostol, *Calculus*, Vols. I–II — анализ, многомерное исчисление, линейная алгебра и приложения.
+- W. Rudin, *Principles of Mathematical Analysis* — строгий honours/graduate bridge.
+- R. Courant, F. John, *Introduction to Calculus and Analysis*, Vols. I–II.
+
+### Линейная алгебра, алгебра и геометрия
+- S. Axler, *Linear Algebra Done Right*.
+- P. Lax, *Linear Algebra and Its Applications*.
+- M. Artin, *Algebra* — группы, кольца, поля и линейная алгебра.
+- J. M. Lee, *Introduction to Smooth Manifolds* — многообразия и дифференциальная геометрия.
+
+### ОДУ, динамика и PDE
+- V. I. Arnold, *Ordinary Differential Equations*.
+- L. Perko, *Differential Equations and Dynamical Systems*.
+- L. C. Evans, *Partial Differential Equations*.
+- M. E. Taylor, *Partial Differential Equations I–III*.
+- R. Courant, D. Hilbert, *Methods of Mathematical Physics*, Vols. I–II.
+
+### Вероятность, статистика и вычисления
+- R. Durrett, *Probability: Theory and Examples*.
+- A. W. van der Vaart, *Asymptotic Statistics*.
+- E. Süli, D. F. Mayers, *An Introduction to Numerical Analysis*.
+- E. Hairer, S. P. Nørsett, G. Wanner, *Solving Ordinary Differential Equations I–II*.
+- R. J. LeVeque, *Finite Difference Methods for Ordinary and Partial Differential Equations*.
+- J. Nocedal, S. Wright, *Numerical Optimization*.
+- S. Boyd, L. Vandenberghe, *Convex Optimization*.
+
+### Продвинутый уровень
+- H. Brezis, *Functional Analysis, Sobolev Spaces and Partial Differential Equations*.
+- L. C. Evans, *Measure Theory and Fine Properties of Functions*.
+- I. M. Gelfand, S. V. Fomin, *Calculus of Variations*.
+- R. Temam, *Navier–Stokes Equations*.
+- C. Canuto et al., *Spectral Methods: Fundamentals in Single Domains*.
+
+Критерий завершения: не чтение названий, а решение задач, доказательства, реализация численных методов, анализ сходимости и воспроизводимый benchmark.
+
 <a id="math-sources"></a>
 ## Сводный список источников
 
@@ -1440,32 +1483,22 @@ Fit response curve с train/validation split, residual plot и confidence interv
 - https://octave.org/
 - https://www.sagemath.org/
 - https://dlmf.nist.gov/
-<!-- SOURCES:END -->
 
-## Углублённая университетская и исследовательская литература
+### Углублённая библиография
 
-Разделы 0–1 и `math-3` являются только входными prerequisites. Они не считаются достаточной математической подготовкой. Основной маршрут должен проходиться по строгим университетским учебникам с решением задач и самостоятельным выводом результатов.
-
-### Анализ и основы
 - M. Spivak, *Calculus*, Vols. I–II — строгий курс анализа с задачами.
 - T. M. Apostol, *Calculus*, Vols. I–II — анализ, многомерное исчисление, линейная алгебра и приложения.
 - W. Rudin, *Principles of Mathematical Analysis* — строгий honours/graduate bridge.
 - R. Courant, F. John, *Introduction to Calculus and Analysis*, Vols. I–II.
-
-### Линейная алгебра, алгебра и геометрия
 - S. Axler, *Linear Algebra Done Right*.
 - P. Lax, *Linear Algebra and Its Applications*.
 - M. Artin, *Algebra* — группы, кольца, поля и линейная алгебра.
 - J. M. Lee, *Introduction to Smooth Manifolds* — многообразия и дифференциальная геометрия.
-
-### ОДУ, динамика и PDE
 - V. I. Arnold, *Ordinary Differential Equations*.
 - L. Perko, *Differential Equations and Dynamical Systems*.
 - L. C. Evans, *Partial Differential Equations*.
 - M. E. Taylor, *Partial Differential Equations I–III*.
 - R. Courant, D. Hilbert, *Methods of Mathematical Physics*, Vols. I–II.
-
-### Вероятность, статистика и вычисления
 - R. Durrett, *Probability: Theory and Examples*.
 - A. W. van der Vaart, *Asymptotic Statistics*.
 - E. Süli, D. F. Mayers, *An Introduction to Numerical Analysis*.
@@ -1473,13 +1506,10 @@ Fit response curve с train/validation split, residual plot и confidence interv
 - R. J. LeVeque, *Finite Difference Methods for Ordinary and Partial Differential Equations*.
 - J. Nocedal, S. Wright, *Numerical Optimization*.
 - S. Boyd, L. Vandenberghe, *Convex Optimization*.
-
-### Продвинутый уровень
 - H. Brezis, *Functional Analysis, Sobolev Spaces and Partial Differential Equations*.
 - L. C. Evans, *Measure Theory and Fine Properties of Functions*.
 - I. M. Gelfand, S. V. Fomin, *Calculus of Variations*.
 - R. Temam, *Navier–Stokes Equations*.
 - C. Canuto et al., *Spectral Methods: Fundamentals in Single Domains*.
 
-Критерий завершения: не чтение названий, а решение задач, доказательства, реализация численных методов, анализ сходимости и воспроизводимый benchmark.
-
+<!-- SOURCES:END -->

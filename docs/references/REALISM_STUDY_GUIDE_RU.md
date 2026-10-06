@@ -26,6 +26,7 @@
 - [19. Матрица источников для задач Aeronautics Plus](#physics-19)
 - [20. Чек-лист приёмки каждой физической механики](#physics-20)
 - [Итоговый принцип](#physics-summary)
+- [Углублённая университетская и инженерно-исследовательская литература](#physics-deep)
 - [Сводный список источников](#physics-sources)
 
 > [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#physics-sources)
@@ -1160,6 +1161,48 @@ MIT 2.700 + USNA EN400 → MIT 2.20/2.154. Реализовать объёмну
 ---
 
 <!-- SOURCES:START -->
+<a id="physics-deep"></a>
+## Углублённая университетская и инженерно-исследовательская литература
+
+Короткие вводные источники из основного списка — только prerequisites. Для серьёзного освоения использовать следующие курсы и монографии.
+
+### Механика, сплошные среды и конструкции
+- L. D. Landau, E. M. Lifshitz, *Mechanics*; *Fluid Mechanics*; *Theory of Elasticity*.
+- G. K. Batchelor, *An Introduction to Fluid Dynamics*.
+- C. Truesdell, W. Noll, *The Non-Linear Field Theories of Mechanics*.
+- J. N. Reddy, *An Introduction to Continuum Mechanics*.
+- S. P. Timoshenko, J. M. Gere, *Theory of Elastic Stability*.
+
+### Аэродинамика и летательные аппараты
+- J. D. Anderson, *Fundamentals of Aerodynamics*; *Modern Compressible Flow*.
+- J. Katz, A. Plotkin, *Low-Speed Aerodynamics*.
+- J. D. Anderson, *Aircraft Performance and Design*.
+- E. L. Houghton et al., *Aerodynamics for Engineering Students*.
+- J. Seddon, E. L. Goldsmith, *Introduction to Aircraft Flight Mechanics*.
+
+### Гидродинамика, корабли и подводные аппараты
+- G. K. Batchelor, *An Introduction to Fluid Dynamics*.
+- M. J. Lighthill, *Waves in Fluids*.
+- J. N. Newman, *Marine Hydrodynamics*.
+- R. H. Faltinsen, *Sea Loads on Ships and Offshore Structures*.
+- R. B. Munson et al., *Fundamentals of Fluid Mechanics*.
+
+### Термодинамика, тепломассообмен и энергетика
+- H. B. Callen, *Thermodynamics and an Introduction to Thermostatistics*.
+- E. M. Lifshitz, L. P. Pitaevskii, *Statistical Physics*.
+- F. P. Incropera et al., *Fundamentals of Heat and Mass Transfer*.
+- S. K. Kothandaraman, *Fundamentals of Heat and Mass Transfer*.
+- S. Glasstone, R. H. Lovberg, *Controlled Thermonuclear Reactions*.
+
+### Управление и верификация
+- K. Ogata, *Modern Control Engineering*.
+- H. K. Khalil, *Nonlinear Systems*.
+- K. J. Åström, R. M. Murray, *Feedback Systems*.
+- P. J. Roache, *Verification and Validation in Computational Science and Engineering*.
+- J. C. Blazek, *Computational Fluid Dynamics: Principles and Applications*.
+
+Критерий уровня: вывод модели, размерностный и предельный анализ, устойчивость, mesh/time-step convergence, validation по эксперименту или benchmark и оценка неопределённости.
+
 <a id="physics-sources"></a>
 ## Сводный список источников
 
@@ -1516,46 +1559,33 @@ MIT 2.700 + USNA EN400 → MIT 2.20/2.154. Реализовать объёмну
 - https://books.google.com/books/about/The_Classical_Theory_of_Fields.html?id=X18PF4oKyrUC
 - https://books.google.com/books/about/Similarity_and_Dimensional_Methods_in_Me.html?id=HEsPEAAAQBAJ
 - https://search.worldcat.org/search?q=ti%3AProblems%20in%20General%20Physics%20au%3AIrodov
-<!-- SOURCES:END -->
 
-## Углублённая университетская и инженерно-исследовательская литература
+### Углублённая библиография
 
-Короткие вводные источники из основного списка — только prerequisites. Для серьёзного освоения использовать следующие курсы и монографии.
-
-### Механика, сплошные среды и конструкции
 - L. D. Landau, E. M. Lifshitz, *Mechanics*; *Fluid Mechanics*; *Theory of Elasticity*.
 - G. K. Batchelor, *An Introduction to Fluid Dynamics*.
 - C. Truesdell, W. Noll, *The Non-Linear Field Theories of Mechanics*.
 - J. N. Reddy, *An Introduction to Continuum Mechanics*.
 - S. P. Timoshenko, J. M. Gere, *Theory of Elastic Stability*.
-
-### Аэродинамика и летательные аппараты
 - J. D. Anderson, *Fundamentals of Aerodynamics*; *Modern Compressible Flow*.
 - J. Katz, A. Plotkin, *Low-Speed Aerodynamics*.
 - J. D. Anderson, *Aircraft Performance and Design*.
 - E. L. Houghton et al., *Aerodynamics for Engineering Students*.
 - J. Seddon, E. L. Goldsmith, *Introduction to Aircraft Flight Mechanics*.
-
-### Гидродинамика, корабли и подводные аппараты
 - G. K. Batchelor, *An Introduction to Fluid Dynamics*.
 - M. J. Lighthill, *Waves in Fluids*.
 - J. N. Newman, *Marine Hydrodynamics*.
 - R. H. Faltinsen, *Sea Loads on Ships and Offshore Structures*.
 - R. B. Munson et al., *Fundamentals of Fluid Mechanics*.
-
-### Термодинамика, тепломассообмен и энергетика
 - H. B. Callen, *Thermodynamics and an Introduction to Thermostatistics*.
 - E. M. Lifshitz, L. P. Pitaevskii, *Statistical Physics*.
 - F. P. Incropera et al., *Fundamentals of Heat and Mass Transfer*.
 - S. K. Kothandaraman, *Fundamentals of Heat and Mass Transfer*.
 - S. Glasstone, R. H. Lovberg, *Controlled Thermonuclear Reactions*.
-
-### Управление и верификация
 - K. Ogata, *Modern Control Engineering*.
 - H. K. Khalil, *Nonlinear Systems*.
 - K. J. Åström, R. M. Murray, *Feedback Systems*.
 - P. J. Roache, *Verification and Validation in Computational Science and Engineering*.
 - J. C. Blazek, *Computational Fluid Dynamics: Principles and Applications*.
 
-Критерий уровня: вывод модели, размерностный и предельный анализ, устойчивость, mesh/time-step convergence, validation по эксперименту или benchmark и оценка неопределённости.
-
+<!-- SOURCES:END -->

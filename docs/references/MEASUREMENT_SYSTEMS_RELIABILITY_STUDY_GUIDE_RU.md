@@ -23,6 +23,7 @@
 - [16A. Сильная русскоязычная полка](#measure-16a)
 - [17. Практические проекты](#measure-17)
 - [18. Критерии завершения](#measure-18)
+- [Углублённая университетская и исследовательская литература](#measure-deep)
 - [Сводный список источников](#measure-sources)
 
 > [Единая программа](INTEGRATED_SCIENCE_CURRICULUM_RU.md) · [Карта покрытия](SCIENCE_COVERAGE_MAP_RU.md) · [Источники этого файла](#measure-sources)
@@ -1311,6 +1312,38 @@ mesh/timestep study, experimental comparison, uncertainty, hazards и acceptance
 ---
 
 <!-- SOURCES:START -->
+<a id="measure-deep"></a>
+## Углублённая университетская и исследовательская литература
+
+Вводный уровень нужен для терминологии; профессиональная подготовка требует метрологических стандартов, математической статистики, идентификации и анализа отказов.
+
+### Измерения и неопределённость
+- JCGM 100:2008, *Evaluation of Measurement Data — Guide to the Expression of Uncertainty in Measurement (GUM)*.
+- JCGM 101:2008, *Supplement 1 to the GUM — Monte Carlo Method*.
+- B. N. Taylor, C. E. Kuyatt, *NIST Technical Note 1297*.
+- D. C. Montgomery, *Design and Analysis of Experiments*.
+
+### Сигналы, идентификация и управление
+- A. V. Oppenheim, A. S. Willsky, S. H. Nawab, *Signals and Systems*.
+- S. M. Kay, *Fundamentals of Statistical Signal Processing*.
+- L. Ljung, *System Identification: Theory for the User*.
+- K. J. Åström, R. M. Murray, *Feedback Systems*.
+
+### Надёжность, диагностика и механика разрушения
+- E. E. Lewis, *Introduction to Reliability Engineering*.
+- M. Rausand, A. Høyland, *System Reliability Theory*.
+- P. D. T. O'Connor, A. Kleyner, *Practical Reliability Engineering*.
+- T. L. Anderson, *Fracture Mechanics: Fundamentals and Applications*.
+- J. Schijve, *Fatigue of Structures and Materials*.
+
+### Системная и вычислительная инженерия
+- INCOSE, *Systems Engineering Handbook*.
+- E. Balagurusamy, *Reliability Engineering*.
+- M. G. Xie et al., *Statistical Methods for Reliability Data*.
+- P. J. Roache, *Verification and Validation in Computational Science and Engineering*.
+
+Критерий уровня: traceable calibration, uncertainty budget, designed experiment, residual analysis, failure mode model, reliability estimate with confidence bounds and independent validation.
+
 <a id="measure-sources"></a>
 ## Сводный список источников
 
@@ -1414,36 +1447,25 @@ mesh/timestep study, experimental comparison, uncertainty, hazards и acceptance
 - FAA Human Factors: https://www.faa.gov/about/initiatives/maintenance_hf
 - NIOSH aviation safety: https://www.cdc.gov/niosh/aviation/
 - NIOSH aircrew noise: https://www.cdc.gov/niosh/aviation/prevention/aircrew-noise.html
-<!-- SOURCES:END -->
 
-## Углублённая университетская и исследовательская литература
+### Углублённая библиография
 
-Вводный уровень нужен для терминологии; профессиональная подготовка требует метрологических стандартов, математической статистики, идентификации и анализа отказов.
-
-### Измерения и неопределённость
 - JCGM 100:2008, *Evaluation of Measurement Data — Guide to the Expression of Uncertainty in Measurement (GUM)*.
 - JCGM 101:2008, *Supplement 1 to the GUM — Monte Carlo Method*.
 - B. N. Taylor, C. E. Kuyatt, *NIST Technical Note 1297*.
 - D. C. Montgomery, *Design and Analysis of Experiments*.
-
-### Сигналы, идентификация и управление
 - A. V. Oppenheim, A. S. Willsky, S. H. Nawab, *Signals and Systems*.
 - S. M. Kay, *Fundamentals of Statistical Signal Processing*.
 - L. Ljung, *System Identification: Theory for the User*.
 - K. J. Åström, R. M. Murray, *Feedback Systems*.
-
-### Надёжность, диагностика и механика разрушения
 - E. E. Lewis, *Introduction to Reliability Engineering*.
 - M. Rausand, A. Høyland, *System Reliability Theory*.
 - P. D. T. O'Connor, A. Kleyner, *Practical Reliability Engineering*.
 - T. L. Anderson, *Fracture Mechanics: Fundamentals and Applications*.
 - J. Schijve, *Fatigue of Structures and Materials*.
-
-### Системная и вычислительная инженерия
 - INCOSE, *Systems Engineering Handbook*.
 - E. Balagurusamy, *Reliability Engineering*.
 - M. G. Xie et al., *Statistical Methods for Reliability Data*.
 - P. J. Roache, *Verification and Validation in Computational Science and Engineering*.
 
-Критерий уровня: traceable calibration, uncertainty budget, designed experiment, residual analysis, failure mode model, reliability estimate with confidence bounds and independent validation.
-
+<!-- SOURCES:END -->
