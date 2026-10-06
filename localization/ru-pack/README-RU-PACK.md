@@ -1,3 +1,181 @@
+# Aeronautics Plus RU Pack v0.26-test
+
+## Create addons exact-JAR pass and previous batches
+
+The exact Create addon batch is now fully covered: **1,755/1,755** effective language keys across Create Connected, Create Optical, Create Ratatouille, Create Big Cannons and Create Diesel Generators, with zero missing keys and zero placeholder mismatches. This includes the animation-adjacent captions, GUI labels, configuration text and tooltips found in these JARs.
+
+The AE2 ecosystem batch, Chisels & Bits, Power Grid, Ok Zoomer, Xaero, PneumaticCraft, LDLib2, Immersive Engineering and Mekanism exact-JAR passes remain complete.
+
+## AE2 ecosystem exact-JAR pass and previous batches
+
+The exact AE2 ecosystem batch is now fully covered: **2,311/2,311** effective language keys across AE2, ExtendedAE, AE2WTLib, AE2WTLib API and AE Additions, with zero missing keys and zero placeholder mismatches. This closes the remaining ordinary GUI/configuration labels found in the downloaded batch; GuideME resources were already integrated separately.
+
+Chisels & Bits, Power Grid, Ok Zoomer, Xaero, PneumaticCraft, LDLib2, Immersive Engineering and Mekanism exact-JAR passes remain complete.
+
+## Chisels & Bits, Power Grid, Ok Zoomer and previous exact-JAR passes
+
+The exact current JAR batch is now fully covered: **1,525/1,525** effective language keys across Chisels & Bits, Power Grid and Ok Zoomer, with zero missing keys and zero placeholder mismatches. This closes 250 Chisels & Bits keys, 164 Power Grid keys and 159 Ok Zoomer keys. Technical IDs and official mod names remain unchanged.
+
+Xaero, PneumaticCraft, LDLib2, Immersive Engineering and Mekanism exact-JAR passes remain complete.
+
+## Xaero maps, PneumaticCraft and previous exact-JAR passes
+
+The exact current Xaero/PneumaticCraft JAR batch is now fully covered: **3,363/3,363** effective language keys across `xaeroworldmap`, `xaerominimap`, `xaerolib`, `xaerobetterpvp` and `pneumaticcraft`, with zero missing keys and zero placeholder mismatches. This closes 277 PneumaticCraft keys and 436 Xaero-related keys in the audited batch. GUI terminology, map controls, tooltips and configuration labels were translated with the technical glossary; IDs and official mod names remain unchanged.
+
+LDLib2, Immersive Engineering and Mekanism exact-JAR passes remain complete.
+
+## LDLib2 and previous exact-JAR passes
+
+The exact `ldlib2-neoforge-1.21.1-2.2.41-all.jar` is now fully covered: **703/703** effective language keys, zero missing keys and zero placeholder mismatches. The 696 missing editor/configuration strings were translated with the machine draft plus a dedicated GUI terminology glossary; technical IDs remain unchanged and the result is marked as a test draft for editorial review.
+
+Immersive Engineering and Mekanism exact-JAR passes remain complete.
+
+## Immersive Engineering and Mekanism exact-JAR passes
+
+The exact `ImmersiveEngineering-1.21.1-12.4.2-194.jar` is now fully covered: **1,952/1,952** effective language keys, zero missing keys, zero placeholder mismatches and zero catalogue conflicts. This includes the GUI, tooltips, machines, tools, manual-related labels and integrations. The draft uses the exact translation memory plus the available Russian translation source and a conservative technical glossary; official mod names and IDs remain unchanged, so it still needs editorial review before being called final.
+
+Mekanism, Mekanism Generators and Mekanism Tools remain at **4,403/4,403** effective keys.
+
+## Mekanism configuration pass and exact non-standard resources
+
+The exact Drive JARs `Mekanism`, `MekanismGenerators` and `MekanismTools` 10.7.19.85 were audited separately. Their **4,403/4,403** effective language keys now have Russian values, including the remaining gear, general, world-generation, tier and storage configuration labels. Placeholders remain valid and the exact three-JAR audit reports zero missing keys and zero placeholder mismatches.
+
+The configuration batch combines the official current Mekanism Russian catalogue with a conservative Russian technical glossary for the configuration-only strings that are not present in the upstream catalogue. Technical identifiers, Forge energy names and official mod names are preserved.
+
+## Exact active-set recheck, Ponder and non-standard resources
+
+This build integrates the offline translation pass for **560 non-standard resources** from the exact active JAR set: AE2/ExtendedAE/AE2WTLib GuideME, Immersive Engineering manual, PneumaticCraft Patchouli, Ad Astra, Productive Bees, Alex's Caves mini-game text, AE2 Additions, Ender IO, Citadel, Ksyxis and TIS-3D documentation. Structured JSON, GuideME front matter, resource IDs, links, code fences and placeholders were preserved and all 364 JSON resources parse successfully.
+
+The machine-assisted prose is a first draft and should receive editorial review before being called final. Official mod names remain unchanged.
+
+## Exact active-set recheck and Create: Deep Seas 3.3.0
+
+The current Drive `mods` folder was rechecked as the source of truth: **205 active JARs**. This pack does not modify any installed JAR, including PMWeather.
+
+This maintenance build adds and verifies:
+
+- all **40** previously missing Create: Deep Seas 3.3.0 Ponder scene strings;
+- the missing `key.categories.ponder` catalogue entry, while keeping the official name `Ponder` unchanged;
+- the current submarine tutorials for arresting hooks, ballast vents, decompression chambers, the shaft-driven electrolyzer, onboard computer and sonar;
+- the one TFC hydration overlay with its two `%s` placeholders preserved;
+- a valid Russian overlay for the malformed upstream Locometal Armor development catalogue.
+
+The exact Ponder audit now reports **0 missing**, **0 placeholder mismatches** and **0 catalogue conflicts** across 3,313 add-on Ponder keys. The sole remaining audit error is the malformed upstream English `locometal_armor` catalogue; the RU overlay itself is valid and the original JAR remains untouched.
+
+The full exact-set and non-lang audit scope is documented in `docs/localization-audit/FULL_EXACT_MODSET_2026-10-05.md`. The integrated 560-resource draft closes the largest non-lang queue; remaining hard-coded Java strings and any residual non-standard files stay in the review audit until verified against the exact runtime.
+
+## Mekanism 10.7.19.85 — первая партия подробных настроек
+
+После полного закрытия Mekanism: Generators и Mekanism: Tools в v0.16-test
+переведена первая отдельная партия подробных параметров базового Mekanism:
+
+- **73/73** оставшихся клиентских параметра: положения окон, частицы, QIO,
+  отрисовка, звуки и непрозрачные передатчики;
+- **10/10** общих клиент-серверных параметров: единицы энергии и температуры,
+  радиационные таймеры, праздники и копирование данных блока;
+- **3/3** параметра запуска для экипировки;
+- **45/45** параметров интеграции ProjectE: обработчик содержимого и 14 типов
+  сопоставления рецептов для вычисления EMC.
+
+Всего в этой версии добавлен перевод **131** конфигурационной строки. Полностью
+закрыты группы `client`, `common`, `startup` и `projecte`. Итоговое покрытие
+базового Mekanism выросло до **2 232/3 239**. Оставшиеся **1 007** строк относятся
+только к шести серверным/игровым группам: `world`, `gear`, `tier`, `general`,
+`usage` и `storage`.
+
+Суммарно три модуля Mekanism теперь покрыты на **3 396/4 403** ключа;
+несовпадений placeholders — **0**. В исходном дереве v0.17-test находится
+**36 775** языковых значений в **89** пространствах имён плюс 21 исправленный
+файл TFC Field Guide.
+
+Подробный воспроизводимый отчёт:
+`docs/localization-audit/MEKANISM_10_7_19_85.md`.
+
+---
+
+# Aeronautics Plus RU Pack v0.16-test
+
+## Mekanism 10.7.19.85
+
+Перевод сверён с точными установленными JAR `Mekanism`, `Mekanism: Generators`
+и `Mekanism: Tools` версии 10.7.19.85. Все три JAR полностью проверены как ZIP.
+Подходящие обновления синхронизированы из официальной ветки `l10n_1.21.x`,
+commit `c7f6a2b2af787bbfc65ab8f680dd3f67044d1978`, но сомнительные значения не
+переносились вслепую.
+
+В v0.16-test:
+
+- добавлено покрытие **1 271** ранее отсутствовавшего ключа;
+- редакторски заменены **108** существовавших значений;
+- переведены все 156 отсутствовавших названий item tags;
+- закрыты игровые сообщения, описания машин, QIO, телепортер, словарь,
+  мультиблоки и химические операции;
+- полностью переведены 128 отсутствовавших подробных параметров
+  `Mekanism: Generators`;
+- полностью переведены 419 отсутствовавших подробных параметров материалов
+  `Mekanism: Tools`;
+- исправлены ошибки Crowdin о топоре/мотыге в параметрах мультиинструмента,
+  посторонние мемные и сленговые фразы, терминология QIO/Jade и научные термины
+  `хольраум`/`DT-топливо`;
+- официальные названия всех трёх модулей оставлены без перевода;
+- несовпадений `%1$s`, printf-параметров и `{...}` — **0**.
+
+Итоговое effective-покрытие точных JAR:
+
+- Mekanism: **2 101/3 239**; оставшиеся 1 138 строк — только подробные параметры
+  `configuration.mekanism.*`, которые будут переводиться следующими партиями;
+- Mekanism: Generators: **364/364**;
+- Mekanism: Tools: **800/800**.
+
+В исходном дереве v0.16-test находится **36 644** языковых значения в **89**
+пространствах имён плюс 21 исправленный файл TFC Field Guide.
+
+Подробный воспроизводимый отчёт:
+`docs/localization-audit/MEKANISM_10_7_19_85.md`.
+
+---
+
+# Aeronautics Plus RU Pack v0.15-test
+
+## TerraFirmaCraft 4.2.11 и сообщения запуска
+
+Проверен точный `TerraFirmaCraft-NeoForge-1.21.1-4.2.11.jar` из актуальной
+Drive-папки `mods` (SHA-256
+`1565efa96f090bec8e8c12f54ae222d3f9321ef7fad2ea3af752fb9198e803df`). JAR
+исправен как ZIP. Встроенный русский каталог покрывает все **10 047/10 047**
+игровых ключей, однако первичная вычитка обнаружила видимые английские остатки.
+
+В v0.15-test добавлено **112** точечных исправлений `tfc`:
+
+- вкладки творческого режима, подсказки, Jade, JEI и EMI;
+- верблюды, броненосцы, яйца призыва и серверные параметры животных;
+- обсидиановые инструменты и рабочие части;
+- ящики и листья всех 20 пород древесины;
+- корзина, цветочный черенок, ламповое топливо и соседние редакторские ошибки.
+
+После наложения pack осталось 18 совпадающих значений `EN=RU`; это только
+TerraFirmaCraft, авторы, числовые форматы, обозначения температур и служебные
+шаблоны. Несовпадений placeholders — **0**.
+
+В русской Field Guide присутствуют все **88/88** содержательных файлов. В 21 из
+них переведены **60** английских названий и абзацев, а также исправлены **15**
+русских опечаток и редакторских ошибок. Сохранены все динамические ссылки,
+клавиши и параметры Patchouli. Английские 13 файлов `templates/*` являются
+общими техническими шаблонами, а не отсутствующими русскими статьями.
+
+По присланному скриншоту дополнительно переведены предупреждение о сломанных
+тегах рецептов Mekanism и сообщение загрузки Hbm's Nuclear Tech Mod.
+Предупреждение PMWeather об Iris уже было переведено. Сообщения Ender IO об
+alpha-версии и Distant Horizons о Chunky/G1 GC зашиты в Java-код и не могут быть
+заменены resource pack.
+
+В исходном дереве v0.15-test находится **35 267** языковых значений в **87**
+пространствах имён плюс 21 исправленный файл Field Guide.
+
+Подробный воспроизводимый отчёт: `docs/localization-audit/TFC_4_2_11.md`.
+
+---
+
 # Aeronautics Plus RU Pack v0.14-test
 
 ## Повторный аудит всех Create-аддонов

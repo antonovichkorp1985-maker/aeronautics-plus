@@ -1,0 +1,40 @@
+{
+  "name": "Обсуждение Entity Attack Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/attack_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(l:tools/drone)Дрон/$ атакует любое живое существо в этом районе.$(p)Помните, что любой$(l:programming/area)Виджеты Area/$, подключенные к этому виджету, должны иметь тип области$(thing)Коробка/$; это единственная поддерживаемая форма. Тем не менее, можно создавать различные формы, используя несколько виджетов Area в белом списке (справа) или черном списке (слева)."
+    },
+    {
+      "type": "text",
+      "title": "Фильтрация объектов",
+      "text": "Вы можете указать, какие существа могут быть атакованы с помощью$(l:programming/text)Текст/$ виджеты как$(l:base_concepts/entity_filter)Фильтр организации/$. Например, если вы хотите$(thing)Drone/$ для атаки на всех игроков$(thing)Текст/$ виджет для$(italic)Право / $ / Право$(thing)Entity Attack/$ виджет$(#600)@player/$.$(p)Если вы не хотите, чтобы на вас напали, подключите$(thing)Текст/$ виджет на$(italic)Левый / $, содержащий имя игрока."
+    },
+    {
+      "type": "spotlight",
+      "item": "minecraft:diamond_sword",
+      "title": "Мели атакует",
+      "text": "$(l:tools/drone)Дроны будут оснащать и использовать любое оружие ближнего боя в своем инвентаре для атаки. Если$(thing)Дрон/$ имеет в своем арсенале несколько видов оружия, он будет оснащать самое разрушительное.$(p)Вы можете использовать$(l:programming/inventory_import)Виджет Inventory Import/$ для обеспечения дрона оружием, что настоятельно рекомендуется - его безоружная атака ближнего боя слаба."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:minigun_upgrade",
+      "text": "Включить$(l:base_concepts/upgrades#minigun)Мини-пушка Upgrade/$ в комплекте$(l:tools/drone)Дрон/$, чтобы получить$(l:tools/minigun)Минигун/$. Когда предоставляется$(l:tools/minigun_ammo)Оружейный боеприпас / $ (используя$(l:programming/inventory_import)Виджет инвентаризации импорт/$,$(thing)Дрон/$ будет использовать этот мини-пулемет для атак с диапазоном.$(p)Диапазон по умолчанию составляет 16 блоков, которые можно обновить, вставив до 16 блоков.$(l:base_concepts/upgrades#range_upgrade)Обновление диапазона / $, для максимальной дальности 32 блока."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:micromissiles",
+      "text": "Дроны умеют стрелять$(l:tools/micromissiles)Микроракеты/$: если$(thing)Дрон/$ держит$(item)Когда этот виджет будет выполнен, он будет стрелять ракетой по своей текущей цели. Любой подключенный$(l:base_concepts/entity_filter)Фильтр сущности/$ копируется дроном в собственный фильтр сущности Микроракеты."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/attack_piece.png"
+      ],
+      "text": "$(italic)Я вернусь/$"
+    }
+  ]
+}

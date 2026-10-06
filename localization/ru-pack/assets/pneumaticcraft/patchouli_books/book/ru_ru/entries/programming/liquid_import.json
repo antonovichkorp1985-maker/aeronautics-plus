@@ -1,0 +1,23 @@
+{
+  "name": "Виджет импорта жидкости",
+  "icon": "pneumaticcraft:textures/progwidgets/liquid_import_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(thing)Fluid Import Widget/$ будет использоваться$(l:tools/drone)Дрон/$ перемещается в ближайший танк в пределах указанного$(l:programming/area)площадь/$, извлекать жидкость из этого резервуара и помещать ее в свой собственный резервуар.$(p)Он также может всасывать жидкости из внутримировых жидких блоков, делая$(item)Дрон/$ действует как переносной насос."
+    },
+    {
+      "type": "text",
+      "text": "$(thing)Нажмите правой кнопкой мыши / $ виджет для открытия графического интерфейса установки, где вы можете указать, с какой стороны (с) дрон должен извлекать жидкости и максимальное количество импортированной жидкости за операцию (в мБ).$(p)Ты можешь$(ttcolor)$(t:Connect on the right to whitelist, on the left to blacklist)Подключение/$$(l:programming/liquid_filter)Fluid Filter/$ для ограничения того, что может быть импортировано дроном.$(p)Этот виджет выполняется, когда$(item)Аккумулятор дрона / $ заполнен или когда в баках больше нет (применимых) жидкостей."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/liquid_import_piece.png"
+      ],
+      "text": "$(italic)Slurp/$"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "Spawner Core",
+  "icon": "pneumaticcraft:spawner_core",
+  "category": "pneumaticcraft:spawning",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)Spawner Cores/$ - это сердце ванили.$(item)Spawners / $, которые содержат сущность толпы, которая будет нерест.$(p)Они могут быть принудительно извлечены из невесты с помощью$(l:spawning/spawner_extractor)Spawner Extractor / $, но также можно сделать их и использовать их в более мощном виде.$(l:spawning/pressurized_spawner)Под давлением Spawner/$."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:spawner_core",
+      "text": "Существует два способа получения Spawner Core:$(li)Принудительное извлечение одного из невесты с помощью$(l:spawning/spawner_extractor)Spawner Extractor/$ (Будьте готовы к бою!) Такие ядра на 100% заполнены сущностью толпы Спаунера.$(li)Создайте свой собственный Spawner Core и используйте$(l:spawning/vacuum_trap)Вакуумная ловушка / $, чтобы захватить сущность толпы, чтобы заполнить ее."
+    },
+    {
+      "type": "text",
+      "text": "Обратите внимание, что это возможно для ядра Spawner, заполненного$(item)Вакуумная ловушка/$ содержит сущность нескольких различных толп, которые могут быть или не быть желательными.$(p)Вы можете выпустить случайную толпу из ядра$(thing)Щелчок правой кнопкой мыши / $ это, но это может быть немного хитом и пропустить дело. Производство ядра со 100% чистотой через$(thing)Вакуумная ловушка / $ не тривиальна и требует некоторой осторожности."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремесло для Spawner Ядро Shell. Используется в создании реального$(item)Spawner Core/$.",
+      "recipe": "pneumaticcraft:spawner_core_shell"
+    },
+    {
+      "type": "pneumaticcraft:thermo_plant",
+      "recipe": "pneumaticcraft:thermo_plant/spawner_core"
+    }
+  ]
+}

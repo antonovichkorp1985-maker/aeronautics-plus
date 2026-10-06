@@ -1,0 +1,16 @@
+{
+  "name": "Би Шлем",
+  "icon": "productivebees:bee_nest_diamond_helmet",
+  "category": "productivebees:items",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "productivebees:bee_nest_diamond_helmet",
+      "text": "Нажмите на пчелиное гнездо на вашем красивом алмазном шлеме, чтобы оно стало липким. Пчелы в гнезде, несомненно, привыкнут к вам и могут даже защитить вас, когда вы находитесь в опасности. Ношение этой одежды также покажет ваши добрые намерения другим пчелам и удержит их от нападения на вас."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "productivebees:bee_nest_helmet"
+    }
+  ]
+}

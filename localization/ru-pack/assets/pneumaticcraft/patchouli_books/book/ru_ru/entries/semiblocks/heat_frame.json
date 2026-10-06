@@ -1,0 +1,25 @@
+{
+  "name": "тепловой каркас",
+  "icon": "pneumaticcraft:heat_frame",
+  "category": "pneumaticcraft:semiblocks",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Этот пункт можно разместить на любом$(thing)инвентарь/$. При нагреве соседним$(l:base_concepts/heat)Тепловой источник / $ он будет пытаться выплавить любой предмет в инвентаре (или заморозить его при охлаждении). Он будет успешным только в том случае, если в инвентаре имеется место для полученного элемента. Чем больше тепла применяется, тем быстрее будет процесс плавки, максимум до 1 пункта в секунду. Точно так же, чем больше он охлаждается, тем быстрее он замораживает объекты."
+    },
+    {
+      "type": "link",
+      "flag": "mod:crafttweaker",
+      "title": "CraftTweaker",
+      "text": "The$(thing)Тепловой каркас/$ имеет$(l:https://minecraft.curseforge.com/projects/crafttweaker)Поддержка CraftTweaker/$ для охлаждения (плавление просто использует обычную технику)$(item)Рецепты: рецепты могут быть добавлены и удалены. Перейдите по ссылке ниже для получения дополнительной информации.",
+      "url": "https://crafttweaker.readthedocs.io/en/latest/#Mods/PneumaticCraft_Repressurized/Heat_Frame_Cooling/",
+      "link_text": "CraftTweaker Docs"
+    },
+    {
+      "type": "crafting",
+      "text": "Создание тепловой рамы",
+      "recipe": "pneumaticcraft:heat_frame"
+    }
+  ]
+}

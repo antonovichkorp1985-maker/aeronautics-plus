@@ -1,0 +1,17 @@
+{
+  "name": "Компрессор Flux",
+  "icon": "pneumaticcraft:flux_compressor",
+  "category": "pneumaticcraft:compressors",
+  "advancement": "pneumaticcraft:advanced_pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Flux Compressor/$ конвертация$(thing)Кузнечная энергия/$ (совместимо с$(thing)Redstone Flux/$ и энергетические системы различных других модов$(l:base_concepts/pressure)Сжатый воздух/$. Он потребляет основание 40 FE / тик, но может быть обновлен с помощью$(l:base_concepts/upgrades#speed)Ускорение/$.$(p)Компрессор Flux имеет емкость 100 000 FE и принимает FE в два раза быстрее, чем он его использует."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремесло$(item)Компрессор Flux/$$(p)Этот генератор должен быть$(l:base_concepts/heat)Охлажденный/$, так как его эффективность будет падать по мере повышения температуры, вплоть до точки, где воздух не генерируется вообще.",
+      "recipe": "pneumaticcraft:flux_compressor"
+    }
+  ]
+}

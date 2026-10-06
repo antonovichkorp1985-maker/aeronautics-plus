@@ -1,0 +1,17 @@
+{
+  "name": "смазка",
+  "icon": "pneumaticcraft:lubricant_bucket",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:tp_plant",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)Смазка / $ требуется для изготовления$(l:base_concepts/upgrades#speed)Ускорение/$.$(p)Он был создан в$(l:manufacturing/thermopneumatic_processing_plant)Термопневматическая перерабатывающая установка/$$(l:manufacturing/refinery)Дизель/$ (или$(l:renewables/biodiesel)Биодизель/$ и$(item)Редстоун/$."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:lubricant_bucket",
+      "text": "$(italic)Скользкие вещи / $"
+    }
+  ]
+}

@@ -1,5 +1,14 @@
 {
   "ae2.rei_jei_integration.flowing_fluid_name": "%s (текучая)",
   "chat.ae2.ChannelModeCurrent": "Текущий режим каналов: %s",
-  "theoneprobe.ae2.channels": "%1$d каналов"
+  "theoneprobe.ae2.channels": "%1$d каналов",
+  "achievement.ae2.Root": "Прикладная энергетика",
+  "dimension.ae2.spatial_storage": "Пространственное хранилище",
+  "gui.ae2.CompatibleUpgrade": "%s (%s)",
+  "gui.ae2.ETAFormat": "HH:mm:ss",
+  "gui.ae2.OCTunnel": "OpenComputer",
+  "gui.ae2.Resume": "Резюме",
+  "gui.ae2.Suspend": "приостанавливать",
+  "gui.ae2.ToastCraftingJobFinishedText": "%d %s",
+  "theoneprobe.ae2.stored_energy": "%1$d / %2$d"
 }

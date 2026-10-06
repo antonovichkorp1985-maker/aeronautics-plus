@@ -1,0 +1,23 @@
+{
+  "name": "Скачать игру Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/item_drop_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это сделает его$(l:tools/drone)Дрон / $ выпадает из инвентаря в подключенном$(l:programming/area)Площадь/$. By$(thing)Правый клик / $$(thing)В виджете Drop Item/$ вы можете указать, сколько предметов на позицию в этом районе может быть выброшено. Вы также можете переключаться между$(thing)Рэндом/$ и$(thing)Режимы Straight / $, что означает, что он отбрасывает элемент с небольшим случайным смещением (например, ваниль).$(item)Dropper)/$, или уронить товар прямо вниз, соответственно."
+    },
+    {
+      "type": "text",
+      "text": "Вы также можете подключить$(l:programming/item_filter)Фильтр товара/$. С фильтром будут сбрасываться только предметы, разрешенные фильтром.$(p)Виджет выполняется, когда ни один из применимых элементов не остается в$(item)Дроны/$ инвентарь или когда$(item)Дрон/$ посетил все позиции в этом районе."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/item_drop_piece.png"
+      ],
+      "text": "$(italic)Скачать игру Widget/$"
+    }
+  ]
+}

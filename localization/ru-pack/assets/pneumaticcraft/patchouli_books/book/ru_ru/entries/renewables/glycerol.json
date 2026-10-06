@@ -1,0 +1,28 @@
+{
+  "name": "Глицерол",
+  "icon": "pneumaticcraft:glycerol",
+  "category": "pneumaticcraft:renewables",
+  "advancement": "pneumaticcraft:ethanol",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)Глицерин/$ является побочным продуктом производства$(l:renewables/biodiesel)Биодизель/$, но сам по себе он оказывается довольно полезным веществом. Его использование подробно описано на следующих страницах."
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:bandage",
+      "text": "$(thing)Повязки могут быть использованы для быстрого заживления 3 сердца здоровья. Быстро не мгновенно; вам нужно будет щелкнуть правой кнопкой мыши и держать в течение 2 секунд, чтобы нанести повязку, и между использованием есть 8-секундное охлаждение."
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:speed_upgrade_from_glycerol",
+      "text": "удвоить результат использования$(thing)Сахар/$, что не нравится? Это сэкономит ваше драгоценное$(l:components/lubricant)Смазка/$."
+    },
+    {
+      "type": "spotlight",
+      "item": "minecraft:furnace",
+      "title": "Как топливо",
+      "text": "$(thing)Глицерин/$ также делает приличный топливный элемент, эквивалентный 4$(thing)Планки / $ или половина куска$(thing)Уголь/$."
+    }
+  ]
+}

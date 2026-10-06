@@ -1,0 +1,23 @@
+{
+  "name": "Виджет экспорта жидкости",
+  "icon": "pneumaticcraft:textures/progwidgets/liquid_export_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Противоположность$(l:programming/liquid_import)Импорт жидкости/$:$(l:tools/drone)Дрон/$ перейдет в ближайший танк в пределах указанного$(l:programming/area)Площадь/$, чтобы выбросить жидкость из собственного резервуара.$(p)Кроме того,$(item)Дрон/$ может поместить жидкость в мир: чтобы сделать это, проверьте$(thing)Поместите жидкость в World/$ опцию в виджет GUI. Берегись,$(item)Дроны могут легко заманить себя в ловушку, делая это!"
+    },
+    {
+      "type": "text",
+      "text": "Вы можете указать, на какую сторону (стороны) резервуара Дрон должен выводить свои элементы в виджете GUI; вы также можете указать максимальное количество экспортируемой жидкости (в мБ).$(p)Ты можешь$(ttcolor)$(t:Connect on the right to whitelist, on the left to blacklist)Подключение/$$(l:programming/liquid_filter)Fluid Filter/$ для ограничения того, что может быть экспортировано дроном.$(p)Этот виджет выполняется, когда$(item)Аккумулятор дрона / $ пуст (применимых жидкостей), или когда нет резервуара в области, которая принимает жидкость."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/liquid_export_piece.png"
+      ],
+      "text": "$(italic)Виджет экспорта жидкости/$"
+    }
+  ]
+}

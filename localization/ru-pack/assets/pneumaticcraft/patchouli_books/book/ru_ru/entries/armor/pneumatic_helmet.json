@@ -1,0 +1,73 @@
+{
+  "name": "Пневматический шлем",
+  "icon": "pneumaticcraft:pneumatic_helmet",
+  "category": "pneumaticcraft:armor",
+  "advancement": "pneumaticcraft:printed_circuit_board",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Пневматический шлем - один из четырех$(thing)Пневматическая броня/$ штук.$(p)Долгое время он был единственным доступным материалом."
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:pneumatic_helmet",
+      "text": "Создание пневматического шлем"
+    },
+    {
+      "type": "spotlight",
+      "anchor": "entity_tracker",
+      "item": "pneumaticcraft:entity_tracker_upgrade",
+      "text": "С одним$(l:base_concepts/upgrades#entity_tracker)Установка Entity Tracker/$ модернизируется, живые существа в пределах 16 блоков будут автоматически отслеживаться даже через стены. Когда сущность является агрессивной толпой, вы получите предупреждение, если она нацелится на вас. Это позволяет подготовиться к бою (или побегу!). Вы можете фильтровать в GUI объекты, которые следует отслеживать с помощью$(l:base_concepts/entity_filter)Фильтр организации/$."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:block_tracker_upgrade",
+      "text": "С ним$(l:base_concepts/upgrades#block_tracker)Устанавливается Block Tracker/$ upgrade, специальные блоки в пределах 30 блоков будут отслеживаться даже через стены. Отслеживаются следующие блоки:$(li)Любые кадастры (содержимое будет показано)$(li)Mob Spawners (будет показано время испаунов)$(li)Серебряная рыба блокирует$(li)Конечные фреймы портала$(li)ТНТ$(li)Трипвайр Хукс"
+    },
+    {
+      "type": "text",
+      "title": "Block Tracker (Конт.)",
+      "text": "Поскольку некоторые из этих блоков довольно распространены (запасы в доме игрока, блоки Silverfish в крепости), HUD автоматически перестанет отображать этикетку, если будет достигнуто определенное количество блоков определенного типа. Тем не менее, вы все еще можете получить информацию о отслеживаемом блоке, паря над ним своим перекрестным прицелом. Вы также можете указать, какие блоки вы хотите отслеживать, отключив их в графическом интерфейсе конфигурации."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:coordinate_tracker_upgrade",
+      "text": "The$(l:base_concepts/upgrades#coordinate_tracker)Обновление Coordinate Tracker/$ вычислит кратчайший путь к выбранному местоположению, используя для этого собственный поиск пути Minecraft.$(p)Это очень полезно, когда вы заблудились в пещере и хотите выбраться: откройте меню опций$(thing)$(k:pneumaticcraft.armor.options)/$ и выбрать$(bold)Навигация по поверхности/$."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:search_upgrade",
+      "text": "Знаете ли вы проблему поиска определенного предмета в вашей базе, который имеет много сундуков? Если это так, то$(l:base_concepts/upgrades#item_searcher)Обновление поиска/$ для вас. Вы можете искать элемент в графическом интерфейсе: либо просмотрите элемент, который вы ищете, с помощью панели прокрутки, либо введите имя элемента в поле поиска. Когда вы найдете предмет, поместите его в слот Target."
+    },
+    {
+      "type": "text",
+      "title": "Поисковый элемент (cont.)",
+      "text": "Теперь любой из выбранных предметов, лежащих на земле или в любом инвентаре в диапазоне 16 блоков, получит$(thing)Зеленое свечение/$. Размер свечения зависит от отношения предмета в месте к общему количеству найденных предметов.$(p)Обратите внимание, что вам также требуется$(l:base_concepts/upgrades#entity_tracker)Entity Tracker/$ (для наземных объектов)$(l:base_concepts/upgrades#block_tracker)Block Tracker / $ (для товаров в запасах) обновления в шлеме."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:dispenser_upgrade",
+      "text": "A $(l:base_concepts/upgrades#dispenser)Обновление диспенсера / $ при установке вместе с$(l:base_concepts/upgrades#entity_tracker)Entity Tracker Upgrade/$, позволяет отслеживать/отлаживать$(l:tools/drone)Дроны/$. Просто нажмите$(thing)$(k:pneumaticcraft.helmet.debugging.drone)$, если смотреть на$(item)Дрон/$. Анимация отслеживания теперь будет иметь красную границу. Теперь откройте окно выбора шлема, нажав$(thing)$(k:pneumaticcraft.armor.options)/$ и перейти к$(bold)Отладка дронов / $ панель."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:range_upgrade",
+      "text": "The$(l:base_concepts/upgrades#range)Обновление диапазона/$ увеличивает диапазон$(l:base_concepts/upgrades#entity_tracker)Entity Tracker / $ на 16 блоков за обновление$(l:base_concepts/upgrades#block_tracker)Block Tracker/$ на 5 блоков за обновление. Принимаются до 5 обновлений.$(p)Обратите внимание, что это обновление увеличивает использование воздуха в шлеме."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:night_vision_upgrade",
+      "text": "The$(l:base_concepts/upgrades#night_vision)Ночное видение Обновление / $ делает то, что он говорит: позволяет видеть в темноте, для очень незначительного$(l:base_concepts/pressure)Стоимость воздуха/$."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:scuba_upgrade",
+      "text": "The$(l:base_concepts/upgrades#scuba)Скуба Обновление / $ позволяет дышать под водой, используя воздух из запаса шлема, чтобы обеспечить вас воздухом. В качестве дополнительного бонуса, он обеспечивает маску для лица, которая позволяет гораздо более четкое подводное зрение; виды могут быть довольно впечатляющими в сочетании с внешним видом.$(l:base_concepts/upgrades#night_vision)Обновление ночного видения / $"
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:ender_visor_upgrade",
+      "text": "The$(l:base_concepts/upgrades#ender_visor)Ender Visor Upgrade/$ основан на продвинутых версиях$(thing)исследование тыквы / $ и обеспечивает переключаемые средства, чтобы избежать$(thing)Эндерман / $ aggro, смягчая визуальные трудности, обычно связанные с засовыванием головы в настоящую тыкву."
+    }
+  ]
+}

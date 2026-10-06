@@ -2960,3 +2960,37 @@ measurement и safety base — nuclear educational slice.
 - https://geant4.web.cern.ch/
 - https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=1"
 <!-- SOURCES:END -->
+
+## Углублённая университетская и исследовательская литература
+
+Популярные и обзорные книги использовать только как вход. Ядро подготовки должно опираться на строгие курсы, задачники, справочники и монографии.
+
+### Общая, физическая и органическая химия
+- P. W. Atkins, J. de Paula, *Physical Chemistry*.
+- I. N. Levine, *Physical Chemistry*.
+- J. E. McMurry, *Organic Chemistry* — базовый университетский курс с механизмами.
+- R. T. Morrison, R. N. Boyd, *Organic Chemistry*.
+- F. A. Cotton, G. Wilkinson et al., *Advanced Inorganic Chemistry*.
+
+### Кинетика, катализ и квантовая химия
+- I. N. Levine, *Quantum Chemistry*.
+- D. A. McQuarrie, J. D. Simon, *Physical Chemistry: A Molecular Approach*.
+- R. A. Masel, *Chemical Kinetics and Catalysis*.
+- J. M. Smith, H. C. Van Ness, M. M. Abbott, *Introduction to Chemical Engineering Thermodynamics*.
+- J. M. Thomas, W. J. Thomas, *Principles and Practice of Heterogeneous Catalysis*.
+
+### Аналитика, электрохимия и материалы
+- D. A. Skoog et al., *Principles of Instrumental Analysis*.
+- A. J. Bard, L. R. Faulkner, *Electrochemical Methods*.
+- C. M. A. Brett, A. M. O. Brett, *Electrochemistry: Principles, Methods, and Applications*.
+- W. D. Callister, D. G. Rethwisch, *Materials Science and Engineering*.
+- R. W. Cahn, P. Haasen, E. J. Kramer, *Materials Science and Technology*.
+
+### Химическая технология и безопасность
+- O. Levenspiel, *Chemical Reaction Engineering*.
+- J. M. Coulson, J. F. Richardson, *Chemical Engineering*, multi-volume set.
+- R. K. Sinnott, G. Towler, *Chemical Engineering Design*.
+- R. H. Perry, D. W. Green, *Perry's Chemical Engineers' Handbook*.
+
+Критерий уровня: баланс массы и энергии, вывод кинетической модели, идентификация параметров, фазовое равновесие, uncertainty budget, safety case и воспроизводимый расчёт.
+

@@ -1,0 +1,24 @@
+{
+  "name": "Изготовление стали",
+  "icon": "ad_astra:etrionic_blast_furnace",
+  "sortnum": 2,
+  "category": "ad_astra:the_first_launch",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "title": "Этрионическая взрывная печь",
+      "item": "ad_astra:etrionic_blast_furnace",
+      "text": "Etrionic Blast Furnace является модернизированной версией доменной печи. Он имеет два режима: взрыв и легирование. Взрыв работает как доменная печь, но с 4 слотами для эффективности 4x. Легирование объединяет материалы для изготовления сплава."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ad_astra:etrionic_blast_furnace"
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "стальной",
+      "item": "ad_astra:steel_ingot",
+      "text": "Сталь производится в этрионной доменной печи путем объединения железа и угля. Это составит 1 стальной слиток на железо и уголь. Сталь необходима для большинства рецептов и является основным материалом вашей первой ракеты."
+    }
+  ]
+}

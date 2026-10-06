@@ -1,0 +1,17 @@
+{
+  "name": "Усиленная грудь",
+  "icon": "pneumaticcraft:reinforced_chest",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Усиленная грудная клетка / $ - это 36-слотовая грудная клетка, которая имеет сопротивление взрыва на уровне обсидиана и сохраняет свой инвентарь при поломке."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремесло усиленное Грудь",
+      "recipe": "pneumaticcraft:reinforced_chest"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "Сетевые компоненты",
+  "icon": "pneumaticcraft:network_api",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:plastic",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эти компоненты используются в основном для создания$(l:programming/security_station)Станция безопасности / $, но некоторые из них также используются в качестве крафтовых компонентов.$(l:components/network_components#network_storage)Сетевое хранение/$ и$(l:components/network_components#network_api)Сетевой API/$ можно использовать для хранения$(l:tools/drone)Программы Drone/$."
+    },
+    {
+      "type": "crafting",
+      "anchor": "diagnostic",
+      "text": "The$(item)Diagnostic Subroutine/$ является обязательным компонентом$(l:machines/security_station)Станция безопасности.$(br)несет ответственность за отслеживание$(l:machines/security_station#hacking)Попытки взлома / возврат к хакеру. Если бы все$(item)Диагностические подпрограммы / $ взламываются$(item)Станция безопасности/$ была взломана.",
+      "recipe": "pneumaticcraft:diagnostic_subroutine"
+    },
+    {
+      "type": "crafting",
+      "anchor": "io_port",
+      "text": "The$(item)Сеть IO Порт/$ является обязательным компонентом$(l:machines/security_station)Станция безопасности.$(br)Это точка входа для попыток взлома на вашем компьютере.$(item)Станция безопасности.",
+      "recipe": "pneumaticcraft:network_io_port"
+    },
+    {
+      "type": "crafting",
+      "anchor": "registry",
+      "text": "The$(item)Сетевой реестр/$ является обязательным компонентом в системе$(l:machines/security_station)Станция безопасности.$(br)Это мишень для хакеров.$(italic)все/$ Записи взломаны, ваши$(item)Станция безопасности/$ была взломана.",
+      "recipe": "pneumaticcraft:network_registry"
+    },
+    {
+      "type": "crafting",
+      "anchor": "node",
+      "text": "The$(item)Сетевой узел/$ является общим компонентом$(l:machines/security_station)Станция безопасности, используемая для формирования путей между требуемыми компонентами.",
+      "recipe": "pneumaticcraft:network_node"
+    },
+    {
+      "type": "crafting",
+      "anchor": "network_api",
+      "text": "The$(item)Сетевой API/$ можно использовать для хранения$(l:tools/drone)Программы Drone/$. Это требует$(l:programming/puzzle_pieces)Puzzle Pieces/$ для программирования, и может использоваться для запуска программ$(l:programming/programmable_controller)Программируемый контроллер/$ или$(l:programming/external_program)Внешний виджет / $.",
+      "recipe": "pneumaticcraft:network_api"
+    },
+    {
+      "type": "crafting",
+      "anchor": "network_storage",
+      "text": "The$(item)Сетевое хранилище данных / $ может быть использовано для хранения$(l:tools/drone)Программы Drone/$. Он делает$(italic)Не требуется / $$(l:programming/puzzle_pieces)Puzzle Pieces/$ для программ, поэтому не может использоваться для запуска программ; однако это полезно, если вы хотите хранить библиотеку программ или торговать программами с другими игроками.",
+      "recipe": "pneumaticcraft:network_data_storage"
+    }
+  ]
+}

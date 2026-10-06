@@ -1,0 +1,23 @@
+{
+  "name": "Прыжок Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/jump_piece.png",
+  "category": "pneumaticcraft:widget_flow",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Этот виджет ориентирован исключительно на$(l:programming/flow_control)Поток программы/$. Когда программа попадает в$(thing)Jump/$ виджет, он будет смотреть на подключенный$(l:programming/text)Текст/$ виджет, и попытаться перейти к$(l:programming/label)Виджет Label/$ с соответствующим именем. Если по какой-либо причине это не удастся, казнь вернется к$(l:programming/start)Старт/$ виджет. (Эта обратная реакция никогда не должна происходить нормально)."
+    },
+    {
+      "type": "text",
+      "text": "A $(thing)Виджет Jump/$ можно использовать для объединения нескольких$(italic)ветви/$ в программном потоке (путем использования двух или более прыжков, которые все прыгают к одному и тому же)$(l:programming/label)Ярлык/$, или просто организовать свою программу, разделив разделы на собственные «суброутины». Полезный совет - проверить$(bold)Show Flow/$ checkbox в левом нижнем углу$(l:programming/programmer)Программист / $ GUI; он покажет линии, связывающие$(thing)Jump/Condition/Label/$ виджеты с таким же названием."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/jump_piece.png"
+      ],
+      "text": "$(italic)Также может быть /$"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Условие: Виджет давления",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_pressure_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: Виджет давления/$ позволяет (удалённо) проверить,$(l:base_concepts/pressure)давление/$ пневматического блока(ов) в соединенном$(l:programming/area)Виджет Area/$ соответствует настроенному порогу давления."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_pressure_piece.png"
+      ],
+      "text": "$(italic)Состояние: Виджет давления/$"
+    }
+  ]
+}

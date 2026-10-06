@@ -1,0 +1,19 @@
+{
+  "name": "Состояние дрона: Виджет давления",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_drone_pressure_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Состояние дрона: Виджет Pressure/$ позволяет проверить$(l:base_concepts/pressure)Давление/$ от этого$(l:tools/drone)Дрон/$."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_drone_pressure_piece.png"
+      ],
+      "text": "$(italic)Состояние дрона: Виджет давления/$"
+    }
+  ]
+}

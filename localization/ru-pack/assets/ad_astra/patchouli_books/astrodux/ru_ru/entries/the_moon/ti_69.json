@@ -1,0 +1,19 @@
+{
+  "name": "Ти-69",
+  "icon": "ad_astra:ti_69",
+  "sortnum": 4,
+  "category": "ad_astra:the_moon",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "title": "Ти-69",
+      "item": "ad_astra:ti_69",
+      "text": "Ti-69 - это мобильное устройство, которое отображает местный кислород, температуру и гравитацию. Используйте его, чтобы проверить, безопасна ли зона."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Рецепт Ti-69",
+      "recipe": "ad_astra:ti_69"
+    }
+  ]
+}

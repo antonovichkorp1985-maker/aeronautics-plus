@@ -1,0 +1,47 @@
+{
+  "name": "Печатные кольцевые доски",
+  "icon": "pneumaticcraft:printed_circuit_board",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:plastic",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)Печатные платы / $ (PCB) являются важными компонентами, используемыми во многих машинах и инструментах более высокого уровня. Сделать$(item)Для PCB/$ требуется несколько шагов.$(p)Во-первых, сделать$(item)Пустая ПХБ/$ в$(l:manufacturing/pressure_chamber)Нажимная камера/$, как показано напротив. Есть два способа, чтобы продолжить (см. выше)."
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "recipe": "pneumaticcraft:pressure_chamber/empty_pcb"
+    },
+    {
+      "type": "text",
+      "title": "Способ #1",
+      "text": "Этот метод является единственным доступным изначально и несколько медленным без дополнительной автоматизации и отопительной инфраструктуры.$(item)ПХБ/$ химически, помещая его в$(l:manufacturing/uv_light_box)UV Light Box / $, а затем выставить$(item)Пустой PCB/$ в одном$(l:manufacturing/etching_tank)Etching Tank/$, чтобы превратить его в$(item)Несобранный ПХБ/$."
+    },
+    {
+      "type": "blasting",
+      "title": "Утилизация неисправных ПХД",
+      "recipe": "pneumaticcraft:empty_pcb_from_failed_pcb",
+      "text": "Процесс травления имеет шансы на провал, если$(item)Пустая ПХБ/$ не была на 100% открыта$(l:manufacturing/uv_light_box)UV Light Box/$; можно перерабатывать$(item)Неудачный PCB/$ в$(item)Взрывная печь/$."
+    },
+    {
+      "type": "spotlight",
+      "title": "Способ #2",
+      "item": "pneumaticcraft:assembly_controller",
+      "text": "Как только вы сможете сделать$(l:manufacturing/assembly_system)Система сборки / $, вы можете использовать это, чтобы повернуть$(item)Empty PCB's / $ прямо в$(item)Несобранные ПХД/$ с$(item)Программа сборки: Лазер/$. Нет необходимости разоблачать его в$(item)UV Light Box/$ или использовать$(item)В данном случае - загрузка танка/$."
+    },
+    {
+      "type": "text",
+      "title": "Способ #2 (cont)",
+      "text": "$(p)Система сборки является очень удобным и достаточно быстрым вариантом для производства.$(item)Несобранные ПХД/$; однако при достаточной автоматизации и отопительной инфраструктуре$(thing)Комбинация UV Light Box / Etching Tank / $ может быть намного быстрее, особенно если вам нужно массовое производство печатных плат."
+    },
+    {
+      "type": "pneumaticcraft:assembly_system",
+      "recipe": "pneumaticcraft:assembly/unassembled_pcb"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:printed_circuit_board",
+      "text": "Наконец, вы можете добавить некоторые$(l:components/capacitor)Конденсаторы/$ и$(l:components/transistor)Транзисторы/$ для сборки готового$(item)Распечатанная плата/$!"
+    }
+  ]
+}

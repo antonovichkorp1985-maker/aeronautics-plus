@@ -1515,3 +1515,37 @@ Realtime tick model может использовать:
 - NIST Cryogenic Materials Properties Reference List:
   https://www.nist.gov/mml/acmd/cryogenic-materials-properties-reference-list
 <!-- SOURCES:END -->
+
+## Углублённая университетская и исследовательская литература
+
+Обзорные материалы служат входом. Ниже — литература для магистерского и исследовательского уровня.
+
+### Поверхности, коллоиды и адсорбция
+- J. N. Israelachvili, *Intermolecular and Surface Forces*.
+- A. W. Adamson, A. P. Gast, *Physical Chemistry of Surfaces*.
+- R. J. Hunter, *Foundations of Colloid Science*.
+- J. C. Berg, *An Introduction to Interfaces and Colloids*.
+
+### Перенос, пористые среды и многофазные течения
+- R. B. Bird, W. E. Stewart, E. N. Lightfoot, *Transport Phenomena*.
+- R. B. Bird et al., *Dynamics of Polymeric Liquids*.
+- M. C. Potter, D. C. Wiggert, *Mechanics of Fluids*.
+- M. Kaviany, *Principles of Heat Transfer in Porous Media*.
+- C. T. Crowe et al., *Multiphase Flows with Droplets and Particles*.
+
+### Реология, порошки и трибология
+- C. W. Macosko, *Rheology: Principles, Measurements, and Applications*.
+- N. P. Cheremisinoff, *An Introduction to Polymer Rheology*.
+- R. A. Mashelkar, *Transport Phenomena in Multiphase Systems*.
+- B. Bhushan, *Introduction to Tribology*.
+- M. J. Adams, *Powder and Bulk Solids*.
+
+### Горение, плазма, вакуум и криогеника
+- S. R. Turns, *An Introduction to Combustion*.
+- C. K. Law, *Combustion Physics*.
+- F. F. Chen, *Introduction to Plasma Physics and Controlled Fusion*.
+- J. F. O'Hanlon, *A User's Guide to Vacuum Technology*.
+- K. D. Timmerhaus, T. M. Flynn, *Cryogenic Process Engineering*.
+
+Критерий уровня: nondimensional analysis, constitutive law, closure assumption, coupling of transport equations, regime map, stability and uncertainty validation.
+

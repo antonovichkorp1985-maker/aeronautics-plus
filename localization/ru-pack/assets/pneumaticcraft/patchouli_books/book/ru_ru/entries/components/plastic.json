@@ -1,0 +1,69 @@
+{
+  "name": "Пластик",
+  "icon": "pneumaticcraft:plastic_bucket",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:tp_plant",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)Пластик / $ является важным компонентом обработки$(pncr).$(p)$(item)Расплавленный пластик/$ изготовлен из$(l:manufacturing/refinery)LPG/$ и$(item)Уголь/$, или$(l:renewables/biodiesel)Биотопливо/$ и$(item)Уголь/$ в составе$(l:manufacturing/thermopneumatic_processing_plant)Термопневматическая перерабатывающая установка/$."
+    },
+    {
+      "type": "pneumaticcraft:thermo_plant",
+      "recipe": "pneumaticcraft:thermo_plant/plastic_from_lpg"
+    },
+    {
+      "type": "pneumaticcraft:thermo_plant",
+      "recipe": "pneumaticcraft:thermo_plant/plastic_from_biodiesel"
+    },
+    {
+      "type": "spotlight",
+      "title": "Пластиковый лист",
+      "item": "pneumaticcraft:plastic",
+      "flag": "pneumaticcraft:inWorldPlasticSolidification",
+      "text": "$(item)Расплавленный пластик / $ можно затвердеть, просто вливая его в мир; он превратится в...$(item)Пластиковый лист/$ в течение полсекунды или около того. Это очень легко автоматизировать с помощью$(l:machines/liquid_hopper)Жидкий Хоппер / $ с$(l:base_concepts/upgrades#dispenser)Обновление диспенсера/$ и$(l:machines/omnidirectional_hopper)Всенаправленный Хоппер/$."
+    },
+    {
+      "type": "spotlight",
+      "title": "Пластиковый лист",
+      "item": "pneumaticcraft:plastic",
+      "flag": "!pneumaticcraft:inWorldPlasticSolidification",
+      "text": "$(item)Пластиковые листы/$ производятся путем размещения ведра или$(l:machines/tanks)танк/$$(item)Расплавленный пластик / $ в инвентарь с$(l:semiblocks/heat_frame)Тепловая рама / $ прилагается и охлаждает тепловую раму, в идеале ниже -80 ° C (чем холоднее, тем лучше).$(item)Расплавленный пластик / $ будет потребляться из ведра или бака, и у вас будет шанс на секунду.$(item)Пластиковый лист / $ за каждые 1000 м B расплавленного пластика."
+    },
+    {
+      "type": "text",
+      "title": "Повышение доходности",
+      "flag": "pneumaticcraft:inWorldPlasticSolidification",
+      "text": "Альтернативный способ укрепления$(item)Пластиковые листы / $ - это место ведра или$(l:machines/tanks)танк/$$(item)Расплавленный пластик / $ в инвентарь с$(l:semiblocks/heat_frame)Тепловая рама / $ прилагается и охлаждает тепловую раму, в идеале ниже -80 ° C (чем холоднее, тем лучше).$(item)Расплавленный пластик / $ будет потребляться из ведра или бака, и у вас будет шанс на секунду.$(item)Пластиковый лист / $ за каждые 1000 м B расплавленного пластика."
+    },
+    {
+      "type": "text",
+      "title": "Записка о танках",
+      "text": "Хотя$(pncr)жидкий Танки имеют инвентарные слоты и позволяют$(thing)Тепловые рамки / $, которые будут размещены на них, просто прикрепление тепловой рамки к резервуару, полному расплавленного пластика, не будет работать; резервуар с жидкостью должен быть в форме элемента в инвентаре (грудь и т. Д.) с тепловой рамой."
+    },
+    {
+      "type": "spotlight",
+      "title": "Пластиковый строительный кирпичTM",
+      "item": "pneumaticcraft:plastic_brick_red",
+      "text": "Эти кирпичи образуются с$(item)Пластиковые листы / $ и любой краситель, и подходят для строительства.$(p)Не ходите по ним босыми ногами, потому что это причиняет необоснованную боль!$(p)$(italic)Совместим с другими ведущими брендами строительного кирпича."
+    },
+    {
+      "type": "spotlight",
+      "title": "Пластиковая конструкция BrickTM",
+      "item": "pneumaticcraft:smooth_plastic_brick_red",
+      "text": "Гладкая версия The$(item)Пластиковый строительный кирпич / $ также подходит для строительства.$(p)Эти кирпичи также имеют преимущество в создании отличного напольного покрытия, так как они увеличивают скорость ходьбы!"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:plastic_brick_red",
+      "recipe2": "pneumaticcraft:smooth_plastic_brick_red",
+      "text": "Вы можете угадать рецепты других цветов."
+    },
+    {
+      "type": "smelting",
+      "recipe": "pneumaticcraft:plastic_sheet_from_brick",
+      "recipe2": "pneumaticcraft:plastic_sheet_from_smooth_brick",
+      "text": "Вы можете выплавить кирпич обратно в пластиковые листы"
+    }
+  ]
+}
