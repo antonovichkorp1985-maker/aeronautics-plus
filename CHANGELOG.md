@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.2-test.9] — 2026-10-06
+
+- Added a client-side RU-pack updater.
+- Reads release metadata from GitHub and downloads the public Drive ZIP only after SHA-256 and ZIP checks.
+- Can enable the newest pack on the next launch and retain the latest two local versions.
+- Added `config/aeronauticsplus-ru-pack.json` switches for download, auto-enable and cleanup.
+
+
 Все заметные изменения Aeronautics Plus документируются в этом файле.
 
 ## [0.2.2-test.8] — 2026-10-04
