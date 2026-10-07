@@ -166,7 +166,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.9: RU-pack auto-updater and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.10: RU-pack auto-updater and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {

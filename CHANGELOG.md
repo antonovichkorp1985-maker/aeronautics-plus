@@ -4,7 +4,7 @@
 
 - Added a client-side RU-pack updater.
 - Reads release metadata from GitHub and downloads the public Drive ZIP only after SHA-256 and ZIP checks.
-- Can enable the newest pack on the next launch and retain the latest two local versions.
+- Can enable the newest pack on the next launch and retain only the current local version.
 - Added `config/aeronauticsplus-ru-pack.json` switches for download, auto-enable and cleanup.
 
 

@@ -95,7 +95,7 @@ public final class RuPackUpdater {
                 selectPackOnNextLaunch(Minecraft.getInstance().gameDirectory.toPath(), fileName);
             }
             if (settings.cleanup()) {
-                cleanup(resourcepacks, fileName, settings.keepVersions());
+                cleanup(resourcepacks, fileName);
             }
         } catch (Exception error) {
             AeronauticsPlus.LOGGER.warn("RU-pack update skipped; local files were left untouched", error);
@@ -144,7 +144,7 @@ public final class RuPackUpdater {
         if (changed) Files.write(options, lines, StandardCharsets.UTF_8);
     }
 
-    private static void cleanup(Path directory, String current, int keep) throws IOException {
+    private static void cleanup(Path directory, String current) throws IOException {
         List<Path> packs;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, FILE_PREFIX + "*.zip")) {
             packs = new ArrayList<>();
@@ -153,7 +153,7 @@ public final class RuPackUpdater {
         packs.sort(Comparator.comparingLong(RuPackUpdater::modified).reversed());
         int kept = 0;
         for (Path pack : packs) {
-            if (kept++ < Math.max(1, keep)) continue;
+            if (kept++ < 1) continue;
             Files.deleteIfExists(pack);
         }
     }
@@ -185,20 +185,20 @@ public final class RuPackUpdater {
         return object.get(key).getAsString();
     }
 
-    private record Settings(boolean enable, boolean download, boolean cleanup, int keepVersions) {
+    private record Settings(boolean enable, boolean download, boolean cleanup) {
         static Settings load(Path path) {
             try {
                 if (Files.isRegularFile(path)) {
                     JsonObject json = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
                     return new Settings(value(json, "auto_enable_ru_pack", true), value(json, "auto_download_ru_pack", true),
-                            value(json, "auto_cleanup_old_ru_packs", true), Math.max(1, value(json, "keep_local_versions", 2)));
+                            value(json, "auto_cleanup_old_ru_packs", true));
                 }
                 Files.createDirectories(path.getParent());
-                Files.writeString(path, "{\n  \"auto_enable_ru_pack\": true,\n  \"auto_download_ru_pack\": true,\n  \"auto_cleanup_old_ru_packs\": true,\n  \"keep_local_versions\": 2\n}\n");
+                Files.writeString(path, "{\n  \"auto_enable_ru_pack\": true,\n  \"auto_download_ru_pack\": true,\n  \"auto_cleanup_old_ru_packs\": true\n}\n");
             } catch (Exception error) {
                 AeronauticsPlus.LOGGER.warn("Could not read RU-pack updater config; using defaults", error);
             }
-            return new Settings(true, true, true, 2);
+            return new Settings(true, true, true);
         }
         private static boolean value(JsonObject o, String k, boolean d) { return o.has(k) ? o.get(k).getAsBoolean() : d; }
         private static int value(JsonObject o, String k, int d) { return o.has(k) ? o.get(k).getAsInt() : d; }
