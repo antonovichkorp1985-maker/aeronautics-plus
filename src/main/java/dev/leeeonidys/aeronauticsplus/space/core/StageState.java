@@ -44,6 +44,16 @@ public record StageState(
         return engines.stream().mapToDouble(EngineState::activeThrustNewtons).sum();
     }
 
+    public double effectiveExhaustVelocityMetersPerSecond() {
+        double thrust = thrustNewtons();
+        if (!(thrust > 0.0)) {
+            return 0.0;
+        }
+        return engines.stream()
+                .mapToDouble(engine -> engine.activeThrustNewtons() * engine.exhaustVelocityMetersPerSecond())
+                .sum() / thrust;
+    }
+
     /**
      * Ideal stage delta-v using thrust-weighted exhaust velocity.
      * Mixture compatibility and feed losses are validated by the later vessel compiler.
