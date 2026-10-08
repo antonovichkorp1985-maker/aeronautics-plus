@@ -50,12 +50,13 @@ public record StageState(
      */
     public double idealDeltaV() {
         double thrust = thrustNewtons();
-        if (!(thrust > 0.0)) {
+        double dryMass = dryMassKg();
+        if (!(thrust > 0.0) || !(dryMass > 0.0) || !(totalMassKg() > dryMass)) {
             return 0.0;
         }
         double effectiveExhaustVelocity = engines.stream()
                 .mapToDouble(engine -> engine.activeThrustNewtons() * engine.exhaustVelocityMetersPerSecond())
                 .sum() / thrust;
-        return effectiveExhaustVelocity * Math.log(totalMassKg() / dryMassKg());
+        return effectiveExhaustVelocity * Math.log(totalMassKg() / dryMass);
     }
 }
