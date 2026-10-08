@@ -217,27 +217,25 @@ validity_range
 reference_source
 ```
 
-## 7. Связь с архитектурой Aeronautics Plus
+## 7. Как использовать COMSOL как отдельную программу
+
+COMSOL Multiphysics не является частью Aeronautics Plus, ChemMod или Minecraft-сборки и не должен становиться их runtime-зависимостью. Это самостоятельный инженерный инструмент для проверки физических гипотез и расчёта эталонных случаев.
+
+Практический цикл:
 
 ```text
-ChemMod
-  → вещества, партии, смеси, давление, температура, плотность и химия
-
-Aeronautics Winds
-  → ветер и погодные возмущения
-
-Create Aeronautics / Sable
-  → физическая конструкция и базовая кинематика
-
-Aeronautics Plus
-  → массы, аэродинамика, тяга, нагрев, разрушение,
-    ракеты, ступени и орбитальная миссия
-
-COMSOL
-  → офлайн-эталоны, калибровка и verification datasets
+физическая гипотеза или инженерная конструкция
+        ↓
+модель в COMSOL
+        ↓
+аналитическая/экспериментальная проверка
+        ↓
+контрольные значения и диапазон применимости
+        ↓
+отдельное использование результатов в проекте при необходимости
 ```
 
-COMSOL не должен становиться обязательной зависимостью сборки или запускаться во время игры. Runtime использует физически осмысленные формулы, таблицы интерполяции и модели пониженного порядка.
+COMSOL можно применять для проверки физики, но сам проект не обязан переносить его модели, интерфейсы или численные решатели в Minecraft.
 
 ## 8. Литература для продолжения
 
@@ -255,19 +253,3 @@ COMSOL не должен становиться обязательной зав�
 - NASA, *Systems Engineering Handbook*, NASA/SP-2016-6105 Rev 2.
 - NASA Apollo Experience Reports и Apollo 13 Mission Report.
 
-## 9. Доступ через СПбГУ
-
-Искать книги и статьи следует по ISBN/DOI через университетский каталог и открывать издательские версии через сеть или удалённый доступ СПбГУ:
-
-- Электронная библиотека СПбГУ: https://library.spbu.ru/
-- Каталог библиотеки СПбГУ: https://catalog.library.spbu.ru/
-- eLIBRARY.RU: https://www.elibrary.ru/
-- SpringerLink: https://link.springer.com/
-- ScienceDirect: https://www.sciencedirect.com/
-- Wiley Online Library: https://onlinelibrary.wiley.com/
-- Cambridge Core: https://www.cambridge.org/core/
-- AIAA Aerospace Research Central: https://arc.aiaa.org/
-- NASA Technical Reports Server: https://ntrs.nasa.gov/
-- Crossref: https://search.crossref.org/
-
-Подписки СПбГУ и права на конкретные издания могут меняться, поэтому доступ нужно проверять по каждой записи. При отсутствии полной версии использовать официальный open access, NASA NTRS или авторский manuscript, а не случайную копию.
