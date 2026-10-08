@@ -179,7 +179,7 @@ public final class AeronauticsPlus {
                         "Aeronautics Plus space core slice OK: boosterDeltaV={} m/s, remainingStages={}, diagnosticsPreview={}",
                         String.format(java.util.Locale.ROOT, "%.1f", slice.boosterDeltaVMetersPerSecond()),
                         slice.afterSeparation().stages().size(),
-                        slice.brokenDiagnosticText().replace('\n', ' | '));
+                        slice.brokenDiagnosticText().replace("\n", " | "));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus space core slice failed", exception);
             }
