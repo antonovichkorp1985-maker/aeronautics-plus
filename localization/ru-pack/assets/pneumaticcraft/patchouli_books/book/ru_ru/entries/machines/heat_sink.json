@@ -1,0 +1,30 @@
+{
+  "name": "Тепловая вонь",
+  "icon": "pneumaticcraft:heat_sink",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Heat Sink - блок, используемый для избавления от$(l:base_concepts/heat)Тепло/$.$(p)Будьте осторожны, а$(item)Тепловой поглотитель / $ горячее 60° С или холоднее -60° С будет больно при прикосновении!$(p)$(item)Тепловые палки / $ только рассеивают тепло от блока, к которому они непосредственно подключены. Чтобы соединить многие$(item)Heat Sinks/$, использование$(l:machines/heat_pipe)Тепловые трубы / $, чтобы обеспечить больше поверхностей."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/patchouli/heat_sinks.png"
+      ],
+      "border": "true",
+      "text": "$(italic)Ан$(l:compressors/advanced_liquid_compressor)Расширенный жидкостный компрессор / $$(italic)с множественным Тепловые палки / $"
+    },
+    {
+      "type": "text",
+      "title": "Активное охлаждение",
+      "text": "Вы можете повысить эффективность а$(item)Тепловой поглотитель / $, помещая его в диапазон$(l:tubes/air_grate_module#active_cooling)Модуль скорости воздуха/$. Диапазон модуля отображается, когда вы прикрепляете его к$(l:tubes/pressure_tubes)Трубка давления/$. Эффективность охлаждения может быть сложена с помощью нескольких модулей Air Grate."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремонт теплового потопа",
+      "recipe": "pneumaticcraft:heat_sink"
+    }
+  ]
+}

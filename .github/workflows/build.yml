@@ -4,15 +4,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v6
         with:
           # ModDevGradle 2.x совместим с Gradle 8.x; не даём поставить 9-ю
           gradle-version: '8.9'
+      - name: Validate science documentation
+        run: python3 scripts/validate_science_docs.py
+      - name: Validate resources and data
+        run: python3 scripts/validate_resources.py
       - name: Fetch Create Aeronautics + Ponder/Flywheel/Registrate (compile targets)
         run: |
           mkdir -p libs
@@ -31,9 +35,28 @@ jobs:
                   open(out, 'wb').write(cr.read(n))
                   print('extracted:', n, '->', out)
           PY
+      - name: Validate RU pack against Create 6.0.10
+        run: |
+          python3 scripts/validate_create_localization.py \
+            --jar /tmp/create.jar \
+            --resource-pack localization/ru-pack
+      - name: Validate RU pack against Create Deep Seas 2.2.4
+        run: |
+          curl -sL "https://cdn.modrinth.com/data/mva5q4qZ/versions/UcXaPVeD/create_submarine-2.2.4.jar" -o /tmp/create-submarine.jar
+          echo "fb4902c2ca3463ea3016efbae7011408eb008d89  /tmp/create-submarine.jar" | sha1sum --check
+          python3 scripts/validate_deep_seas_localization.py \
+            --jar /tmp/create-submarine.jar \
+            --resource-pack localization/ru-pack
+      - name: Validate RU pack against Sable 2.0.5
+        run: |
+          curl -sL "https://api.modrinth.com/maven/maven/modrinth/sable/2.0.5+mc1.21.1/sable-2.0.5+mc1.21.1.jar" -o /tmp/sable.jar
+          echo "05f666e973d32baaaf405acb9bbed6615b909971  /tmp/sable.jar" | sha1sum --check
+          python3 scripts/validate_sable_localization.py \
+            --jar /tmp/sable.jar \
+            --resource-pack localization/ru-pack
       - name: Build
         run: gradle build --no-daemon
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: aeronauticsplus-jars
           path: build/libs/*.jar

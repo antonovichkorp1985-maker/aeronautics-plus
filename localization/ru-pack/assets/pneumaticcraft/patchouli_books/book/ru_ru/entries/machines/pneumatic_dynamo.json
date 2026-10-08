@@ -1,0 +1,22 @@
+{
+  "name": "Пневматическое динамо",
+  "icon": "pneumaticcraft:pneumatic_dynamo",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:advanced_pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Пневматическое динамо / $ конвертируется$(l:base_concepts/pressure)сжатый воздух/$ в$(thing)Кузнечная энергия/$, совместимая с$(thing)Redstone Flux/$ и другие энергетические системы модов. Он производит 40 FE / тик по умолчанию, но может быть обновлен с помощью$(l:base_concepts/upgrades#speed)Ускорение/$. FE выходной коэффициент для$(item)Flux Compressor / $ в два раза превышает объем текущего производства FE; 80 FE / тик по умолчанию, но может быть увеличен с помощью Speed Upgrades."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:pneumatic_dynamo",
+      "text": "Важным фактором, влияющим на эффективность, является «Динамо».$(l:base_concepts/heat)Температура/$. «Динамо» должно быть$(thing)Охлажденный / $, или его эффективность будет падать по мере повышения температуры, вплоть до того момента, когда воздух вообще не образуется."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание пневматического Динамо",
+      "recipe": "pneumaticcraft:pneumatic_dynamo"
+    }
+  ]
+}

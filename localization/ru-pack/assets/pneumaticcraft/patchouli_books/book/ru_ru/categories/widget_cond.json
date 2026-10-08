@@ -1,0 +1,7 @@
+{
+  "name": "Состояние Виджеты",
+  "description": "Виджеты, оценивающие условия.",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_block_piece.png",
+  "parent": "pneumaticcraft:programming",
+  "sortnum": 3
+}

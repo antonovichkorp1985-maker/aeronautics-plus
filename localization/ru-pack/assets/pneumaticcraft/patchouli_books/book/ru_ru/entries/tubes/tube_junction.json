@@ -1,0 +1,17 @@
+{
+  "name": "Трубопровод",
+  "icon": "pneumaticcraft:tube_junction",
+  "category": "pneumaticcraft:tubes",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "A $(thing)Tube Junction/$ - это очень простое устройство, которое позволяет$(l:tubes/pressure_tubes)Трубы давления/$ (любой)$(l:base_concepts/pressure_tiers)Уровень давления/$) для пересечения друг друга без соединения."
+    },
+    {
+      "type": "crafting",
+      "text": "Сооружение Tube Junction",
+      "recipe": "pneumaticcraft:tube_junction"
+    }
+  ]
+}

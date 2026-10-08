@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "tag": "aeronauticsplus:blade_materials/wood"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    "MSM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:wooden_two_blade_propeller"
+  }
+}

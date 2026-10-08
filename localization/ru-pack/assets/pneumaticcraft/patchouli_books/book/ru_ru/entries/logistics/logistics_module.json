@@ -1,0 +1,17 @@
+{
+  "name": "Модуль логистики",
+  "icon": "pneumaticcraft:logistics_module",
+  "category": "pneumaticcraft:logistics",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Видишь?$(l:tubes/logistics_module)Логистический модуль вход/$ в$(thing)Трубы давления / $ раздел руководства для полных деталей."
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:logistics_module",
+      "text": "Создание логистики модуль"
+    }
+  ]
+}

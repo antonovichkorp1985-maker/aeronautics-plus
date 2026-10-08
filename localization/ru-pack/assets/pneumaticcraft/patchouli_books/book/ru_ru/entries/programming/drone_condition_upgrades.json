@@ -1,0 +1,19 @@
+{
+  "name": "Состояние дрона: Обновление Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_drone_upgrades_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(thing)Состояние дрона: Модернизация / $ виджет позволяет проверить количество установленных обновлений в этом$(l:tools/drone)Дрон/$. Укажите обновление (обновления), которое должно быть проверено с помощью одного или нескольких прилагаемых$(l:programming/item_filter)Фильтр элемента / виджеты $, установленные на элемент(ы) обновления, подлежащие проверке; без какого-либо фильтра будут учитываться все установленные обновления всех типов."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_drone_upgrades_piece.png"
+      ],
+      "text": "$(italic)Состояние дрона: Обновление Widget/$"
+    }
+  ]
+}

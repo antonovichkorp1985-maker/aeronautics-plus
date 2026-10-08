@@ -1,0 +1,4 @@
+{
+  "bigwater.configuration.fallbackTextureScale": "Масштаб запасной текстуры",
+  "bigwater.configuration.forceFallbackTextureScale": "Принудительный масштаб запасной текстуры"
+}

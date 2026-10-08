@@ -1,0 +1,10 @@
+{
+  "block.createdieselgenerators.andesite_girder_strut": "Андесит Гирдер Струт",
+  "createdieselgenerators.actionbar.distillation_controller.too_short": "дистилляция Башня слишком короткая! Минимальная высота:%s",
+  "createdieselgenerators.display_source.pumpjack_oil_amount": "Сумма нефти",
+  "createdieselgenerators.hint.distiller_full": "Похоже, что эта дистилляционная башня имеет полный выходной бак. Убедитесь, что у каждого  Tank  достаточно места для выхода.",
+  "createdieselgenerators.hint.distiller_full.title": "Выход танка полный",
+  "createdieselgenerators.tooltip.keyAlt": "Альт",
+  "item.createdieselgenerators.lighter.tooltip.behaviour3": "Меняет зажигалку  skin .",
+  "item.createdieselgenerators.lighter.tooltip.condition3": "Когда переименовали."
+}

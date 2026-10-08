@@ -1,37 +1,134 @@
 {
-  "parent": "block/block",
+  "loader": "neoforge:obj",
+  "model": "aeronauticsplus:models/block/propellers/geometry/propeller_four_blade.obj",
+  "automatic_culling": false,
+  "shade_quads": true,
+  "flip_v": false,
+  "emissive_ambient": false,
+  "ambientocclusion": false,
   "textures": {
-    "0": "aeronauticsplus:block/prototype_propeller",
+    "texture0": "aeronauticsplus:block/prototype_propeller",
     "particle": "aeronauticsplus:block/prototype_propeller"
   },
-  "elements": [
-    { "from": [7, 7, 0],  "to": [9, 9, 16],
-      "faces": {
-        "north": {"texture": "#0"}, "south": {"texture": "#0"},
-        "east":  {"texture": "#0"}, "west":  {"texture": "#0"},
-        "up":    {"texture": "#0"}, "down":  {"texture": "#0"}
-      }
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.48,
+        0.48,
+        0.48
+      ]
     },
-    { "from": [5.5, 5.5, 6], "to": [10.5, 10.5, 10],
-      "faces": {
-        "north": {"texture": "#0"}, "south": {"texture": "#0"},
-        "east":  {"texture": "#0"}, "west":  {"texture": "#0"},
-        "up":    {"texture": "#0"}, "down":  {"texture": "#0"}
-      }
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.32,
+        0.32,
+        0.32
+      ]
     },
-    { "from": [0, 7, 7], "to": [16, 9, 9],
-      "faces": {
-        "north": {"texture": "#0"}, "south": {"texture": "#0"},
-        "east":  {"texture": "#0"}, "west":  {"texture": "#0"},
-        "up":    {"texture": "#0"}, "down":  {"texture": "#0"}
-      }
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.48,
+        0.48,
+        0.48
+      ]
     },
-    { "from": [7, 0, 7], "to": [9, 16, 9],
-      "faces": {
-        "north": {"texture": "#0"}, "south": {"texture": "#0"},
-        "east":  {"texture": "#0"}, "west":  {"texture": "#0"},
-        "up":    {"texture": "#0"}, "down":  {"texture": "#0"}
-      }
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.38,
+        0.38,
+        0.38
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.38,
+        0.38,
+        0.38
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.42,
+        0.42,
+        0.42
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.42,
+        0.42,
+        0.42
+      ]
     }
-  ]
+  }
 }

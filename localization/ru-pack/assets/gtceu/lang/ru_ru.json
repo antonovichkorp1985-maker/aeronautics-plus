@@ -1,0 +1,16 @@
+{
+  "command.gtceu.cape.take.success.single": "Забрано плащей: %s у %s",
+  "gtceu.gui.content.chance_base": "Базовый шанс: %s%%",
+  "gtceu.gui.content.chance_tier_boost_minus": "Бонусный шанс: -%s%%/уровень",
+  "gtceu.gui.content.chance_tier_boost_plus": "Бонусный шанс: +%s%%/уровень",
+  "gtceu.machine.fisher.requirement": "Требуется расположенный прямо снизу квадрат воды %d × %d с центром под механизмом.",
+  "gtceu.machine.power_substation.tooltip.4": "Пассивные потери ограничены §f%d кЕЭ/т§7 на каждый блок конденсатора.",
+  "gtceu.multiblock.energy_consumption": "Энергопотребление: %s ЕЭ/т (%s)",
+  "gtceu.multiblock.hpca.computation": "Предоставляется: %s",
+  "gtceu.multiblock.large_boiler.description": "Большие котлы — многоблочные структуры, вырабатывающие пар из воды и источника энергии. Источником может быть любое твёрдое топливо со временем горения либо дизельное/полужидкое топливо. Мощность можно уменьшать с шагом 5%%, снижая выработку пара и расход топлива.",
+  "gtceu.multiblock.large_chemical_reactor.description": "Большой химический реактор выполняет реакции со 100%% энергоэффективностью. Разгон увеличивает скорость и расход энергии в 4 раза. Структуре требуется ровно 1 блок купроникелевой катушки рядом с корпусом ПТФЭ-трубы в центре.",
+  "metaitem.cover.digital.wireless.tooltip.3": "§aПривязка: §f%s",
+  "metaitem.generic.electric_item.tooltip": "%d/%d ЕЭ — уровень %s",
+  "recipe.condition.dimension.tooltip": "Измерение: %s",
+  "recipe.condition.eu_to_start.tooltip": "ЕЭ для запуска: %d%s"
+}

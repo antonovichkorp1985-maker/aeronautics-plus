@@ -1,0 +1,25 @@
+{
+  "name": "Обзор логистики",
+  "icon": "pneumaticcraft:logistics_configurator",
+  "category": "pneumaticcraft:logistics",
+  "advancement": "pneumaticcraft:root",
+  "priority": "true",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(pncr)'s $(thing)Логистическая система / $ предлагает интересный способ транспортировки предметов и жидкостей, а также хранения запасов и резервуаров.$(p)Запасы и цистерны могут быть помечены$(l:logistics/frames)Логистические рамки / $, прикрепляемые гаджеты, которые контролируют, как предметы и жидкости должны быть перемещены в и из этих блоков."
+    },
+    {
+      "type": "text",
+      "text": "Эти кадастры затем связаны с$(l:logistics/logistics_drone)Логистические дроны / $$(l:tubes/pressure_tubes)Трубы под давлением / $ с$(l:tubes/logistics_module)Логистические модули/$.$(p)The$(thing)Логистическая система / $ в значительной степени вдохновлена$(l:https://wiki.factorio.com/Logistic_network)Факторио / $, и если вы играли в эту игру, концепции будут знакомы. Основное отличие заключается в том, что этот мод обеспечивает$(l:logistics/frames)Рамки/$ для прикрепления к существующим запасам/цистернам, а не к отдельным сундукам материально-технического обеспечения."
+    },
+    {
+      "type": "relations",
+      "entries": [
+        "pneumaticcraft:logistics/frames",
+        "pneumaticcraft:logistics/logistics_drone",
+        "pneumaticcraft:tubes/logistics_module"
+      ]
+    }
+  ]
+}

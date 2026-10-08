@@ -1,0 +1,27 @@
+{
+  "name": "Пневматический генератор",
+  "icon": "pneumaticcraft:pneumatic_generator",
+  "category": "pneumaticcraft:machines",
+  "flag": "pneumaticcraft:pneumaticGeneratorEnabled",
+  "advancement": "pneumaticcraft:advanced_pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Пневматический генератор может генерировать$(thing)IndustrialCraft 2 EU/$$(l:base_concepts/pressure)Сжатый воздух/$. Это двухуровневая машина, обозначенная минимальным рабочим давлением 15 бар. По умолчанию он имеет КПД 40%, но это может быть$(ttcolor)$(t:See 'I:pneumaticGeneratorEfficiency')Изменить конфигурацию/$.$(p)Без всякого$(l:base_concepts/upgrades#speed)Скорость обновления / $, он выдает со скоростью 32 ЕС / тик; с одним обновлением вставлено: 128 ЕС / тик и с двумя: 512 ЕС / тик."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:pneumatic_generator",
+      "text": "Использование воздуха (mL/tick):$(p)$(formula)выходной / E * 400 $$(p)где$(formula)E/$ - эффективность в процентах. Например, для эффективности по умолчанию 40% и скорости выхода 32EU/тик, использование воздуха =$(formula)32 / 40 * 400 = 320 мл / тик / $."
+    },
+    {
+      "type": "text",
+      "text": "Важным фактором, влияющим на эффективность, является генератор.$(l:base_concepts/heat)Температура/$. Генератор должен быть$(thing)Охлажденный / $, или его эффективность будет падать по мере повышения температуры, вплоть до того момента, когда воздух вообще не образуется."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание пневматического генератор",
+      "recipe": "pneumaticcraft:pneumatic_generator"
+    }
+  ]
+}

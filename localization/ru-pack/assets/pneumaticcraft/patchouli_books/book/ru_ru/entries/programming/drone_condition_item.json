@@ -1,0 +1,19 @@
+{
+  "name": "Состояние дрона: Пункт Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_drone_inventory_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(thing)Состояние дрона: Элемент/$ виджет позволяет проверить инвентаризацию этого$(l:tools/drone)Дрон/$ за определенное количество предметов. Он будет подсчитывать все соответствующие элементы (указанные подключенным устройством).$(l:programming/item_filter)Фильтр элемента / $ или отсутствие фильтра для подсчета каждого элемента."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_drone_inventory_piece.png"
+      ],
+      "text": "$(italic)Состояние дрона: Пункт Виджет/$"
+    }
+  ]
+}

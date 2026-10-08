@@ -1,0 +1,17 @@
+{
+  "name": "Расширенный жидкостный компрессор",
+  "icon": "pneumaticcraft:advanced_liquid_compressor",
+  "category": "pneumaticcraft:compressors",
+  "advancement": "pneumaticcraft:advanced_pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Расширенный жидкостный компрессор / $ - это$(l:base_concepts/pressure_tiers)Версия уровня 2/$$(l:compressors/liquid_compressor)Жидкий компрессор / $, с максимальным безопасным давлением 20 бар. Он генерирует базовый воздух / клещ 50 мл и может быть модернизирован с помощью$(l:base_concepts/upgrades#speed)Ускорение/$.$(p)Этот генератор должен быть$(l:base_concepts/heat)Охлажденный/$, так как его эффективность будет падать по мере повышения температуры, вплоть до точки, где воздух не генерируется вообще."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремесленник$(item)Расширенный жидкостный компрессор / $",
+      "recipe": "pneumaticcraft:advanced_liquid_compressor"
+    }
+  ]
+}

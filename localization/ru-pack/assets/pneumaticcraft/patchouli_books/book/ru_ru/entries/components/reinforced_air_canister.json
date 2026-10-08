@@ -1,0 +1,21 @@
+{
+  "name": "Усиленная воздушная канистра",
+  "icon": "pneumaticcraft:reinforced_air_canister",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:advanced_pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Как и его младший брат,$(l:components/air_canister)Воздушная канистра, $$(thing)Усиленная воздушная канистра / $ удерживает воздух и может заряжаться и разряжаться в$(l:machines/charging_station)Зарядная станция/$. Тем не менее, он имеет увеличенный объем 6000 мл и может быть заряжен до 20 бар."
+    },
+    {
+      "type": "text",
+      "text": "Интересное использование для$(thing)Усиленная воздушная канистра / $ - это устройство для хранения большого объема воздуха в сочетании с инвентарем, таким как сундук и сундук.$(l:tubes/pressure_tubes)Трубка давления / $ с$(l:tubes/charging_module)Зарядка модуля/$. Это может стать еще более интересным с$(l:machines/aerial_interface)Aerial Interface/$ and a (Ваниль)$(thing)Эндер Чест / $"
+    },
+    {
+      "type": "crafting",
+      "text": "Ремесло усиленное Воздушная канистра",
+      "recipe": "pneumaticcraft:reinforced_air_canister"
+    }
+  ]
+}

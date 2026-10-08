@@ -1,0 +1,19 @@
+{
+  "name": "Самоубийство Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/suicide_piece.png",
+  "category": "pneumaticcraft:widget_flow",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(l:tools/drone)Дрон/$ немедленно преобразуется в форму товара, опускаясь в качестве объекта на местах. Выполнение программы, конечно, немедленно прекращается."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/suicide_piece.png"
+      ],
+      "text": "$(italic)Вот и все, господа!"
+    }
+  ]
+}

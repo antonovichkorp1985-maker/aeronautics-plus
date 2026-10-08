@@ -1,0 +1,38 @@
+{
+  "name": "Основные материалы",
+  "icon": "pneumaticcraft:ingot_iron_compressed",
+  "category": "pneumaticcraft:base_concepts",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(pncr)не генерирует никаких дополнительных руд в земле. Чтобы начать, вам просто нужно$(item)Железные слитки / $, которые вы конвертируете в$(item)Сжатые железные слитки$()Используется во многих рецептах по всему моду.$(p)Чтобы сделать это, бросьте$(item)Железные слитки/$ на земле и вызывают взрыв.$(item)TNT/$ сделает трюк, но любой другой взрыв тоже сработает."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/patchouli/compressed_iron.png"
+      ],
+      "text": "$(italic)Шаг назад / $"
+    },
+    {
+      "type": "spotlight",
+      "anchor": "compressed_iron_ingot",
+      "item": "pneumaticcraft:ingot_iron_compressed",
+      "text": "Предупреждение: в результате взрыва вы потеряете около 20% слитков. Чтобы избежать этого, вы также можете создать$(item)Сжатые железные слитки / $ в a$(l:manufacturing/pressure_chamber)Камера давления. Однако, чтобы иметь возможность создавать$(thing)Давление камера / $ сам вам понадобится$(item)Сжатые железные слитки/$, поэтому небольшие первоначальные потери неизбежны."
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "recipe": "pneumaticcraft:pressure_chamber/compressed_iron_ingot"
+    },
+    {
+      "type": "crafting",
+      "anchor": "compressed_iron_block",
+      "recipe": "pneumaticcraft:compressed_iron_block_from_ingot",
+      "text": "The$(item)Блок сжатого железа / $ является отличным$(l:base_concepts/heat)Теплопроводник / $ и может использоваться для прикрепления большего количества лиц$(l:machines/heat_sink)Heat Sinks/$ для тепловых машин. Однако см. также$(l:machines/heat_pipe)Тепловые трубы/$."
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "recipe": "pneumaticcraft:pressure_chamber/compressed_iron_block"
+    }
+  ]
+}

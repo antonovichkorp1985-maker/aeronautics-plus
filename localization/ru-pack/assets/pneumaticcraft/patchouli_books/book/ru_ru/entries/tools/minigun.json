@@ -1,0 +1,22 @@
+{
+  "name": "Мини-пулемет",
+  "icon": "pneumaticcraft:minigun[pneumaticcraft:air=30000]",
+  "category": "pneumaticcraft:tools",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Minigun / $ - это ручное оружие, которое работает на$(l:base_concepts/pressure)сжатый воздух/$ и$(l:tools/minigun_ammo)Оружейный патрон/$. Боеприпасы нужно вставлять в$(l:tools/minigun_ammo#magazine)Журнал Minigun/$ - он не будет потребляться из инвентаря игрока.$(p)Чтобы стрелять из ружья, просто держите$(thing)Правый клик/$. Ствол начнет вращаться и будет стрелять, как только он достигнет скорости."
+    },
+    {
+      "type": "text",
+      "title": "модернизация",
+      "text": "Многие особенности (скорость вращения, диапазон, шанс зелья прок...)$(item)Мини-пушка / $ может быть обновлена в$(l:machines/charging_station)Зарядная станция/$.$(p)Полная документация по каждому обновлению и его последствиям доступна в GUI обновления зарядной станции."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремонт мини-пушки",
+      "recipe": "pneumaticcraft:minigun"
+    }
+  ]
+}

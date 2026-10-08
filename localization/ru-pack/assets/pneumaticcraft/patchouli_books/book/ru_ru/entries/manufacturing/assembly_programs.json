@@ -1,0 +1,18 @@
+{
+  "name": "Программы Ассамблеи",
+  "icon": "pneumaticcraft:assembly_program_laser",
+  "category": "pneumaticcraft:manufacturing",
+  "advancement": "pneumaticcraft:printed_circuit_board",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)Программы сборки/$ должны быть включены в$(l:manufacturing/assembly_system)Контроллер сборки/$, чтобы определить, какая операция должна быть выполнена. Они не могут быть созданы, но должны быть проданы; либо из$(thing)Механические жители / $ или через$(l:tools/amadron_tablet)Таблетка Амадрона/$."
+    },
+    {
+      "type": "spotlight",
+      "title": "Drill & Laser",
+      "item": "pneumaticcraft:assembly_program_drill_laser",
+      "text": "The$(item)Программа сборки: Drill & Laser/$ немного особенная. Он не обрабатывает рецепты бурения и лазера; вместо этого он предоставляет однопрограммный метод для двухэтапных рецептов, которые включают бурение.$(italic)и/$ лазерные ступени, например.$(l:tubes/pressure_tubes#advanced)Трубы повышенного давления/$."
+    }
+  ]
+}

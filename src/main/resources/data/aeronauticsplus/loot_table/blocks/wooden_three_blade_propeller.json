@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "aeronauticsplus:wooden_three_blade_propeller"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "aeronauticsplus:blocks/wooden_three_blade_propeller"
+}

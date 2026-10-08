@@ -1,0 +1,17 @@
+{
+  "name": "Измерение давления",
+  "icon": "pneumaticcraft:pressure_gauge",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это крафтовый компонент для других устройств. Само по себе это бесполезно."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремонт давления",
+      "recipe": "pneumaticcraft:pressure_gauge"
+    }
+  ]
+}

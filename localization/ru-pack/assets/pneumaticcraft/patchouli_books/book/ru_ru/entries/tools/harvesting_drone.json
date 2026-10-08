@@ -1,0 +1,33 @@
+{
+  "name": "Сбор дронов",
+  "icon": "pneumaticcraft:harvesting_drone[pneumaticcraft:air=120000]",
+  "category": "pneumaticcraft:tools",
+  "advancement": "pneumaticcraft:pressure_chamber",
+  "pages": [
+    {
+      "type": "text",
+      "text": "A $(item)Harvesting Drone/$ является специализированным непрограммируемым типом дрона.$(l:tools/drone)Дрон/$, который будет$(l:programming/harvest)Задачи по сбору урожая / сбору деревьев / $ в кубе 17x17x17, сосредоточенном на блоке, на котором он развернут. Дрон будет$(italic)Не забирайте собранные предметы."
+    },
+    {
+      "type": "spotlight",
+      "title": "Автоматическая зарядка",
+      "item": "pneumaticcraft:charging_station",
+      "text": "Как и для всех типов дронов, эти дроны требуют$(l:base_concepts/pressure)давление/$ для работы и будет автоматически искать$(l:tools/drone#charging)Зарядная станция с дозатором обновления / $, если низкий на воздухе."
+    },
+    {
+      "type": "entity",
+      "entity": "pneumaticcraft:harvesting_drone",
+      "offset": -0.3
+    },
+    {
+      "type": "text",
+      "title": "Использование инструмента",
+      "text": "Если вы используете$(item)Сбор дрона/$$(thing)sneak+right-clicking/$ против инвентаря, содержащего (только)$(item)Беспилотник будет использовать эту мотыгу для автоматической пересадки сельскохозяйственных культур и не будет пытаться выполнять какую-либо работу без оснащения мотыги. Если вы не заботитесь о пересадке, просто разверните дрон против любого другого блока."
+    },
+    {
+      "type": "crafting",
+      "text": "Обратите внимание, что дроны-сборщики придумали, как рубить деревья мотыгой вместо топора; они такие умные.",
+      "recipe": "pneumaticcraft:harvesting_drone"
+    }
+  ]
+}

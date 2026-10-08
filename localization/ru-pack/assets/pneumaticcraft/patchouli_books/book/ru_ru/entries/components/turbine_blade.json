@@ -1,0 +1,16 @@
+{
+  "name": "Лезвие турбины",
+  "icon": "pneumaticcraft:turbine_blade",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:pressure_chamber",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это крафтовый компонент для других устройств. Само по себе это бесполезно."
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "recipe": "pneumaticcraft:pressure_chamber/turbine_blade"
+    }
+  ]
+}
