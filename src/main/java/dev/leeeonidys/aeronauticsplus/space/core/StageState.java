@@ -54,10 +54,7 @@ public record StageState(
         if (!(thrust > 0.0) || !(dryMass > 0.0) || !(totalMassKg() > dryMass)) {
             return 0.0;
         }
-        double effectiveExhaustVelocity = engines.stream()
-                .mapToDouble(engine -> engine.activeThrustNewtons() * engine.exhaustVelocityMetersPerSecond())
-                .sum() / thrust;
-        return effectiveExhaustVelocity * Math.log(totalMassKg() / dryMass);
+        return effectiveExhaustVelocityMetersPerSecond() * Math.log(totalMassKg() / dryMass);
     }
 
     /** Burns propellant deterministically, stopping exactly when either resource is exhausted. */

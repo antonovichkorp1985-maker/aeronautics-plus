@@ -15,7 +15,7 @@
 - `VesselBlueprint` — свободный граф компонентов и соединений;
 - `VesselCompilation` и объяснимые диагностические ошибки;
 - `VesselState` — ступени, активная ступень, orbit state и separation;
-- `VesselDynamics` — burn, propagation и отделение активной ступени.
+- `VesselDynamics` — burn, расход рабочего тела, изменение массы, delta-v, propagation и отделение активной ступени.
 
 ### Следующий слой
 

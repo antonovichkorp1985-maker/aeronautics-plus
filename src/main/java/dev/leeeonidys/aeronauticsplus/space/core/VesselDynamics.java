@@ -25,6 +25,23 @@ public final class VesselDynamics {
         return new VesselState(vessel.id(), vessel.orbit(), stages, vessel.activeStageIndex());
     }
 
+    /** Burns and applies the rocket-equation delta-v in a supplied thrust direction. */
+    public static VesselState burnActiveStage(VesselState vessel, double durationSeconds,
+                                               Vector3d thrustDirection) {
+        if (thrustDirection == null || !(thrustDirection.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Thrust direction must be finite and non-zero");
+        }
+        double initialMass = vessel.totalMassKg();
+        double exhaustVelocity = vessel.activeStage().effectiveExhaustVelocityMetersPerSecond();
+        VesselState burned = burnActiveStage(vessel, durationSeconds);
+        double finalMass = burned.totalMassKg();
+        double deltaV = exhaustVelocity > 0.0 && finalMass > 0.0 && initialMass > finalMass
+                ? exhaustVelocity * Math.log(initialMass / finalMass) : 0.0;
+        return deltaV > 0.0
+                ? applyImpulse(burned, thrustDirection.normalized().multiply(deltaV))
+                : burned;
+    }
+
     public static VesselState separateActiveStage(VesselState vessel) {
         return vessel.separateActiveStage();
     }
