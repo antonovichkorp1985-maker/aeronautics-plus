@@ -4,7 +4,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,8 +38,10 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
         }
 
         List<StageState> stages = new ArrayList<>();
-        Map<String, List<VesselComponent>> byStage = components.stream()
-                .collect(Collectors.groupingBy(VesselComponent::stageId));
+        Map<String, List<VesselComponent>> byStage = new LinkedHashMap<>();
+        for (VesselComponent component : components) {
+            byStage.computeIfAbsent(component.stageId(), ignored -> new ArrayList<>()).add(component);
+        }
         for (Map.Entry<String, List<VesselComponent>> entry : byStage.entrySet()) {
             String stageId = entry.getKey();
             List<VesselComponent> stageComponents = entry.getValue();
@@ -54,18 +58,39 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             validateFuelConnections(stageId, engines, tanks, diagnostics);
             validateStructuralConnectivity(stageId, stageComponents, diagnostics);
             if (!tanks.isEmpty() && !engines.isEmpty()) {
-                stages.add(new StageState(
+                StageState stage = new StageState(
                         stageId,
                         stageComponents.stream()
                                 .filter(component -> component.kind() != VesselComponent.ComponentKind.TANK
                                         && component.kind() != VesselComponent.ComponentKind.ENGINE)
-                                .mapToDouble(VesselComponent::structuralMassKg).sum(),
+                                .filter(component -> component.structuralMassKg() > 0.0)
+                                .map(component -> new MassElement(
+                                        component.id(), component.structuralMassKg(), component.localPositionMeters()))
+                                .toList(),
                         tanks.stream().map(VesselComponent::tank).toList(),
                         engines.stream().map(VesselComponent::engine).toList(),
-                        true));
+                        true);
+                addThrustGeometryDiagnostics(stage, diagnostics);
+                stages.add(stage);
             }
         }
         return new VesselCompilation(diagnostics, stages);
+    }
+
+    private static void addThrustGeometryDiagnostics(StageState stage, List<VesselDiagnostic> diagnostics) {
+        ThrustGeometry geometry = stage.thrustGeometry();
+        if (!geometry.hasNetThrust()) {
+            diagnostics.add(error("ZERO_NET_THRUST",
+                    "Ступень " + stage.id()
+                            + " имеет нулевой суммарный вектор тяги — двигатели выключены или взаимно компенсируются"));
+            return;
+        }
+        if (geometry.hasMaterialOffset()) {
+            diagnostics.add(warning("THRUST_OFFSET",
+                    "Ступень " + stage.id() + ": центр тяги смещён относительно центра масс на "
+                            + String.format(Locale.ROOT, "%.3f", geometry.perpendicularOffsetMeters())
+                            + " м; появится вращательный момент"));
+        }
     }
 
     private void validateFuelConnections(String stageId, List<VesselComponent> engines,
@@ -128,5 +153,9 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
 
     private static VesselDiagnostic error(String code, String message) {
         return new VesselDiagnostic(VesselDiagnostic.Severity.ERROR, code, message);
+    }
+
+    private static VesselDiagnostic warning(String code, String message) {
+        return new VesselDiagnostic(VesselDiagnostic.Severity.WARNING, code, message);
     }
 }

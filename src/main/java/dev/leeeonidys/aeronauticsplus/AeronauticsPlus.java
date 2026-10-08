@@ -8,6 +8,7 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlo
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
+import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -166,12 +167,22 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.10: RU-pack auto-updater and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.11: space core slice and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             CompatibilityManager.initialize();
+            try {
+                SpaceCoreSlice.Result slice = SpaceCoreSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus space core slice OK: boosterDeltaV={} m/s, remainingStages={}, diagnosticsPreview={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", slice.boosterDeltaVMetersPerSecond()),
+                        slice.afterSeparation().stages().size(),
+                        slice.brokenDiagnosticText().replace('\n', ' | '));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus space core slice failed", exception);
+            }
 
             List<String> registeredItems = new ArrayList<>();
             registeredItems.add(BuiltInRegistries.ITEM.getKey(PROPELLER_SHAFT_ADAPTER_ITEM.get()).toString());

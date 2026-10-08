@@ -3,7 +3,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.147'
 }
 
-version = '0.2.2-test.10'
+version = '0.2.2-test.11'
 group = 'dev.leeeonidys'
 base { archivesName = 'aeronauticsplus' }
 

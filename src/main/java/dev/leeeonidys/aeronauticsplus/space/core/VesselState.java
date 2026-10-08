@@ -30,6 +30,28 @@ public record VesselState(String id, OrbitState orbit, List<StageState> stages, 
                 .mapToDouble(StageState::idealDeltaV).sum();
     }
 
+    /**
+     * Centre of mass of remaining stages in each stage-local frame, stacked without
+     * inter-stage offsets. True stacking geometry arrives with the Minecraft compiler.
+     */
+    public Vector3d centerOfMassMeters() {
+        double mass = 0.0;
+        Vector3d moment = Vector3d.ZERO;
+        for (StageState stage : stages.subList(activeStageIndex, stages.size())) {
+            double stageMass = stage.totalMassKg();
+            mass += stageMass;
+            moment = moment.add(stage.centerOfMassMeters().multiply(stageMass));
+        }
+        if (!(mass > 0.0)) {
+            throw new IllegalStateException("Vessel has no remaining mass");
+        }
+        return moment.multiply(1.0 / mass);
+    }
+
+    public ThrustGeometry activeThrustGeometry() {
+        return activeStage().thrustGeometry();
+    }
+
     public VesselState withOrbit(OrbitState nextOrbit) {
         return new VesselState(id, nextOrbit, stages, activeStageIndex);
     }

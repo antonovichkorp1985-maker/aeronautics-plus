@@ -12,6 +12,10 @@
   границы ответственности Aeronautics Plus и большого научного мода, правила optional-интеграций и поэтапный план TerraFirmaCraft.
 - [`modeling/HELICOPTER_ROTOR_BLENDER_SPEC.md`](modeling/HELICOPTER_ROTOR_BLENDER_SPEC.md) —
   действующий контракт геометрии, осей, объектов и ассетов ротора.
+- [`space/SPACE_CORE_ROADMAP_RU.md`](space/SPACE_CORE_ROADMAP_RU.md) —
+  независимое космическое ядро: конструкция, ступени, тяга, центр масс.
+- [`space/NEXT_TEST_RELEASE_RU.md`](space/NEXT_TEST_RELEASE_RU.md) —
+  критерии текущего космического test-среза.
 
 ## Научная база
 

@@ -1,6 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
-/** Logical engine specification; engine placement/vector is a later vessel layer. */
+/** Logical engine with a stage-local position and installed thrust axis. */
 public record EngineState(
         String id,
         String fuelId,
@@ -10,7 +10,9 @@ public record EngineState(
         double specificImpulseSeconds,
         double throttle,
         double gimbalDegrees,
-        boolean enabled) {
+        boolean enabled,
+        Vector3d localPositionMeters,
+        Vector3d thrustAxis) {
     public EngineState {
         requireName(id, "Engine");
         requireName(fuelId, "Fuel");
@@ -30,6 +32,13 @@ public record EngineState(
         if (gimbalDegrees < 0.0 || gimbalDegrees > 90.0 || !Double.isFinite(gimbalDegrees)) {
             throw new IllegalArgumentException("Gimbal range must be between zero and ninety degrees");
         }
+        if (localPositionMeters == null) {
+            throw new IllegalArgumentException("Engine position must not be null");
+        }
+        if (thrustAxis == null || !(thrustAxis.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Engine thrust axis must be finite and non-zero");
+        }
+        thrustAxis = thrustAxis.normalized();
     }
 
     public double activeThrustNewtons() {
@@ -42,6 +51,10 @@ public record EngineState(
 
     public double propellantFlowKgPerSecond() {
         return activeThrustNewtons() / exhaustVelocityMetersPerSecond();
+    }
+
+    public Vector3d activeThrustVectorNewtons() {
+        return thrustAxis.multiply(activeThrustNewtons());
     }
 
     private static void requireName(String value, String label) {

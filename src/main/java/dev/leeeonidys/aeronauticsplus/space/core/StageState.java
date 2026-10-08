@@ -5,7 +5,7 @@ import java.util.List;
 /** A physically meaningful stage assembled from tanks and engines, not a recipe template. */
 public record StageState(
         String id,
-        double structuralDryMassKg,
+        List<MassElement> structure,
         List<TankState> tanks,
         List<EngineState> engines,
         boolean separable) {
@@ -13,9 +13,7 @@ public record StageState(
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Stage id must not be blank");
         }
-        if (structuralDryMassKg < 0.0 || !Double.isFinite(structuralDryMassKg)) {
-            throw new IllegalArgumentException("Structural dry mass must be finite and non-negative");
-        }
+        structure = List.copyOf(structure == null ? List.of() : structure);
         tanks = List.copyOf(tanks == null ? List.of() : tanks);
         engines = List.copyOf(engines == null ? List.of() : engines);
         if (tanks.isEmpty()) {
@@ -26,12 +24,16 @@ public record StageState(
         }
     }
 
+    public double structuralDryMassKg() {
+        return structure.stream().mapToDouble(MassElement::massKg).sum();
+    }
+
     public double propellantMassKg() {
         return tanks.stream().mapToDouble(tank -> tank.contents().totalMassKg()).sum();
     }
 
     public double dryMassKg() {
-        return structuralDryMassKg
+        return structuralDryMassKg()
                 + tanks.stream().mapToDouble(TankState::dryMassKg).sum()
                 + engines.stream().mapToDouble(EngineState::dryMassKg).sum();
     }
@@ -42,6 +44,14 @@ public record StageState(
 
     public double thrustNewtons() {
         return engines.stream().mapToDouble(EngineState::activeThrustNewtons).sum();
+    }
+
+    public Vector3d netThrustNewtons() {
+        Vector3d sum = Vector3d.ZERO;
+        for (EngineState engine : engines) {
+            sum = sum.add(engine.activeThrustVectorNewtons());
+        }
+        return sum;
     }
 
     public double effectiveExhaustVelocityMetersPerSecond() {
@@ -65,6 +75,55 @@ public record StageState(
             return 0.0;
         }
         return effectiveExhaustVelocityMetersPerSecond() * Math.log(totalMassKg() / dryMass);
+    }
+
+    public Vector3d centerOfMassMeters() {
+        double mass = 0.0;
+        Vector3d moment = Vector3d.ZERO;
+        for (MassElement element : structure) {
+            mass += element.massKg();
+            moment = moment.add(element.localPositionMeters().multiply(element.massKg()));
+        }
+        for (TankState tank : tanks) {
+            double tankMass = tank.totalMassKg();
+            mass += tankMass;
+            moment = moment.add(tank.localPositionMeters().multiply(tankMass));
+        }
+        for (EngineState engine : engines) {
+            mass += engine.dryMassKg();
+            moment = moment.add(engine.localPositionMeters().multiply(engine.dryMassKg()));
+        }
+        if (!(mass > 0.0)) {
+            throw new IllegalStateException("Stage " + id + " has no mass");
+        }
+        return moment.multiply(1.0 / mass);
+    }
+
+    public Vector3d centerOfThrustMeters() {
+        double thrust = 0.0;
+        Vector3d moment = Vector3d.ZERO;
+        for (EngineState engine : engines) {
+            double engineThrust = engine.activeThrustNewtons();
+            if (engineThrust > 0.0) {
+                thrust += engineThrust;
+                moment = moment.add(engine.localPositionMeters().multiply(engineThrust));
+            }
+        }
+        if (!(thrust > 0.0)) {
+            return centerOfMassMeters();
+        }
+        return moment.multiply(1.0 / thrust);
+    }
+
+    public ThrustGeometry thrustGeometry() {
+        Vector3d centerOfMass = centerOfMassMeters();
+        Vector3d netThrust = netThrustNewtons();
+        Vector3d centerOfThrust = centerOfThrustMeters();
+        Vector3d momentArm = centerOfThrust.subtract(centerOfMass);
+        double offset = netThrust.magnitudeSquared() > 0.0
+                ? momentArm.cross(netThrust).magnitude() / netThrust.magnitude()
+                : 0.0;
+        return new ThrustGeometry(centerOfMass, centerOfThrust, netThrust, momentArm, offset);
     }
 
     /** Burns propellant deterministically, stopping exactly when either resource is exhausted. */
@@ -93,7 +152,7 @@ public record StageState(
                     ? oxidizerUsed * tank.contents().oxidizerMassKg() / availableOxidizer : 0.0;
             return tank.consume(fuelShare, oxidizerShare);
         }).toList();
-        StageState next = new StageState(id, structuralDryMassKg, nextTanks, engines, separable);
+        StageState next = new StageState(id, structure, nextTanks, engines, separable);
         boolean depleted = elapsed + 1.0e-9 < requestedSeconds;
         return new StageBurnResult(next, elapsed, fuelUsed, oxidizerUsed, depleted);
     }

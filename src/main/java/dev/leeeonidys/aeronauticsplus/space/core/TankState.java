@@ -1,11 +1,12 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
-/** Logical tank; geometry and material are added by the vessel compiler later. */
+/** Logical tank; detailed hull geometry is added by the later Minecraft compiler. */
 public record TankState(
         String id,
         double dryMassKg,
         double propellantCapacityKg,
-        PropellantState contents) {
+        PropellantState contents,
+        Vector3d localPositionMeters) {
     public TankState {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Tank id must not be blank");
@@ -19,6 +20,9 @@ public record TankState(
         if (contents == null || contents.totalMassKg() > propellantCapacityKg + 1.0e-9) {
             throw new IllegalArgumentException("Tank contents exceed capacity");
         }
+        if (localPositionMeters == null) {
+            throw new IllegalArgumentException("Tank position must not be null");
+        }
     }
 
     public double totalMassKg() {
@@ -26,6 +30,7 @@ public record TankState(
     }
 
     public TankState consume(double fuelKg, double oxidizerKg) {
-        return new TankState(id, dryMassKg, propellantCapacityKg, contents.consume(fuelKg, oxidizerKg));
+        return new TankState(
+                id, dryMassKg, propellantCapacityKg, contents.consume(fuelKg, oxidizerKg), localPositionMeters);
     }
 }

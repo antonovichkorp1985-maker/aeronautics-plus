@@ -3,6 +3,13 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 /** Immutable 3D vector used by the dependency-free orbital core. */
 public record Vector3d(double x, double y, double z) {
     public static final Vector3d ZERO = new Vector3d(0.0, 0.0, 0.0);
+    public static final Vector3d UNIT_Y = new Vector3d(0.0, 1.0, 0.0);
+
+    public Vector3d {
+        if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(z)) {
+            throw new IllegalArgumentException("Vector components must be finite");
+        }
+    }
 
     public Vector3d add(Vector3d other) {
         return new Vector3d(x + other.x, y + other.y, z + other.z);
@@ -18,6 +25,13 @@ public record Vector3d(double x, double y, double z) {
 
     public double dot(Vector3d other) {
         return x * other.x + y * other.y + z * other.z;
+    }
+
+    public Vector3d cross(Vector3d other) {
+        return new Vector3d(
+                y * other.z - z * other.y,
+                z * other.x - x * other.z,
+                x * other.y - y * other.x);
     }
 
     public double magnitudeSquared() {
