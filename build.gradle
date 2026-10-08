@@ -42,8 +42,14 @@ dependencies {
     compileOnly "maven.modrinth:create:6.0.10+mc1.21.1"
     compileOnly "maven.modrinth:sable:2.0.5+mc1.21.1"
     compileOnly fileTree(dir: 'libs', include: ['ponder-*.jar', 'flywheel-*.jar', 'Registrate-*.jar'])
+    testImplementation platform('org.junit:junit-bom:5.11.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
