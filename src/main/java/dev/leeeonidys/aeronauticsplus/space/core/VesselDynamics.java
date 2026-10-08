@@ -18,6 +18,13 @@ public final class VesselDynamics {
         return vessel.withOrbit(OrbitalSimulator.propagate(vessel.orbit(), durationSeconds, stepSeconds));
     }
 
+    public static VesselState burnActiveStage(VesselState vessel, double durationSeconds) {
+        StageBurnResult burn = vessel.activeStage().burn(durationSeconds);
+        java.util.ArrayList<StageState> stages = new java.util.ArrayList<>(vessel.stages());
+        stages.set(vessel.activeStageIndex(), burn.stage());
+        return new VesselState(vessel.id(), vessel.orbit(), stages, vessel.activeStageIndex());
+    }
+
     public static VesselState separateActiveStage(VesselState vessel) {
         return vessel.separateActiveStage();
     }

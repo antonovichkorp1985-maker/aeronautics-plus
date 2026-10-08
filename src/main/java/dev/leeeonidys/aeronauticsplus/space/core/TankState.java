@@ -24,4 +24,8 @@ public record TankState(
     public double totalMassKg() {
         return dryMassKg + contents.totalMassKg();
     }
+
+    public TankState consume(double fuelKg, double oxidizerKg) {
+        return new TankState(id, dryMassKg, propellantCapacityKg, contents.consume(fuelKg, oxidizerKg));
+    }
 }

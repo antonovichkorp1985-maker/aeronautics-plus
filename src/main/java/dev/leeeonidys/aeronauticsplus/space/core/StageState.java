@@ -59,4 +59,45 @@ public record StageState(
                 .sum() / thrust;
         return effectiveExhaustVelocity * Math.log(totalMassKg() / dryMass);
     }
+
+    /** Burns propellant deterministically, stopping exactly when either resource is exhausted. */
+    public StageBurnResult burn(double requestedSeconds) {
+        if (requestedSeconds < 0.0 || !Double.isFinite(requestedSeconds)) {
+            throw new IllegalArgumentException("Burn duration must be finite and non-negative");
+        }
+        double fuelRate = 0.0;
+        double oxidizerRate = 0.0;
+        for (EngineState engine : engines) {
+            double flow = engine.propellantFlowKgPerSecond();
+            double ratio = matchingMixtureRatio(engine);
+            fuelRate += flow / (1.0 + ratio);
+            oxidizerRate += flow * ratio / (1.0 + ratio);
+        }
+        double availableFuel = tanks.stream().mapToDouble(t -> t.contents().fuelMassKg()).sum();
+        double availableOxidizer = tanks.stream().mapToDouble(t -> t.contents().oxidizerMassKg()).sum();
+        double elapsed = requestedSeconds;
+        if (fuelRate > 0.0) elapsed = Math.min(elapsed, availableFuel / fuelRate);
+        if (oxidizerRate > 0.0) elapsed = Math.min(elapsed, availableOxidizer / oxidizerRate);
+        double fuelUsed = fuelRate * elapsed;
+        double oxidizerUsed = oxidizerRate * elapsed;
+        List<TankState> nextTanks = tanks.stream().map(tank -> {
+            double fuelShare = availableFuel > 0.0 ? fuelUsed * tank.contents().fuelMassKg() / availableFuel : 0.0;
+            double oxidizerShare = availableOxidizer > 0.0
+                    ? oxidizerUsed * tank.contents().oxidizerMassKg() / availableOxidizer : 0.0;
+            return tank.consume(fuelShare, oxidizerShare);
+        }).toList();
+        StageState next = new StageState(id, structuralDryMassKg, nextTanks, engines, separable);
+        boolean depleted = elapsed + 1.0e-9 < requestedSeconds;
+        return new StageBurnResult(next, elapsed, fuelUsed, oxidizerUsed, depleted);
+    }
+
+    private double matchingMixtureRatio(EngineState engine) {
+        return tanks.stream()
+                .filter(tank -> tank.contents().fuelId().equals(engine.fuelId())
+                        && tank.contents().oxidizerId().equals(engine.oxidizerId()))
+                .filter(tank -> tank.contents().fuelMassKg() > 0.0 && tank.contents().oxidizerMassKg() > 0.0)
+                .mapToDouble(tank -> tank.contents().mixtureRatio())
+                .findFirst()
+                .orElse(1.0);
+    }
 }
