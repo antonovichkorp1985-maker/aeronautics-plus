@@ -26,6 +26,7 @@
 - [`references/MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md`](references/MEASUREMENT_SYSTEMS_RELIABILITY_STUDY_GUIDE_RU.md);
 - [`references/INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md`](references/INTERFACIAL_TRANSPORT_ENERGY_STUDY_GUIDE_RU.md);
 - [`references/EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md`](references/EARTH_MATERIALS_ENVIRONMENT_STUDY_GUIDE_RU.md);
+- [`references/COMSOL_MULTIPHYSICS_GUIDE_RU.md`](references/COMSOL_MULTIPHYSICS_GUIDE_RU.md) — практический гайд по COMSOL для офлайн-верификации механики, CFD, тепла, химии и сопряжённых моделей;
 - [`references/SCIENCE_COVERAGE_MAP_RU.md`](references/SCIENCE_COVERAGE_MAP_RU.md) —
   аудит полноты и рисков, а не отдельный учебник.
 
