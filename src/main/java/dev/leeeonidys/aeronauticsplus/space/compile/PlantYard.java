@@ -8,25 +8,43 @@ import java.util.List;
 /**
  * Staging yard and planted structure for a large assembled machine.
  * The plant is a graph of cells, not one decorative block. The crane is the
- * only way a staged part becomes planted; there is no spawn.
+ * only way a staged part becomes planted; the crawler is the only way the
+ * assembled plant reaches the pad. Neither is a spawn or a teleport.
  */
-public record PlantYard(VesselBlockGrid staged, VesselBlockGrid planted, CraneJob job) {
+public record PlantYard(VesselBlockGrid staged, VesselBlockGrid planted, CraneJob job, CrawlerJob crawler) {
     public PlantYard {
         staged = staged == null ? new VesselBlockGrid(List.of()) : staged;
         planted = planted == null ? new VesselBlockGrid(List.of()) : planted;
+        if (job != null && crawler != null) {
+            throw new IllegalArgumentException("Crane and crawler cannot run at once");
+        }
+    }
+
+    public PlantYard(VesselBlockGrid staged, VesselBlockGrid planted, CraneJob job) {
+        this(staged, planted, job, null);
     }
 
     public static PlantYard ofStaged(VesselBlockOccupant... occupants) {
-        return new PlantYard(VesselBlockGrid.of(occupants), new VesselBlockGrid(List.of()), null);
+        return new PlantYard(VesselBlockGrid.of(occupants), new VesselBlockGrid(List.of()), null, null);
     }
 
     public boolean craneBusy() {
         return job != null && !job.complete();
     }
 
+    public boolean crawlerBusy() {
+        return crawler != null && !crawler.complete();
+    }
+
     public CraneOutcome startInstall(String stagedComponentId, GridPos destination) {
         if (stagedComponentId == null || stagedComponentId.isBlank() || destination == null) {
             throw new IllegalArgumentException("Install requires a staged part id and a destination");
+        }
+        if (crawlerBusy()) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "CRAWLER_BUSY",
+                    "Транспортёр занят: пакет едет на " + crawler.to())));
         }
         if (craneBusy()) {
             return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
@@ -63,21 +81,65 @@ public record PlantYard(VesselBlockGrid staged, VesselBlockGrid planted, CraneJo
         PlantYard next = new PlantYard(
                 new VesselBlockGrid(remaining),
                 planted,
-                CraneJob.start(occupant, destination));
+                CraneJob.start(occupant, destination),
+                null);
+        return CraneOutcome.accepted(next);
+    }
+
+    public CraneOutcome startHaul(GridPos padOrigin) {
+        if (padOrigin == null) {
+            throw new IllegalArgumentException("Haul requires a pad origin");
+        }
+        if (craneBusy()) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "CRANE_BUSY",
+                    "Кран занят: идёт установка " + job.spec().id() + " на " + job.to())));
+        }
+        if (crawlerBusy()) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "CRAWLER_BUSY",
+                    "Транспортёр занят: пакет едет на " + crawler.to())));
+        }
+        if (planted.isEmpty()) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "NOTHING_TO_HAUL",
+                    "На площадке нет собранного пакета")));
+        }
+        if (planted.origin().equals(padOrigin)) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "SAME_CELL",
+                    "Транспортёр не телепортирует пакет на месте: " + padOrigin)));
+        }
+        PlantYard next = new PlantYard(
+                staged,
+                new VesselBlockGrid(List.of()),
+                null,
+                CrawlerJob.start(planted, padOrigin));
         return CraneOutcome.accepted(next);
     }
 
     public PlantYard advance(double dt) {
+        if (crawler != null) {
+            CrawlerJob next = crawler.advance(dt);
+            if (!next.complete()) {
+                return new PlantYard(staged, planted, null, next);
+            }
+            return new PlantYard(staged, next.placed(), null, null);
+        }
         if (job == null) {
             return this;
         }
         CraneJob next = job.advance(dt);
         if (!next.complete()) {
-            return new PlantYard(staged, planted, next);
+            return new PlantYard(staged, planted, next, null);
         }
         List<VesselBlockOccupant> occupants = new ArrayList<>(planted.occupants());
         occupants.add(next.placed());
-        return new PlantYard(staged, new VesselBlockGrid(occupants), null);
+        return new PlantYard(staged, new VesselBlockGrid(occupants), null, null);
     }
 
     public VesselCompilation compilePlanted() {

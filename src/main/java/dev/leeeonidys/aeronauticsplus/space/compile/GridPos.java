@@ -9,6 +9,10 @@ public record GridPos(int x, int y, int z) implements Comparable<GridPos> {
         return new GridPos(x + face.dx(), y + face.dy(), z + face.dz());
     }
 
+    public GridPos translate(int dx, int dy, int dz) {
+        return new GridPos(x + dx, y + dy, z + dz);
+    }
+
     public Vector3d centerMeters(GridPos origin) {
         return occupancyCentroidMeters(origin, CellOccupancy.FULL);
     }

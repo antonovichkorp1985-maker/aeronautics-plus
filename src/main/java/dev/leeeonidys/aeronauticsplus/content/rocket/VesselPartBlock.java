@@ -1,6 +1,9 @@
 package dev.leeeonidys.aeronauticsplus.content.rocket;
 
 import com.mojang.serialization.MapCodec;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselEnvelope;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.CellOccupancy;
@@ -105,18 +108,32 @@ public final class VesselPartBlock extends Block {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
-        VesselCompilation compilation = WorldVesselScanner.compileAt(level, pos);
-        if (compilation.stages().isEmpty() && compilation.diagnostics().isEmpty()) {
+        VesselBlockGrid grid = WorldVesselScanner.scan(level, pos);
+        VesselCompilation compilation = VesselBlockCompiler.analyze(grid);
+        if (grid.isEmpty() && compilation.diagnostics().isEmpty()) {
             player.displayClientMessage(Component.literal("Сборка пуста."), false);
             return InteractionResult.CONSUME;
         }
-        if (compilation.isLaunchable()) {
-            double mass = compilation.stages().stream().mapToDouble(stage -> stage.totalMassKg()).sum();
-            double deltaV = compilation.stages().stream().mapToDouble(stage -> stage.idealDeltaV()).sum();
-            player.displayClientMessage(Component.literal(
-                    "Сборка пригодна: ступеней " + compilation.stages().size()
-                            + ", масса " + Math.round(mass)
-                            + " кг, Δv " + Math.round(deltaV) + " м/с."), false);
+        if (!grid.isEmpty()) {
+            VesselEnvelope envelope = VesselEnvelope.of(grid);
+            if (compilation.isLaunchable()) {
+                double mass = compilation.stages().stream().mapToDouble(stage -> stage.totalMassKg()).sum();
+                double deltaV = compilation.stages().stream().mapToDouble(stage -> stage.idealDeltaV()).sum();
+                player.displayClientMessage(Component.literal(String.format(
+                        java.util.Locale.ROOT,
+                        "Сборка пригодна: ступеней %d, диаметр %.1f м, высота %.1f м, масса %d кг, Δv %d м/с.",
+                        compilation.stages().size(),
+                        envelope.diameter(),
+                        envelope.height(),
+                        Math.round(mass),
+                        Math.round(deltaV))), false);
+            } else {
+                player.displayClientMessage(Component.literal(String.format(
+                        java.util.Locale.ROOT,
+                        "Габарит сборки: диаметр %.1f м, высота %.1f м.",
+                        envelope.diameter(),
+                        envelope.height())), false);
+            }
         }
         String text = compilation.diagnosticText();
         if (!text.isBlank()) {

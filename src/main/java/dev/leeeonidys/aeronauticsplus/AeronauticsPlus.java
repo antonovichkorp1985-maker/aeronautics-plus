@@ -12,6 +12,7 @@ import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -201,7 +202,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.22: closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.23: crawler haul to pad, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -321,6 +322,18 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3f", spin.thrustDot()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus spin slice failed", exception);
+            }
+            try {
+                TransporterSlice.Result haul = TransporterSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus transporter slice OK: diameter={}, height={}, haulSeconds={}, padX={}, launchable={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", haul.diameterMeters()),
+                        String.format(java.util.Locale.ROOT, "%.3f", haul.heightMeters()),
+                        String.format(java.util.Locale.ROOT, "%.3f", haul.haulSeconds()),
+                        haul.padOriginX(),
+                        haul.launchableAtPad());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus transporter slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();
