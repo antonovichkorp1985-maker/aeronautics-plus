@@ -20,6 +20,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MixtureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.SpinSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.TorqueSlice;
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +201,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.19: crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.20: residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -309,6 +310,17 @@ public final class AeronauticsPlus {
                         assembly.launchable());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus assembly slice failed", exception);
+            }
+            try {
+                SpinSlice.Result spin = SpinSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus spin slice OK: burnRate={}, coastRate={}, extraCoastAngle={}, thrustDot={}",
+                        String.format(java.util.Locale.ROOT, "%.4f", spin.burnRate()),
+                        String.format(java.util.Locale.ROOT, "%.4f", spin.coastRate()),
+                        String.format(java.util.Locale.ROOT, "%.4f", spin.extraCoastAngle()),
+                        String.format(java.util.Locale.ROOT, "%.3f", spin.thrustDot()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus spin slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();

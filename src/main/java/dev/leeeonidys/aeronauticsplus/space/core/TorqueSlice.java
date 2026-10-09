@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Deterministic proof that an offset thrust vector rotates the vessel during burn.
- * Spin is not kept after the impulse; only the finite attitude change is applied.
+ * Residual body rate after the impulse is covered by {@link SpinSlice}.
  */
 public final class TorqueSlice {
     private TorqueSlice() {

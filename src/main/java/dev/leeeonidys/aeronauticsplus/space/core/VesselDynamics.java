@@ -18,12 +18,15 @@ public final class VesselDynamics {
     }
 
     public static VesselState propagate(VesselState vessel, double durationSeconds, double stepSeconds) {
-        return vessel.withOrbit(OrbitalSimulator.propagate(vessel.orbit(), durationSeconds, stepSeconds));
+        VesselState orbited = vessel.withOrbit(
+                OrbitalSimulator.propagate(vessel.orbit(), durationSeconds, stepSeconds));
+        return orbited.withAttitude(vessel.attitude().integrateBodyRate(
+                vessel.angularVelocityBody(), durationSeconds));
     }
 
     /**
      * Burns the active stage along the inertial image of the body-frame net thrust.
-     * Offset thrust applies a finite attitude change; residual spin is not kept.
+     * Offset thrust changes attitude and leaves residual body-frame spin.
      */
     public static VesselState burnActiveStage(VesselState vessel, double durationSeconds) {
         return attemptBurn(vessel, durationSeconds).vessel();
@@ -98,7 +101,7 @@ public final class VesselDynamics {
         VesselState flown = deltaV > 0.0
                 ? applyImpulse(consumed, thrustDirection.normalized().multiply(deltaV))
                 : consumed;
-        flown = applyBurnTorque(vessel, flown, geometry, burn.elapsedSeconds());
+        flown = applyBurnSpin(vessel, flown, geometry, burn.elapsedSeconds());
         return new BurnOutcome(flown, requestedSeconds, burn.elapsedSeconds(), deltaV, faults);
     }
 
@@ -111,31 +114,37 @@ public final class VesselDynamics {
     }
 
     /**
-     * Constant-torque attitude change over the burn, starting from rest.
-     * Residual angular velocity is discarded until a later spin layer.
+     * Constant-torque rigid rotation over the burn. Average ω updates attitude;
+     * the final body rate is kept for coast.
      */
-    private static VesselState applyBurnTorque(
+    private static VesselState applyBurnSpin(
             VesselState initial, VesselState flown, ThrustGeometry geometry, double elapsedSeconds) {
-        if (!(elapsedSeconds > 0.0) || geometry == null || !geometry.hasNetThrust()) {
+        if (!(elapsedSeconds > 0.0)) {
             return flown;
         }
-        Vector3d torque = geometry.momentArmMeters().cross(geometry.netThrustNewtons());
-        double tau = torque.magnitude();
-        if (!(tau > 0.0)) {
-            return flown;
+        Vector3d omega0 = initial.angularVelocityBody();
+        Vector3d alpha = Vector3d.ZERO;
+        if (geometry != null && geometry.hasNetThrust()) {
+            Vector3d torque = geometry.momentArmMeters().cross(geometry.netThrustNewtons());
+            double tau = torque.magnitude();
+            if (tau > 0.0) {
+                double inertia = initial.momentOfInertiaKgM2(torque);
+                if (inertia > 1.0e-6) {
+                    alpha = torque.multiply(1.0 / inertia);
+                }
+            }
         }
-        double inertia = initial.momentOfInertiaKgM2(torque);
-        if (!(inertia > 1.0e-6)) {
-            return flown;
-        }
-        double deltaRadians = 0.5 * (tau / inertia) * elapsedSeconds * elapsedSeconds;
-        return flown.withAttitude(flown.attitude().rotateBody(torque, deltaRadians));
+        Vector3d omega1 = omega0.add(alpha.multiply(elapsedSeconds));
+        Vector3d omegaAvg = omega0.add(alpha.multiply(0.5 * elapsedSeconds));
+        return flown.withAttitude(flown.attitude().integrateBodyRate(omegaAvg, elapsedSeconds))
+                .withAngularVelocity(omega1);
     }
 
     private static VesselState replaceActive(VesselState vessel, StageState nextStage) {
         ArrayList<StageState> stages = new ArrayList<>(vessel.stages());
         stages.set(vessel.activeStageIndex(), nextStage);
         return new VesselState(
-                vessel.id(), vessel.orbit(), stages, vessel.activeStageIndex(), vessel.attitude());
+                vessel.id(), vessel.orbit(), stages, vessel.activeStageIndex(),
+                vessel.attitude(), vessel.angularVelocityBody());
     }
 }

@@ -8,7 +8,8 @@ public record VesselState(
         OrbitState orbit,
         List<StageState> stages,
         int activeStageIndex,
-        Attitude attitude) {
+        Attitude attitude,
+        Vector3d angularVelocityBody) {
     public VesselState {
         if (id == null || id.isBlank() || orbit == null) {
             throw new IllegalArgumentException("Vessel identity and orbit are required");
@@ -23,10 +24,18 @@ public record VesselState(
         if (attitude == null) {
             attitude = Attitude.IDENTITY;
         }
+        if (angularVelocityBody == null) {
+            angularVelocityBody = Vector3d.ZERO;
+        }
     }
 
     public VesselState(String id, OrbitState orbit, List<StageState> stages, int activeStageIndex) {
-        this(id, orbit, stages, activeStageIndex, Attitude.IDENTITY);
+        this(id, orbit, stages, activeStageIndex, Attitude.IDENTITY, Vector3d.ZERO);
+    }
+
+    public VesselState(String id, OrbitState orbit, List<StageState> stages, int activeStageIndex,
+                       Attitude attitude) {
+        this(id, orbit, stages, activeStageIndex, attitude, Vector3d.ZERO);
     }
 
     public StageState activeStage() {
@@ -79,15 +88,26 @@ public record VesselState(
         return attitude.toInertial(activeStage().netThrustNewtons());
     }
 
+    public boolean hasResidualSpin() {
+        return angularVelocityBody.magnitudeSquared() > 1.0e-18;
+    }
+
     public VesselState withOrbit(OrbitState nextOrbit) {
-        return new VesselState(id, nextOrbit, stages, activeStageIndex, attitude);
+        return new VesselState(id, nextOrbit, stages, activeStageIndex, attitude, angularVelocityBody);
     }
 
     public VesselState withAttitude(Attitude nextAttitude) {
         if (nextAttitude == null) {
             throw new IllegalArgumentException("Attitude must not be null");
         }
-        return new VesselState(id, orbit, stages, activeStageIndex, nextAttitude);
+        return new VesselState(id, orbit, stages, activeStageIndex, nextAttitude, angularVelocityBody);
+    }
+
+    public VesselState withAngularVelocity(Vector3d nextOmega) {
+        if (nextOmega == null) {
+            throw new IllegalArgumentException("Angular velocity must not be null");
+        }
+        return new VesselState(id, orbit, stages, activeStageIndex, attitude, nextOmega);
     }
 
     /** Drops the currently active stage and activates the next one. */
@@ -96,6 +116,6 @@ public record VesselState(
             throw new IllegalStateException("Cannot separate the final active stage");
         }
         List<StageState> remaining = List.copyOf(stages.subList(activeStageIndex + 1, stages.size()));
-        return new VesselState(id, orbit, remaining, 0, attitude);
+        return new VesselState(id, orbit, remaining, 0, attitude, angularVelocityBody);
     }
 }

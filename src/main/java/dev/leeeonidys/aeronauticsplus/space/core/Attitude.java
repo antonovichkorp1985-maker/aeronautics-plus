@@ -27,6 +27,21 @@ public record Attitude(Quaternion bodyToInertial) {
         return new Attitude(bodyToInertial.multiply(Quaternion.fromAxisAngle(bodyAxis, radians)));
     }
 
+    /** Integrate a constant body-frame angular rate over {@code seconds}. */
+    public Attitude integrateBodyRate(Vector3d omegaBody, double seconds) {
+        if (omegaBody == null) {
+            throw new IllegalArgumentException("Angular velocity must not be null");
+        }
+        if (!(seconds >= 0.0) || !Double.isFinite(seconds)) {
+            throw new IllegalArgumentException("Integration duration must be finite and non-negative");
+        }
+        double rate = omegaBody.magnitude();
+        if (!(rate > 1.0e-12) || seconds == 0.0) {
+            return this;
+        }
+        return rotateBody(omegaBody, rate * seconds);
+    }
+
     /** Rotate so that {@code bodyAxis} points along {@code inertialDirection}. */
     public static Attitude pointing(Vector3d bodyAxis, Vector3d inertialDirection) {
         return new Attitude(Quaternion.rotateFromTo(bodyAxis, inertialDirection));

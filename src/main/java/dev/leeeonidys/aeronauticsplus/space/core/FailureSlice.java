@@ -85,6 +85,7 @@ public final class FailureSlice {
     private static VesselState replaceEngines(VesselState vessel, boolean enabled) {
         StageState stage = vessel.activeStage();
         StageState next = enabled ? stage : stage.withDisabledEngines();
-        return new VesselState(vessel.id(), vessel.orbit(), List.of(next), 0, vessel.attitude());
+        return new VesselState(
+                vessel.id(), vessel.orbit(), List.of(next), 0, vessel.attitude(), vessel.angularVelocityBody());
     }
 }
