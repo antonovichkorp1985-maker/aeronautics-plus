@@ -9,7 +9,7 @@ public record VesselComponent(
         TankState tank,
         EngineState engine,
         Vector3d localPositionMeters) {
-    public enum ComponentKind { STRUCTURE, TANK, ENGINE, AVIONICS, PAYLOAD }
+    public enum ComponentKind { STRUCTURE, TANK, ENGINE, AVIONICS, FAIRING, PAYLOAD }
 
     public VesselComponent {
         if (id == null || id.isBlank() || stageId == null || stageId.isBlank() || kind == null) {

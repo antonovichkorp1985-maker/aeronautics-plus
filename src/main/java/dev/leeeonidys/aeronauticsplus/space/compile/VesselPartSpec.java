@@ -83,13 +83,23 @@ public record VesselPartSpec(
                 id, VesselPartKind.MOUNT, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CRADLE);
     }
 
+    public static VesselPartSpec fairing(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.FAIRING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.OGIVE);
+    }
+
+    public static VesselPartSpec payload(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.PAYLOAD, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.BUS);
+    }
+
     /**
      * Ports exposed on {@code face}. {@code facing} is exhaust for an engine and the
      * upper-stage direction for a separator.
      */
     public Set<VesselConnection.ConnectionKind> ports(BlockFace face, BlockFace facing) {
         return switch (kind) {
-            case STRUCTURE -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case STRUCTURE, FAIRING, PAYLOAD -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             case TANK -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.FUEL,

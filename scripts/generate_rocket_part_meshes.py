@@ -290,6 +290,61 @@ def separator_mesh() -> Mesh:
     return mesh
 
 
+def fairing_mesh() -> Mesh:
+    """Ogive shroud: closed nose, open clamp ring, inner skin. Not a copied NASA fairing."""
+    mesh = Mesh()
+    n = 24
+    mesh.add(
+        "ogive",
+        frustum(0.08, 0.42, 0.55, 0.34, n, 0.02, 0.40)
+        + frustum(0.55, 0.34, 0.88, 0.14, n, 0.40, 0.70)
+        + frustum(0.88, 0.14, 0.98, 0.03, n, 0.70, 0.86)
+        + disk(0.98, 0.03, n, True, (0.22, 0.78)),
+    )
+    mesh.add(
+        "inner",
+        frustum(0.12, 0.38, 0.55, 0.30, n, 0.78, 0.88, invert=True)
+        + frustum(0.55, 0.30, 0.86, 0.12, n, 0.88, 0.96, invert=True),
+    )
+    mesh.add(
+        "clamp",
+        frustum(0.00, 0.44, 0.08, 0.44, n, 0.05, 0.22)
+        + frustum(0.00, 0.32, 0.08, 0.32, n, 0.05, 0.22, invert=True)
+        + frustum(0.08, 0.42, 0.12, 0.42, n, 0.22, 0.30),
+    )
+    seam = []
+    seam.extend(box(0.48, 0.10, 0.08, 0.52, 0.90, 0.12, 0.70, 0.10, 0.90, 0.55))
+    seam.extend(box(0.48, 0.10, 0.88, 0.52, 0.90, 0.92, 0.70, 0.10, 0.90, 0.55))
+    mesh.add("seam", seam)
+    return mesh
+
+
+def payload_mesh() -> Mesh:
+    """Satellite bus with panel stubs and a dish. Original Minecraft-scale geometry."""
+    mesh = Mesh()
+    n = 16
+    mesh.add(
+        "bus",
+        box(0.32, 0.22, 0.32, 0.68, 0.70, 0.68, 0.08, 0.08, 0.42, 0.55),
+    )
+    mesh.add(
+        "radiator",
+        box(0.36, 0.70, 0.36, 0.64, 0.74, 0.64, 0.45, 0.08, 0.62, 0.22),
+    )
+    panels = []
+    panels.extend(box(0.02, 0.38, 0.46, 0.30, 0.62, 0.54, 0.10, 0.60, 0.40, 0.88))
+    panels.extend(box(0.70, 0.38, 0.46, 0.98, 0.62, 0.54, 0.10, 0.60, 0.40, 0.88))
+    mesh.add("panels", panels)
+    mesh.add(
+        "dish",
+        frustum(0.74, 0.06, 0.88, 0.16, n, 0.70, 0.90)
+        + frustum(0.74, 0.04, 0.86, 0.13, n, 0.70, 0.90, invert=True)
+        + disk(0.74, 0.06, n, False, (0.80, 0.22)),
+    )
+    mesh.add("boom", box(0.48, 0.70, 0.48, 0.52, 0.78, 0.52, 0.72, 0.70, 0.88, 0.90))
+    return mesh
+
+
 def mount_mesh() -> Mesh:
     """Train-car cradle: rails, ring, hold-down clamps. Not a homemade crawler."""
     mesh = Mesh()
@@ -402,6 +457,24 @@ def separator_tex(x, y, s):
     return (214, 176, 36)
 
 
+def fairing_tex(x, y, s):
+    ny = y / (s - 1)
+    if x in (s // 2, s // 2 - 1):
+        return (36, 38, 42)
+    if 0.18 <= ny <= 0.24 or 0.72 <= ny <= 0.78:
+        return (168, 172, 178)
+    return (232, 234, 238) if (x + y) % 5 else (218, 222, 228)
+
+
+def payload_tex(x, y, s):
+    nx, ny = x / (s - 1), y / (s - 1)
+    if 0.42 <= ny <= 0.58 and (nx < 0.22 or nx > 0.78):
+        return (28, 36, 64) if (x // 3 + y // 3) % 2 else (18, 24, 48)
+    if (x + y) % 7 == 0:
+        return (168, 124, 42)
+    return (198, 156, 64) if (x + y) % 3 else (184, 140, 52)
+
+
 def mount_tex(x, y, s):
     ny = y / (s - 1)
     if 0.18 <= ny <= 0.28 or 0.72 <= ny <= 0.82:
@@ -485,14 +558,20 @@ def main() -> None:
     structure_mesh().write(GEO / "rocket_structure.obj")
     separator_mesh().write(GEO / "stage_separator.obj")
     mount_mesh().write(GEO / "rocket_mount.obj")
+    fairing_mesh().write(GEO / "rocket_fairing.obj")
+    payload_mesh().write(GEO / "rocket_payload.obj")
 
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
     write_png(TEX / "rocket_structure.png", paint(64, structure_tex))
     write_png(TEX / "stage_separator.png", paint(64, separator_tex))
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
+    write_png(TEX / "rocket_fairing.png", paint(64, fairing_tex))
+    write_png(TEX / "rocket_payload.png", paint(64, payload_tex))
 
-    for block_id in ("rocket_engine", "rocket_tank", "rocket_structure", "stage_separator", "rocket_mount"):
+    for block_id in (
+            "rocket_engine", "rocket_tank", "rocket_structure", "stage_separator",
+            "rocket_mount", "rocket_fairing", "rocket_payload"):
         body = JSON_MODEL.format(block_id=block_id)
         (ASSETS / "models/block" / f"{block_id}.json").write_text(body, encoding="utf-8")
         (ASSETS / "models/item" / f"{block_id}.json").write_text(body, encoding="utf-8")
@@ -502,6 +581,8 @@ def main() -> None:
     write_blockstate("rocket_structure", UP_STATES)
     write_blockstate("stage_separator", UP_STATES)
     write_blockstate("rocket_mount", UP_STATES)
+    write_blockstate("rocket_fairing", UP_STATES)
+    write_blockstate("rocket_payload", UP_STATES)
     print("rocket part meshes, textures and models written")
 
 

@@ -31,6 +31,7 @@ public final class MissionExecutor {
             case BURN -> VesselDynamics.burnActiveStage(
                     vessel, event.durationSeconds(), aim(vessel, event.aim()));
             case SEPARATE -> VesselDynamics.separateActiveStage(vessel);
+            case JETTISON_FAIRING -> VesselDynamics.jettisonFairing(vessel);
         };
     }
 

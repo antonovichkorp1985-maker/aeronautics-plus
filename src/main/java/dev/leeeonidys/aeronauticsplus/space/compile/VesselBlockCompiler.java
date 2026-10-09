@@ -188,6 +188,10 @@ public final class VesselBlockCompiler {
         return switch (spec.kind()) {
             case STRUCTURE, SEPARATOR, MOUNT -> VesselComponent.structure(
                     id, stageId, VesselComponent.ComponentKind.STRUCTURE, spec.massKg(), position);
+            case FAIRING -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.FAIRING, spec.massKg(), position);
+            case PAYLOAD -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.PAYLOAD, spec.massKg(), position);
             case TANK -> VesselComponent.tank(id, stageId, new TankState(
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
             case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(

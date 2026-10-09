@@ -15,12 +15,14 @@ public final class VesselPartCatalog {
             "rocket_engine", 90.0, 20_000.0, 300.0, FUEL_ID, OXIDIZER_ID, 2.0);
     public static final VesselPartSpec SEPARATOR = VesselPartSpec.separator("stage_separator", 40.0);
     public static final VesselPartSpec MOUNT = VesselPartSpec.mount("rocket_mount", 160.0);
+    public static final VesselPartSpec FAIRING = VesselPartSpec.fairing("rocket_fairing", 45.0);
+    public static final VesselPartSpec PAYLOAD = VesselPartSpec.payload("rocket_payload", 180.0);
 
     private VesselPartCatalog() {
     }
 
     public static List<VesselPartSpec> all() {
-        return List.of(STRUCTURE, TANK, ENGINE, SEPARATOR, MOUNT);
+        return List.of(STRUCTURE, TANK, ENGINE, SEPARATOR, MOUNT, FAIRING, PAYLOAD);
     }
 
     public static VesselPartSpec byId(String id) {

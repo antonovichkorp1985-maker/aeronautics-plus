@@ -65,7 +65,10 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
                                         && component.kind() != VesselComponent.ComponentKind.ENGINE)
                                 .filter(component -> component.structuralMassKg() > 0.0)
                                 .map(component -> new MassElement(
-                                        component.id(), component.structuralMassKg(), component.localPositionMeters()))
+                                        component.id(),
+                                        component.structuralMassKg(),
+                                        component.localPositionMeters(),
+                                        roleOf(component.kind())))
                                 .toList(),
                         tanks.stream().map(VesselComponent::tank).toList(),
                         engines.stream().map(VesselComponent::engine).toList(),
@@ -74,7 +77,35 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
                 stages.add(stage);
             }
         }
+        addPayloadDiagnostics(diagnostics);
         return new VesselCompilation(diagnostics, stages);
+    }
+
+    private void addPayloadDiagnostics(List<VesselDiagnostic> diagnostics) {
+        boolean hasPayload = components.stream()
+                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.PAYLOAD);
+        boolean hasFairing = components.stream()
+                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.FAIRING);
+        if (!hasPayload) {
+            diagnostics.add(warning("NO_PAYLOAD",
+                    "Нет полезной нагрузки: орбитальный запуск без аппарата"));
+        }
+        if (hasPayload && !hasFairing) {
+            diagnostics.add(warning("PAYLOAD_WITHOUT_FAIRING",
+                    "Полезная нагрузка без обтекателя: нет защиты на участке атмосферы"));
+        }
+        if (hasFairing && !hasPayload) {
+            diagnostics.add(warning("FAIRING_WITHOUT_PAYLOAD",
+                    "Обтекатель без аппарата: сбрасывать нечего"));
+        }
+    }
+
+    private static MassElement.Role roleOf(VesselComponent.ComponentKind kind) {
+        return switch (kind) {
+            case FAIRING -> MassElement.Role.FAIRING;
+            case PAYLOAD -> MassElement.Role.PAYLOAD;
+            default -> MassElement.Role.STRUCTURE;
+        };
     }
 
     private static void addThrustGeometryDiagnostics(StageState stage, List<VesselDiagnostic> diagnostics) {

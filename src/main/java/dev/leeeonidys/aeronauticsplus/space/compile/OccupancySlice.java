@@ -18,8 +18,13 @@ public final class OccupancySlice {
 
     public static Result execute() {
         if (CellOccupancy.NOZZLE.isFullBlock() || CellOccupancy.COLUMN.isFullBlock()
-                || CellOccupancy.RING.isFullBlock() || CellOccupancy.CRADLE.isFullBlock()) {
+                || CellOccupancy.RING.isFullBlock() || CellOccupancy.CRADLE.isFullBlock()
+                || CellOccupancy.OGIVE.isFullBlock() || CellOccupancy.BUS.isFullBlock()) {
             throw new IllegalStateException("Catalog rocket parts must not occupy a full cube");
+        }
+        if (!(VesselPartCatalog.FAIRING.occupancy().volume() < 1.0)
+                || !(VesselPartCatalog.PAYLOAD.occupancy().volume() < 1.0)) {
+            throw new IllegalStateException("Fairing and payload must be smaller than one cubic metre");
         }
         if (!(VesselPartCatalog.ENGINE.occupancy().volume() < 1.0)) {
             throw new IllegalStateException("Engine occupancy must be smaller than one cubic metre");

@@ -2,13 +2,14 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 
 /** One coast, burn or staging step on a mission map. */
 public record MissionEvent(String id, Kind kind, double durationSeconds, BurnAim aim) {
-    public enum Kind { COAST, BURN, SEPARATE }
+    public enum Kind { COAST, BURN, SEPARATE, JETTISON_FAIRING }
 
     public MissionEvent {
         if (id == null || id.isBlank() || kind == null) {
             throw new IllegalArgumentException("Mission event identity is invalid");
         }
-        if (kind != Kind.SEPARATE && (durationSeconds < 0.0 || !Double.isFinite(durationSeconds))) {
+        if (kind != Kind.SEPARATE && kind != Kind.JETTISON_FAIRING
+                && (durationSeconds < 0.0 || !Double.isFinite(durationSeconds))) {
             throw new IllegalArgumentException("Event duration must be finite and non-negative");
         }
         if (kind == Kind.BURN && aim == null) {
@@ -26,5 +27,9 @@ public record MissionEvent(String id, Kind kind, double durationSeconds, BurnAim
 
     public static MissionEvent separate(String id) {
         return new MissionEvent(id, Kind.SEPARATE, 0.0, BurnAim.ENGINE);
+    }
+
+    public static MissionEvent jettisonFairing(String id) {
+        return new MissionEvent(id, Kind.JETTISON_FAIRING, 0.0, BurnAim.ENGINE);
     }
 }

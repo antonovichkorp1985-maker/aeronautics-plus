@@ -114,6 +114,31 @@ public final class VesselDynamics {
     }
 
     /**
+     * Jettisons remaining fairings on every remaining stage. Payload stays.
+     * Historical sequence: after leaving dense atmosphere (Soyuz, Falcon 9, Saturn V).
+     */
+    public static VesselState jettisonFairing(VesselState vessel) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        ArrayList<StageState> next = new ArrayList<>(vessel.stages().size());
+        boolean dropped = false;
+        for (StageState stage : vessel.stages()) {
+            StageState stripped = stage.withoutFairings();
+            if (stripped != stage) {
+                dropped = true;
+            }
+            next.add(stripped);
+        }
+        if (!dropped) {
+            throw new IllegalStateException("No fairing to jettison");
+        }
+        return new VesselState(
+                vessel.id(), vessel.orbit(), next, vessel.activeStageIndex(),
+                vessel.attitude(), vessel.angularVelocityBody());
+    }
+
+    /**
      * Constant-torque rigid rotation over the burn. Average ω updates attitude;
      * the final body rate is kept for coast.
      */

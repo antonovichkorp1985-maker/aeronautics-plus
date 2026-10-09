@@ -154,6 +154,42 @@ public record StageState(
         return new ThrustGeometry(centerOfMass, centerOfThrust, netThrust, momentArm, offset);
     }
 
+    public double fairingMassKg() {
+        return structure.stream()
+                .filter(element -> element.role() == MassElement.Role.FAIRING)
+                .mapToDouble(MassElement::massKg)
+                .sum();
+    }
+
+    public double payloadMassKg() {
+        return structure.stream()
+                .filter(element -> element.role() == MassElement.Role.PAYLOAD)
+                .mapToDouble(MassElement::massKg)
+                .sum();
+    }
+
+    public boolean hasFairing() {
+        return fairingMassKg() > 0.0;
+    }
+
+    public boolean hasPayload() {
+        return payloadMassKg() > 0.0;
+    }
+
+    /**
+     * Drops jettisonable fairing mass. Payload and propulsion stay on the stage,
+     * matching Soyuz / Falcon 9 / Saturn V after leaving dense atmosphere.
+     */
+    public StageState withoutFairings() {
+        List<MassElement> kept = structure.stream()
+                .filter(element -> element.role() != MassElement.Role.FAIRING)
+                .toList();
+        if (kept.size() == structure.size()) {
+            return this;
+        }
+        return new StageState(id, kept, tanks, engines, separable);
+    }
+
     public StageState withEngines(List<EngineState> nextEngines) {
         return new StageState(id, structure, tanks, nextEngines, separable);
     }

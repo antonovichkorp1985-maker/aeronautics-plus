@@ -12,6 +12,7 @@ import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.PayloadSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
@@ -184,6 +185,14 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.MOUNT, MapColor.COLOR_YELLOW);
     public static final DeferredItem<BlockItem> ROCKET_MOUNT_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_MOUNT);
+    public static final DeferredBlock<VesselPartBlock> ROCKET_FAIRING =
+            registerVesselPart(VesselPartCatalog.FAIRING, MapColor.SNOW);
+    public static final DeferredItem<BlockItem> ROCKET_FAIRING_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_FAIRING);
+    public static final DeferredBlock<VesselPartBlock> ROCKET_PAYLOAD =
+            registerVesselPart(VesselPartCatalog.PAYLOAD, MapColor.GOLD);
+    public static final DeferredItem<BlockItem> ROCKET_PAYLOAD_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_PAYLOAD);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -198,6 +207,8 @@ public final class AeronauticsPlus {
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(ROCKET_MOUNT_ITEM.get());
+                        output.accept(ROCKET_FAIRING_ITEM.get());
+                        output.accept(ROCKET_PAYLOAD_ITEM.get());
                     })
                     .build());
 
@@ -207,7 +218,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.25: no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.26: payload fairing jettison, orbital payload, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -329,6 +340,17 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus spin slice failed", exception);
             }
             try {
+                PayloadSlice.Result payload = PayloadSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus payload slice OK: fairing={}, payload={}, dropped={}, launchable={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", payload.fairingMassKg()),
+                        String.format(java.util.Locale.ROOT, "%.1f", payload.payloadMassKg()),
+                        String.format(java.util.Locale.ROOT, "%.1f", payload.massDroppedKg()),
+                        payload.launchable());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus payload slice failed", exception);
+            }
+            try {
                 TransporterSlice.Result haul = TransporterSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus transporter slice OK: diameter={}, height={}, haulSeconds={}, padX={}, launchable={}",
@@ -351,8 +373,10 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FAIRING_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_PAYLOAD_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 16
+            boolean allRegistered = registeredItems.size() == 18
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

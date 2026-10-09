@@ -19,6 +19,7 @@ public record MissionPlan(String id, List<MissionEvent> events) {
         return events.stream()
                 .map(event -> event.kind() + " " + event.id()
                         + (event.kind() == MissionEvent.Kind.SEPARATE
+                        || event.kind() == MissionEvent.Kind.JETTISON_FAIRING
                         ? ""
                         : " t=" + event.durationSeconds() + "s")
                         + (event.kind() == MissionEvent.Kind.BURN ? " aim=" + event.aim() : ""))

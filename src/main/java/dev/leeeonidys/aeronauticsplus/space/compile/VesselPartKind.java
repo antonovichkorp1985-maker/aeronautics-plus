@@ -7,5 +7,9 @@ public enum VesselPartKind {
     ENGINE,
     SEPARATOR,
     /** Fixture on a Create train. The train plus this block is the transporter. */
-    MOUNT
+    MOUNT,
+    /** Ogive covering the payload through dense atmosphere. */
+    FAIRING,
+    /** Orbital apparatus under the fairing. */
+    PAYLOAD
 }
