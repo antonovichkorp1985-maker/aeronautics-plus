@@ -133,7 +133,8 @@ public final class VesselBlockCompiler {
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
             case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(
                     id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
-                    spec.specificImpulseSeconds(), 1.0, 0.0, true, position, occupant.facing().opposite().vector()));
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 0.0, true, position,
+                    occupant.facing().opposite().vector()));
         };
     }
 }

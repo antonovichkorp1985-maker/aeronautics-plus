@@ -7,6 +7,7 @@ public record FlightFault(String code, String message, double atSeconds) {
     public static final String DRY_TANK = "DRY_TANK";
     public static final String ZERO_THRUST = "ZERO_THRUST";
     public static final String FEED_BREAK = "FEED_BREAK";
+    public static final String WRONG_PROPELLANT = "WRONG_PROPELLANT";
 
     public FlightFault {
         if (code == null || code.isBlank() || message == null || message.isBlank()) {
@@ -33,6 +34,12 @@ public record FlightFault(String code, String message, double atSeconds) {
         return new FlightFault(FEED_BREAK,
                 "Обрыв топливной магистрали на " + format(atSeconds) + " с — оставшийся burn отменён",
                 atSeconds);
+    }
+
+    public static FlightFault wrongPropellant() {
+        return new FlightFault(WRONG_PROPELLANT,
+                "Состав рабочего тела не совпадает с двигателем — burn отменён",
+                0.0);
     }
 
     private static String format(double seconds) {

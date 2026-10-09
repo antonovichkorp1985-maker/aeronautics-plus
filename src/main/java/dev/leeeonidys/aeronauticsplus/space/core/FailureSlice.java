@@ -71,7 +71,7 @@ public final class FailureSlice {
                 new PropellantState("rp1", "lox", 50.0, 100.0),
                 Vector3d.ZERO);
         EngineState engine = new EngineState(
-                "engine", "rp1", "lox", 90.0, 20_000.0, 300.0,
+                "engine", "rp1", "lox", 90.0, 20_000.0, 300.0, 2.0,
                 1.0, 0.0, true, new Vector3d(0.0, -1.0, 0.0), Vector3d.UNIT_Y);
         StageState stage = new StageState(
                 "stage-0",

@@ -1,6 +1,10 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
-/** Logical engine with a stage-local position and installed thrust axis. */
+/**
+ * Logical engine with a stage-local position and installed thrust axis.
+ * {@code mixtureRatio} is oxidizer/fuel by mass declared by the engine;
+ * ChemMod remains the chemistry source for real mixture data.
+ */
 public record EngineState(
         String id,
         String fuelId,
@@ -8,6 +12,7 @@ public record EngineState(
         double dryMassKg,
         double thrustNewtons,
         double specificImpulseSeconds,
+        double mixtureRatio,
         double throttle,
         double gimbalDegrees,
         boolean enabled,
@@ -25,6 +30,9 @@ public record EngineState(
         }
         if (!(specificImpulseSeconds > 0.0) || !Double.isFinite(specificImpulseSeconds)) {
             throw new IllegalArgumentException("Specific impulse must be finite and positive");
+        }
+        if (!(mixtureRatio > 0.0) || !Double.isFinite(mixtureRatio)) {
+            throw new IllegalArgumentException("Mixture ratio must be finite and positive");
         }
         if (throttle < 0.0 || throttle > 1.0 || !Double.isFinite(throttle)) {
             throw new IllegalArgumentException("Throttle must be between zero and one");
@@ -53,6 +61,14 @@ public record EngineState(
         return activeThrustNewtons() / exhaustVelocityMetersPerSecond();
     }
 
+    public double fuelFlowKgPerSecond() {
+        return propellantFlowKgPerSecond() / (1.0 + mixtureRatio);
+    }
+
+    public double oxidizerFlowKgPerSecond() {
+        return propellantFlowKgPerSecond() * mixtureRatio / (1.0 + mixtureRatio);
+    }
+
     public Vector3d activeThrustVectorNewtons() {
         return thrustAxis.multiply(activeThrustNewtons());
     }
@@ -60,7 +76,7 @@ public record EngineState(
     public EngineState withEnabled(boolean nextEnabled) {
         return new EngineState(
                 id, fuelId, oxidizerId, dryMassKg, thrustNewtons, specificImpulseSeconds,
-                throttle, gimbalDegrees, nextEnabled, localPositionMeters, thrustAxis);
+                mixtureRatio, throttle, gimbalDegrees, nextEnabled, localPositionMeters, thrustAxis);
     }
 
     private static void requireName(String value, String label) {

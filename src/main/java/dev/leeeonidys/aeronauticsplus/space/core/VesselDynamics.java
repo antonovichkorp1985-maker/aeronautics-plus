@@ -42,8 +42,9 @@ public final class VesselDynamics {
     }
 
     /**
-     * Attempts a burn. Dry tank, zero thrust and a mid-burn feed break become named faults
-     * instead of silent no-ops. {@code feedBreakAtSeconds} is ignored when NaN or negative.
+     * Attempts a burn. Dry tank, zero thrust, wrong propellant and a mid-burn feed break
+     * become named faults instead of silent no-ops. {@code feedBreakAtSeconds} is ignored
+     * when NaN or negative.
      */
     public static BurnOutcome attemptBurn(VesselState vessel, double requestedSeconds,
                                           Vector3d thrustDirection, double feedBreakAtSeconds) {
@@ -53,6 +54,10 @@ public final class VesselDynamics {
         List<FlightFault> faults = new ArrayList<>();
         if (!(vessel.activeStage().thrustNewtons() > 0.0)) {
             faults.add(FlightFault.zeroThrust());
+            return new BurnOutcome(vessel, requestedSeconds, 0.0, 0.0, faults);
+        }
+        if (!vessel.activeStage().hasCompatibleFeed()) {
+            faults.add(FlightFault.wrongPropellant());
             return new BurnOutcome(vessel, requestedSeconds, 0.0, 0.0, faults);
         }
         if (thrustDirection == null || !(thrustDirection.magnitudeSquared() > 0.0)) {

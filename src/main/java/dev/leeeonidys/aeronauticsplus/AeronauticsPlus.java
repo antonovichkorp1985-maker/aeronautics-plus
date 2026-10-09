@@ -15,6 +15,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.MixtureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
 import java.util.ArrayList;
 import java.util.List;
@@ -195,7 +196,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.15: vessel attitude, in-flight faults, mission map and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.16: mixture feed, vessel attitude, in-flight faults, mission map and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -253,6 +254,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3f", attitude.identitySpeedGain()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus attitude slice failed", exception);
+            }
+            try {
+                MixtureSlice.Result mixture = MixtureSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus mixture slice OK: designFuel={}, designOxidizer={}, leftoverFuel={}, wrong={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", mixture.designFuelKg()),
+                        String.format(java.util.Locale.ROOT, "%.3f", mixture.designOxidizerKg()),
+                        String.format(java.util.Locale.ROOT, "%.3f", mixture.leftoverFuelKg()),
+                        mixture.wrongPropellant().split(":", 2)[0]);
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus mixture slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();

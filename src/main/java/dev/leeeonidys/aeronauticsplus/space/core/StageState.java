@@ -1,6 +1,8 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** A physically meaningful stage assembled from tanks and engines, not a recipe template. */
 public record StageState(
@@ -66,7 +68,7 @@ public record StageState(
 
     /**
      * Ideal stage delta-v using thrust-weighted exhaust velocity.
-     * Mixture compatibility and feed losses are validated by the later vessel compiler.
+     * Burn consumption uses each engine's declared oxidizer/fuel mass ratio.
      */
     public double idealDeltaV() {
         double thrust = thrustNewtons();
@@ -134,30 +136,88 @@ public record StageState(
         return withEngines(engines.stream().map(engine -> engine.withEnabled(false)).toList());
     }
 
-    /** Burns propellant deterministically, stopping exactly when either resource is exhausted. */
+    /** True when every firing engine has a tank with matching fuel and oxidizer ids. */
+    public boolean hasCompatibleFeed() {
+        for (EngineState engine : engines) {
+            if (!(engine.activeThrustNewtons() > 0.0)) {
+                continue;
+            }
+            boolean matched = false;
+            for (TankState tank : tanks) {
+                if (feeds(engine, tank)) {
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Burns propellant at each engine's declared mixture ratio, drawing only from tanks
+     * whose fuel and oxidizer ids match. Stops when either species of a firing pair is gone.
+     */
     public StageBurnResult burn(double requestedSeconds) {
         if (requestedSeconds < 0.0 || !Double.isFinite(requestedSeconds)) {
             throw new IllegalArgumentException("Burn duration must be finite and non-negative");
         }
-        double fuelRate = 0.0;
-        double oxidizerRate = 0.0;
+        Map<PropellantSpecies, double[]> rates = new LinkedHashMap<>();
         for (EngineState engine : engines) {
-            double flow = engine.propellantFlowKgPerSecond();
-            double ratio = matchingMixtureRatio(engine);
-            fuelRate += flow / (1.0 + ratio);
-            oxidizerRate += flow * ratio / (1.0 + ratio);
+            if (!(engine.activeThrustNewtons() > 0.0)) {
+                continue;
+            }
+            PropellantSpecies species = new PropellantSpecies(engine.fuelId(), engine.oxidizerId());
+            double[] rate = rates.computeIfAbsent(species, ignored -> new double[2]);
+            rate[0] += engine.fuelFlowKgPerSecond();
+            rate[1] += engine.oxidizerFlowKgPerSecond();
         }
-        double availableFuel = tanks.stream().mapToDouble(t -> t.contents().fuelMassKg()).sum();
-        double availableOxidizer = tanks.stream().mapToDouble(t -> t.contents().oxidizerMassKg()).sum();
+        Map<PropellantSpecies, double[]> available = new LinkedHashMap<>();
+        for (TankState tank : tanks) {
+            PropellantSpecies species = new PropellantSpecies(
+                    tank.contents().fuelId(), tank.contents().oxidizerId());
+            if (!rates.containsKey(species)) {
+                continue;
+            }
+            double[] stock = available.computeIfAbsent(species, ignored -> new double[2]);
+            stock[0] += tank.contents().fuelMassKg();
+            stock[1] += tank.contents().oxidizerMassKg();
+        }
         double elapsed = requestedSeconds;
-        if (fuelRate > 0.0) elapsed = Math.min(elapsed, availableFuel / fuelRate);
-        if (oxidizerRate > 0.0) elapsed = Math.min(elapsed, availableOxidizer / oxidizerRate);
-        double fuelUsed = fuelRate * elapsed;
-        double oxidizerUsed = oxidizerRate * elapsed;
+        for (Map.Entry<PropellantSpecies, double[]> entry : rates.entrySet()) {
+            double[] rate = entry.getValue();
+            double[] stock = available.getOrDefault(entry.getKey(), new double[2]);
+            if (rate[0] > 0.0) {
+                elapsed = Math.min(elapsed, stock[0] / rate[0]);
+            }
+            if (rate[1] > 0.0) {
+                elapsed = Math.min(elapsed, stock[1] / rate[1]);
+            }
+        }
+        double fuelUsed = 0.0;
+        double oxidizerUsed = 0.0;
+        Map<PropellantSpecies, double[]> consumed = new LinkedHashMap<>();
+        for (Map.Entry<PropellantSpecies, double[]> entry : rates.entrySet()) {
+            double[] rate = entry.getValue();
+            double pairFuel = rate[0] * elapsed;
+            double pairOxidizer = rate[1] * elapsed;
+            consumed.put(entry.getKey(), new double[] {pairFuel, pairOxidizer});
+            fuelUsed += pairFuel;
+            oxidizerUsed += pairOxidizer;
+        }
         List<TankState> nextTanks = tanks.stream().map(tank -> {
-            double fuelShare = availableFuel > 0.0 ? fuelUsed * tank.contents().fuelMassKg() / availableFuel : 0.0;
-            double oxidizerShare = availableOxidizer > 0.0
-                    ? oxidizerUsed * tank.contents().oxidizerMassKg() / availableOxidizer : 0.0;
+            PropellantSpecies species = new PropellantSpecies(
+                    tank.contents().fuelId(), tank.contents().oxidizerId());
+            double[] pairUsed = consumed.get(species);
+            double[] stock = available.get(species);
+            if (pairUsed == null || stock == null) {
+                return tank;
+            }
+            double fuelShare = stock[0] > 0.0 ? pairUsed[0] * tank.contents().fuelMassKg() / stock[0] : 0.0;
+            double oxidizerShare = stock[1] > 0.0
+                    ? pairUsed[1] * tank.contents().oxidizerMassKg() / stock[1] : 0.0;
             return tank.consume(fuelShare, oxidizerShare);
         }).toList();
         StageState next = new StageState(id, structure, nextTanks, engines, separable);
@@ -165,13 +225,11 @@ public record StageState(
         return new StageBurnResult(next, elapsed, fuelUsed, oxidizerUsed, depleted);
     }
 
-    private double matchingMixtureRatio(EngineState engine) {
-        return tanks.stream()
-                .filter(tank -> tank.contents().fuelId().equals(engine.fuelId())
-                        && tank.contents().oxidizerId().equals(engine.oxidizerId()))
-                .filter(tank -> tank.contents().fuelMassKg() > 0.0 && tank.contents().oxidizerMassKg() > 0.0)
-                .mapToDouble(tank -> tank.contents().mixtureRatio())
-                .findFirst()
-                .orElse(1.0);
+    private static boolean feeds(EngineState engine, TankState tank) {
+        return tank.contents().fuelId().equals(engine.fuelId())
+                && tank.contents().oxidizerId().equals(engine.oxidizerId());
+    }
+
+    private record PropellantSpecies(String fuelId, String oxidizerId) {
     }
 }

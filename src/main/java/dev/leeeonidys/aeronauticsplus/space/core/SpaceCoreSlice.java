@@ -203,6 +203,7 @@ public final class SpaceCoreSlice {
     private static EngineState engine(
             String id, double dryMassKg, double thrustNewtons, double ispSeconds,
             Vector3d position, Vector3d axis) {
-        return new EngineState(id, "rp1", "lox", dryMassKg, thrustNewtons, ispSeconds, 1.0, 0.0, true, position, axis);
+        return new EngineState(
+                id, "rp1", "lox", dryMassKg, thrustNewtons, ispSeconds, 2.0, 1.0, 0.0, true, position, axis);
     }
 }

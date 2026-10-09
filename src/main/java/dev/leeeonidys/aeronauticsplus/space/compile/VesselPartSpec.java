@@ -17,6 +17,7 @@ public record VesselPartSpec(
         PropellantState defaultPropellant,
         double thrustNewtons,
         double specificImpulseSeconds,
+        double mixtureRatio,
         String fuelId,
         String oxidizerId) {
     public VesselPartSpec {
@@ -32,34 +33,35 @@ public record VesselPartSpec(
             }
         }
         if (kind == VesselPartKind.ENGINE) {
-            if (!(thrustNewtons > 0.0) || !(specificImpulseSeconds > 0.0)
+            if (!(thrustNewtons > 0.0) || !(specificImpulseSeconds > 0.0) || !(mixtureRatio > 0.0)
                     || fuelId == null || fuelId.isBlank()
                     || oxidizerId == null || oxidizerId.isBlank()) {
-                throw new IllegalArgumentException("Engine spec requires thrust, Isp and propellant ids");
+                throw new IllegalArgumentException("Engine spec requires thrust, Isp, mixture ratio and propellant ids");
             }
         }
     }
 
     public static VesselPartSpec structure(String id, double massKg) {
-        return new VesselPartSpec(id, VesselPartKind.STRUCTURE, massKg, 0.0, null, 0.0, 0.0, "", "");
+        return new VesselPartSpec(id, VesselPartKind.STRUCTURE, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "");
     }
 
     public static VesselPartSpec tank(
             String id, double dryMassKg, double capacityKg, PropellantState contents) {
         return new VesselPartSpec(
-                id, VesselPartKind.TANK, dryMassKg, capacityKg, contents, 0.0, 0.0,
+                id, VesselPartKind.TANK, dryMassKg, capacityKg, contents, 0.0, 0.0, 0.0,
                 contents.fuelId(), contents.oxidizerId());
     }
 
     public static VesselPartSpec engine(
             String id, double dryMassKg, double thrustNewtons, double ispSeconds,
-            String fuelId, String oxidizerId) {
+            String fuelId, String oxidizerId, double mixtureRatio) {
         return new VesselPartSpec(
-                id, VesselPartKind.ENGINE, dryMassKg, 0.0, null, thrustNewtons, ispSeconds, fuelId, oxidizerId);
+                id, VesselPartKind.ENGINE, dryMassKg, 0.0, null, thrustNewtons, ispSeconds, mixtureRatio,
+                fuelId, oxidizerId);
     }
 
     public static VesselPartSpec separator(String id, double massKg) {
-        return new VesselPartSpec(id, VesselPartKind.SEPARATOR, massKg, 0.0, null, 0.0, 0.0, "", "");
+        return new VesselPartSpec(id, VesselPartKind.SEPARATOR, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "");
     }
 
     /**
