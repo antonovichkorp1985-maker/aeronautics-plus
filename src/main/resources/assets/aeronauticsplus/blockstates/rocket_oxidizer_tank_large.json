@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/rocket_oxidizer_tank_large"
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/rocket_oxidizer_tank_large",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/rocket_oxidizer_tank_large",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/rocket_oxidizer_tank_large",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/rocket_oxidizer_tank_large",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/rocket_oxidizer_tank_large",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

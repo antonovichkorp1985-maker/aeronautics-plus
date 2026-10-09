@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:coal"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "pattern": [
+    "ICI",
+    "IBI",
+    "ICI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:rocket_fuel_tank_large"
+  }
+}

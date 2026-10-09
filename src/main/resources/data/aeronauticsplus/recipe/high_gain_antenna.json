@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:bowl"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    " B ",
+    "IRI",
+    " I "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:high_gain_antenna"
+  }
+}

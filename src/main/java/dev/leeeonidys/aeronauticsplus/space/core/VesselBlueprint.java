@@ -137,15 +137,18 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             diagnostics.add(warning("BATTERY_WITHOUT_SOLAR",
                     "Батарея без панели: заряд не восполняется"));
         }
-        if ((hasHabitat || hasGyro) && !hasRadiator) {
+        boolean hasAntenna = hasKind(VesselComponent.ComponentKind.ANTENNA);
+        boolean hasLab = hasKind(VesselComponent.ComponentKind.LAB);
+        if ((hasHabitat || hasGyro || hasLab) && !hasRadiator) {
             diagnostics.add(warning("NO_RADIATOR",
                     "В вакууме нет конвекции: нужен радиатор"));
         }
-        if ((hasHabitat || hasGyro || hasBattery) && hasRadiator) {
+        if ((hasHabitat || hasGyro || hasBattery || hasLab) && hasRadiator) {
             Set<String> heat = idsOf(
                     VesselComponent.ComponentKind.HABITAT,
                     VesselComponent.ComponentKind.GYRO,
-                    VesselComponent.ComponentKind.BATTERY);
+                    VesselComponent.ComponentKind.BATTERY,
+                    VesselComponent.ComponentKind.LAB);
             Set<String> radiators = idsOf(VesselComponent.ComponentKind.RADIATOR);
             for (String source : heat) {
                 if (!hasPath(Set.of(source), radiators, VesselConnection.ConnectionKind.THERMAL)) {
@@ -158,6 +161,14 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
         if (hasHabitat && !hasDocking) {
             diagnostics.add(warning("NO_DOCKING",
                     "Жилой модуль без стыковочного узла: нет перехода на другой аппарат"));
+        }
+        if ((hasHabitat || hasPayload) && !hasAntenna) {
+            diagnostics.add(warning("NO_ANTENNA",
+                    "Нет антенны: нет канала на Землю"));
+        }
+        if (hasLab && !hasHabitat) {
+            diagnostics.add(warning("LAB_WITHOUT_HABITAT",
+                    "Лаборатория без жилого модуля: станция не обитаема"));
         }
     }
 
@@ -206,6 +217,8 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             case DOCKING -> MassElement.Role.DOCKING;
             case BATTERY -> MassElement.Role.BATTERY;
             case RADIATOR -> MassElement.Role.RADIATOR;
+            case ANTENNA -> MassElement.Role.ANTENNA;
+            case LAB -> MassElement.Role.LAB;
             default -> MassElement.Role.STRUCTURE;
         };
     }

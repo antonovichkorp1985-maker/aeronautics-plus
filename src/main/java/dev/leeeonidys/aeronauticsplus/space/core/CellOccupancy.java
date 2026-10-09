@@ -26,6 +26,14 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
     public static final CellOccupancy CAN = fromPixels(4, 4, 4, 12, 12, 12);
     /** Small RCS pod. */
     public static final CellOccupancy POD = fromPixels(5, 2, 5, 11, 14, 11);
+    /** Skinny upper-stage barrel. Still one 1 m cell. */
+    public static final CellOccupancy SLIM = fromPixels(5, 0, 5, 11, 16, 11);
+    /** Fat booster barrel. Still one 1 m cell, not a 3 m rocket. */
+    public static final CellOccupancy WIDE = fromPixels(1, 0, 1, 15, 16, 15);
+    /** Omni / whip antenna mast. */
+    public static final CellOccupancy MAST = fromPixels(6, 0, 6, 10, 16, 10);
+    /** High-gain dish. */
+    public static final CellOccupancy DISH = fromPixels(2, 3, 2, 14, 13, 14);
 
     public CellOccupancy {
         if (origin == null || size == null) {

@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/lh2_tank"
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/lh2_tank",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/lh2_tank",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/lh2_tank",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/lh2_tank",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/lh2_tank",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

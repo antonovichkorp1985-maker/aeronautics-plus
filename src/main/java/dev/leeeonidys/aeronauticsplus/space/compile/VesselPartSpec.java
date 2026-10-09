@@ -53,9 +53,14 @@ public record VesselPartSpec(
 
     public static VesselPartSpec tank(
             String id, double dryMassKg, double capacityKg, PropellantState contents) {
+        return tank(id, dryMassKg, capacityKg, contents, CellOccupancy.COLUMN);
+    }
+
+    public static VesselPartSpec tank(
+            String id, double dryMassKg, double capacityKg, PropellantState contents, CellOccupancy occupancy) {
         return new VesselPartSpec(
                 id, VesselPartKind.TANK, dryMassKg, capacityKg, contents, 0.0, 0.0, 0.0,
-                contents.fuelId(), contents.oxidizerId(), CellOccupancy.COLUMN);
+                contents.fuelId(), contents.oxidizerId(), occupancy);
     }
 
     public static VesselPartSpec engine(
@@ -131,6 +136,16 @@ public record VesselPartSpec(
                 id, VesselPartKind.RADIATOR, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING);
     }
 
+    public static VesselPartSpec antenna(String id, double massKg, CellOccupancy occupancy) {
+        return new VesselPartSpec(
+                id, VesselPartKind.ANTENNA, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", occupancy);
+    }
+
+    public static VesselPartSpec lab(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.LAB, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.COLUMN);
+    }
+
     /**
      * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
      * tanks expose only that species — oxidizer does not travel through the fuel hull.
@@ -154,10 +169,21 @@ public record VesselPartSpec(
      */
     public Set<VesselConnection.ConnectionKind> ports(BlockFace face, BlockFace facing) {
         return switch (kind) {
-            case STRUCTURE, FAIRING, PAYLOAD -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case STRUCTURE, FAIRING -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case PAYLOAD -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.DATA);
             case HABITAT -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
-                    VesselConnection.ConnectionKind.THERMAL);
+                    VesselConnection.ConnectionKind.THERMAL,
+                    VesselConnection.ConnectionKind.DATA);
+            case LAB -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.THERMAL,
+                    VesselConnection.ConnectionKind.DATA);
+            case ANTENNA -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.DATA);
             case SOLAR -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.ELECTRIC);

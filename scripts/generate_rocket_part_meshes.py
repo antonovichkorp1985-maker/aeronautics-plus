@@ -194,24 +194,27 @@ def engine_mesh() -> Mesh:
     return mesh
 
 
-def tank_mesh() -> Mesh:
+def tank_mesh(radius: float = 0.44) -> Mesh:
     mesh = Mesh()
     n = 24
+    r = radius
+    dome = max(0.16, r * 0.64)
     # Closed barrel: outer skin + full bulkheads. No sight-line through the tank.
-    mesh.add("barrel", frustum(0.12, 0.44, 0.88, 0.44, n, 0.02, 0.50))
+    mesh.add("barrel", frustum(0.12, r, 0.88, r, n, 0.02, 0.50))
     mesh.add(
         "lower_dome",
-        frustum(0.02, 0.28, 0.12, 0.44, n, 0.50, 0.64) + disk(0.02, 0.28, n, False, (0.22, 0.22)),
+        frustum(0.02, dome, 0.12, r, n, 0.50, 0.64) + disk(0.02, dome, n, False, (0.22, 0.22)),
     )
     mesh.add(
         "upper_dome",
-        frustum(0.88, 0.44, 0.98, 0.28, n, 0.64, 0.78) + disk(0.98, 0.28, n, True, (0.22, 0.78)),
+        frustum(0.88, r, 0.98, dome, n, 0.64, 0.78) + disk(0.98, dome, n, True, (0.22, 0.78)),
     )
-    mesh.add("band", frustum(0.44, 0.455, 0.56, 0.455, n, 0.82, 0.96))
+    mesh.add("band", frustum(0.44, r + 0.015, 0.56, r + 0.015, n, 0.82, 0.96))
     stringers = []
+    sr = min(0.49, r + 0.01)
     for i in range(8):
         ang = 2 * math.pi * i / 8
-        dx, dz = 0.45 * math.cos(ang), 0.45 * math.sin(ang)
+        dx, dz = sr * math.cos(ang), sr * math.sin(ang)
         stringers.extend(
             box(
                 0.5 + dx - 0.014,
@@ -371,6 +374,76 @@ def gyro_mesh() -> Mesh:
         + disk(0.22, 0.22, n, False, (0.80, 0.22))
         + disk(0.78, 0.22, n, True, (0.80, 0.78)),
     )
+    return mesh
+
+
+def hydrolox_engine_mesh() -> Mesh:
+    """Long vacuum bell, RL10 silhouette at 1 m. Not a copy of NASA files."""
+    mesh = Mesh()
+    n = 20
+    mesh.add(
+        "bell_outer",
+        frustum(0.00, 0.36, 0.42, 0.12, n, 0.02, 0.50)
+        + frustum(0.42, 0.12, 0.58, 0.08, n, 0.50, 0.62),
+    )
+    mesh.add(
+        "bell_inner",
+        frustum(0.02, 0.32, 0.42, 0.09, n, 0.78, 0.92, invert=True)
+        + disk(0.02, 0.32, n, False, (0.80, 0.22)),
+    )
+    mesh.add(
+        "chamber",
+        frustum(0.58, 0.12, 0.82, 0.12, n, 0.05, 0.28) + disk(0.82, 0.12, n, True, (0.22, 0.78)),
+    )
+    mesh.add("gimbal", frustum(0.82, 0.14, 0.98, 0.08, n, 0.30, 0.48) + disk(0.98, 0.08, n, True, (0.22, 0.22)))
+    return mesh
+
+
+def omni_antenna_mesh() -> Mesh:
+    """Whip / omni mast. Not a full cube."""
+    mesh = Mesh()
+    n = 12
+    mesh.add("base", box(0.38, 0.00, 0.38, 0.62, 0.10, 0.62, 0.40, 0.10, 0.62, 0.40))
+    mesh.add("mast", frustum(0.10, 0.04, 0.88, 0.03, n, 0.50, 0.80))
+    mesh.add(
+        "tip",
+        frustum(0.88, 0.05, 0.98, 0.05, n, 0.10, 0.30)
+        + disk(0.88, 0.05, n, False, (0.22, 0.22))
+        + disk(0.98, 0.05, n, True, (0.22, 0.78)),
+    )
+    return mesh
+
+
+def dish_antenna_mesh() -> Mesh:
+    """High-gain dish on a boom. Original Minecraft-scale geometry."""
+    mesh = Mesh()
+    n = 16
+    mesh.add("boom", box(0.46, 0.08, 0.46, 0.54, 0.62, 0.54, 0.70, 0.70, 0.88, 0.90))
+    mesh.add("yoke", box(0.30, 0.58, 0.46, 0.70, 0.66, 0.54, 0.40, 0.40, 0.60, 0.60))
+    mesh.add(
+        "dish",
+        frustum(0.66, 0.08, 0.86, 0.28, n, 0.70, 0.92)
+        + frustum(0.66, 0.05, 0.82, 0.24, n, 0.70, 0.92, invert=True)
+        + disk(0.66, 0.08, n, False, (0.80, 0.22)),
+    )
+    return mesh
+
+
+def lab_mesh() -> Mesh:
+    """ISS-style lab barrel with rack windows. Not a copy of habitat."""
+    mesh = Mesh()
+    n = 16
+    mesh.add("hull", frustum(0.06, 0.38, 0.94, 0.38, n, 0.05, 0.50))
+    mesh.add(
+        "ends",
+        frustum(0.00, 0.28, 0.06, 0.38, n, 0.50, 0.65) + disk(0.00, 0.28, n, False, (0.22, 0.22))
+        + frustum(0.94, 0.38, 1.00, 0.28, n, 0.65, 0.80) + disk(1.00, 0.28, n, True, (0.22, 0.78)),
+    )
+    racks = []
+    racks.extend(box(0.12, 0.32, 0.70, 0.88, 0.70, 0.80, 0.10, 0.55, 0.40, 0.90))
+    racks.extend(box(0.12, 0.32, 0.20, 0.88, 0.70, 0.30, 0.10, 0.55, 0.40, 0.90))
+    mesh.add("racks", racks)
+    mesh.add("band", frustum(0.46, 0.40, 0.54, 0.40, n, 0.82, 0.95))
     return mesh
 
 
@@ -639,6 +712,51 @@ def gyro_tex(x, y, s):
     return (88, 92, 98) if (x + y) % 5 else (72, 76, 82)
 
 
+def lh2_tank_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.40 <= ny <= 0.58:
+        return (214, 214, 218) if (x + y) % 4 else (196, 198, 204)
+    if x % 8 == 0 or y in (0, s - 1):
+        return (168, 120, 64)
+    return (198, 132, 52) if (x + y) % 3 else (184, 118, 42)
+
+
+def hydrolox_engine_tex(x, y, s):
+    nx, ny = x / (s - 1), y / (s - 1)
+    cx, cy = nx - 0.5, ny - 0.5
+    r = math.hypot(cx, cy)
+    if r < 0.12:
+        return (22, 24, 28)
+    if r < 0.40:
+        return (148, 168, 186) if (x + y) % 4 else (118, 140, 162)
+    return (88, 96, 108) if (x + y) % 5 else (72, 80, 90)
+
+
+def omni_tex(x, y, s):
+    if x % 6 == 0:
+        return (168, 172, 178)
+    return (90, 94, 100) if (x + y) % 4 else (72, 76, 82)
+
+
+def dish_tex(x, y, s):
+    nx, ny = x / (s - 1), y / (s - 1)
+    r = math.hypot(nx - 0.5, ny - 0.5)
+    if r < 0.22:
+        return (48, 52, 58)
+    if r < 0.46:
+        return (210, 214, 220) if (x + y) % 5 else (188, 192, 198)
+    return (118, 122, 130)
+
+
+def lab_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.28 <= ny <= 0.42 or 0.58 <= ny <= 0.72:
+        return (36, 90, 140) if (x // 5 + y // 5) % 2 else (24, 70, 118)
+    if x % 8 == 0:
+        return (176, 180, 188)
+    return (206, 210, 216) if (x + y) % 4 else (188, 192, 198)
+
+
 def docking_tex(x, y, s):
     ny = y / (s - 1)
     if 0.35 <= ny <= 0.55:
@@ -766,7 +884,10 @@ def assert_outward() -> None:
 def main() -> None:
     assert_outward()
     engine_mesh().write(GEO / "rocket_engine.obj")
+    hydrolox_engine_mesh().write(GEO / "hydrolox_engine.obj")
     tank_mesh().write(GEO / "rocket_tank.obj")
+    tank_mesh(0.30).write(GEO / "rocket_tank_small.obj")
+    tank_mesh(0.48).write(GEO / "rocket_tank_large.obj")
     structure_mesh().write(GEO / "rocket_structure.obj")
     separator_mesh().write(GEO / "stage_separator.obj")
     mount_mesh().write(GEO / "rocket_mount.obj")
@@ -779,6 +900,9 @@ def main() -> None:
     docking_mesh().write(GEO / "docking_port.obj")
     battery_mesh().write(GEO / "battery_pack.obj")
     radiator_mesh().write(GEO / "heat_radiator.obj")
+    omni_antenna_mesh().write(GEO / "omni_antenna.obj")
+    dish_antenna_mesh().write(GEO / "high_gain_antenna.obj")
+    lab_mesh().write(GEO / "research_lab.obj")
 
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
@@ -796,15 +920,30 @@ def main() -> None:
     write_png(TEX / "docking_port.png", paint(64, docking_tex))
     write_png(TEX / "battery_pack.png", paint(64, battery_tex))
     write_png(TEX / "heat_radiator.png", paint(64, radiator_tex))
+    write_png(TEX / "rocket_fuel_tank_small.png", paint(64, fuel_tank_tex))
+    write_png(TEX / "rocket_fuel_tank_large.png", paint(64, fuel_tank_tex))
+    write_png(TEX / "rocket_oxidizer_tank_small.png", paint(64, oxidizer_tank_tex))
+    write_png(TEX / "rocket_oxidizer_tank_large.png", paint(64, oxidizer_tank_tex))
+    write_png(TEX / "lh2_tank.png", paint(64, lh2_tank_tex))
+    write_png(TEX / "hydrolox_engine.png", paint(64, hydrolox_engine_tex))
+    write_png(TEX / "omni_antenna.png", paint(64, omni_tex))
+    write_png(TEX / "high_gain_antenna.png", paint(64, dish_tex))
+    write_png(TEX / "research_lab.png", paint(64, lab_tex))
 
     for block_id in (
             "rocket_engine", "rocket_tank", "rocket_structure", "stage_separator",
             "rocket_mount", "rocket_fairing", "rocket_payload",
             "crew_habitat", "solar_panel", "control_gyro", "rcs_thruster",
-            "docking_port", "battery_pack", "heat_radiator"):
+            "docking_port", "battery_pack", "heat_radiator",
+            "hydrolox_engine", "omni_antenna", "high_gain_antenna", "research_lab"):
         write_part_models(block_id)
     write_part_models("rocket_fuel_tank", "rocket_tank")
     write_part_models("rocket_oxidizer_tank", "rocket_tank")
+    write_part_models("rocket_fuel_tank_small", "rocket_tank_small")
+    write_part_models("rocket_oxidizer_tank_small", "rocket_tank_small")
+    write_part_models("rocket_fuel_tank_large", "rocket_tank_large")
+    write_part_models("rocket_oxidizer_tank_large", "rocket_tank_large")
+    write_part_models("lh2_tank", "rocket_tank_large")
 
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_tank", UP_STATES)
@@ -822,6 +961,15 @@ def main() -> None:
     write_blockstate("docking_port", UP_STATES)
     write_blockstate("battery_pack", UP_STATES)
     write_blockstate("heat_radiator", UP_STATES)
+    write_blockstate("rocket_fuel_tank_small", UP_STATES)
+    write_blockstate("rocket_fuel_tank_large", UP_STATES)
+    write_blockstate("rocket_oxidizer_tank_small", UP_STATES)
+    write_blockstate("rocket_oxidizer_tank_large", UP_STATES)
+    write_blockstate("lh2_tank", UP_STATES)
+    write_blockstate("hydrolox_engine", ENGINE_STATES)
+    write_blockstate("omni_antenna", UP_STATES)
+    write_blockstate("high_gain_antenna", UP_STATES)
+    write_blockstate("research_lab", UP_STATES)
     print("rocket part meshes, textures and models written")
 
 

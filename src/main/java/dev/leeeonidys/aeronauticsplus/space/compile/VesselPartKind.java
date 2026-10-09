@@ -25,5 +25,9 @@ public enum VesselPartKind {
     /** Eclipse energy store. Solar does not work in shadow. */
     BATTERY,
     /** Vacuum heat rejection. There is no convection off-atmosphere. */
-    RADIATOR
+    RADIATOR,
+    /** Radio: omni or high-gain. */
+    ANTENNA,
+    /** Pressurized station laboratory / experiment rack. */
+    LAB
 }

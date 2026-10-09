@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "B": {
+      "item": "minecraft:book"
+    }
+  },
+  "pattern": [
+    "IGI",
+    "IBI",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:research_lab"
+  }
+}
