@@ -9,6 +9,7 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
+import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
@@ -199,7 +200,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.18: cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.19: crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -297,6 +298,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3f", packing.eastX()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus packing slice failed", exception);
+            }
+            try {
+                AssemblySlice.Result assembly = AssemblySlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus assembly slice OK: planted={}, craneSeconds={}, midTransitEmpty={}, launchable={}",
+                        assembly.plantedComponents(),
+                        String.format(java.util.Locale.ROOT, "%.3f", assembly.craneSeconds()),
+                        assembly.midTransitEmpty(),
+                        assembly.launchable());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus assembly slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();
