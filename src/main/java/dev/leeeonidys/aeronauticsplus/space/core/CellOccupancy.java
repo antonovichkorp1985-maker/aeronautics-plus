@@ -14,6 +14,8 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
     public static final CellOccupancy NOZZLE = fromPixels(4, 0, 4, 12, 16, 12);
     /** Thin separator ring. */
     public static final CellOccupancy RING = fromPixels(1, 5, 1, 15, 11, 15);
+    /** Low cradle on a train car; not a full cube. */
+    public static final CellOccupancy CRADLE = fromPixels(1, 0, 1, 15, 6, 15);
 
     public CellOccupancy {
         if (origin == null || size == null) {

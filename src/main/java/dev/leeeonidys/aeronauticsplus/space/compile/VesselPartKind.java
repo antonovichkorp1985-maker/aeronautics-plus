@@ -5,5 +5,7 @@ public enum VesselPartKind {
     STRUCTURE,
     TANK,
     ENGINE,
-    SEPARATOR
+    SEPARATOR,
+    /** Fixture on a Create train. The train plus this block is the transporter. */
+    MOUNT
 }

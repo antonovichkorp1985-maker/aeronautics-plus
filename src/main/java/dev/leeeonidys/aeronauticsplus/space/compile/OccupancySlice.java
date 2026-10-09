@@ -18,7 +18,7 @@ public final class OccupancySlice {
 
     public static Result execute() {
         if (CellOccupancy.NOZZLE.isFullBlock() || CellOccupancy.COLUMN.isFullBlock()
-                || CellOccupancy.RING.isFullBlock()) {
+                || CellOccupancy.RING.isFullBlock() || CellOccupancy.CRADLE.isFullBlock()) {
             throw new IllegalStateException("Catalog rocket parts must not occupy a full cube");
         }
         if (!(VesselPartCatalog.ENGINE.occupancy().volume() < 1.0)) {

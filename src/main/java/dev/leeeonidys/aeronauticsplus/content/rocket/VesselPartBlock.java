@@ -86,7 +86,7 @@ public final class VesselPartBlock extends Block {
         if (spec.kind() == VesselPartKind.ENGINE) {
             return defaultBlockState().setValue(FACING, context.getClickedFace().getOpposite());
         }
-        if (spec.kind() == VesselPartKind.SEPARATOR) {
+        if (spec.kind() == VesselPartKind.SEPARATOR || spec.kind() == VesselPartKind.MOUNT) {
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
         return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());

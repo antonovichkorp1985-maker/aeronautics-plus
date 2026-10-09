@@ -290,6 +290,57 @@ def separator_mesh() -> Mesh:
     return mesh
 
 
+def mount_mesh() -> Mesh:
+    """Train-car cradle: rails, ring, hold-down clamps. Not a homemade crawler."""
+    mesh = Mesh()
+    n = 16
+    rails = []
+    rails.extend(box(0.06, 0.00, 0.06, 0.20, 0.08, 0.94, 0.05, 0.05, 0.40, 0.35))
+    rails.extend(box(0.80, 0.00, 0.06, 0.94, 0.08, 0.94, 0.05, 0.05, 0.40, 0.35))
+    rails.extend(box(0.06, 0.00, 0.06, 0.94, 0.08, 0.20, 0.05, 0.05, 0.40, 0.35))
+    rails.extend(box(0.06, 0.00, 0.80, 0.94, 0.08, 0.94, 0.05, 0.05, 0.40, 0.35))
+    mesh.add("rails", rails)
+    mesh.add(
+        "ring",
+        frustum(0.08, 0.42, 0.16, 0.42, n, 0.45, 0.70)
+        + frustum(0.08, 0.28, 0.16, 0.28, n, 0.45, 0.70, invert=True),
+    )
+    clamps = []
+    for i in range(4):
+        ang = math.pi / 4 + i * math.pi / 2
+        dx, dz = 0.38 * math.cos(ang), 0.38 * math.sin(ang)
+        clamps.extend(
+            box(
+                0.5 + dx - 0.04,
+                0.08,
+                0.5 + dz - 0.04,
+                0.5 + dx + 0.04,
+                0.42,
+                0.5 + dz + 0.04,
+                0.72,
+                0.10,
+                0.95,
+                0.55,
+            )
+        )
+        clamps.extend(
+            box(
+                0.5 + dx - 0.06,
+                0.38,
+                0.5 + dz - 0.06,
+                0.5 + dx + 0.06,
+                0.46,
+                0.5 + dz + 0.06,
+                0.72,
+                0.55,
+                0.95,
+                0.80,
+            )
+        )
+    mesh.add("clamps", clamps)
+    return mesh
+
+
 def chunk(tag: bytes, data: bytes) -> bytes:
     return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
 
@@ -349,6 +400,15 @@ def separator_tex(x, y, s):
     if (x + y) % 5 == 0:
         return (232, 198, 64)
     return (214, 176, 36)
+
+
+def mount_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.18 <= ny <= 0.28 or 0.72 <= ny <= 0.82:
+        return (214, 176, 36)
+    if x % 8 == 0 or y % 8 == 0:
+        return (168, 172, 178)
+    return (78, 82, 90) if (x // 4 + y // 4) % 2 == 0 else (58, 62, 70)
 
 
 JSON_MODEL = """{{
@@ -424,13 +484,15 @@ def main() -> None:
     tank_mesh().write(GEO / "rocket_tank.obj")
     structure_mesh().write(GEO / "rocket_structure.obj")
     separator_mesh().write(GEO / "stage_separator.obj")
+    mount_mesh().write(GEO / "rocket_mount.obj")
 
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
     write_png(TEX / "rocket_structure.png", paint(64, structure_tex))
     write_png(TEX / "stage_separator.png", paint(64, separator_tex))
+    write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
 
-    for block_id in ("rocket_engine", "rocket_tank", "rocket_structure", "stage_separator"):
+    for block_id in ("rocket_engine", "rocket_tank", "rocket_structure", "stage_separator", "rocket_mount"):
         body = JSON_MODEL.format(block_id=block_id)
         (ASSETS / "models/block" / f"{block_id}.json").write_text(body, encoding="utf-8")
         (ASSETS / "models/item" / f"{block_id}.json").write_text(body, encoding="utf-8")
@@ -439,6 +501,7 @@ def main() -> None:
     write_blockstate("rocket_tank", UP_STATES)
     write_blockstate("rocket_structure", UP_STATES)
     write_blockstate("stage_separator", UP_STATES)
+    write_blockstate("rocket_mount", UP_STATES)
     print("rocket part meshes, textures and models written")
 
 

@@ -3,9 +3,9 @@ package dev.leeeonidys.aeronauticsplus.space.compile;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
 
 /**
- * Deterministic proof that an assembled plant reaches the pad on a crawler:
- * the haul is a timed action, not a teleport, and a 3-cell-wide stack is ~3 m
- * across rather than one decorative block.
+ * Create train plus {@link VesselPartCatalog#MOUNT} is the transporter.
+ * The haul is the train trip: timed, not a teleport. A 3-cell-wide stack is
+ * ~3 m across rather than one decorative block.
  */
 public final class TransporterSlice {
     private TransporterSlice() {
@@ -104,6 +104,12 @@ public final class TransporterSlice {
     }
 
     private static PlantYard assembleWideStack() {
+        VesselBlockOccupant westMount = new VesselBlockOccupant(
+                new GridPos(10, -1, 0), VesselPartCatalog.MOUNT, BlockFace.UP);
+        VesselBlockOccupant coreMount = new VesselBlockOccupant(
+                new GridPos(11, -1, 0), VesselPartCatalog.MOUNT, BlockFace.UP);
+        VesselBlockOccupant eastMount = new VesselBlockOccupant(
+                new GridPos(12, -1, 0), VesselPartCatalog.MOUNT, BlockFace.UP);
         VesselBlockOccupant westFoot = new VesselBlockOccupant(
                 new GridPos(10, 0, 0), VesselPartCatalog.STRUCTURE, BlockFace.UP);
         VesselBlockOccupant engine = new VesselBlockOccupant(
@@ -116,13 +122,17 @@ public final class TransporterSlice {
                 new GridPos(11, 1, 0), VesselPartCatalog.TANK, BlockFace.UP);
         VesselBlockOccupant eastTank = new VesselBlockOccupant(
                 new GridPos(12, 1, 0), VesselPartCatalog.TANK, BlockFace.UP);
-        PlantYard yard = PlantYard.ofStaged(westFoot, engine, eastFoot, westTank, coreTank, eastTank);
-        yard = complete(yard, engine.componentId(), engine.pos().translate(-10, 0, 0));
-        yard = complete(yard, westFoot.componentId(), westFoot.pos().translate(-10, 0, 0));
-        yard = complete(yard, eastFoot.componentId(), eastFoot.pos().translate(-10, 0, 0));
-        yard = complete(yard, westTank.componentId(), westTank.pos().translate(-10, 0, 0));
-        yard = complete(yard, coreTank.componentId(), coreTank.pos().translate(-10, 0, 0));
-        yard = complete(yard, eastTank.componentId(), eastTank.pos().translate(-10, 0, 0));
+        PlantYard yard = PlantYard.ofStaged(
+                westMount, coreMount, eastMount, westFoot, engine, eastFoot, westTank, coreTank, eastTank);
+        yard = complete(yard, westMount.componentId(), westMount.pos().translate(-10, 1, 0));
+        yard = complete(yard, coreMount.componentId(), coreMount.pos().translate(-10, 1, 0));
+        yard = complete(yard, eastMount.componentId(), eastMount.pos().translate(-10, 1, 0));
+        yard = complete(yard, engine.componentId(), engine.pos().translate(-10, 1, 0));
+        yard = complete(yard, westFoot.componentId(), westFoot.pos().translate(-10, 1, 0));
+        yard = complete(yard, eastFoot.componentId(), eastFoot.pos().translate(-10, 1, 0));
+        yard = complete(yard, westTank.componentId(), westTank.pos().translate(-10, 1, 0));
+        yard = complete(yard, coreTank.componentId(), coreTank.pos().translate(-10, 1, 0));
+        yard = complete(yard, eastTank.componentId(), eastTank.pos().translate(-10, 1, 0));
         return yard;
     }
 

@@ -180,6 +180,10 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.SEPARATOR, MapColor.GOLD);
     public static final DeferredItem<BlockItem> STAGE_SEPARATOR_ITEM =
             ITEMS.registerSimpleBlockItem(STAGE_SEPARATOR);
+    public static final DeferredBlock<VesselPartBlock> ROCKET_MOUNT =
+            registerVesselPart(VesselPartCatalog.MOUNT, MapColor.COLOR_YELLOW);
+    public static final DeferredItem<BlockItem> ROCKET_MOUNT_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_MOUNT);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -193,6 +197,7 @@ public final class AeronauticsPlus {
                         output.accept(ROCKET_TANK_ITEM.get());
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
+                        output.accept(ROCKET_MOUNT_ITEM.get());
                     })
                     .build());
 
@@ -202,7 +207,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.23: crawler haul to pad, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.24: Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -345,8 +350,9 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_TANK_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 15
+            boolean allRegistered = registeredItems.size() == 16
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

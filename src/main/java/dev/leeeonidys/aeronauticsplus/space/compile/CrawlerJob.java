@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * One crawler haul of an assembled plant from the bay to the pad.
- * The stack leaves the bay when the job starts and appears at the pad only
- * when the job finishes. This is an action, not a teleport.
+ * Duration of a Create-train haul: the assembled plant is on a rocket mount
+ * and is not at the pad until the train arrives. This is not a homemade
+ * crawler vehicle.
  */
 public record CrawlerJob(
         VesselBlockGrid cargo,

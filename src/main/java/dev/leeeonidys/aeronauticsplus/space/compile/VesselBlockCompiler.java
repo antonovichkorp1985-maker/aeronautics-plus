@@ -168,7 +168,7 @@ public final class VesselBlockCompiler {
         String id = occupant.componentId();
         VesselPartSpec spec = occupant.spec();
         return switch (spec.kind()) {
-            case STRUCTURE, SEPARATOR -> VesselComponent.structure(
+            case STRUCTURE, SEPARATOR, MOUNT -> VesselComponent.structure(
                     id, stageId, VesselComponent.ComponentKind.STRUCTURE, spec.massKg(), position);
             case TANK -> VesselComponent.tank(id, stageId, new TankState(
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));

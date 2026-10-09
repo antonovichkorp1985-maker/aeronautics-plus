@@ -78,6 +78,11 @@ public record VesselPartSpec(
                 id, VesselPartKind.SEPARATOR, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.RING);
     }
 
+    public static VesselPartSpec mount(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.MOUNT, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CRADLE);
+    }
+
     /**
      * Ports exposed on {@code face}. {@code facing} is exhaust for an engine and the
      * upper-stage direction for a separator.
@@ -105,6 +110,7 @@ public record VesselPartSpec(
             case SEPARATOR -> face == facing
                     ? EnumSet.of(VesselConnection.ConnectionKind.SEPARATION)
                     : EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case MOUNT -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
         };
     }
 }
