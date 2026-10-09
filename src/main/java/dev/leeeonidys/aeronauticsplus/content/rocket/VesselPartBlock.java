@@ -8,7 +8,7 @@ import dev.leeeonidys.aeronauticsplus.space.world.WorldVesselScanner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -74,15 +74,15 @@ public final class VesselPartBlock extends Block {
     }
 
     @Override
-    protected ItemInteractionResult useWithoutItem(
+    public InteractionResult useWithoutItem(
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide) {
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         VesselCompilation compilation = WorldVesselScanner.compileAt(level, pos);
         if (compilation.stages().isEmpty() && compilation.diagnostics().isEmpty()) {
             player.displayClientMessage(Component.literal("Сборка пуста."), false);
-            return ItemInteractionResult.CONSUME;
+            return InteractionResult.CONSUME;
         }
         if (compilation.isLaunchable()) {
             player.displayClientMessage(Component.literal(
@@ -97,6 +97,6 @@ public final class VesselPartBlock extends Block {
                 player.displayClientMessage(Component.literal(line), false);
             }
         }
-        return ItemInteractionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 }
