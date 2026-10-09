@@ -23,7 +23,7 @@ public final class WorldVesselScanner {
     }
 
     public static VesselCompilation compileAt(Level level, BlockPos origin) {
-        return VesselBlockCompiler.compile(scan(level, origin)).analyze();
+        return VesselBlockCompiler.analyze(scan(level, origin));
     }
 
     public static VesselBlockGrid scan(Level level, BlockPos origin) {

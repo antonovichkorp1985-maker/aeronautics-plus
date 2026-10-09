@@ -55,4 +55,20 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
     public boolean isFullBlock() {
         return volume() > 1.0 - 1.0e-9;
     }
+
+    public Vector3d max() {
+        return origin.add(size);
+    }
+
+    /** True when the open boxes overlap. Faces that only touch are allowed. */
+    public boolean intersects(CellOccupancy other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Occupancy to test is required");
+        }
+        Vector3d a1 = max();
+        Vector3d b1 = other.max();
+        return origin.x() < b1.x() - 1.0e-9 && other.origin.x() < a1.x() - 1.0e-9
+                && origin.y() < b1.y() - 1.0e-9 && other.origin.y() < a1.y() - 1.0e-9
+                && origin.z() < b1.z() - 1.0e-9 && other.origin.z() < a1.z() - 1.0e-9;
+    }
 }

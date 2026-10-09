@@ -6,12 +6,14 @@ import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselBlueprint;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselComponent;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselConnection;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,15 +26,16 @@ public final class VesselBlockCompiler {
     private VesselBlockCompiler() {
     }
 
+    public static VesselCompilation analyze(VesselBlockGrid grid) {
+        return compile(grid).analyze().withDiagnostics(CellPacking.diagnostics(grid));
+    }
+
     public static VesselBlueprint compile(VesselBlockGrid grid) {
         if (grid == null || grid.isEmpty()) {
             return new VesselBlueprint(List.of(), List.of());
         }
         GridPos origin = grid.origin();
-        Map<GridPos, VesselBlockOccupant> byPos = new HashMap<>();
-        for (VesselBlockOccupant occupant : grid.occupants()) {
-            byPos.put(occupant.pos(), occupant);
-        }
+        Map<GridPos, List<VesselBlockOccupant>> byPos = index(grid.occupants());
         Map<GridPos, String> stageByPos = assignStages(grid.occupants(), byPos);
         List<VesselComponent> components = new ArrayList<>();
         for (VesselBlockOccupant occupant : grid.occupants()) {
@@ -41,11 +44,19 @@ public final class VesselBlockCompiler {
                     stageByPos.get(occupant.pos()),
                     occupant.pos().occupancyCentroidMeters(origin, occupant.spec().occupancy())));
         }
-        return new VesselBlueprint(components, buildConnections(grid.occupants(), byPos));
+        return new VesselBlueprint(components, buildConnections(byPos));
+    }
+
+    private static Map<GridPos, List<VesselBlockOccupant>> index(List<VesselBlockOccupant> occupants) {
+        Map<GridPos, List<VesselBlockOccupant>> byPos = new LinkedHashMap<>();
+        for (VesselBlockOccupant occupant : occupants) {
+            byPos.computeIfAbsent(occupant.pos(), ignored -> new ArrayList<>()).add(occupant);
+        }
+        return byPos;
     }
 
     private static Map<GridPos, String> assignStages(
-            List<VesselBlockOccupant> occupants, Map<GridPos, VesselBlockOccupant> byPos) {
+            List<VesselBlockOccupant> occupants, Map<GridPos, List<VesselBlockOccupant>> byPos) {
         Set<GridPos> visited = new HashSet<>();
         List<List<GridPos>> islands = new ArrayList<>();
         for (VesselBlockOccupant occupant : occupants) {
@@ -58,14 +69,14 @@ public final class VesselBlockCompiler {
             while (!pending.isEmpty()) {
                 GridPos current = pending.remove();
                 island.add(current);
-                VesselBlockOccupant here = byPos.get(current);
+                List<VesselBlockOccupant> here = byPos.get(current);
                 for (BlockFace face : BlockFace.values()) {
                     GridPos neighbourPos = current.offset(face);
-                    VesselBlockOccupant neighbour = byPos.get(neighbourPos);
-                    if (neighbour == null || visited.contains(neighbourPos)) {
+                    List<VesselBlockOccupant> neighbours = byPos.get(neighbourPos);
+                    if (neighbours == null || visited.contains(neighbourPos)) {
                         continue;
                     }
-                    if (shares(here, neighbour, face, VesselConnection.ConnectionKind.STRUCTURAL)) {
+                    if (structurallyLinked(here, neighbours, face)) {
                         visited.add(neighbourPos);
                         pending.add(neighbourPos);
                     }
@@ -85,25 +96,52 @@ public final class VesselBlockCompiler {
         return stageByPos;
     }
 
-    private static List<VesselConnection> buildConnections(
-            List<VesselBlockOccupant> occupants, Map<GridPos, VesselBlockOccupant> byPos) {
+    private static List<VesselConnection> buildConnections(Map<GridPos, List<VesselBlockOccupant>> byPos) {
         List<VesselConnection> connections = new ArrayList<>();
-        for (VesselBlockOccupant occupant : occupants) {
-            for (BlockFace face : BlockFace.values()) {
-                GridPos neighbourPos = occupant.pos().offset(face);
-                if (occupant.pos().compareTo(neighbourPos) >= 0) {
-                    continue;
+        for (Map.Entry<GridPos, List<VesselBlockOccupant>> entry : byPos.entrySet()) {
+            List<VesselBlockOccupant> cell = entry.getValue();
+            for (int i = 0; i < cell.size(); i++) {
+                for (int j = i + 1; j < cell.size(); j++) {
+                    if (!cell.get(i).spec().occupancy().intersects(cell.get(j).spec().occupancy())) {
+                        connections.add(new VesselConnection(
+                                cell.get(i).componentId(),
+                                cell.get(j).componentId(),
+                                VesselConnection.ConnectionKind.STRUCTURAL));
+                    }
                 }
-                VesselBlockOccupant neighbour = byPos.get(neighbourPos);
-                if (neighbour == null) {
-                    continue;
-                }
-                for (VesselConnection.ConnectionKind kind : sharedKinds(occupant, neighbour, face)) {
-                    connections.add(new VesselConnection(occupant.componentId(), neighbour.componentId(), kind));
+            }
+            for (VesselBlockOccupant occupant : cell) {
+                for (BlockFace face : BlockFace.values()) {
+                    GridPos neighbourPos = occupant.pos().offset(face);
+                    if (occupant.pos().compareTo(neighbourPos) >= 0) {
+                        continue;
+                    }
+                    List<VesselBlockOccupant> neighbours = byPos.get(neighbourPos);
+                    if (neighbours == null) {
+                        continue;
+                    }
+                    for (VesselBlockOccupant neighbour : neighbours) {
+                        for (VesselConnection.ConnectionKind kind : sharedKinds(occupant, neighbour, face)) {
+                            connections.add(new VesselConnection(
+                                    occupant.componentId(), neighbour.componentId(), kind));
+                        }
+                    }
                 }
             }
         }
         return connections;
+    }
+
+    private static boolean structurallyLinked(
+            List<VesselBlockOccupant> here, List<VesselBlockOccupant> neighbours, BlockFace face) {
+        for (VesselBlockOccupant from : here) {
+            for (VesselBlockOccupant to : neighbours) {
+                if (shares(from, to, face, VesselConnection.ConnectionKind.STRUCTURAL)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static Set<VesselConnection.ConnectionKind> sharedKinds(

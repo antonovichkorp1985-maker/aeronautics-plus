@@ -10,6 +10,7 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -198,7 +199,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.17: sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.18: cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -286,6 +287,16 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3f", torque.offsetMeters()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus torque slice failed", exception);
+            }
+            try {
+                PackingSlice.Result packing = PackingSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus packing slice OK: packedEngines={}, westX={}, eastX={}",
+                        packing.packedEngines(),
+                        String.format(java.util.Locale.ROOT, "%.3f", packing.westX()),
+                        String.format(java.util.Locale.ROOT, "%.3f", packing.eastX()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus packing slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();

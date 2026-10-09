@@ -1,27 +1,31 @@
 package dev.leeeonidys.aeronauticsplus.space.compile;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** Occupied vessel blocks in world-grid coordinates. */
+/**
+ * Occupied vessel objects in world-grid coordinates.
+ * Several objects may share one cell when their occupancies fit.
+ */
 public record VesselBlockGrid(List<VesselBlockOccupant> occupants) {
     public static final int MAX_BLOCKS = 256;
 
     public VesselBlockGrid {
         occupants = List.copyOf(occupants == null ? List.of() : occupants);
         if (occupants.size() > MAX_BLOCKS) {
-            throw new IllegalArgumentException("Vessel exceeds " + MAX_BLOCKS + " blocks");
+            throw new IllegalArgumentException("Vessel exceeds " + MAX_BLOCKS + " objects");
         }
-        Set<GridPos> seen = new HashSet<>();
+        Set<String> ids = new HashSet<>();
         for (VesselBlockOccupant occupant : occupants) {
-            if (!seen.add(occupant.pos())) {
-                throw new IllegalArgumentException("Duplicate block at " + occupant.pos());
+            if (!ids.add(occupant.componentId())) {
+                throw new IllegalArgumentException("Duplicate component " + occupant.componentId());
             }
         }
-        occupants = occupants.stream().sorted(Comparator.comparing(VesselBlockOccupant::pos)).toList();
+        occupants = occupants.stream()
+                .sorted(Comparator.comparing(VesselBlockOccupant::pos).thenComparing(VesselBlockOccupant::componentId))
+                .toList();
     }
 
     public static VesselBlockGrid of(VesselBlockOccupant... occupants) {

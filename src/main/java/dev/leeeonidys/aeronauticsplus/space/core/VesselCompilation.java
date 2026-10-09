@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,15 @@ public record VesselCompilation(List<VesselDiagnostic> diagnostics, List<StageSt
     public boolean isLaunchable() {
         return !stages.isEmpty()
                 && diagnostics.stream().noneMatch(diagnostic -> diagnostic.severity() == VesselDiagnostic.Severity.ERROR);
+    }
+
+    public VesselCompilation withDiagnostics(List<VesselDiagnostic> extra) {
+        if (extra == null || extra.isEmpty()) {
+            return this;
+        }
+        ArrayList<VesselDiagnostic> merged = new ArrayList<>(extra);
+        merged.addAll(diagnostics);
+        return new VesselCompilation(merged, stages);
     }
 
     public String diagnosticText() {
