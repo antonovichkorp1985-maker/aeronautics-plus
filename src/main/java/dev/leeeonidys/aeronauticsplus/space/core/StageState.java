@@ -67,6 +67,18 @@ public record StageState(
         return structure.stream().anyMatch(element -> element.role() == MassElement.Role.HABITAT);
     }
 
+    public boolean hasDocking() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.DOCKING);
+    }
+
+    public boolean hasBattery() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.BATTERY);
+    }
+
+    public boolean hasRadiator() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.RADIATOR);
+    }
+
     public int gyroCount() {
         return (int) structure.stream().filter(element -> element.role() == MassElement.Role.GYRO).count();
     }

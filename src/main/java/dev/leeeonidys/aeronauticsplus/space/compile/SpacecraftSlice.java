@@ -30,15 +30,22 @@ public final class SpacecraftSlice {
         }
         if (bus.diagnosticText().contains("NO_RCS")
                 || bus.diagnosticText().contains("GYRO_WITHOUT_SOLAR")
-                || bus.diagnosticText().contains("NO_POWER_PATH")) {
-            throw new IllegalStateException("Complete bus must not warn about ACS/power:\n"
+                || bus.diagnosticText().contains("NO_POWER_PATH")
+                || bus.diagnosticText().contains("NO_DOCKING")
+                || bus.diagnosticText().contains("NO_BATTERY")
+                || bus.diagnosticText().contains("NO_RADIATOR")
+                || bus.diagnosticText().contains("NO_THERMAL_PATH")) {
+            throw new IllegalStateException("Complete bus must not warn about ACS/power/heat:\n"
                     + bus.diagnosticText());
         }
         if (!bus.stages().get(0).hasHabitat()
                 || !bus.stages().get(0).hasGyro()
                 || !bus.stages().get(0).hasSolar()
+                || !bus.stages().get(0).hasDocking()
+                || !bus.stages().get(0).hasBattery()
+                || !bus.stages().get(0).hasRadiator()
                 || bus.stages().get(0).rcsThrusters().isEmpty()) {
-            throw new IllegalStateException("Bus must compile habitat, gyro, solar and RCS");
+            throw new IllegalStateException("Bus must compile habitat, gyro, solar, docking, battery, radiator and RCS");
         }
 
         VesselState initial = bus.toVesselState("spacecraft-demo", SpaceBodies.parkingOrbit());
@@ -110,7 +117,10 @@ public final class SpacecraftSlice {
                 new VesselBlockOccupant(new GridPos(0, 1, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(1, 1, 0), VesselPartCatalog.RCS, BlockFace.EAST),
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
+                new VesselBlockOccupant(new GridPos(0, 2, -1), VesselPartCatalog.DOCKING, BlockFace.NORTH),
+                new VesselBlockOccupant(new GridPos(1, 2, 0), VesselPartCatalog.RADIATOR, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.GYRO, BlockFace.UP),
+                new VesselBlockOccupant(new GridPos(-1, 3, 0), VesselPartCatalog.BATTERY, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(1, 3, 0), VesselPartCatalog.SOLAR, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.PAYLOAD, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));

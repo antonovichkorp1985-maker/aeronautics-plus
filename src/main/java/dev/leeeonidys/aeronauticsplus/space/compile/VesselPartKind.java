@@ -19,5 +19,11 @@ public enum VesselPartKind {
     /** Control-moment gyro / гиродин. */
     GYRO,
     /** Reaction-control thruster. Not a main engine. */
-    RCS
+    RCS,
+    /** Androgynous capture ring (APAS / IDSS silhouette). */
+    DOCKING,
+    /** Eclipse energy store. Solar does not work in shadow. */
+    BATTERY,
+    /** Vacuum heat rejection. There is no convection off-atmosphere. */
+    RADIATOR
 }

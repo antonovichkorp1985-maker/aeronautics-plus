@@ -116,6 +116,21 @@ public record VesselPartSpec(
                 fuelId, oxidizerId, CellOccupancy.POD);
     }
 
+    public static VesselPartSpec docking(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.DOCKING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.RING);
+    }
+
+    public static VesselPartSpec battery(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.BATTERY, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CAN);
+    }
+
+    public static VesselPartSpec radiator(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.RADIATOR, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING);
+    }
+
     /**
      * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
      * tanks expose only that species — oxidizer does not travel through the fuel hull.
@@ -139,10 +154,20 @@ public record VesselPartSpec(
      */
     public Set<VesselConnection.ConnectionKind> ports(BlockFace face, BlockFace facing) {
         return switch (kind) {
-            case STRUCTURE, FAIRING, PAYLOAD, HABITAT -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
-            case SOLAR, GYRO -> EnumSet.of(
+            case STRUCTURE, FAIRING, PAYLOAD -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case HABITAT -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.THERMAL);
+            case SOLAR -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.ELECTRIC);
+            case GYRO, BATTERY -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.ELECTRIC,
+                    VesselConnection.ConnectionKind.THERMAL);
+            case RADIATOR -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.THERMAL);
             case TANK -> tankPorts();
             case ENGINE -> {
                 if (face == facing) {
@@ -169,6 +194,13 @@ public record VesselPartSpec(
                             VesselConnection.ConnectionKind.STRUCTURAL,
                             VesselConnection.ConnectionKind.FUEL,
                             VesselConnection.ConnectionKind.OXIDIZER);
+                }
+                yield EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            }
+            case DOCKING -> {
+                if (face == facing) {
+                    // Capture ring. Two ports looking at each other share DOCKING, not hull.
+                    yield EnumSet.of(VesselConnection.ConnectionKind.DOCKING);
                 }
                 yield EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             }

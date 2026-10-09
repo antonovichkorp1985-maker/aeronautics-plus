@@ -107,12 +107,13 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             diagnostics.add(warning("FAIRING_WITHOUT_PAYLOAD",
                     "Обтекатель без аппарата: сбрасывать нечего"));
         }
-        boolean hasRcs = components.stream()
-                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.RCS);
-        boolean hasGyro = components.stream()
-                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.GYRO);
-        boolean hasSolar = components.stream()
-                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.SOLAR);
+        boolean hasRcs = hasKind(VesselComponent.ComponentKind.RCS);
+        boolean hasGyro = hasKind(VesselComponent.ComponentKind.GYRO);
+        boolean hasSolar = hasKind(VesselComponent.ComponentKind.SOLAR);
+        boolean hasBattery = hasKind(VesselComponent.ComponentKind.BATTERY);
+        boolean hasRadiator = hasKind(VesselComponent.ComponentKind.RADIATOR);
+        boolean hasHabitat = hasKind(VesselComponent.ComponentKind.HABITAT);
+        boolean hasDocking = hasKind(VesselComponent.ComponentKind.DOCKING);
         if (hasPayload && !hasRcs) {
             diagnostics.add(warning("NO_RCS",
                     "Аппарат без РСУ: нет ориентации и малых манёвров"));
@@ -121,25 +122,78 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             diagnostics.add(warning("GYRO_WITHOUT_SOLAR",
                     "Гиродину нужна солнечная панель"));
         }
-        if (hasGyro && hasSolar && !hasElectricPath()) {
+        if (hasGyro && (hasSolar || hasBattery) && !hasPath(
+                idsOf(VesselComponent.ComponentKind.SOLAR, VesselComponent.ComponentKind.BATTERY),
+                idsOf(VesselComponent.ComponentKind.GYRO),
+                VesselConnection.ConnectionKind.ELECTRIC)) {
             diagnostics.add(warning("NO_POWER_PATH",
-                    "Гиродин не соединён электрически с солнечной панелью"));
+                    "Гиродин не соединён электрически с солнечной панелью или батареей"));
+        }
+        if (hasSolar && !hasBattery) {
+            diagnostics.add(warning("NO_BATTERY",
+                    "Солнечная панель без батареи: в тени нет питания"));
+        }
+        if (hasBattery && !hasSolar) {
+            diagnostics.add(warning("BATTERY_WITHOUT_SOLAR",
+                    "Батарея без панели: заряд не восполняется"));
+        }
+        if ((hasHabitat || hasGyro) && !hasRadiator) {
+            diagnostics.add(warning("NO_RADIATOR",
+                    "В вакууме нет конвекции: нужен радиатор"));
+        }
+        if ((hasHabitat || hasGyro || hasBattery) && hasRadiator) {
+            Set<String> heat = idsOf(
+                    VesselComponent.ComponentKind.HABITAT,
+                    VesselComponent.ComponentKind.GYRO,
+                    VesselComponent.ComponentKind.BATTERY);
+            Set<String> radiators = idsOf(VesselComponent.ComponentKind.RADIATOR);
+            for (String source : heat) {
+                if (!hasPath(Set.of(source), radiators, VesselConnection.ConnectionKind.THERMAL)) {
+                    diagnostics.add(warning("NO_THERMAL_PATH",
+                            "Тепло от " + source + " не доходит до радиатора"));
+                    break;
+                }
+            }
+        }
+        if (hasHabitat && !hasDocking) {
+            diagnostics.add(warning("NO_DOCKING",
+                    "Жилой модуль без стыковочного узла: нет перехода на другой аппарат"));
         }
     }
 
-    private boolean hasElectricPath() {
-        Set<String> solarIds = components.stream()
-                .filter(component -> component.kind() == VesselComponent.ComponentKind.SOLAR)
+    private boolean hasKind(VesselComponent.ComponentKind kind) {
+        return components.stream().anyMatch(component -> component.kind() == kind);
+    }
+
+    private Set<String> idsOf(VesselComponent.ComponentKind... kinds) {
+        Set<VesselComponent.ComponentKind> wanted = Set.of(kinds);
+        return components.stream()
+                .filter(component -> wanted.contains(component.kind()))
                 .map(VesselComponent::id)
                 .collect(Collectors.toSet());
-        Set<String> gyroIds = components.stream()
-                .filter(component -> component.kind() == VesselComponent.ComponentKind.GYRO)
-                .map(VesselComponent::id)
-                .collect(Collectors.toSet());
-        return connections.stream().anyMatch(connection ->
-                connection.kind() == VesselConnection.ConnectionKind.ELECTRIC
-                        && ((solarIds.contains(connection.fromId()) && gyroIds.contains(connection.toId()))
-                        || (gyroIds.contains(connection.fromId()) && solarIds.contains(connection.toId()))));
+    }
+
+    private boolean hasPath(Set<String> sources, Set<String> sinks, VesselConnection.ConnectionKind kind) {
+        if (sources.isEmpty() || sinks.isEmpty()) {
+            return false;
+        }
+        ArrayDeque<String> pending = new ArrayDeque<>(sources);
+        Set<String> visited = new HashSet<>();
+        while (!pending.isEmpty()) {
+            String current = pending.remove();
+            if (!visited.add(current)) {
+                continue;
+            }
+            if (sinks.contains(current)) {
+                return true;
+            }
+            connections.stream()
+                    .filter(connection -> connection.kind() == kind)
+                    .filter(connection -> connection.fromId().equals(current) || connection.toId().equals(current))
+                    .map(connection -> connection.fromId().equals(current) ? connection.toId() : connection.fromId())
+                    .forEach(pending::add);
+        }
+        return false;
     }
 
     private static MassElement.Role roleOf(VesselComponent.ComponentKind kind) {
@@ -149,6 +203,9 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             case HABITAT -> MassElement.Role.HABITAT;
             case SOLAR -> MassElement.Role.SOLAR;
             case GYRO -> MassElement.Role.GYRO;
+            case DOCKING -> MassElement.Role.DOCKING;
+            case BATTERY -> MassElement.Role.BATTERY;
+            case RADIATOR -> MassElement.Role.RADIATOR;
             default -> MassElement.Role.STRUCTURE;
         };
     }

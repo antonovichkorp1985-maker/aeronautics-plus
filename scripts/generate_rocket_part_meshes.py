@@ -374,6 +374,65 @@ def gyro_mesh() -> Mesh:
     return mesh
 
 
+def docking_mesh() -> Mesh:
+    """Androgynous capture ring: flange, tunnel, petals. Original, APAS/IDSS silhouette."""
+    mesh = Mesh()
+    n = 20
+    mesh.add(
+        "base",
+        frustum(0.00, 0.42, 0.10, 0.42, n, 0.05, 0.22)
+        + frustum(0.00, 0.28, 0.10, 0.28, n, 0.05, 0.22, invert=True),
+    )
+    mesh.add(
+        "tunnel",
+        frustum(0.10, 0.30, 0.48, 0.30, n, 0.22, 0.50)
+        + frustum(0.10, 0.22, 0.48, 0.22, n, 0.22, 0.50, invert=True),
+    )
+    mesh.add(
+        "ring",
+        frustum(0.48, 0.36, 0.62, 0.36, n, 0.50, 0.72)
+        + frustum(0.48, 0.24, 0.62, 0.24, n, 0.50, 0.72, invert=True),
+    )
+    petals = []
+    for i in range(3):
+        ang = 2 * math.pi * i / 3
+        c, s = math.cos(ang), math.sin(ang)
+        x, z = 0.5 + 0.34 * c, 0.5 + 0.34 * s
+        petals.extend(box(x - 0.05, 0.50, z - 0.05, x + 0.05, 0.78, z + 0.05, 0.72, 0.10, 0.95, 0.45))
+    mesh.add("petals", petals)
+    mesh.add(
+        "guide",
+        frustum(0.62, 0.18, 0.72, 0.08, n, 0.78, 0.92) + disk(0.72, 0.08, n, True, (0.80, 0.78)),
+    )
+    return mesh
+
+
+def battery_mesh() -> Mesh:
+    """Battery ORU: case, connector, warning stripe. Not a cube."""
+    mesh = Mesh()
+    mesh.add("case", box(0.28, 0.18, 0.30, 0.72, 0.82, 0.70, 0.08, 0.08, 0.45, 0.55))
+    mesh.add("stripe", box(0.26, 0.44, 0.28, 0.74, 0.56, 0.72, 0.70, 0.10, 0.90, 0.40))
+    mesh.add("connector", box(0.44, 0.82, 0.44, 0.56, 0.94, 0.56, 0.40, 0.70, 0.60, 0.90))
+    feet = []
+    feet.extend(box(0.30, 0.12, 0.32, 0.40, 0.18, 0.42, 0.50, 0.50, 0.70, 0.70))
+    feet.extend(box(0.60, 0.12, 0.58, 0.70, 0.18, 0.68, 0.50, 0.50, 0.70, 0.70))
+    mesh.add("feet", feet)
+    return mesh
+
+
+def radiator_mesh() -> Mesh:
+    """Deployable radiator: boom, thin panel, heat pipes. Vacuum has no convection."""
+    mesh = Mesh()
+    mesh.add("boom", box(0.46, 0.46, 0.08, 0.54, 0.54, 0.32, 0.70, 0.70, 0.88, 0.90))
+    mesh.add("panel", box(0.04, 0.38, 0.32, 0.96, 0.62, 0.78, 0.02, 0.02, 0.40, 0.40))
+    pipes = []
+    for i in range(5):
+        x0 = 0.10 + i * 0.16
+        pipes.extend(box(x0, 0.40, 0.34, x0 + 0.04, 0.60, 0.76, 0.55, 0.55, 0.80, 0.85))
+    mesh.add("pipes", pipes)
+    return mesh
+
+
 def rcs_mesh() -> Mesh:
     """Four small RCS bells on a pod. Not a main engine."""
     mesh = Mesh()
@@ -580,6 +639,30 @@ def gyro_tex(x, y, s):
     return (88, 92, 98) if (x + y) % 5 else (72, 76, 82)
 
 
+def docking_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.35 <= ny <= 0.55:
+        return (196, 164, 48) if (x + y) % 4 else (176, 140, 36)
+    if x % 8 == 0:
+        return (168, 172, 178)
+    return (118, 122, 130) if (x + y) % 3 else (98, 102, 110)
+
+
+def battery_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.42 <= ny <= 0.58:
+        return (198, 92, 28) if (x + y) % 4 else (168, 72, 22)
+    if x % 8 == 0:
+        return (48, 52, 58)
+    return (62, 66, 74) if (x + y) % 3 else (44, 48, 54)
+
+
+def radiator_tex(x, y, s):
+    if x % 10 == 0:
+        return (88, 92, 98)
+    return (232, 234, 238) if (x + y) % 5 else (214, 218, 224)
+
+
 def rcs_tex(x, y, s):
     ny = y / (s - 1)
     if ny < 0.28:
@@ -693,6 +776,9 @@ def main() -> None:
     solar_mesh().write(GEO / "solar_panel.obj")
     gyro_mesh().write(GEO / "control_gyro.obj")
     rcs_mesh().write(GEO / "rcs_thruster.obj")
+    docking_mesh().write(GEO / "docking_port.obj")
+    battery_mesh().write(GEO / "battery_pack.obj")
+    radiator_mesh().write(GEO / "heat_radiator.obj")
 
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
@@ -707,11 +793,15 @@ def main() -> None:
     write_png(TEX / "solar_panel.png", paint(64, solar_tex))
     write_png(TEX / "control_gyro.png", paint(64, gyro_tex))
     write_png(TEX / "rcs_thruster.png", paint(64, rcs_tex))
+    write_png(TEX / "docking_port.png", paint(64, docking_tex))
+    write_png(TEX / "battery_pack.png", paint(64, battery_tex))
+    write_png(TEX / "heat_radiator.png", paint(64, radiator_tex))
 
     for block_id in (
             "rocket_engine", "rocket_tank", "rocket_structure", "stage_separator",
             "rocket_mount", "rocket_fairing", "rocket_payload",
-            "crew_habitat", "solar_panel", "control_gyro", "rcs_thruster"):
+            "crew_habitat", "solar_panel", "control_gyro", "rcs_thruster",
+            "docking_port", "battery_pack", "heat_radiator"):
         write_part_models(block_id)
     write_part_models("rocket_fuel_tank", "rocket_tank")
     write_part_models("rocket_oxidizer_tank", "rocket_tank")
@@ -729,6 +819,9 @@ def main() -> None:
     write_blockstate("solar_panel", UP_STATES)
     write_blockstate("control_gyro", UP_STATES)
     write_blockstate("rcs_thruster", ENGINE_STATES)
+    write_blockstate("docking_port", UP_STATES)
+    write_blockstate("battery_pack", UP_STATES)
+    write_blockstate("heat_radiator", UP_STATES)
     print("rocket part meshes, textures and models written")
 
 

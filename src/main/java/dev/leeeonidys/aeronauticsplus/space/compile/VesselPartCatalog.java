@@ -35,6 +35,12 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec GYRO = VesselPartSpec.gyro("control_gyro", 40.0);
     public static final VesselPartSpec RCS = VesselPartSpec.rcs(
             "rcs_thruster", 15.0, 400.0, 220.0, FUEL_ID, OXIDIZER_ID, KEROLX_MIXTURE);
+    /** APAS/IDSS-class ring, 1 m segment. */
+    public static final VesselPartSpec DOCKING = VesselPartSpec.docking("docking_port", 80.0);
+    /** Eclipse store. Solar does not work in shadow. */
+    public static final VesselPartSpec BATTERY = VesselPartSpec.battery("battery_pack", 55.0);
+    /** ISS-style deployable panel. Vacuum has no convection. */
+    public static final VesselPartSpec RADIATOR = VesselPartSpec.radiator("heat_radiator", 35.0);
 
     private VesselPartCatalog() {
     }
@@ -42,7 +48,7 @@ public final class VesselPartCatalog {
     public static List<VesselPartSpec> all() {
         return List.of(
                 STRUCTURE, TANK, FUEL_TANK, OXIDIZER_TANK, ENGINE, SEPARATOR, MOUNT, FAIRING, PAYLOAD,
-                HABITAT, SOLAR, GYRO, RCS);
+                HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR);
     }
 
     public static VesselPartSpec byId(String id) {

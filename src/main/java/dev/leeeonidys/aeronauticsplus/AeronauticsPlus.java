@@ -14,6 +14,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PayloadSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.SpacecraftSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.DockingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.SplitTankSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
@@ -219,6 +220,18 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.RCS, MapColor.COLOR_ORANGE);
     public static final DeferredItem<BlockItem> RCS_THRUSTER_ITEM =
             ITEMS.registerSimpleBlockItem(RCS_THRUSTER);
+    public static final DeferredBlock<VesselPartBlock> DOCKING_PORT =
+            registerVesselPart(VesselPartCatalog.DOCKING, MapColor.METAL);
+    public static final DeferredItem<BlockItem> DOCKING_PORT_ITEM =
+            ITEMS.registerSimpleBlockItem(DOCKING_PORT);
+    public static final DeferredBlock<VesselPartBlock> BATTERY_PACK =
+            registerVesselPart(VesselPartCatalog.BATTERY, MapColor.COLOR_RED);
+    public static final DeferredItem<BlockItem> BATTERY_PACK_ITEM =
+            ITEMS.registerSimpleBlockItem(BATTERY_PACK);
+    public static final DeferredBlock<VesselPartBlock> HEAT_RADIATOR =
+            registerVesselPart(VesselPartCatalog.RADIATOR, MapColor.SNOW);
+    public static final DeferredItem<BlockItem> HEAT_RADIATOR_ITEM =
+            ITEMS.registerSimpleBlockItem(HEAT_RADIATOR);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -241,6 +254,9 @@ public final class AeronauticsPlus {
                         output.accept(SOLAR_PANEL_ITEM.get());
                         output.accept(CONTROL_GYRO_ITEM.get());
                         output.accept(RCS_THRUSTER_ITEM.get());
+                        output.accept(DOCKING_PORT_ITEM.get());
+                        output.accept(BATTERY_PACK_ITEM.get());
+                        output.accept(HEAT_RADIATOR_ITEM.get());
                     })
                     .build());
 
@@ -250,7 +266,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.28: split RP-1/LOX tanks, habitat RCS gyrodyne solar, kerolox O/F 2.3, payload fairing jettison, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.29: docking battery radiator, split RP-1/LOX tanks, habitat RCS gyrodyne solar, kerolox O/F 2.3, payload fairing jettison, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -396,6 +412,17 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus spacecraft slice failed", exception);
             }
             try {
+                DockingSlice.Result dock = DockingSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus docking slice OK: docking={}, battery={}, radiator={}, links={}",
+                        dock.docking(),
+                        dock.battery(),
+                        dock.radiator(),
+                        dock.dockingLinks());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus docking slice failed", exception);
+            }
+            try {
                 PayloadSlice.Result payload = PayloadSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus payload slice OK: fairing={}, payload={}, dropped={}, launchable={}",
@@ -437,8 +464,11 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(SOLAR_PANEL_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(CONTROL_GYRO_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(BATTERY_PACK_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(HEAT_RADIATOR_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 24
+            boolean allRegistered = registeredItems.size() == 27
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(
