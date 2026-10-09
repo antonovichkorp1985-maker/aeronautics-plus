@@ -1,9 +1,7 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
- * Stage-local thrust and mass geometry.
- * Attitude is identity until a later orientation layer: the net thrust axis is also
- * the inertial burn direction for the current slice.
+ * Stage-local thrust and mass geometry. {@link Attitude} maps the net thrust into inertial space.
  */
 public record ThrustGeometry(
         Vector3d centerOfMassMeters,

@@ -12,6 +12,7 @@ import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
+import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
@@ -194,7 +195,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.14: in-flight faults, mission map and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.15: vessel attitude, in-flight faults, mission map and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -241,6 +242,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3f", faults.feedBreakElapsed()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus failure slice failed", exception);
+            }
+            try {
+                AttitudeSlice.Result attitude = AttitudeSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus attitude slice OK: identityDeltaY={}, rolledDeltaX={}, progradeGain={}, identityGain={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", attitude.identityDeltaY()),
+                        String.format(java.util.Locale.ROOT, "%.3f", attitude.rolledDeltaX()),
+                        String.format(java.util.Locale.ROOT, "%.3f", attitude.progradeSpeedGain()),
+                        String.format(java.util.Locale.ROOT, "%.3f", attitude.identitySpeedGain()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus attitude slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();

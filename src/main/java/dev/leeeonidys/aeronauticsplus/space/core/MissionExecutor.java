@@ -1,8 +1,8 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
- * Executes a mission map against a vessel. Burns use current orbit or engine axis;
- * there is still no orientation GUI.
+ * Executes a mission map against a vessel. ENGINE burns follow the inertial image of
+ * body-frame thrust; other aims are orbit-relative. There is still no orientation GUI.
  */
 public final class MissionExecutor {
     public static final double DEFAULT_STEP_SECONDS = 1.0;
@@ -39,7 +39,7 @@ public final class MissionExecutor {
         Vector3d velocity = vessel.orbit().velocityMetersPerSecond();
         return switch (aim) {
             case ENGINE -> {
-                Vector3d thrust = vessel.activeStage().netThrustNewtons();
+                Vector3d thrust = vessel.inertialThrustNewtons();
                 yield thrust.magnitudeSquared() > 0.0 ? thrust : velocity;
             }
             case PROGRADE -> velocity;

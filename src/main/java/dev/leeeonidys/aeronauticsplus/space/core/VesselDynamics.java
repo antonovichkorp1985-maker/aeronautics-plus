@@ -22,8 +22,8 @@ public final class VesselDynamics {
     }
 
     /**
-     * Burns the active stage and applies rocket-equation delta-v along the net engine axis.
-     * Until an attitude layer exists, the stage-local thrust axis is treated as inertial.
+     * Burns the active stage along the inertial image of the body-frame net thrust.
+     * Attitude is held constant during the burn; there is no torque integration yet.
      */
     public static VesselState burnActiveStage(VesselState vessel, double durationSeconds) {
         return attemptBurn(vessel, durationSeconds).vessel();
@@ -36,8 +36,8 @@ public final class VesselDynamics {
     }
 
     public static BurnOutcome attemptBurn(VesselState vessel, double requestedSeconds) {
-        Vector3d netThrust = vessel.activeStage().netThrustNewtons();
-        Vector3d direction = netThrust.magnitudeSquared() > 0.0 ? netThrust : Vector3d.UNIT_Y;
+        Vector3d inertialThrust = vessel.inertialThrustNewtons();
+        Vector3d direction = inertialThrust.magnitudeSquared() > 0.0 ? inertialThrust : Vector3d.UNIT_Y;
         return attemptBurn(vessel, requestedSeconds, direction, Double.NaN);
     }
 
@@ -106,6 +106,7 @@ public final class VesselDynamics {
     private static VesselState replaceActive(VesselState vessel, StageState nextStage) {
         ArrayList<StageState> stages = new ArrayList<>(vessel.stages());
         stages.set(vessel.activeStageIndex(), nextStage);
-        return new VesselState(vessel.id(), vessel.orbit(), stages, vessel.activeStageIndex());
+        return new VesselState(
+                vessel.id(), vessel.orbit(), stages, vessel.activeStageIndex(), vessel.attitude());
     }
 }

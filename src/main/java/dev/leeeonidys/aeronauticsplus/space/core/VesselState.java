@@ -3,7 +3,12 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 import java.util.List;
 
 /** Logical flight state of a multi-stage vessel. Stages are ordered bottom to top. */
-public record VesselState(String id, OrbitState orbit, List<StageState> stages, int activeStageIndex) {
+public record VesselState(
+        String id,
+        OrbitState orbit,
+        List<StageState> stages,
+        int activeStageIndex,
+        Attitude attitude) {
     public VesselState {
         if (id == null || id.isBlank() || orbit == null) {
             throw new IllegalArgumentException("Vessel identity and orbit are required");
@@ -15,6 +20,13 @@ public record VesselState(String id, OrbitState orbit, List<StageState> stages, 
         if (activeStageIndex < 0 || activeStageIndex >= stages.size()) {
             throw new IllegalArgumentException("Active stage index is outside the vessel");
         }
+        if (attitude == null) {
+            attitude = Attitude.IDENTITY;
+        }
+    }
+
+    public VesselState(String id, OrbitState orbit, List<StageState> stages, int activeStageIndex) {
+        this(id, orbit, stages, activeStageIndex, Attitude.IDENTITY);
     }
 
     public StageState activeStage() {
@@ -52,8 +64,20 @@ public record VesselState(String id, OrbitState orbit, List<StageState> stages, 
         return activeStage().thrustGeometry();
     }
 
+    /** Net engine thrust mapped through the current attitude into the inertial frame. */
+    public Vector3d inertialThrustNewtons() {
+        return attitude.toInertial(activeStage().netThrustNewtons());
+    }
+
     public VesselState withOrbit(OrbitState nextOrbit) {
-        return new VesselState(id, nextOrbit, stages, activeStageIndex);
+        return new VesselState(id, nextOrbit, stages, activeStageIndex, attitude);
+    }
+
+    public VesselState withAttitude(Attitude nextAttitude) {
+        if (nextAttitude == null) {
+            throw new IllegalArgumentException("Attitude must not be null");
+        }
+        return new VesselState(id, orbit, stages, activeStageIndex, nextAttitude);
     }
 
     /** Drops the currently active stage and activates the next one. */
@@ -62,6 +86,6 @@ public record VesselState(String id, OrbitState orbit, List<StageState> stages, 
             throw new IllegalStateException("Cannot separate the final active stage");
         }
         List<StageState> remaining = List.copyOf(stages.subList(activeStageIndex + 1, stages.size()));
-        return new VesselState(id, orbit, remaining, 0);
+        return new VesselState(id, orbit, remaining, 0, attitude);
     }
 }
