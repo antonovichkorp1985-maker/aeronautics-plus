@@ -30,9 +30,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Physical rocket part. Collision follows {@link CellOccupancy}: engines and rings
- * are not full cubes, matching the Chisels & Bits rule that several small mechanisms
- * may share a cell. Right-click compiles the grid; there is no mission-map GUI.
+ * AP fixture on a ChemMod pile (currently the Create-train mount). Collision follows
+ * {@link CellOccupancy}. Right-click compiles the grid; there is no mission-map GUI.
  */
 public final class VesselPartBlock extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;

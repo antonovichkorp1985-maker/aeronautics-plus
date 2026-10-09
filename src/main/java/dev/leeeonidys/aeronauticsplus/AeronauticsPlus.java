@@ -170,118 +170,11 @@ public final class AeronauticsPlus {
         return new AircraftPropellerBlockEntity(AIRCRAFT_PROPELLER_BE.get(), pos, state);
     }
 
-    public static final DeferredBlock<VesselPartBlock> ROCKET_STRUCTURE =
-            registerVesselPart(VesselPartCatalog.STRUCTURE, MapColor.METAL);
-    public static final DeferredItem<BlockItem> ROCKET_STRUCTURE_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_STRUCTURE);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_TANK =
-            registerVesselPart(VesselPartCatalog.TANK, MapColor.SNOW);
-    public static final DeferredItem<BlockItem> ROCKET_TANK_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_TANK);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_FUEL_TANK =
-            registerVesselPart(VesselPartCatalog.FUEL_TANK, MapColor.TERRACOTTA_ORANGE);
-    public static final DeferredItem<BlockItem> ROCKET_FUEL_TANK_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_FUEL_TANK);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_FUEL_TANK_SMALL =
-            registerVesselPart(VesselPartCatalog.FUEL_TANK_SMALL, MapColor.TERRACOTTA_ORANGE);
-    public static final DeferredItem<BlockItem> ROCKET_FUEL_TANK_SMALL_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_FUEL_TANK_SMALL);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_FUEL_TANK_LARGE =
-            registerVesselPart(VesselPartCatalog.FUEL_TANK_LARGE, MapColor.TERRACOTTA_ORANGE);
-    public static final DeferredItem<BlockItem> ROCKET_FUEL_TANK_LARGE_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_FUEL_TANK_LARGE);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_OXIDIZER_TANK =
-            registerVesselPart(VesselPartCatalog.OXIDIZER_TANK, MapColor.ICE);
-    public static final DeferredItem<BlockItem> ROCKET_OXIDIZER_TANK_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_OXIDIZER_TANK);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_OXIDIZER_TANK_SMALL =
-            registerVesselPart(VesselPartCatalog.OXIDIZER_TANK_SMALL, MapColor.ICE);
-    public static final DeferredItem<BlockItem> ROCKET_OXIDIZER_TANK_SMALL_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_OXIDIZER_TANK_SMALL);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_OXIDIZER_TANK_LARGE =
-            registerVesselPart(VesselPartCatalog.OXIDIZER_TANK_LARGE, MapColor.ICE);
-    public static final DeferredItem<BlockItem> ROCKET_OXIDIZER_TANK_LARGE_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_OXIDIZER_TANK_LARGE);
-    public static final DeferredBlock<VesselPartBlock> LH2_TANK =
-            registerVesselPart(VesselPartCatalog.LH2_TANK, MapColor.SAND);
-    public static final DeferredItem<BlockItem> LH2_TANK_ITEM =
-            ITEMS.registerSimpleBlockItem(LH2_TANK);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_ENGINE =
-            registerVesselPart(VesselPartCatalog.ENGINE, MapColor.COLOR_ORANGE);
-    public static final DeferredItem<BlockItem> ROCKET_ENGINE_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_ENGINE);
-    public static final DeferredBlock<VesselPartBlock> HYDROLOX_ENGINE =
-            registerVesselPart(VesselPartCatalog.HYDROLOX_ENGINE, MapColor.COLOR_LIGHT_BLUE);
-    public static final DeferredItem<BlockItem> HYDROLOX_ENGINE_ITEM =
-            ITEMS.registerSimpleBlockItem(HYDROLOX_ENGINE);
-    public static final DeferredBlock<VesselPartBlock> STAGE_SEPARATOR =
-            registerVesselPart(VesselPartCatalog.SEPARATOR, MapColor.GOLD);
-    public static final DeferredItem<BlockItem> STAGE_SEPARATOR_ITEM =
-            ITEMS.registerSimpleBlockItem(STAGE_SEPARATOR);
+    /** Create-train fixture. Hull, tanks and internals come from ChemMod, not from AP SKUs. */
     public static final DeferredBlock<VesselPartBlock> ROCKET_MOUNT =
             registerVesselPart(VesselPartCatalog.MOUNT, MapColor.COLOR_YELLOW);
     public static final DeferredItem<BlockItem> ROCKET_MOUNT_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_MOUNT);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_FAIRING =
-            registerVesselPart(VesselPartCatalog.FAIRING, MapColor.SNOW);
-    public static final DeferredItem<BlockItem> ROCKET_FAIRING_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_FAIRING);
-    public static final DeferredBlock<VesselPartBlock> ROCKET_PAYLOAD =
-            registerVesselPart(VesselPartCatalog.PAYLOAD, MapColor.GOLD);
-    public static final DeferredItem<BlockItem> ROCKET_PAYLOAD_ITEM =
-            ITEMS.registerSimpleBlockItem(ROCKET_PAYLOAD);
-    public static final DeferredBlock<VesselPartBlock> CREW_HABITAT =
-            registerVesselPart(VesselPartCatalog.HABITAT, MapColor.WOOL);
-    public static final DeferredItem<BlockItem> CREW_HABITAT_ITEM =
-            ITEMS.registerSimpleBlockItem(CREW_HABITAT);
-    public static final DeferredBlock<VesselPartBlock> SOLAR_PANEL =
-            registerVesselPart(VesselPartCatalog.SOLAR, MapColor.COLOR_BLUE);
-    public static final DeferredItem<BlockItem> SOLAR_PANEL_ITEM =
-            ITEMS.registerSimpleBlockItem(SOLAR_PANEL);
-    public static final DeferredBlock<VesselPartBlock> CONTROL_GYRO =
-            registerVesselPart(VesselPartCatalog.GYRO, MapColor.METAL);
-    public static final DeferredItem<BlockItem> CONTROL_GYRO_ITEM =
-            ITEMS.registerSimpleBlockItem(CONTROL_GYRO);
-    public static final DeferredBlock<VesselPartBlock> RCS_THRUSTER =
-            registerVesselPart(VesselPartCatalog.RCS, MapColor.COLOR_ORANGE);
-    public static final DeferredItem<BlockItem> RCS_THRUSTER_ITEM =
-            ITEMS.registerSimpleBlockItem(RCS_THRUSTER);
-    public static final DeferredBlock<VesselPartBlock> DOCKING_PORT =
-            registerVesselPart(VesselPartCatalog.DOCKING, MapColor.METAL);
-    public static final DeferredItem<BlockItem> DOCKING_PORT_ITEM =
-            ITEMS.registerSimpleBlockItem(DOCKING_PORT);
-    public static final DeferredBlock<VesselPartBlock> BATTERY_PACK =
-            registerVesselPart(VesselPartCatalog.BATTERY, MapColor.COLOR_RED);
-    public static final DeferredItem<BlockItem> BATTERY_PACK_ITEM =
-            ITEMS.registerSimpleBlockItem(BATTERY_PACK);
-    public static final DeferredBlock<VesselPartBlock> HEAT_RADIATOR =
-            registerVesselPart(VesselPartCatalog.RADIATOR, MapColor.SNOW);
-    public static final DeferredItem<BlockItem> HEAT_RADIATOR_ITEM =
-            ITEMS.registerSimpleBlockItem(HEAT_RADIATOR);
-    public static final DeferredBlock<VesselPartBlock> OMNI_ANTENNA =
-            registerVesselPart(VesselPartCatalog.OMNI_ANTENNA, MapColor.COLOR_LIGHT_GRAY);
-    public static final DeferredItem<BlockItem> OMNI_ANTENNA_ITEM =
-            ITEMS.registerSimpleBlockItem(OMNI_ANTENNA);
-    public static final DeferredBlock<VesselPartBlock> HIGH_GAIN_ANTENNA =
-            registerVesselPart(VesselPartCatalog.HIGH_GAIN_ANTENNA, MapColor.COLOR_LIGHT_GRAY);
-    public static final DeferredItem<BlockItem> HIGH_GAIN_ANTENNA_ITEM =
-            ITEMS.registerSimpleBlockItem(HIGH_GAIN_ANTENNA);
-    public static final DeferredBlock<VesselPartBlock> RESEARCH_LAB =
-            registerVesselPart(VesselPartCatalog.LAB, MapColor.COLOR_CYAN);
-    public static final DeferredItem<BlockItem> RESEARCH_LAB_ITEM =
-            ITEMS.registerSimpleBlockItem(RESEARCH_LAB);
-    public static final DeferredBlock<VesselPartBlock> CABIN_OXYGEN =
-            registerVesselPart(VesselPartCatalog.OXYGEN, MapColor.COLOR_LIGHT_BLUE);
-    public static final DeferredItem<BlockItem> CABIN_OXYGEN_ITEM =
-            ITEMS.registerSimpleBlockItem(CABIN_OXYGEN);
-    public static final DeferredBlock<VesselPartBlock> RADIO_TRANSPONDER =
-            registerVesselPart(VesselPartCatalog.TRANSPONDER, MapColor.COLOR_GREEN);
-    public static final DeferredItem<BlockItem> RADIO_TRANSPONDER_ITEM =
-            ITEMS.registerSimpleBlockItem(RADIO_TRANSPONDER);
-    public static final DeferredBlock<VesselPartBlock> SPACE_TELESCOPE =
-            registerVesselPart(VesselPartCatalog.TELESCOPE, MapColor.COLOR_BLACK);
-    public static final DeferredItem<BlockItem> SPACE_TELESCOPE_ITEM =
-            ITEMS.registerSimpleBlockItem(SPACE_TELESCOPE);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -291,34 +184,7 @@ public final class AeronauticsPlus {
                         output.accept(PROPELLER_SHAFT_ADAPTER_ITEM.get());
                         output.accept(PROTOTYPE_PROPELLER_ITEM.get());
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
-                        output.accept(ROCKET_STRUCTURE_ITEM.get());
-                        output.accept(ROCKET_TANK_ITEM.get());
-                        output.accept(ROCKET_FUEL_TANK_ITEM.get());
-                        output.accept(ROCKET_FUEL_TANK_SMALL_ITEM.get());
-                        output.accept(ROCKET_FUEL_TANK_LARGE_ITEM.get());
-                        output.accept(ROCKET_OXIDIZER_TANK_ITEM.get());
-                        output.accept(ROCKET_OXIDIZER_TANK_SMALL_ITEM.get());
-                        output.accept(ROCKET_OXIDIZER_TANK_LARGE_ITEM.get());
-                        output.accept(LH2_TANK_ITEM.get());
-                        output.accept(ROCKET_ENGINE_ITEM.get());
-                        output.accept(HYDROLOX_ENGINE_ITEM.get());
-                        output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(ROCKET_MOUNT_ITEM.get());
-                        output.accept(ROCKET_FAIRING_ITEM.get());
-                        output.accept(ROCKET_PAYLOAD_ITEM.get());
-                        output.accept(CREW_HABITAT_ITEM.get());
-                        output.accept(SOLAR_PANEL_ITEM.get());
-                        output.accept(CONTROL_GYRO_ITEM.get());
-                        output.accept(RCS_THRUSTER_ITEM.get());
-                        output.accept(DOCKING_PORT_ITEM.get());
-                        output.accept(BATTERY_PACK_ITEM.get());
-                        output.accept(HEAT_RADIATOR_ITEM.get());
-                        output.accept(OMNI_ANTENNA_ITEM.get());
-                        output.accept(HIGH_GAIN_ANTENNA_ITEM.get());
-                        output.accept(RESEARCH_LAB_ITEM.get());
-                        output.accept(CABIN_OXYGEN_ITEM.get());
-                        output.accept(RADIO_TRANSPONDER_ITEM.get());
-                        output.accept(SPACE_TELESCOPE_ITEM.get());
                     })
                     .build());
 
@@ -328,7 +194,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.31: cabin oxygen, transponder, telescope; apparatus not rocket SKUs; ChemMod keeps feedstock.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.32: rocket SKUs removed; ChemMod assembles the pile, AP gives it rocket physics.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -534,36 +400,9 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(PROTOTYPE_PROPELLER_ITEM.get()).toString());
             AIRCRAFT_PROPELLERS.forEach(entry ->
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_STRUCTURE_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_TANK_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FUEL_TANK_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FUEL_TANK_SMALL_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FUEL_TANK_LARGE_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_OXIDIZER_TANK_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_OXIDIZER_TANK_SMALL_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_OXIDIZER_TANK_LARGE_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(LH2_TANK_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(HYDROLOX_ENGINE_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FAIRING_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_PAYLOAD_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(CREW_HABITAT_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(SOLAR_PANEL_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(CONTROL_GYRO_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(BATTERY_PACK_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(HEAT_RADIATOR_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(OMNI_ANTENNA_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(HIGH_GAIN_ANTENNA_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(RESEARCH_LAB_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(CABIN_OXYGEN_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(RADIO_TRANSPONDER_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(SPACE_TELESCOPE_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 39
+            boolean allRegistered = registeredItems.size() == 12
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

@@ -5,9 +5,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.PropellantState;
 import java.util.List;
 
 /**
- * Placeholder catalog until ChemMod supplies materials. Do not grow this as a KSP SKU list.
- * Kerolox/hydrolox numbers are physics stand-ins (O/F 2.3 / 6.0), not Merlin/F-1/RL10 products.
- * Apparatus (electronics, ECLSS, optics) lives here; feedstock and foundry live in ChemMod.
+ * In-memory physics fixtures for the compiler. These are not Minecraft items.
+ * ChemMod owns hull, tanks, internals and assembly. AP assigns rocket properties.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";
