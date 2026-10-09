@@ -23,7 +23,7 @@ public final class VesselDynamics {
 
     /**
      * Burns the active stage along the inertial image of the body-frame net thrust.
-     * Attitude is held constant during the burn; there is no torque integration yet.
+     * Offset thrust applies a finite attitude change; residual spin is not kept.
      */
     public static VesselState burnActiveStage(VesselState vessel, double durationSeconds) {
         return attemptBurn(vessel, durationSeconds).vessel();
@@ -78,6 +78,7 @@ public final class VesselDynamics {
 
         double initialMass = vessel.totalMassKg();
         double exhaustVelocity = vessel.activeStage().effectiveExhaustVelocityMetersPerSecond();
+        ThrustGeometry geometry = vessel.activeThrustGeometry();
         StageBurnResult burn = vessel.activeStage().burn(allowed);
         StageState nextStage = burn.stage();
         if (feedBreak && burn.elapsedSeconds() + 1.0e-9 >= feedBreakAtSeconds
@@ -97,6 +98,7 @@ public final class VesselDynamics {
         VesselState flown = deltaV > 0.0
                 ? applyImpulse(consumed, thrustDirection.normalized().multiply(deltaV))
                 : consumed;
+        flown = applyBurnTorque(vessel, flown, geometry, burn.elapsedSeconds());
         return new BurnOutcome(flown, requestedSeconds, burn.elapsedSeconds(), deltaV, faults);
     }
 
@@ -106,6 +108,28 @@ public final class VesselDynamics {
 
     public static VesselState separateActiveStage(VesselState vessel) {
         return vessel.separateActiveStage();
+    }
+
+    /**
+     * Constant-torque attitude change over the burn, starting from rest.
+     * Residual angular velocity is discarded until a later spin layer.
+     */
+    private static VesselState applyBurnTorque(
+            VesselState initial, VesselState flown, ThrustGeometry geometry, double elapsedSeconds) {
+        if (!(elapsedSeconds > 0.0) || geometry == null || !geometry.hasNetThrust()) {
+            return flown;
+        }
+        Vector3d torque = geometry.momentArmMeters().cross(geometry.netThrustNewtons());
+        double tau = torque.magnitude();
+        if (!(tau > 0.0)) {
+            return flown;
+        }
+        double inertia = initial.momentOfInertiaKgM2(torque);
+        if (!(inertia > 1.0e-6)) {
+            return flown;
+        }
+        double deltaRadians = 0.5 * (tau / inertia) * elapsedSeconds * elapsedSeconds;
+        return flown.withAttitude(flown.attitude().rotateBody(torque, deltaRadians));
     }
 
     private static VesselState replaceActive(VesselState vessel, StageState nextStage) {

@@ -117,6 +117,32 @@ public record StageState(
         return moment.multiply(1.0 / thrust);
     }
 
+    /**
+     * Point-mass inertia about {@code pivot} for rotation around {@code axis}.
+     * Occupancy centroids are already written into the mass positions.
+     */
+    public double momentOfInertiaKgM2(Vector3d pivot, Vector3d axis) {
+        if (pivot == null || axis == null || !(axis.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Inertia pivot and axis are required");
+        }
+        Vector3d n = axis.normalized();
+        double inertia = 0.0;
+        for (MassElement element : structure) {
+            inertia += inertiaOf(element.massKg(), element.localPositionMeters(), pivot, n);
+        }
+        for (TankState tank : tanks) {
+            inertia += inertiaOf(tank.totalMassKg(), tank.localPositionMeters(), pivot, n);
+        }
+        for (EngineState engine : engines) {
+            inertia += inertiaOf(engine.dryMassKg(), engine.localPositionMeters(), pivot, n);
+        }
+        return inertia;
+    }
+
+    private static double inertiaOf(double massKg, Vector3d position, Vector3d pivot, Vector3d axis) {
+        return massKg * position.subtract(pivot).cross(axis).magnitudeSquared();
+    }
+
     public ThrustGeometry thrustGeometry() {
         Vector3d centerOfMass = centerOfMassMeters();
         Vector3d netThrust = netThrustNewtons();

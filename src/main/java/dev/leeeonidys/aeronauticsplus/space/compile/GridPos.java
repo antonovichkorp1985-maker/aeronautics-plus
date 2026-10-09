@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.compile;
 
+import dev.leeeonidys.aeronauticsplus.space.core.CellOccupancy;
 import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 
 /** Integer block coordinate in the vessel grid. One block is one metre. */
@@ -9,10 +10,15 @@ public record GridPos(int x, int y, int z) implements Comparable<GridPos> {
     }
 
     public Vector3d centerMeters(GridPos origin) {
-        return new Vector3d(
-                x - origin.x + 0.5,
-                y - origin.y + 0.5,
-                z - origin.z + 0.5);
+        return occupancyCentroidMeters(origin, CellOccupancy.FULL);
+    }
+
+    /** Mass centre of a part that occupies only part of the 1 m cell. */
+    public Vector3d occupancyCentroidMeters(GridPos origin, CellOccupancy occupancy) {
+        if (occupancy == null) {
+            throw new IllegalArgumentException("Occupancy is required");
+        }
+        return new Vector3d(x - origin.x, y - origin.y, z - origin.z).add(occupancy.centroid());
     }
 
     @Override

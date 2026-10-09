@@ -9,6 +9,7 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
+import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -17,6 +18,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MixtureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.TorqueSlice;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -196,7 +198,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.16: mixture feed, vessel attitude, in-flight faults, mission map and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.17: sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -265,6 +267,25 @@ public final class AeronauticsPlus {
                         mixture.wrongPropellant().split(":", 2)[0]);
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus mixture slice failed", exception);
+            }
+            try {
+                OccupancySlice.Result occupancy = OccupancySlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus occupancy slice OK: nozzleVolume={}, halfEngineX={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", occupancy.nozzleVolume()),
+                        String.format(java.util.Locale.ROOT, "%.3f", occupancy.halfEngineX()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus occupancy slice failed", exception);
+            }
+            try {
+                TorqueSlice.Result torque = TorqueSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus torque slice OK: centeredAngle={}, offsetAngle={}, offset={}",
+                        String.format(java.util.Locale.ROOT, "%.4f", torque.centeredAngle()),
+                        String.format(java.util.Locale.ROOT, "%.4f", torque.offsetAngle()),
+                        String.format(java.util.Locale.ROOT, "%.3f", torque.offsetMeters()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus torque slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();

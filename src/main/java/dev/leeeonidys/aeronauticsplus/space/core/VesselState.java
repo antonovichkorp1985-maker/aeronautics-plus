@@ -64,6 +64,16 @@ public record VesselState(
         return activeStage().thrustGeometry();
     }
 
+    /** Point-mass inertia of remaining stages about the stacked centre of mass. */
+    public double momentOfInertiaKgM2(Vector3d axis) {
+        Vector3d pivot = centerOfMassMeters();
+        double inertia = 0.0;
+        for (StageState stage : stages.subList(activeStageIndex, stages.size())) {
+            inertia += stage.momentOfInertiaKgM2(pivot, axis);
+        }
+        return inertia;
+    }
+
     /** Net engine thrust mapped through the current attitude into the inertial frame. */
     public Vector3d inertialThrustNewtons() {
         return attitude.toInertial(activeStage().netThrustNewtons());

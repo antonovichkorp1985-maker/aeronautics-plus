@@ -3,6 +3,8 @@ package dev.leeeonidys.aeronauticsplus.content.rocket;
 import com.mojang.serialization.MapCodec;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
+import dev.leeeonidys.aeronauticsplus.space.core.CellOccupancy;
+import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
 import dev.leeeonidys.aeronauticsplus.space.world.WorldVesselScanner;
 import net.minecraft.core.BlockPos;
@@ -25,13 +27,12 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Physical rocket part. Right-click compiles the connected grid into a vessel blueprint
- * and prints diagnostics; there is no mission-map GUI in this slice.
+ * Physical rocket part. Collision follows {@link CellOccupancy}: engines and rings
+ * are not full cubes, matching the Chisels & Bits rule that several small mechanisms
+ * may share a cell. Right-click compiles the grid; there is no mission-map GUI.
  */
 public final class VesselPartBlock extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
-    private static final VoxelShape COLUMN = Block.box(2, 0, 2, 14, 16, 14);
-    private static final VoxelShape RING = Block.box(1, 5, 1, 15, 11, 15);
 
     private final VesselPartSpec spec;
 
@@ -59,7 +60,22 @@ public final class VesselPartBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return spec.kind() == VesselPartKind.SEPARATOR ? RING : COLUMN;
+        return voxelShape(spec.occupancy());
+    }
+
+    @Override
+    protected boolean isCollisionShapeFullBlock(BlockState state, BlockGetter level, BlockPos pos) {
+        return spec.occupancy().isFullBlock();
+    }
+
+    private static VoxelShape voxelShape(CellOccupancy occupancy) {
+        Vector3d origin = occupancy.origin();
+        Vector3d size = occupancy.size();
+        return Block.box(
+                origin.x() * 16.0, origin.y() * 16.0, origin.z() * 16.0,
+                (origin.x() + size.x()) * 16.0,
+                (origin.y() + size.y()) * 16.0,
+                (origin.z() + size.z()) * 16.0);
     }
 
     @Override

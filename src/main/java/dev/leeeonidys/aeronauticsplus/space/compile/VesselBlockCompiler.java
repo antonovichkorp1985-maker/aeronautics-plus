@@ -36,7 +36,10 @@ public final class VesselBlockCompiler {
         Map<GridPos, String> stageByPos = assignStages(grid.occupants(), byPos);
         List<VesselComponent> components = new ArrayList<>();
         for (VesselBlockOccupant occupant : grid.occupants()) {
-            components.add(toComponent(occupant, stageByPos.get(occupant.pos()), occupant.pos().centerMeters(origin)));
+            components.add(toComponent(
+                    occupant,
+                    stageByPos.get(occupant.pos()),
+                    occupant.pos().occupancyCentroidMeters(origin, occupant.spec().occupancy())));
         }
         return new VesselBlueprint(components, buildConnections(grid.occupants(), byPos));
     }
