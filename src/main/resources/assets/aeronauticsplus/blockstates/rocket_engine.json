@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "aeronauticsplus:block/rocket_engine",
+      "x": 90
+    },
+    "facing=up": {
+      "model": "aeronauticsplus:block/rocket_engine",
+      "x": 270
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/rocket_engine"
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/rocket_engine",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/rocket_engine",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/rocket_engine",
+      "y": 90
+    }
+  }
+}

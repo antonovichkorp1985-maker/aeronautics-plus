@@ -8,6 +8,10 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlo
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
+import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
 import java.util.ArrayList;
 import java.util.List;
@@ -150,6 +154,23 @@ public final class AeronauticsPlus {
         return new AircraftPropellerBlockEntity(AIRCRAFT_PROPELLER_BE.get(), pos, state);
     }
 
+    public static final DeferredBlock<VesselPartBlock> ROCKET_STRUCTURE =
+            registerVesselPart(VesselPartCatalog.STRUCTURE, MapColor.METAL);
+    public static final DeferredItem<BlockItem> ROCKET_STRUCTURE_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_STRUCTURE);
+    public static final DeferredBlock<VesselPartBlock> ROCKET_TANK =
+            registerVesselPart(VesselPartCatalog.TANK, MapColor.SNOW);
+    public static final DeferredItem<BlockItem> ROCKET_TANK_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_TANK);
+    public static final DeferredBlock<VesselPartBlock> ROCKET_ENGINE =
+            registerVesselPart(VesselPartCatalog.ENGINE, MapColor.COLOR_ORANGE);
+    public static final DeferredItem<BlockItem> ROCKET_ENGINE_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_ENGINE);
+    public static final DeferredBlock<VesselPartBlock> STAGE_SEPARATOR =
+            registerVesselPart(VesselPartCatalog.SEPARATOR, MapColor.GOLD);
+    public static final DeferredItem<BlockItem> STAGE_SEPARATOR_ITEM =
+            ITEMS.registerSimpleBlockItem(STAGE_SEPARATOR);
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.aeronauticsplus"))
@@ -158,6 +179,10 @@ public final class AeronauticsPlus {
                         output.accept(PROPELLER_SHAFT_ADAPTER_ITEM.get());
                         output.accept(PROTOTYPE_PROPELLER_ITEM.get());
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
+                        output.accept(ROCKET_STRUCTURE_ITEM.get());
+                        output.accept(ROCKET_TANK_ITEM.get());
+                        output.accept(ROCKET_ENGINE_ITEM.get());
+                        output.accept(STAGE_SEPARATOR_ITEM.get());
                     })
                     .build());
 
@@ -167,7 +192,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.11: space core slice and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.12: vessel block compiler and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -183,14 +208,30 @@ public final class AeronauticsPlus {
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus space core slice failed", exception);
             }
+            try {
+                VesselCompileSlice.Result compiled = VesselCompileSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus vessel compiler slice OK: components={}, stages={}, structural={}, fuel={}, separation={}",
+                        compiled.componentCount(),
+                        compiled.compilation().stages().size(),
+                        compiled.structuralLinks(),
+                        compiled.fuelLinks(),
+                        compiled.separationLinks());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus vessel compiler slice failed", exception);
+            }
 
             List<String> registeredItems = new ArrayList<>();
             registeredItems.add(BuiltInRegistries.ITEM.getKey(PROPELLER_SHAFT_ADAPTER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(PROTOTYPE_PROPELLER_ITEM.get()).toString());
             AIRCRAFT_PROPELLERS.forEach(entry ->
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_STRUCTURE_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_TANK_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 11
+            boolean allRegistered = registeredItems.size() == 15
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(
@@ -200,6 +241,14 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus registry verification failed: ids={}", registeredItems);
             }
         });
+    }
+
+    private static DeferredBlock<VesselPartBlock> registerVesselPart(VesselPartSpec spec, MapColor color) {
+        return BLOCKS.register(spec.id(), () -> new VesselPartBlock(
+                spec,
+                BlockBehaviour.Properties.of()
+                        .mapColor(color)
+                        .strength(3.0f, 6.0f)));
     }
 
     private static PropellerEntry registerAircraftPropeller(PropellerSpec spec) {

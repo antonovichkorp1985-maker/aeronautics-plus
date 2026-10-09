@@ -3,9 +3,9 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 import java.util.List;
 
 /**
- * Deterministic vertical slice for 0.2.2-test.11: freeform blueprint → stages → burn
+ * Deterministic vertical slice for the Minecraft-free core: freeform blueprint → stages → burn
  * with mass change, automatic thrust direction, orbit change and staging.
- * Minecraft-block compilation and GUI are intentionally absent.
+ * Physical block compilation lives in {@code VesselCompileSlice}.
  */
 public final class SpaceCoreSlice {
     private SpaceCoreSlice() {

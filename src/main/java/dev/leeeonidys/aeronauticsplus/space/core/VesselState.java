@@ -31,8 +31,8 @@ public record VesselState(String id, OrbitState orbit, List<StageState> stages, 
     }
 
     /**
-     * Centre of mass of remaining stages in each stage-local frame, stacked without
-     * inter-stage offsets. True stacking geometry arrives with the Minecraft compiler.
+     * Centre of mass of remaining stages. The block compiler writes every stage in the
+     * same grid frame, so this average is the stacked mass centre.
      */
     public Vector3d centerOfMassMeters() {
         double mass = 0.0;
