@@ -71,13 +71,28 @@ public final class TransporterSlice {
             throw new IllegalStateException("Pad origin must be x=20, got " + yard.planted().origin());
         }
         VesselCompilation atPad = yard.compilePlanted();
-        if (!atPad.isLaunchable()) {
-            throw new IllegalStateException("Hauled stack must still compile as launchable:\n"
+        if (atPad.isLaunchable() || !atPad.diagnosticText().contains("ON_TRANSPORTER")) {
+            throw new IllegalStateException("Stack on the train mount must not launch:\n"
                     + atPad.diagnosticText());
         }
         VesselEnvelope atPadEnvelope = VesselEnvelope.of(yard.planted());
         if (Math.abs(atPadEnvelope.diameter() - envelope.diameter()) > 1.0e-9) {
             throw new IllegalStateException("Haul must not change envelope diameter");
+        }
+        PlantYard.CraneOutcome release = yard.releaseFromMount();
+        if (!release.accepted()) {
+            throw new IllegalStateException("Pad unclamp must succeed:\n" + release.diagnosticText());
+        }
+        yard = release.yard();
+        VesselCompilation released = yard.compilePlanted();
+        if (!released.isLaunchable() || released.diagnosticText().contains("ON_TRANSPORTER")) {
+            throw new IllegalStateException("After unclamp the rocket must be launchable:\n"
+                    + released.diagnosticText());
+        }
+        PlantYard.CraneOutcome alreadyReleased = yard.releaseFromMount();
+        if (alreadyReleased.accepted() || !alreadyReleased.diagnosticText().contains("NOTHING_TO_RELEASE")) {
+            throw new IllegalStateException("Second unclamp must be NOTHING_TO_RELEASE:\n"
+                    + alreadyReleased.diagnosticText());
         }
 
         PlantYard.CraneOutcome alreadyThere = yard.startHaul(yard.planted().origin());
@@ -97,7 +112,7 @@ public final class TransporterSlice {
                 envelope.height(),
                 haulSeconds,
                 midTransitEmpty,
-                atPad.isLaunchable(),
+                released.isLaunchable(),
                 yard.planted().origin().x(),
                 busy.diagnosticText(),
                 empty.diagnosticText());

@@ -7,6 +7,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.VesselBlueprint;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselComponent;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselConnection;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselDiagnostic;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +28,24 @@ public final class VesselBlockCompiler {
     }
 
     public static VesselCompilation analyze(VesselBlockGrid grid) {
-        return compile(grid).analyze().withDiagnostics(CellPacking.diagnostics(grid));
+        List<VesselDiagnostic> extra = new ArrayList<>(CellPacking.diagnostics(grid));
+        extra.addAll(transporterDiagnostics(grid));
+        return compile(grid).analyze().withDiagnostics(extra);
+    }
+
+    private static List<VesselDiagnostic> transporterDiagnostics(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            return List.of();
+        }
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.MOUNT) {
+                return List.of(new VesselDiagnostic(
+                        VesselDiagnostic.Severity.ERROR,
+                        "ON_TRANSPORTER",
+                        "Пакет на креплении поезда: старт запрещён, пока крепление не снято"));
+            }
+        }
+        return List.of();
     }
 
     public static VesselBlueprint compile(VesselBlockGrid grid) {

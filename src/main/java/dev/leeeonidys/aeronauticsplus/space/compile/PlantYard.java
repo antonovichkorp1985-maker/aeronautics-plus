@@ -122,6 +122,37 @@ public record PlantYard(VesselBlockGrid staged, VesselBlockGrid planted, CraneJo
         return CraneOutcome.accepted(next);
     }
 
+    public CraneOutcome releaseFromMount() {
+        if (craneBusy()) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "CRANE_BUSY",
+                    "Кран занят: идёт установка " + job.spec().id() + " на " + job.to())));
+        }
+        if (crawlerBusy()) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "CRAWLER_BUSY",
+                    "Транспортёр занят: пакет едет на " + crawler.to())));
+        }
+        List<VesselBlockOccupant> remaining = new ArrayList<>();
+        int mounts = 0;
+        for (VesselBlockOccupant occupant : planted.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.MOUNT) {
+                mounts++;
+            } else {
+                remaining.add(occupant);
+            }
+        }
+        if (mounts == 0 || remaining.isEmpty()) {
+            return CraneOutcome.rejected(this, List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.ERROR,
+                    "NOTHING_TO_RELEASE",
+                    mounts == 0 ? "Пакет уже снят с крепления" : "На креплении нет ракеты")));
+        }
+        return CraneOutcome.accepted(new PlantYard(staged, new VesselBlockGrid(remaining), null, null));
+    }
+
     public PlantYard advance(double dt) {
         if (crawler != null) {
             CrawlerJob next = crawler.advance(dt);

@@ -127,6 +127,12 @@ public final class VesselPartBlock extends Block {
                         envelope.height(),
                         Math.round(mass),
                         Math.round(deltaV))), false);
+            } else if (compilation.diagnosticText().contains("ON_TRANSPORTER")) {
+                player.displayClientMessage(Component.literal(String.format(
+                        java.util.Locale.ROOT,
+                        "На транспортёре: старт запрещён. Диаметр %.1f м, высота %.1f м.",
+                        envelope.diameter(),
+                        envelope.height())), false);
             } else {
                 player.displayClientMessage(Component.literal(String.format(
                         java.util.Locale.ROOT,
