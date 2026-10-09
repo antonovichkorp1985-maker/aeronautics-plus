@@ -9,7 +9,7 @@ public record VesselComponent(
         TankState tank,
         EngineState engine,
         Vector3d localPositionMeters) {
-    public enum ComponentKind { STRUCTURE, TANK, ENGINE, AVIONICS, FAIRING, PAYLOAD }
+    public enum ComponentKind { STRUCTURE, TANK, ENGINE, RCS, AVIONICS, FAIRING, PAYLOAD, HABITAT, SOLAR, GYRO }
 
     public VesselComponent {
         if (id == null || id.isBlank() || stageId == null || stageId.isBlank() || kind == null) {
@@ -24,10 +24,11 @@ public record VesselComponent(
         if (kind == ComponentKind.TANK && tank == null) {
             throw new IllegalArgumentException("Tank component requires TankState");
         }
-        if (kind == ComponentKind.ENGINE && engine == null) {
+        if ((kind == ComponentKind.ENGINE || kind == ComponentKind.RCS) && engine == null) {
             throw new IllegalArgumentException("Engine component requires EngineState");
         }
-        if (kind != ComponentKind.TANK && tank != null || kind != ComponentKind.ENGINE && engine != null) {
+        if (kind != ComponentKind.TANK && tank != null
+                || kind != ComponentKind.ENGINE && kind != ComponentKind.RCS && engine != null) {
             throw new IllegalArgumentException("Component payload does not match component kind");
         }
     }
@@ -38,7 +39,7 @@ public record VesselComponent(
 
     public static VesselComponent structure(
             String id, String stageId, ComponentKind kind, double massKg, Vector3d localPositionMeters) {
-        if (kind == ComponentKind.TANK || kind == ComponentKind.ENGINE) {
+        if (kind == ComponentKind.TANK || kind == ComponentKind.ENGINE || kind == ComponentKind.RCS) {
             throw new IllegalArgumentException("Use tank() or engine() for physical components");
         }
         return new VesselComponent(id, stageId, kind, massKg, null, null, localPositionMeters);
@@ -50,7 +51,19 @@ public record VesselComponent(
     }
 
     public static VesselComponent engine(String id, String stageId, EngineState engine) {
+        return engine(id, stageId, engine, ComponentKind.ENGINE);
+    }
+
+    public static VesselComponent rcs(String id, String stageId, EngineState engine) {
+        if (engine == null || !engine.rcs()) {
+            throw new IllegalArgumentException("RCS component requires an RCS engine");
+        }
+        return engine(id, stageId, engine, ComponentKind.RCS);
+    }
+
+    private static VesselComponent engine(
+            String id, String stageId, EngineState engine, ComponentKind kind) {
         return new VesselComponent(
-                id, stageId, ComponentKind.ENGINE, 0.0, null, engine, engine.localPositionMeters());
+                id, stageId, kind, 0.0, null, engine, engine.localPositionMeters());
     }
 }

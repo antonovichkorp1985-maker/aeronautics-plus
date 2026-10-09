@@ -13,6 +13,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PayloadSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.SpacecraftSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
@@ -193,6 +194,22 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.PAYLOAD, MapColor.GOLD);
     public static final DeferredItem<BlockItem> ROCKET_PAYLOAD_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_PAYLOAD);
+    public static final DeferredBlock<VesselPartBlock> CREW_HABITAT =
+            registerVesselPart(VesselPartCatalog.HABITAT, MapColor.WOOL);
+    public static final DeferredItem<BlockItem> CREW_HABITAT_ITEM =
+            ITEMS.registerSimpleBlockItem(CREW_HABITAT);
+    public static final DeferredBlock<VesselPartBlock> SOLAR_PANEL =
+            registerVesselPart(VesselPartCatalog.SOLAR, MapColor.COLOR_BLUE);
+    public static final DeferredItem<BlockItem> SOLAR_PANEL_ITEM =
+            ITEMS.registerSimpleBlockItem(SOLAR_PANEL);
+    public static final DeferredBlock<VesselPartBlock> CONTROL_GYRO =
+            registerVesselPart(VesselPartCatalog.GYRO, MapColor.METAL);
+    public static final DeferredItem<BlockItem> CONTROL_GYRO_ITEM =
+            ITEMS.registerSimpleBlockItem(CONTROL_GYRO);
+    public static final DeferredBlock<VesselPartBlock> RCS_THRUSTER =
+            registerVesselPart(VesselPartCatalog.RCS, MapColor.COLOR_ORANGE);
+    public static final DeferredItem<BlockItem> RCS_THRUSTER_ITEM =
+            ITEMS.registerSimpleBlockItem(RCS_THRUSTER);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -209,6 +226,10 @@ public final class AeronauticsPlus {
                         output.accept(ROCKET_MOUNT_ITEM.get());
                         output.accept(ROCKET_FAIRING_ITEM.get());
                         output.accept(ROCKET_PAYLOAD_ITEM.get());
+                        output.accept(CREW_HABITAT_ITEM.get());
+                        output.accept(SOLAR_PANEL_ITEM.get());
+                        output.accept(CONTROL_GYRO_ITEM.get());
+                        output.accept(RCS_THRUSTER_ITEM.get());
                     })
                     .build());
 
@@ -218,7 +239,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.26: payload fairing jettison, orbital payload, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.27: habitat RCS gyrodyne solar, kerolox O/F 2.3, payload fairing jettison, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -340,6 +361,18 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus spin slice failed", exception);
             }
             try {
+                SpacecraftSlice.Result craft = SpacecraftSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus spacecraft slice OK: habitat={}, gyro={}, solar={}, spinAfter={}, rcsDrop={}",
+                        craft.habitat(),
+                        craft.gyro(),
+                        craft.solar(),
+                        String.format(java.util.Locale.ROOT, "%.4f", craft.spinAfter()),
+                        String.format(java.util.Locale.ROOT, "%.3f", craft.rcsMassDropped()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus spacecraft slice failed", exception);
+            }
+            try {
                 PayloadSlice.Result payload = PayloadSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus payload slice OK: fairing={}, payload={}, dropped={}, launchable={}",
@@ -375,8 +408,12 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FAIRING_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_PAYLOAD_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(CREW_HABITAT_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(SOLAR_PANEL_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(CONTROL_GYRO_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 18
+            boolean allRegistered = registeredItems.size() == 22
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

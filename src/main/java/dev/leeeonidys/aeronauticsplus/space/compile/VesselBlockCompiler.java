@@ -192,12 +192,22 @@ public final class VesselBlockCompiler {
                     id, stageId, VesselComponent.ComponentKind.FAIRING, spec.massKg(), position);
             case PAYLOAD -> VesselComponent.structure(
                     id, stageId, VesselComponent.ComponentKind.PAYLOAD, spec.massKg(), position);
+            case HABITAT -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.HABITAT, spec.massKg(), position);
+            case SOLAR -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.SOLAR, spec.massKg(), position);
+            case GYRO -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.GYRO, spec.massKg(), position);
             case TANK -> VesselComponent.tank(id, stageId, new TankState(
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
             case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(
                     id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
                     spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 0.0, true, position,
-                    occupant.facing().opposite().vector()));
+                    occupant.facing().opposite().vector(), false));
+            case RCS -> VesselComponent.rcs(id, stageId, new EngineState(
+                    id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 0.0, true, position,
+                    occupant.facing().opposite().vector(), true));
         };
     }
 }

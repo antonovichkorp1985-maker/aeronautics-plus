@@ -117,6 +117,76 @@ public final class VesselDynamics {
      * Jettisons remaining fairings on every remaining stage. Payload stays.
      * Historical sequence: after leaving dense atmosphere (Soyuz, Falcon 9, Saturn V).
      */
+    /**
+     * CMG/gyrodyne despin: torque without propellant. Needs a gyro and solar power
+     * (ISS гиродины, Soyuz has no CMGs — RCS instead).
+     */
+    public static VesselState despinWithGyro(VesselState vessel, double seconds) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (seconds < 0.0 || !Double.isFinite(seconds)) {
+            throw new IllegalArgumentException("Despin duration must be finite and non-negative");
+        }
+        if (!vessel.activeStage().hasGyro()) {
+            throw new IllegalStateException("No gyrodyne");
+        }
+        if (!vessel.activeStage().hasSolar()) {
+            throw new IllegalStateException("Gyrodyne needs solar power");
+        }
+        Vector3d omega0 = vessel.angularVelocityBody();
+        double rate = omega0.magnitude();
+        if (!(rate > 1.0e-12) || seconds == 0.0) {
+            return vessel;
+        }
+        double inertia = vessel.momentOfInertiaKgM2(omega0);
+        double torque = StageState.GYRO_TORQUE_NEWTON_METERS * vessel.activeStage().gyroCount();
+        double maxDelta = torque / Math.max(inertia, 1.0e-6) * seconds;
+        Vector3d omega1 = maxDelta >= rate
+                ? Vector3d.ZERO
+                : omega0.multiply((rate - maxDelta) / rate);
+        Vector3d omegaAvg = omega0.add(omega1).multiply(0.5);
+        return vessel.withAttitude(vessel.attitude().integrateBodyRate(omegaAvg, seconds))
+                .withAngularVelocity(omega1);
+    }
+
+    /** RCS cluster: small thrusters, not the main engine. Consumes propellant. */
+    public static VesselState fireRcs(VesselState vessel, double seconds) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (vessel.activeStage().rcsThrusters().isEmpty()) {
+            throw new IllegalStateException("No RCS");
+        }
+        if (!vessel.activeStage().hasCompatibleRcsFeed()) {
+            throw new IllegalStateException("RCS has no matching propellant");
+        }
+        Vector3d bodyThrust = vessel.activeStage().netRcsThrustNewtons();
+        if (!(bodyThrust.magnitudeSquared() > 0.0)) {
+            throw new IllegalStateException("RCS thrust is zero");
+        }
+        double initialMass = vessel.totalMassKg();
+        StageBurnResult burn = vessel.activeStage().burnRcs(seconds);
+        VesselState consumed = replaceActive(vessel, burn.stage());
+        double finalMass = consumed.totalMassKg();
+        double exhaust = 0.0;
+        double thrust = 0.0;
+        for (EngineState engine : vessel.activeStage().rcsThrusters()) {
+            double t = engine.activeThrustNewtons();
+            if (t > 0.0) {
+                thrust += t;
+                exhaust += t * engine.exhaustVelocityMetersPerSecond();
+            }
+        }
+        double ve = thrust > 0.0 ? exhaust / thrust : 0.0;
+        double deltaV = ve > 0.0 && finalMass > 0.0 && initialMass > finalMass
+                ? ve * Math.log(initialMass / finalMass) : 0.0;
+        Vector3d inertial = vessel.attitude().toInertial(bodyThrust);
+        return deltaV > 0.0
+                ? applyImpulse(consumed, inertial.normalized().multiply(deltaV))
+                : consumed;
+    }
+
     public static VesselState jettisonFairing(VesselState vessel) {
         if (vessel == null) {
             throw new IllegalArgumentException("Vessel is required");

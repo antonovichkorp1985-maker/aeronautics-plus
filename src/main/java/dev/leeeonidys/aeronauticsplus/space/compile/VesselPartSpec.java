@@ -37,7 +37,7 @@ public record VesselPartSpec(
                 throw new IllegalArgumentException("Tank spec requires capacity and propellant");
             }
         }
-        if (kind == VesselPartKind.ENGINE) {
+        if (kind == VesselPartKind.ENGINE || kind == VesselPartKind.RCS) {
             if (!(thrustNewtons > 0.0) || !(specificImpulseSeconds > 0.0) || !(mixtureRatio > 0.0)
                     || fuelId == null || fuelId.isBlank()
                     || oxidizerId == null || oxidizerId.isBlank()) {
@@ -93,13 +93,39 @@ public record VesselPartSpec(
                 id, VesselPartKind.PAYLOAD, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.BUS);
     }
 
+    public static VesselPartSpec habitat(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.HABITAT, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.COLUMN);
+    }
+
+    public static VesselPartSpec solar(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.SOLAR, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING);
+    }
+
+    public static VesselPartSpec gyro(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.GYRO, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CAN);
+    }
+
+    public static VesselPartSpec rcs(
+            String id, double dryMassKg, double thrustNewtons, double ispSeconds,
+            String fuelId, String oxidizerId, double mixtureRatio) {
+        return new VesselPartSpec(
+                id, VesselPartKind.RCS, dryMassKg, 0.0, null, thrustNewtons, ispSeconds, mixtureRatio,
+                fuelId, oxidizerId, CellOccupancy.POD);
+    }
+
     /**
      * Ports exposed on {@code face}. {@code facing} is exhaust for an engine and the
      * upper-stage direction for a separator.
      */
     public Set<VesselConnection.ConnectionKind> ports(BlockFace face, BlockFace facing) {
         return switch (kind) {
-            case STRUCTURE, FAIRING, PAYLOAD -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case STRUCTURE, FAIRING, PAYLOAD, HABITAT -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case SOLAR, GYRO -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.ELECTRIC);
             case TANK -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.FUEL,
@@ -121,6 +147,18 @@ public record VesselPartSpec(
                     ? EnumSet.of(VesselConnection.ConnectionKind.SEPARATION)
                     : EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             case MOUNT -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case RCS -> {
+                if (face == facing) {
+                    yield EnumSet.of(VesselConnection.ConnectionKind.SEPARATION);
+                }
+                if (face == facing.opposite()) {
+                    yield EnumSet.of(
+                            VesselConnection.ConnectionKind.STRUCTURAL,
+                            VesselConnection.ConnectionKind.FUEL,
+                            VesselConnection.ConnectionKind.OXIDIZER);
+                }
+                yield EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            }
         };
     }
 }

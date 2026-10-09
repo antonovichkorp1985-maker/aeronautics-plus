@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "aeronauticsplus:block/rcs_thruster"
+    },
+    "facing=up": {
+      "model": "aeronauticsplus:block/rcs_thruster",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/rcs_thruster",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/rcs_thruster",
+      "x": 90
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/rcs_thruster",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/rcs_thruster",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

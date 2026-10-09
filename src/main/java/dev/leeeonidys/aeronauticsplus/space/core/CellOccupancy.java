@@ -20,6 +20,12 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
     public static final CellOccupancy OGIVE = fromPixels(2, 0, 2, 14, 16, 14);
     /** Compact satellite bus under the fairing. */
     public static final CellOccupancy BUS = fromPixels(3, 2, 3, 13, 14, 13);
+    /** Thin solar wing; not a full cube. */
+    public static final CellOccupancy WING = fromPixels(0, 5, 3, 16, 11, 13);
+    /** CMG can inside a cell. */
+    public static final CellOccupancy CAN = fromPixels(4, 4, 4, 12, 12, 12);
+    /** Small RCS pod. */
+    public static final CellOccupancy POD = fromPixels(5, 2, 5, 11, 14, 11);
 
     public CellOccupancy {
         if (origin == null || size == null) {

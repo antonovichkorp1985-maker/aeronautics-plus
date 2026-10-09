@@ -17,7 +17,8 @@ public record EngineState(
         double gimbalDegrees,
         boolean enabled,
         Vector3d localPositionMeters,
-        Vector3d thrustAxis) {
+        Vector3d thrustAxis,
+        boolean rcs) {
     public EngineState {
         requireName(id, "Engine");
         requireName(fuelId, "Fuel");
@@ -49,6 +50,24 @@ public record EngineState(
         thrustAxis = thrustAxis.normalized();
     }
 
+    public EngineState(
+            String id,
+            String fuelId,
+            String oxidizerId,
+            double dryMassKg,
+            double thrustNewtons,
+            double specificImpulseSeconds,
+            double mixtureRatio,
+            double throttle,
+            double gimbalDegrees,
+            boolean enabled,
+            Vector3d localPositionMeters,
+            Vector3d thrustAxis) {
+        this(
+                id, fuelId, oxidizerId, dryMassKg, thrustNewtons, specificImpulseSeconds,
+                mixtureRatio, throttle, gimbalDegrees, enabled, localPositionMeters, thrustAxis, false);
+    }
+
     public double activeThrustNewtons() {
         return enabled ? thrustNewtons * throttle : 0.0;
     }
@@ -76,7 +95,7 @@ public record EngineState(
     public EngineState withEnabled(boolean nextEnabled) {
         return new EngineState(
                 id, fuelId, oxidizerId, dryMassKg, thrustNewtons, specificImpulseSeconds,
-                mixtureRatio, throttle, gimbalDegrees, nextEnabled, localPositionMeters, thrustAxis);
+                mixtureRatio, throttle, gimbalDegrees, nextEnabled, localPositionMeters, thrustAxis, rcs);
     }
 
     private static void requireName(String value, String label) {

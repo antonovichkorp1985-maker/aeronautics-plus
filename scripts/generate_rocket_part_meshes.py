@@ -319,6 +319,75 @@ def fairing_mesh() -> Mesh:
     return mesh
 
 
+def habitat_mesh() -> Mesh:
+    """Pressurized cabin: barrel, windows, docking ring. Original geometry."""
+    mesh = Mesh()
+    n = 20
+    mesh.add("barrel", frustum(0.08, 0.40, 0.92, 0.40, n, 0.05, 0.55))
+    mesh.add(
+        "domes",
+        frustum(0.00, 0.28, 0.08, 0.40, n, 0.55, 0.68) + disk(0.00, 0.28, n, False, (0.22, 0.22))
+        + frustum(0.92, 0.40, 1.00, 0.28, n, 0.68, 0.82) + disk(1.00, 0.28, n, True, (0.22, 0.78)),
+    )
+    windows = []
+    windows.extend(box(0.18, 0.38, 0.72, 0.38, 0.62, 0.82, 0.70, 0.10, 0.90, 0.40))
+    windows.extend(box(0.62, 0.38, 0.72, 0.82, 0.62, 0.82, 0.70, 0.10, 0.90, 0.40))
+    mesh.add("windows", windows)
+    mesh.add("hatch", frustum(0.44, 0.42, 0.56, 0.42, n, 0.82, 0.95))
+    return mesh
+
+
+def solar_mesh() -> Mesh:
+    """Thin photovoltaic wing with a boom. Not a full cube."""
+    mesh = Mesh()
+    mesh.add("boom", box(0.46, 0.46, 0.10, 0.54, 0.54, 0.36, 0.70, 0.70, 0.88, 0.90))
+    mesh.add("panel", box(0.02, 0.36, 0.36, 0.98, 0.64, 0.78, 0.08, 0.08, 0.55, 0.55))
+    cells = []
+    for i in range(4):
+        x0 = 0.08 + i * 0.22
+        cells.extend(box(x0, 0.40, 0.40, x0 + 0.16, 0.60, 0.74, 0.10, 0.58, 0.40, 0.88))
+    mesh.add("cells", cells)
+    return mesh
+
+
+def gyro_mesh() -> Mesh:
+    """Control-moment gyro: rotor disk in a gimbal ring."""
+    mesh = Mesh()
+    n = 20
+    mesh.add(
+        "rotor",
+        frustum(0.42, 0.28, 0.58, 0.28, n, 0.05, 0.40)
+        + disk(0.42, 0.28, n, False, (0.22, 0.22))
+        + disk(0.58, 0.28, n, True, (0.22, 0.78)),
+    )
+    mesh.add(
+        "gimbal",
+        frustum(0.30, 0.34, 0.34, 0.34, n, 0.50, 0.65)
+        + frustum(0.66, 0.34, 0.70, 0.34, n, 0.50, 0.65),
+    )
+    mesh.add(
+        "case",
+        frustum(0.22, 0.22, 0.78, 0.22, n, 0.70, 0.90)
+        + disk(0.22, 0.22, n, False, (0.80, 0.22))
+        + disk(0.78, 0.22, n, True, (0.80, 0.78)),
+    )
+    return mesh
+
+
+def rcs_mesh() -> Mesh:
+    """Four small RCS bells on a pod. Not a main engine."""
+    mesh = Mesh()
+    n = 12
+    mesh.add("pod", box(0.36, 0.20, 0.36, 0.64, 0.80, 0.64, 0.40, 0.10, 0.62, 0.50))
+    bells = []
+    for dx, dz in ((0.0, -0.22), (0.0, 0.22), (-0.22, 0.0), (0.22, 0.0)):
+        bells.extend(frustum(0.08, 0.10, 0.28, 0.06, n, 0.70, 0.90))
+        # offset copies: shift by rewriting via boxes for side bells
+        bells.extend(box(0.46 + dx, 0.04, 0.46 + dz, 0.54 + dx, 0.22, 0.54 + dz, 0.70, 0.55, 0.90, 0.80))
+    mesh.add("bells", bells)
+    return mesh
+
+
 def payload_mesh() -> Mesh:
     """Satellite bus with panel stubs and a dish. Original Minecraft-scale geometry."""
     mesh = Mesh()
@@ -466,6 +535,40 @@ def fairing_tex(x, y, s):
     return (232, 234, 238) if (x + y) % 5 else (218, 222, 228)
 
 
+def habitat_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.30 <= ny <= 0.46 or 0.58 <= ny <= 0.70:
+        return (40, 80, 140) if (x // 6 + y // 6) % 2 else (30, 60, 110)
+    if x % 8 == 0:
+        return (176, 180, 188)
+    return (214, 216, 220) if (x + y) % 4 else (198, 200, 206)
+
+
+def solar_tex(x, y, s):
+    if (x // 8 + y // 8) % 2 == 0:
+        return (18, 32, 96)
+    return (28, 48, 140)
+
+
+def gyro_tex(x, y, s):
+    nx, ny = x / (s - 1), y / (s - 1)
+    r = math.hypot(nx - 0.5, ny - 0.5)
+    if r < 0.22:
+        return (48, 52, 58)
+    if r < 0.38:
+        return (168, 172, 180)
+    return (88, 92, 98) if (x + y) % 5 else (72, 76, 82)
+
+
+def rcs_tex(x, y, s):
+    ny = y / (s - 1)
+    if ny < 0.28:
+        return (168, 86, 42)
+    if (x + y) % 6 == 0:
+        return (90, 94, 100)
+    return (118, 122, 130)
+
+
 def payload_tex(x, y, s):
     nx, ny = x / (s - 1), y / (s - 1)
     if 0.42 <= ny <= 0.58 and (nx < 0.22 or nx > 0.78):
@@ -560,6 +663,10 @@ def main() -> None:
     mount_mesh().write(GEO / "rocket_mount.obj")
     fairing_mesh().write(GEO / "rocket_fairing.obj")
     payload_mesh().write(GEO / "rocket_payload.obj")
+    habitat_mesh().write(GEO / "crew_habitat.obj")
+    solar_mesh().write(GEO / "solar_panel.obj")
+    gyro_mesh().write(GEO / "control_gyro.obj")
+    rcs_mesh().write(GEO / "rcs_thruster.obj")
 
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
@@ -568,10 +675,15 @@ def main() -> None:
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
     write_png(TEX / "rocket_fairing.png", paint(64, fairing_tex))
     write_png(TEX / "rocket_payload.png", paint(64, payload_tex))
+    write_png(TEX / "crew_habitat.png", paint(64, habitat_tex))
+    write_png(TEX / "solar_panel.png", paint(64, solar_tex))
+    write_png(TEX / "control_gyro.png", paint(64, gyro_tex))
+    write_png(TEX / "rcs_thruster.png", paint(64, rcs_tex))
 
     for block_id in (
             "rocket_engine", "rocket_tank", "rocket_structure", "stage_separator",
-            "rocket_mount", "rocket_fairing", "rocket_payload"):
+            "rocket_mount", "rocket_fairing", "rocket_payload",
+            "crew_habitat", "solar_panel", "control_gyro", "rcs_thruster"):
         body = JSON_MODEL.format(block_id=block_id)
         (ASSETS / "models/block" / f"{block_id}.json").write_text(body, encoding="utf-8")
         (ASSETS / "models/item" / f"{block_id}.json").write_text(body, encoding="utf-8")
@@ -583,6 +695,10 @@ def main() -> None:
     write_blockstate("rocket_mount", UP_STATES)
     write_blockstate("rocket_fairing", UP_STATES)
     write_blockstate("rocket_payload", UP_STATES)
+    write_blockstate("crew_habitat", UP_STATES)
+    write_blockstate("solar_panel", UP_STATES)
+    write_blockstate("control_gyro", UP_STATES)
+    write_blockstate("rcs_thruster", ENGINE_STATES)
     print("rocket part meshes, textures and models written")
 
 

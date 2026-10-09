@@ -49,20 +49,29 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
                     .filter(component -> component.kind() == VesselComponent.ComponentKind.TANK).toList();
             List<VesselComponent> engines = stageComponents.stream()
                     .filter(component -> component.kind() == VesselComponent.ComponentKind.ENGINE).toList();
+            List<VesselComponent> rcs = stageComponents.stream()
+                    .filter(component -> component.kind() == VesselComponent.ComponentKind.RCS).toList();
             if (tanks.isEmpty()) {
                 diagnostics.add(error("NO_TANK", "Ступень " + stageId + " не содержит баков"));
             }
             if (engines.isEmpty()) {
                 diagnostics.add(error("NO_ENGINE", "Ступень " + stageId + " не содержит двигателей"));
             }
-            validateFuelConnections(stageId, engines, tanks, diagnostics);
+            List<VesselComponent> burners = new ArrayList<>();
+            burners.addAll(engines);
+            burners.addAll(rcs);
+            validateFuelConnections(stageId, burners, tanks, diagnostics);
             validateStructuralConnectivity(stageId, stageComponents, diagnostics);
             if (!tanks.isEmpty() && !engines.isEmpty()) {
+                List<EngineState> allEngines = new ArrayList<>();
+                engines.stream().map(VesselComponent::engine).forEach(allEngines::add);
+                rcs.stream().map(VesselComponent::engine).forEach(allEngines::add);
                 StageState stage = new StageState(
                         stageId,
                         stageComponents.stream()
                                 .filter(component -> component.kind() != VesselComponent.ComponentKind.TANK
-                                        && component.kind() != VesselComponent.ComponentKind.ENGINE)
+                                        && component.kind() != VesselComponent.ComponentKind.ENGINE
+                                        && component.kind() != VesselComponent.ComponentKind.RCS)
                                 .filter(component -> component.structuralMassKg() > 0.0)
                                 .map(component -> new MassElement(
                                         component.id(),
@@ -71,7 +80,7 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
                                         roleOf(component.kind())))
                                 .toList(),
                         tanks.stream().map(VesselComponent::tank).toList(),
-                        engines.stream().map(VesselComponent::engine).toList(),
+                        allEngines,
                         true);
                 addThrustGeometryDiagnostics(stage, diagnostics);
                 stages.add(stage);
@@ -98,12 +107,48 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             diagnostics.add(warning("FAIRING_WITHOUT_PAYLOAD",
                     "Обтекатель без аппарата: сбрасывать нечего"));
         }
+        boolean hasRcs = components.stream()
+                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.RCS);
+        boolean hasGyro = components.stream()
+                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.GYRO);
+        boolean hasSolar = components.stream()
+                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.SOLAR);
+        if (hasPayload && !hasRcs) {
+            diagnostics.add(warning("NO_RCS",
+                    "Аппарат без РСУ: нет ориентации и малых манёвров"));
+        }
+        if (hasGyro && !hasSolar) {
+            diagnostics.add(warning("GYRO_WITHOUT_SOLAR",
+                    "Гиродину нужна солнечная панель"));
+        }
+        if (hasGyro && hasSolar && !hasElectricPath()) {
+            diagnostics.add(warning("NO_POWER_PATH",
+                    "Гиродин не соединён электрически с солнечной панелью"));
+        }
+    }
+
+    private boolean hasElectricPath() {
+        Set<String> solarIds = components.stream()
+                .filter(component -> component.kind() == VesselComponent.ComponentKind.SOLAR)
+                .map(VesselComponent::id)
+                .collect(Collectors.toSet());
+        Set<String> gyroIds = components.stream()
+                .filter(component -> component.kind() == VesselComponent.ComponentKind.GYRO)
+                .map(VesselComponent::id)
+                .collect(Collectors.toSet());
+        return connections.stream().anyMatch(connection ->
+                connection.kind() == VesselConnection.ConnectionKind.ELECTRIC
+                        && ((solarIds.contains(connection.fromId()) && gyroIds.contains(connection.toId()))
+                        || (gyroIds.contains(connection.fromId()) && solarIds.contains(connection.toId()))));
     }
 
     private static MassElement.Role roleOf(VesselComponent.ComponentKind kind) {
         return switch (kind) {
             case FAIRING -> MassElement.Role.FAIRING;
             case PAYLOAD -> MassElement.Role.PAYLOAD;
+            case HABITAT -> MassElement.Role.HABITAT;
+            case SOLAR -> MassElement.Role.SOLAR;
+            case GYRO -> MassElement.Role.GYRO;
             default -> MassElement.Role.STRUCTURE;
         };
     }

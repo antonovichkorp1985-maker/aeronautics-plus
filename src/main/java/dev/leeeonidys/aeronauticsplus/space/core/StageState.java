@@ -44,13 +44,48 @@ public record StageState(
         return dryMassKg() + propellantMassKg();
     }
 
+    /** Game-scale CMG torque; ISS CMG class is ~250 N·m. */
+    public static final double GYRO_TORQUE_NEWTON_METERS = 250.0;
+
+    public List<EngineState> mainEngines() {
+        return engines.stream().filter(engine -> !engine.rcs()).toList();
+    }
+
+    public List<EngineState> rcsThrusters() {
+        return engines.stream().filter(EngineState::rcs).toList();
+    }
+
+    public boolean hasGyro() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.GYRO);
+    }
+
+    public boolean hasSolar() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.SOLAR);
+    }
+
+    public boolean hasHabitat() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.HABITAT);
+    }
+
+    public int gyroCount() {
+        return (int) structure.stream().filter(element -> element.role() == MassElement.Role.GYRO).count();
+    }
+
     public double thrustNewtons() {
-        return engines.stream().mapToDouble(EngineState::activeThrustNewtons).sum();
+        return mainEngines().stream().mapToDouble(EngineState::activeThrustNewtons).sum();
     }
 
     public Vector3d netThrustNewtons() {
         Vector3d sum = Vector3d.ZERO;
-        for (EngineState engine : engines) {
+        for (EngineState engine : mainEngines()) {
+            sum = sum.add(engine.activeThrustVectorNewtons());
+        }
+        return sum;
+    }
+
+    public Vector3d netRcsThrustNewtons() {
+        Vector3d sum = Vector3d.ZERO;
+        for (EngineState engine : rcsThrusters()) {
             sum = sum.add(engine.activeThrustVectorNewtons());
         }
         return sum;
@@ -61,7 +96,7 @@ public record StageState(
         if (!(thrust > 0.0)) {
             return 0.0;
         }
-        return engines.stream()
+        return mainEngines().stream()
                 .mapToDouble(engine -> engine.activeThrustNewtons() * engine.exhaustVelocityMetersPerSecond())
                 .sum() / thrust;
     }
@@ -104,7 +139,7 @@ public record StageState(
     public Vector3d centerOfThrustMeters() {
         double thrust = 0.0;
         Vector3d moment = Vector3d.ZERO;
-        for (EngineState engine : engines) {
+        for (EngineState engine : mainEngines()) {
             double engineThrust = engine.activeThrustNewtons();
             if (engineThrust > 0.0) {
                 thrust += engineThrust;
@@ -198,9 +233,17 @@ public record StageState(
         return withEngines(engines.stream().map(engine -> engine.withEnabled(false)).toList());
     }
 
-    /** True when every firing engine has a tank with matching fuel and oxidizer ids. */
+    /** True when every firing main engine has a tank with matching fuel and oxidizer ids. */
     public boolean hasCompatibleFeed() {
-        for (EngineState engine : engines) {
+        return hasCompatibleFeed(mainEngines());
+    }
+
+    public boolean hasCompatibleRcsFeed() {
+        return hasCompatibleFeed(rcsThrusters());
+    }
+
+    private boolean hasCompatibleFeed(List<EngineState> group) {
+        for (EngineState engine : group) {
             if (!(engine.activeThrustNewtons() > 0.0)) {
                 continue;
             }
@@ -219,15 +262,24 @@ public record StageState(
     }
 
     /**
-     * Burns propellant at each engine's declared mixture ratio, drawing only from tanks
+     * Burns propellant at each main engine's declared mixture ratio, drawing only from tanks
      * whose fuel and oxidizer ids match. Stops when either species of a firing pair is gone.
      */
     public StageBurnResult burn(double requestedSeconds) {
+        return burnEngines(mainEngines(), requestedSeconds);
+    }
+
+    /** RCS cluster burn. Does not fire the main engines. */
+    public StageBurnResult burnRcs(double requestedSeconds) {
+        return burnEngines(rcsThrusters(), requestedSeconds);
+    }
+
+    private StageBurnResult burnEngines(List<EngineState> group, double requestedSeconds) {
         if (requestedSeconds < 0.0 || !Double.isFinite(requestedSeconds)) {
             throw new IllegalArgumentException("Burn duration must be finite and non-negative");
         }
         Map<PropellantSpecies, double[]> rates = new LinkedHashMap<>();
-        for (EngineState engine : engines) {
+        for (EngineState engine : group) {
             if (!(engine.activeThrustNewtons() > 0.0)) {
                 continue;
             }

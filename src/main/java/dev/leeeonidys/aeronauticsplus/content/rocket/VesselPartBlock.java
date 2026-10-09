@@ -83,7 +83,7 @@ public final class VesselPartBlock extends Block {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (spec.kind() == VesselPartKind.ENGINE) {
+        if (spec.kind() == VesselPartKind.ENGINE || spec.kind() == VesselPartKind.RCS) {
             return defaultBlockState().setValue(FACING, context.getClickedFace().getOpposite());
         }
         if (spec.kind() == VesselPartKind.SEPARATOR
