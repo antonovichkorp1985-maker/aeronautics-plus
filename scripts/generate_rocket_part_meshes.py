@@ -5,10 +5,14 @@ Silhouettes follow public-domain NASA RS-25 / Saturn V stage geometry
 (bell nozzle, cylindrical tank, isogrid barrel, clamp-band decoupler).
 Meshes, UVs and textures are authored here; they are not copies of
 NASA high-poly files or other Minecraft mods.
+
+Face winding is outward (CCW when viewed from outside) so Minecraft's
+back-face culling shows the outer skin, not the hollow interior.
 """
 
 from __future__ import annotations
 
+import json
 import math
 import struct
 import zlib
@@ -29,6 +33,16 @@ map_Kd #texture0
 """
 
 
+def normal(a, b, c) -> tuple[float, float, float]:
+    ux, uy, uz = b[0] - a[0], b[1] - a[1], b[2] - a[2]
+    vx, vy, vz = c[0] - a[0], c[1] - a[1], c[2] - a[2]
+    nx = uy * vz - uz * vy
+    ny = uz * vx - ux * vz
+    nz = ux * vy - uy * vx
+    length = math.hypot(nx, ny, nz) or 1.0
+    return (nx / length, ny / length, nz / length)
+
+
 class Mesh:
     def __init__(self) -> None:
         self.objects: list[tuple[str, list[tuple]]] = []
@@ -43,10 +57,15 @@ class Mesh:
         for name, triangles in self.objects:
             lines.append(f"o {name}")
             for a, b, c, uvs in triangles:
+                nx, ny, nz = normal(a, b, c)
                 for vertex, uv in zip((a, b, c), uvs):
                     lines.append(f"v {vertex[0]:.6f} {vertex[1]:.6f} {vertex[2]:.6f}")
                     lines.append(f"vt {uv[0]:.6f} {uv[1]:.6f}")
-                lines.append(f"f {index}/{index} {index + 1}/{index + 1} {index + 2}/{index + 2}")
+                    lines.append(f"vn {nx:.6f} {ny:.6f} {nz:.6f}")
+                lines.append(
+                    f"f {index}/{index}/{index} {index + 1}/{index + 1}/{index + 1} "
+                    f"{index + 2}/{index + 2}/{index + 2}"
+                )
                 index += 3
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -68,6 +87,7 @@ def circle(cx: float, cy: float, cz: float, radius: float, axis: str, i: int, n:
 
 
 def frustum(y0: float, r0: float, y1: float, r1: float, n: int, u0: float, u1: float, invert: bool = False) -> list:
+    """Side of a cone/cylinder. invert=True for inner walls (normals toward axis)."""
     tris = []
     for i in range(n):
         j = (i + 1) % n
@@ -78,15 +98,16 @@ def frustum(y0: float, r0: float, y1: float, r1: float, n: int, u0: float, u1: f
         ui = i / n
         uj = (i + 1) / n
         if invert:
-            tris.append(tri(a, d, c, (ui, u0), (ui, u1), (uj, u1)))
-            tris.append(tri(a, c, b, (ui, u0), (uj, u1), (uj, u0)))
-        else:
             tris.append(tri(a, b, c, (ui, u0), (uj, u0), (uj, u1)))
             tris.append(tri(a, c, d, (ui, u0), (uj, u1), (ui, u1)))
+        else:
+            tris.append(tri(a, d, c, (ui, u0), (ui, u1), (uj, u1)))
+            tris.append(tri(a, c, b, (ui, u0), (uj, u1), (uj, u0)))
     return tris
 
 
 def disk(y: float, radius: float, n: int, up: bool, u_center: tuple[float, float] = (0.5, 0.5)) -> list:
+    """Cap. up=True faces +Y (top), up=False faces -Y (bottom)."""
     tris = []
     center = (0.5, y, 0.5)
     for i in range(n):
@@ -108,8 +129,12 @@ def box(x0, y0, z0, x1, y1, z1, u0=0.05, v0=0.05, u1=0.45, v1=0.45) -> list:
         (x0, y0, z1), (x1, y0, z1), (x1, y1, z1), (x0, y1, z1),
     ]
     faces = (
-        (0, 1, 2, 3), (5, 4, 7, 6), (4, 0, 3, 7),
-        (1, 5, 6, 2), (3, 2, 6, 7), (4, 5, 1, 0),
+        (0, 3, 2, 1),
+        (4, 5, 6, 7),
+        (0, 4, 7, 3),
+        (1, 2, 6, 5),
+        (0, 1, 5, 4),
+        (3, 7, 6, 2),
     )
     uv = ((u0, v0), (u1, v0), (u1, v1), (u0, v1))
     tris = []
@@ -128,80 +153,119 @@ def cylinder_x(x0, x1, cy, cz, radius, n, u0, u1) -> list:
         c = circle(x1, cy, cz, radius, "x", j, n)
         d = circle(x1, cy, cz, radius, "x", i, n)
         ui, uj = i / n, (i + 1) / n
-        tris.append(tri(a, b, c, (ui, u0), (uj, u0), (uj, u1)))
-        tris.append(tri(a, c, d, (ui, u0), (uj, u1), (ui, u1)))
+        tris.append(tri(a, d, c, (ui, u0), (ui, u1), (uj, u1)))
+        tris.append(tri(a, c, b, (ui, u0), (uj, u1), (uj, u0)))
     return tris
 
 
 def engine_mesh() -> Mesh:
     mesh = Mesh()
-    n = 16
-    # Regeneratively cooled bell, RS-25 silhouette: wide lip, tight throat, short chamber.
-    mesh.add("bell_outer", frustum(0.06, 0.42, 0.34, 0.22, n, 0.02, 0.38)
-             + frustum(0.34, 0.22, 0.52, 0.12, n, 0.38, 0.55)
-             + frustum(0.52, 0.12, 0.62, 0.10, n, 0.55, 0.62))
-    mesh.add("bell_inner", frustum(0.08, 0.38, 0.34, 0.19, n, 0.72, 0.88, invert=True)
-             + frustum(0.34, 0.19, 0.52, 0.09, n, 0.88, 0.96, invert=True)
-             + disk(0.08, 0.38, n, True, (0.78, 0.22)))
-    mesh.add("chamber", frustum(0.62, 0.16, 0.88, 0.16, n, 0.05, 0.28)
-             + disk(0.88, 0.16, n, True, (0.22, 0.78)))
-    mesh.add("gimbal", frustum(0.88, 0.18, 0.96, 0.18, n, 0.30, 0.40)
-             + frustum(0.96, 0.18, 0.99, 0.12, n, 0.40, 0.48)
-             + disk(0.99, 0.12, n, True, (0.22, 0.22)))
-    tubes = []
-    for i in range(8):
-        ang = 2 * math.pi * i / 8
-        dx, dz = 0.36 * math.cos(ang), 0.36 * math.sin(ang)
-        tubes.extend(box(0.5 + dx - 0.018, 0.10, 0.5 + dz - 0.018,
-                         0.5 + dx + 0.018, 0.50, 0.5 + dz + 0.018, 0.55, 0.05, 0.70, 0.35))
-    mesh.add("regen_tubes", tubes)
+    n = 24
+    # RS-25 silhouette scaled into one metre cell. No cooling tubes through the bell.
+    mesh.add(
+        "bell_outer",
+        frustum(0.02, 0.47, 0.30, 0.20, n, 0.02, 0.42)
+        + frustum(0.30, 0.20, 0.42, 0.10, n, 0.42, 0.55)
+        + frustum(0.42, 0.10, 0.50, 0.12, n, 0.55, 0.62),
+    )
+    mesh.add(
+        "bell_inner",
+        frustum(0.04, 0.43, 0.30, 0.17, n, 0.78, 0.90, invert=True)
+        + frustum(0.30, 0.17, 0.42, 0.08, n, 0.90, 0.97, invert=True)
+        + disk(0.04, 0.43, n, False, (0.80, 0.22)),
+    )
+    mesh.add(
+        "chamber",
+        frustum(0.50, 0.17, 0.78, 0.17, n, 0.05, 0.28)
+        + disk(0.78, 0.17, n, True, (0.22, 0.78)),
+    )
+    mesh.add(
+        "gimbal",
+        frustum(0.78, 0.20, 0.90, 0.16, n, 0.30, 0.40)
+        + frustum(0.90, 0.16, 0.98, 0.10, n, 0.40, 0.48)
+        + disk(0.98, 0.10, n, True, (0.22, 0.22)),
+    )
     pumps = []
-    pumps.extend(cylinder_x(0.10, 0.34, 0.80, 0.50, 0.07, 10, 0.50, 0.70))
-    pumps.extend(cylinder_x(0.66, 0.90, 0.80, 0.50, 0.07, 10, 0.50, 0.70))
-    pumps.extend(box(0.32, 0.74, 0.46, 0.40, 0.86, 0.54, 0.72, 0.55, 0.88, 0.72))
-    pumps.extend(box(0.60, 0.74, 0.46, 0.68, 0.86, 0.54, 0.72, 0.55, 0.88, 0.72))
+    pumps.extend(cylinder_x(0.06, 0.30, 0.68, 0.50, 0.07, 12, 0.50, 0.70))
+    pumps.extend(cylinder_x(0.70, 0.94, 0.68, 0.50, 0.07, 12, 0.50, 0.70))
+    pumps.extend(box(0.28, 0.62, 0.46, 0.36, 0.74, 0.54, 0.72, 0.55, 0.88, 0.72))
+    pumps.extend(box(0.64, 0.62, 0.46, 0.72, 0.74, 0.54, 0.72, 0.55, 0.88, 0.72))
     mesh.add("turbopumps", pumps)
     return mesh
 
 
 def tank_mesh() -> Mesh:
     mesh = Mesh()
-    n = 16
-    mesh.add("barrel", frustum(0.16, 0.36, 0.84, 0.36, n, 0.05, 0.55))
-    mesh.add("lower_dome", frustum(0.04, 0.18, 0.16, 0.36, n, 0.55, 0.70) + disk(0.04, 0.18, n, False, (0.22, 0.22)))
-    mesh.add("upper_dome", frustum(0.84, 0.36, 0.96, 0.18, n, 0.70, 0.85) + disk(0.96, 0.18, n, True, (0.22, 0.78)))
-    mesh.add("band", frustum(0.46, 0.37, 0.54, 0.37, n, 0.88, 0.98))
+    n = 24
+    # Closed barrel: outer skin + full bulkheads. No sight-line through the tank.
+    mesh.add("barrel", frustum(0.12, 0.44, 0.88, 0.44, n, 0.02, 0.50))
+    mesh.add(
+        "lower_dome",
+        frustum(0.02, 0.28, 0.12, 0.44, n, 0.50, 0.64) + disk(0.02, 0.28, n, False, (0.22, 0.22)),
+    )
+    mesh.add(
+        "upper_dome",
+        frustum(0.88, 0.44, 0.98, 0.28, n, 0.64, 0.78) + disk(0.98, 0.28, n, True, (0.22, 0.78)),
+    )
+    mesh.add("band", frustum(0.44, 0.455, 0.56, 0.455, n, 0.82, 0.96))
     stringers = []
-    for i in range(6):
-        ang = 2 * math.pi * i / 6
-        dx, dz = 0.365 * math.cos(ang), 0.365 * math.sin(ang)
-        stringers.extend(box(0.5 + dx - 0.016, 0.18, 0.5 + dz - 0.016,
-                             0.5 + dx + 0.016, 0.82, 0.5 + dz + 0.016, 0.40, 0.05, 0.52, 0.40))
+    for i in range(8):
+        ang = 2 * math.pi * i / 8
+        dx, dz = 0.45 * math.cos(ang), 0.45 * math.sin(ang)
+        stringers.extend(
+            box(
+                0.5 + dx - 0.014,
+                0.14,
+                0.5 + dz - 0.014,
+                0.5 + dx + 0.014,
+                0.86,
+                0.5 + dz + 0.014,
+                0.40,
+                0.05,
+                0.52,
+                0.40,
+            )
+        )
     mesh.add("stringers", stringers)
-    mesh.add("feed", box(0.46, 0.00, 0.46, 0.54, 0.08, 0.54, 0.10, 0.80, 0.25, 0.95))
+    mesh.add("feed", box(0.46, 0.00, 0.46, 0.54, 0.04, 0.54, 0.10, 0.80, 0.25, 0.95))
     return mesh
 
 
 def structure_mesh() -> Mesh:
     mesh = Mesh()
-    n = 12
-    mesh.add("skin", frustum(0.02, 0.34, 0.98, 0.34, n, 0.05, 0.70, invert=True)
-             + frustum(0.02, 0.36, 0.98, 0.36, n, 0.05, 0.70))
+    n = 16
+    mesh.add(
+        "skin",
+        frustum(0.02, 0.36, 0.98, 0.36, n, 0.05, 0.70, invert=True)
+        + frustum(0.02, 0.40, 0.98, 0.40, n, 0.05, 0.70),
+    )
     rings = []
     for y in (0.08, 0.50, 0.92):
-        rings.extend(frustum(y - 0.03, 0.37, y + 0.03, 0.37, n, 0.72, 0.85))
+        rings.extend(frustum(y - 0.03, 0.42, y + 0.03, 0.42, n, 0.72, 0.85))
     mesh.add("rings", rings)
     longerons = []
     for i in range(4):
         ang = math.pi / 4 + i * math.pi / 2
-        dx, dz = 0.37 * math.cos(ang), 0.37 * math.sin(ang)
-        longerons.extend(box(0.5 + dx - 0.025, 0.02, 0.5 + dz - 0.025,
-                             0.5 + dx + 0.025, 0.98, 0.5 + dz + 0.025, 0.40, 0.05, 0.55, 0.45))
+        dx, dz = 0.41 * math.cos(ang), 0.41 * math.sin(ang)
+        longerons.extend(
+            box(
+                0.5 + dx - 0.025,
+                0.02,
+                0.5 + dz - 0.025,
+                0.5 + dx + 0.025,
+                0.98,
+                0.5 + dz + 0.025,
+                0.40,
+                0.05,
+                0.55,
+                0.45,
+            )
+        )
     mesh.add("longerons", longerons)
     braces = []
-    for y0, y1 in ((0.10, 0.48), (0.52, 0.90)):
-        braces.extend(box(0.14, y0, 0.48, 0.86, y0 + 0.03, 0.52, 0.60, 0.70, 0.80, 0.90))
-        braces.extend(box(0.48, y0, 0.14, 0.52, y0 + 0.03, 0.86, 0.60, 0.70, 0.80, 0.90))
+    for y0 in (0.10, 0.52):
+        braces.extend(box(0.12, y0, 0.48, 0.88, y0 + 0.03, 0.52, 0.60, 0.70, 0.80, 0.90))
+        braces.extend(box(0.48, y0, 0.12, 0.52, y0 + 0.03, 0.88, 0.60, 0.70, 0.80, 0.90))
     mesh.add("braces", braces)
     return mesh
 
@@ -209,8 +273,11 @@ def structure_mesh() -> Mesh:
 def separator_mesh() -> Mesh:
     mesh = Mesh()
     n = 16
-    mesh.add("clamp", frustum(0.42, 0.40, 0.58, 0.40, n, 0.05, 0.40)
-             + frustum(0.42, 0.32, 0.58, 0.32, n, 0.05, 0.40, invert=True))
+    mesh.add(
+        "clamp",
+        frustum(0.42, 0.40, 0.58, 0.40, n, 0.05, 0.40)
+        + frustum(0.42, 0.32, 0.58, 0.32, n, 0.05, 0.40, invert=True),
+    )
     petals = []
     for i in range(8):
         ang = 2 * math.pi * i / 8
@@ -246,33 +313,33 @@ def engine_tex(x, y, s):
     nx, ny = x / (s - 1), y / (s - 1)
     cx, cy = nx - 0.5, ny - 0.5
     r = math.hypot(cx, cy)
-    if r < 0.18:
-        return (22, 18, 16)
-    if r < 0.42:
-        t = (r - 0.18) / 0.24
-        return (int(150 + 40 * t), int(78 + 20 * t), int(36 + 8 * t))
-    if ny > 0.72:
-        return (70, 74, 80)
-    if (x + y) % 4 == 0:
-        return (92, 58, 32)
-    return (58, 52, 48)
+    if r < 0.14:
+        return (18, 14, 12)
+    if r < 0.46:
+        t = (r - 0.14) / 0.32
+        return (int(168 + 40 * t), int(86 + 18 * t), int(42 + 10 * t))
+    if ny > 0.70:
+        return (118, 122, 130)
+    if (x + y) % 5 == 0:
+        return (72, 48, 32)
+    return (64, 56, 50)
 
 
 def tank_tex(x, y, s):
     ny = y / (s - 1)
-    if 0.42 <= ny <= 0.58:
-        return (196, 88, 24)
-    if x in (0, s - 1) or y in (0, s - 1) or x == s // 2:
-        return (120, 124, 130)
-    return (214, 216, 220) if (x + y) % 3 else (200, 204, 210)
+    if 0.40 <= ny <= 0.58:
+        return (198, 92, 28) if (x + y) % 4 else (184, 78, 22)
+    if x % 8 == 0 or y in (0, s - 1):
+        return (132, 136, 142)
+    return (220, 222, 226) if (x + y) % 3 else (206, 210, 216)
 
 
 def structure_tex(x, y, s):
     if x % 8 == 0 or y % 8 == 0:
-        return (168, 174, 184)
+        return (176, 182, 192)
     if (x // 4 + y // 4) % 2 == 0:
-        return (52, 56, 64)
-    return (40, 44, 50)
+        return (58, 62, 70)
+    return (44, 48, 54)
 
 
 def separator_tex(x, y, s):
@@ -334,20 +401,34 @@ def write_blockstate(block_id: str, mapping: dict) -> None:
         entry.update(extra)
         variants[key] = entry
     path = ASSETS / "blockstates" / f"{block_id}.json"
-    import json
     path.write_text(json.dumps({"variants": variants}, indent=2) + "\n", encoding="utf-8")
 
 
+def assert_outward() -> None:
+    sample = frustum(0.0, 0.4, 1.0, 0.4, 16, 0.0, 1.0)[0]
+    a, b, c, _ = sample
+    nx, ny, nz = normal(a, b, c)
+    # Angle-0 station sits on +X; outer normal must point away from the axis.
+    if nx <= 0.2:
+        raise SystemExit(f"outer frustum winding still inward: n=({nx:.3f},{ny:.3f},{nz:.3f})")
+    top = disk(1.0, 0.4, 16, True)[0]
+    a, b, c, _ = top
+    nx, ny, nz = normal(a, b, c)
+    if ny <= 0.2:
+        raise SystemExit(f"top disk does not face +Y: n=({nx:.3f},{ny:.3f},{nz:.3f})")
+
+
 def main() -> None:
+    assert_outward()
     engine_mesh().write(GEO / "rocket_engine.obj")
     tank_mesh().write(GEO / "rocket_tank.obj")
     structure_mesh().write(GEO / "rocket_structure.obj")
     separator_mesh().write(GEO / "stage_separator.obj")
 
-    write_png(TEX / "rocket_engine.png", paint(32, engine_tex))
-    write_png(TEX / "rocket_tank.png", paint(32, tank_tex))
-    write_png(TEX / "rocket_structure.png", paint(32, structure_tex))
-    write_png(TEX / "stage_separator.png", paint(32, separator_tex))
+    write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
+    write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
+    write_png(TEX / "rocket_structure.png", paint(64, structure_tex))
+    write_png(TEX / "stage_separator.png", paint(64, separator_tex))
 
     for block_id in ("rocket_engine", "rocket_tank", "rocket_structure", "stage_separator"):
         body = JSON_MODEL.format(block_id=block_id)

@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -25,10 +26,12 @@ import net.minecraft.client.Minecraft;
  * Small client-only updater for the separately distributed RU resource pack.
  * The ZIP never lives in GitHub: GitHub contains only this metadata and Drive
  * remains the binary source. All network and file failures are non-fatal.
+ * Old AeronauticsPlus-RU-Pack-*.zip files are removed even when the download
+ * itself is skipped or fails, so a stale second pack cannot linger in the GUI.
  */
 public final class RuPackUpdater {
     private static final String MANIFEST_URL =
-            "https://raw.githubusercontent.com/antonovichkorp1985-maker/aeronautics-plus/arena/01a0ea08-aeronautics-plus/docs/localization/RU_PACK_RELEASE.json";
+            "https://raw.githubusercontent.com/antonovichkorp1985-maker/aeronautics-plus/arena/84c40eba-aeronautics-plus/docs/localization/RU_PACK_RELEASE.json";
     private static final String FILE_PREFIX = "AeronauticsPlus-RU-Pack-";
     private static final Pattern PACK_NAME = Pattern.compile("AeronauticsPlus-RU-Pack-[^/\\\\]+\\.zip");
     private static final int CONNECT_TIMEOUT_SECONDS = 8;
@@ -37,69 +40,80 @@ public final class RuPackUpdater {
     }
 
     public static void start() {
-        Path config = Minecraft.getInstance().gameDirectory.toPath()
-                .resolve("config").resolve("aeronauticsplus-ru-pack.json");
+        Path gameDir = Minecraft.getInstance().gameDirectory.toPath();
+        Path config = gameDir.resolve("config").resolve("aeronauticsplus-ru-pack.json");
         Settings settings = Settings.load(config);
-        if (!settings.download()) {
-            AeronauticsPlus.LOGGER.info("RU-pack updater disabled by {}", config.getFileName());
-            return;
-        }
-
-        Path resourcepacks = Minecraft.getInstance().gameDirectory.toPath().resolve("resourcepacks");
-        CompletableFuture.runAsync(() -> update(resourcepacks, settings))
+        Path resourcepacks = gameDir.resolve("resourcepacks");
+        CompletableFuture.runAsync(() -> run(gameDir, resourcepacks, settings))
                 .exceptionally(error -> {
                     AeronauticsPlus.LOGGER.warn("RU-pack updater failed; keeping local pack", error);
                     return null;
                 });
     }
 
-    private static void update(Path resourcepacks, Settings settings) {
+    private static void run(Path gameDir, Path resourcepacks, Settings settings) {
+        String current = null;
         try {
             Files.createDirectories(resourcepacks);
-            HttpClient client = HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .build();
-            JsonObject manifest = getJson(client, MANIFEST_URL);
-            String version = required(manifest, "version");
-            String fileName = required(manifest, "file_name");
-            String downloadUrl = required(manifest, "download_url");
-            String expectedSha = required(manifest, "sha256").toLowerCase();
-            if (!PACK_NAME.matcher(fileName).matches()) {
-                throw new IOException("manifest contains an unsafe pack name: " + fileName);
-            }
-
-            Path target = resourcepacks.resolve(fileName).normalize();
-            if (!target.getParent().equals(resourcepacks)) {
-                throw new IOException("pack path escapes resourcepacks");
-            }
-            if (!Files.isRegularFile(target) || !expectedSha.equals(sha256(target))) {
-                Path temporary = resourcepacks.resolve(fileName + ".download");
-                Files.deleteIfExists(temporary);
-                download(client, downloadUrl, temporary);
-                if (!expectedSha.equals(sha256(temporary))) {
-                    Files.deleteIfExists(temporary);
-                    throw new IOException("SHA-256 mismatch for " + fileName);
-                }
-                if (!looksLikeZip(temporary)) {
-                    Files.deleteIfExists(temporary);
-                    throw new IOException("downloaded file is not a ZIP: " + fileName);
-                }
-                Files.move(temporary, target);
-                AeronauticsPlus.LOGGER.info("Downloaded RU-pack {} from public Drive link", version);
+            if (settings.download()) {
+                current = downloadCurrent(resourcepacks);
             } else {
-                AeronauticsPlus.LOGGER.info("RU-pack {} is already current", version);
-            }
-
-            if (settings.enable()) {
-                selectPackOnNextLaunch(Minecraft.getInstance().gameDirectory.toPath(), fileName);
-            }
-            if (settings.cleanup()) {
-                cleanup(resourcepacks, fileName);
+                AeronauticsPlus.LOGGER.info("RU-pack download disabled by config");
             }
         } catch (Exception error) {
-            AeronauticsPlus.LOGGER.warn("RU-pack update skipped; local files were left untouched", error);
+            AeronauticsPlus.LOGGER.warn("RU-pack update skipped; local files will still be cleaned", error);
         }
+        try {
+            if (settings.cleanup()) {
+                cleanup(resourcepacks, current);
+            }
+            if (settings.enable()) {
+                String enable = usablePack(resourcepacks, current);
+                if (enable != null) {
+                    selectPackOnNextLaunch(gameDir, enable);
+                }
+            }
+        } catch (Exception error) {
+            AeronauticsPlus.LOGGER.warn("RU-pack cleanup skipped", error);
+        }
+    }
+
+    private static String downloadCurrent(Path resourcepacks) throws Exception {
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(CONNECT_TIMEOUT_SECONDS))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
+        JsonObject manifest = getJson(client, MANIFEST_URL);
+        String version = required(manifest, "version");
+        String fileName = required(manifest, "file_name");
+        String downloadUrl = required(manifest, "download_url");
+        String expectedSha = required(manifest, "sha256").toLowerCase();
+        if (!PACK_NAME.matcher(fileName).matches()) {
+            throw new IOException("manifest contains an unsafe pack name: " + fileName);
+        }
+
+        Path target = resourcepacks.resolve(fileName).normalize();
+        if (!target.getParent().equals(resourcepacks)) {
+            throw new IOException("pack path escapes resourcepacks");
+        }
+        if (!Files.isRegularFile(target) || !expectedSha.equals(sha256(target))) {
+            Path temporary = resourcepacks.resolve(fileName + ".download");
+            Files.deleteIfExists(temporary);
+            download(client, downloadUrl, temporary);
+            if (!expectedSha.equals(sha256(temporary))) {
+                Files.deleteIfExists(temporary);
+                throw new IOException("SHA-256 mismatch for " + fileName);
+            }
+            if (!looksLikeZip(temporary)) {
+                Files.deleteIfExists(temporary);
+                throw new IOException("downloaded file is not a ZIP: " + fileName);
+            }
+            Files.move(temporary, target, StandardCopyOption.REPLACE_EXISTING);
+            AeronauticsPlus.LOGGER.info("Downloaded RU-pack {} from public Drive link", version);
+        } else {
+            AeronauticsPlus.LOGGER.info("RU-pack {} is already current", version);
+        }
+        return fileName;
     }
 
     private static JsonObject getJson(HttpClient client, String url) throws IOException, InterruptedException {
@@ -144,18 +158,44 @@ public final class RuPackUpdater {
         if (changed) Files.write(options, lines, StandardCharsets.UTF_8);
     }
 
-    private static void cleanup(Path directory, String current) throws IOException {
-        List<Path> packs;
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, FILE_PREFIX + "*.zip")) {
-            packs = new ArrayList<>();
-            for (Path path : stream) packs.add(path);
-        }
-        packs.sort(Comparator.comparingLong(RuPackUpdater::modified).reversed());
-        int kept = 0;
+    private static void cleanup(Path directory, String keepName) throws IOException {
+        List<Path> packs = listPacks(directory);
+        Path keep = keepFile(directory, packs, keepName);
         for (Path pack : packs) {
-            if (kept++ < 1) continue;
+            if (keep != null && pack.equals(keep)) continue;
             Files.deleteIfExists(pack);
+            AeronauticsPlus.LOGGER.info("Removed old RU-pack {}", pack.getFileName());
         }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, FILE_PREFIX + "*.download")) {
+            for (Path leftover : stream) {
+                Files.deleteIfExists(leftover);
+            }
+        }
+    }
+
+    private static String usablePack(Path directory, String preferred) throws IOException {
+        if (preferred != null && Files.isRegularFile(directory.resolve(preferred))) {
+            return preferred;
+        }
+        Path newest = keepFile(directory, listPacks(directory), null);
+        return newest == null ? null : newest.getFileName().toString();
+    }
+
+    private static Path keepFile(Path directory, List<Path> packs, String keepName) {
+        if (keepName != null) {
+            Path named = directory.resolve(keepName).toAbsolutePath().normalize();
+            if (Files.isRegularFile(named)) return named;
+        }
+        return packs.stream().max(Comparator.comparingLong(RuPackUpdater::modified)).orElse(null);
+    }
+
+    private static List<Path> listPacks(Path directory) throws IOException {
+        List<Path> packs = new ArrayList<>();
+        if (!Files.isDirectory(directory)) return packs;
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory, FILE_PREFIX + "*.zip")) {
+            for (Path path : stream) packs.add(path.toAbsolutePath().normalize());
+        }
+        return packs;
     }
 
     private static long modified(Path path) {
@@ -201,6 +241,5 @@ public final class RuPackUpdater {
             return new Settings(true, true, true);
         }
         private static boolean value(JsonObject o, String k, boolean d) { return o.has(k) ? o.get(k).getAsBoolean() : d; }
-        private static int value(JsonObject o, String k, int d) { return o.has(k) ? o.get(k).getAsInt() : d; }
     }
 }

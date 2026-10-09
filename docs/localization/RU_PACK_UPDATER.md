@@ -14,7 +14,7 @@ shared as “Anyone with the link”.
 - The updater must download to a temporary file first.
 - It must verify `sha256` and ZIP integrity before replacing the active local pack.
 - It must only remove old files matching `AeronauticsPlus-RU-Pack-*.zip`.
-- Only the current local version is retained by default; older local ZIPs matching the AeronauticsPlus prefix are removed after a verified update.
+- Only the current local version is retained by default; older local ZIPs matching the AeronauticsPlus prefix are removed on every launch, even if the download is skipped or fails.
 - `version` changes whenever a new Drive ZIP is published.
 - `sha256`, `size_bytes`, `built_files` and `ru_ru_entries` must be regenerated from
   the exact ZIP being published.
