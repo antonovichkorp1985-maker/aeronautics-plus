@@ -208,6 +208,12 @@ public final class VesselBlockCompiler {
                     id, stageId, VesselComponent.ComponentKind.ANTENNA, spec.massKg(), position);
             case LAB -> VesselComponent.structure(
                     id, stageId, VesselComponent.ComponentKind.LAB, spec.massKg(), position);
+            case OXYGEN -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.OXYGEN, spec.massKg(), position);
+            case TRANSPONDER -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.TRANSPONDER, spec.massKg(), position);
+            case TELESCOPE -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.TELESCOPE, spec.massKg(), position);
             case TANK -> VesselComponent.tank(id, stageId, new TankState(
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
             case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(

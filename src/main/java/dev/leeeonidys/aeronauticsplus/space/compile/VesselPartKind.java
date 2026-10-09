@@ -29,5 +29,11 @@ public enum VesselPartKind {
     /** Radio: omni or high-gain. */
     ANTENNA,
     /** Pressurized station laboratory / experiment rack. */
-    LAB
+    LAB,
+    /** Cabin oxygen. Not LOX, not engine oxidizer. */
+    OXYGEN,
+    /** Radio transponder. The antenna is the aperture; this is the electronics. */
+    TRANSPONDER,
+    /** Optical telescope / Earth-observation tube. */
+    TELESCOPE
 }

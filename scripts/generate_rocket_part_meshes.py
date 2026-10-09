@@ -429,6 +429,59 @@ def dish_antenna_mesh() -> Mesh:
     return mesh
 
 
+def oxygen_mesh() -> Mesh:
+    """Cabin O2 bottles on a rack. Not a LOX barrel."""
+    mesh = Mesh()
+    rack = []
+    rack.extend(box(0.22, 0.04, 0.22, 0.78, 0.10, 0.78, 0.40, 0.10, 0.60, 0.30))
+    rack.extend(box(0.24, 0.10, 0.46, 0.76, 0.88, 0.54, 0.40, 0.10, 0.60, 0.30))
+    mesh.add("rack", rack)
+    bottles = []
+    for x in (0.34, 0.50, 0.66):
+        for z in (0.34, 0.66):
+            bottles.extend(box(x - 0.06, 0.12, z - 0.06, x + 0.06, 0.82, z + 0.06, 0.55, 0.10, 0.80, 0.70))
+    mesh.add("bottles", bottles)
+    mesh.add("valves", box(0.30, 0.82, 0.30, 0.70, 0.90, 0.70, 0.20, 0.70, 0.40, 0.90))
+    return mesh
+
+
+def transponder_mesh() -> Mesh:
+    """Radio box with RF stubs. Electronics, not an antenna."""
+    mesh = Mesh()
+    mesh.add("case", box(0.30, 0.22, 0.30, 0.70, 0.78, 0.70, 0.08, 0.08, 0.40, 0.50))
+    mesh.add("face", box(0.28, 0.36, 0.36, 0.32, 0.64, 0.64, 0.70, 0.20, 0.90, 0.50))
+    stubs = []
+    stubs.extend(box(0.18, 0.44, 0.44, 0.30, 0.52, 0.52, 0.50, 0.50, 0.70, 0.70))
+    stubs.extend(box(0.70, 0.44, 0.44, 0.82, 0.52, 0.52, 0.50, 0.50, 0.70, 0.70))
+    mesh.add("stubs", stubs)
+    return mesh
+
+
+def telescope_mesh() -> Mesh:
+    """Cassegrain tube: baffle, barrel, secondary. Original, not a NASA file."""
+    mesh = Mesh()
+    n = 16
+    mesh.add(
+        "tube",
+        frustum(0.08, 0.22, 0.86, 0.22, n, 0.05, 0.45)
+        + frustum(0.08, 0.18, 0.86, 0.18, n, 0.05, 0.45, invert=True),
+    )
+    mesh.add(
+        "baffle",
+        frustum(0.00, 0.26, 0.08, 0.26, n, 0.50, 0.65)
+        + frustum(0.00, 0.16, 0.08, 0.16, n, 0.50, 0.65, invert=True),
+    )
+    mesh.add(
+        "secondary",
+        frustum(0.70, 0.08, 0.82, 0.08, n, 0.70, 0.88)
+        + disk(0.70, 0.08, n, False, (0.80, 0.22))
+        + disk(0.82, 0.08, n, True, (0.80, 0.78)),
+    )
+    mesh.add("spider", box(0.48, 0.62, 0.20, 0.52, 0.68, 0.80, 0.40, 0.40, 0.60, 0.60))
+    mesh.add("base", frustum(0.86, 0.20, 0.98, 0.14, n, 0.20, 0.40) + disk(0.98, 0.14, n, True, (0.22, 0.22)))
+    return mesh
+
+
 def lab_mesh() -> Mesh:
     """ISS-style lab barrel with rack windows. Not a copy of habitat."""
     mesh = Mesh()
@@ -748,6 +801,34 @@ def dish_tex(x, y, s):
     return (118, 122, 130)
 
 
+def oxygen_tex(x, y, s):
+    ny = y / (s - 1)
+    if ny > 0.82:
+        return (48, 52, 58)
+    if x % 10 < 3:
+        return (220, 236, 246)
+    return (186, 210, 226) if (x + y) % 4 else (164, 192, 214)
+
+
+def transponder_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.40 <= ny <= 0.60:
+        return (48, 140, 72) if (x + y) % 4 else (32, 110, 56)
+    if x % 8 == 0:
+        return (168, 172, 178)
+    return (62, 66, 74) if (x + y) % 3 else (44, 48, 54)
+
+
+def telescope_tex(x, y, s):
+    nx, ny = x / (s - 1), y / (s - 1)
+    r = math.hypot(nx - 0.5, ny - 0.5)
+    if r < 0.16:
+        return (18, 18, 22)
+    if r < 0.38:
+        return (72, 76, 82) if (x + y) % 5 else (58, 62, 68)
+    return (118, 122, 130)
+
+
 def lab_tex(x, y, s):
     ny = y / (s - 1)
     if 0.28 <= ny <= 0.42 or 0.58 <= ny <= 0.72:
@@ -903,6 +984,9 @@ def main() -> None:
     omni_antenna_mesh().write(GEO / "omni_antenna.obj")
     dish_antenna_mesh().write(GEO / "high_gain_antenna.obj")
     lab_mesh().write(GEO / "research_lab.obj")
+    oxygen_mesh().write(GEO / "cabin_oxygen.obj")
+    transponder_mesh().write(GEO / "radio_transponder.obj")
+    telescope_mesh().write(GEO / "space_telescope.obj")
 
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
@@ -929,13 +1013,17 @@ def main() -> None:
     write_png(TEX / "omni_antenna.png", paint(64, omni_tex))
     write_png(TEX / "high_gain_antenna.png", paint(64, dish_tex))
     write_png(TEX / "research_lab.png", paint(64, lab_tex))
+    write_png(TEX / "cabin_oxygen.png", paint(64, oxygen_tex))
+    write_png(TEX / "radio_transponder.png", paint(64, transponder_tex))
+    write_png(TEX / "space_telescope.png", paint(64, telescope_tex))
 
     for block_id in (
             "rocket_engine", "rocket_tank", "rocket_structure", "stage_separator",
             "rocket_mount", "rocket_fairing", "rocket_payload",
             "crew_habitat", "solar_panel", "control_gyro", "rcs_thruster",
             "docking_port", "battery_pack", "heat_radiator",
-            "hydrolox_engine", "omni_antenna", "high_gain_antenna", "research_lab"):
+            "hydrolox_engine", "omni_antenna", "high_gain_antenna", "research_lab",
+            "cabin_oxygen", "radio_transponder", "space_telescope"):
         write_part_models(block_id)
     write_part_models("rocket_fuel_tank", "rocket_tank")
     write_part_models("rocket_oxidizer_tank", "rocket_tank")
@@ -970,6 +1058,9 @@ def main() -> None:
     write_blockstate("omni_antenna", UP_STATES)
     write_blockstate("high_gain_antenna", UP_STATES)
     write_blockstate("research_lab", UP_STATES)
+    write_blockstate("cabin_oxygen", UP_STATES)
+    write_blockstate("radio_transponder", UP_STATES)
+    write_blockstate("space_telescope", UP_STATES)
     print("rocket part meshes, textures and models written")
 
 

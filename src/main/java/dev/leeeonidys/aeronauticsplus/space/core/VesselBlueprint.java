@@ -170,6 +170,29 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             diagnostics.add(warning("LAB_WITHOUT_HABITAT",
                     "Лаборатория без жилого модуля: станция не обитаема"));
         }
+        boolean hasOxygen = hasKind(VesselComponent.ComponentKind.OXYGEN);
+        boolean hasTransponder = hasKind(VesselComponent.ComponentKind.TRANSPONDER);
+        boolean hasTelescope = hasKind(VesselComponent.ComponentKind.TELESCOPE);
+        if (hasHabitat && !hasOxygen) {
+            diagnostics.add(warning("NO_OXYGEN",
+                    "Жилой модуль без бака кислорода: это не LOX и не окислитель двигателя"));
+        }
+        if (hasAntenna && !hasTransponder) {
+            diagnostics.add(warning("ANTENNA_WITHOUT_TRANSPONDER",
+                    "Антенна без ретранслятора: нет радиоэлектроники"));
+        }
+        if (hasTransponder && !hasAntenna) {
+            diagnostics.add(warning("TRANSPONDER_WITHOUT_ANTENNA",
+                    "Ретранслятор без антенны: некуда излучать"));
+        }
+        if (hasTelescope && !hasGyro) {
+            diagnostics.add(warning("TELESCOPE_WITHOUT_GYRO",
+                    "Телескоп без гиродина: нет наведения"));
+        }
+        if (hasTelescope && !hasAntenna) {
+            diagnostics.add(warning("TELESCOPE_WITHOUT_ANTENNA",
+                    "Телескоп без антенны: некуда сбрасывать кадр"));
+        }
     }
 
     private boolean hasKind(VesselComponent.ComponentKind kind) {
@@ -219,6 +242,9 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             case RADIATOR -> MassElement.Role.RADIATOR;
             case ANTENNA -> MassElement.Role.ANTENNA;
             case LAB -> MassElement.Role.LAB;
+            case OXYGEN -> MassElement.Role.OXYGEN;
+            case TRANSPONDER -> MassElement.Role.TRANSPONDER;
+            case TELESCOPE -> MassElement.Role.TELESCOPE;
             default -> MassElement.Role.STRUCTURE;
         };
     }

@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/cabin_oxygen"
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/cabin_oxygen",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/cabin_oxygen",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/cabin_oxygen",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/cabin_oxygen",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/cabin_oxygen",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

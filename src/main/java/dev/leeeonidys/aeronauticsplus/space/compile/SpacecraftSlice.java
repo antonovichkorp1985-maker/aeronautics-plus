@@ -35,7 +35,10 @@ public final class SpacecraftSlice {
                 || bus.diagnosticText().contains("NO_BATTERY")
                 || bus.diagnosticText().contains("NO_RADIATOR")
                 || bus.diagnosticText().contains("NO_THERMAL_PATH")
-                || bus.diagnosticText().contains("NO_ANTENNA")) {
+                || bus.diagnosticText().contains("NO_ANTENNA")
+                || bus.diagnosticText().contains("NO_OXYGEN")
+                || bus.diagnosticText().contains("ANTENNA_WITHOUT_TRANSPONDER")
+                || bus.diagnosticText().contains("TRANSPONDER_WITHOUT_ANTENNA")) {
             throw new IllegalStateException("Complete bus must not warn about ACS/power/heat:\n"
                     + bus.diagnosticText());
         }
@@ -119,6 +122,8 @@ public final class SpacecraftSlice {
                 new VesselBlockOccupant(new GridPos(1, 1, 0), VesselPartCatalog.RCS, BlockFace.EAST),
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(-1, 2, 0), VesselPartCatalog.OMNI_ANTENNA, BlockFace.UP),
+                new VesselBlockOccupant(new GridPos(-2, 2, 0), VesselPartCatalog.TRANSPONDER, BlockFace.UP),
+                new VesselBlockOccupant(new GridPos(0, 2, 1), VesselPartCatalog.OXYGEN, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 2, -1), VesselPartCatalog.DOCKING, BlockFace.NORTH),
                 new VesselBlockOccupant(new GridPos(1, 2, 0), VesselPartCatalog.RADIATOR, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.GYRO, BlockFace.UP),

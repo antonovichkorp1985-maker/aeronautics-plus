@@ -87,6 +87,18 @@ public record StageState(
         return structure.stream().anyMatch(element -> element.role() == MassElement.Role.LAB);
     }
 
+    public boolean hasOxygen() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.OXYGEN);
+    }
+
+    public boolean hasTransponder() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.TRANSPONDER);
+    }
+
+    public boolean hasTelescope() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.TELESCOPE);
+    }
+
     public int gyroCount() {
         return (int) structure.stream().filter(element -> element.role() == MassElement.Role.GYRO).count();
     }

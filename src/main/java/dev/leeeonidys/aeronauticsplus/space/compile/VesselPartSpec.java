@@ -146,6 +146,22 @@ public record VesselPartSpec(
                 id, VesselPartKind.LAB, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.COLUMN);
     }
 
+    /** Cabin O2 bottles. Not a LOX barrel. */
+    public static VesselPartSpec oxygen(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.OXYGEN, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CAN);
+    }
+
+    public static VesselPartSpec transponder(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.TRANSPONDER, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CAN);
+    }
+
+    public static VesselPartSpec telescope(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.TELESCOPE, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.COLUMN);
+    }
+
     /**
      * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
      * tanks expose only that species — oxidizer does not travel through the fuel hull.
@@ -181,9 +197,14 @@ public record VesselPartSpec(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.THERMAL,
                     VesselConnection.ConnectionKind.DATA);
-            case ANTENNA -> EnumSet.of(
+            case ANTENNA, TELESCOPE -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.DATA);
+            case TRANSPONDER -> EnumSet.of(
+                    VesselConnection.ConnectionKind.STRUCTURAL,
+                    VesselConnection.ConnectionKind.DATA,
+                    VesselConnection.ConnectionKind.ELECTRIC);
+            case OXYGEN -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             case SOLAR -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.ELECTRIC);

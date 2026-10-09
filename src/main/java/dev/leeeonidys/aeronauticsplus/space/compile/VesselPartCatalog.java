@@ -5,10 +5,9 @@ import dev.leeeonidys.aeronauticsplus.space.core.PropellantState;
 import java.util.List;
 
 /**
- * Registered physical parts. Chemistry remains ChemMod's responsibility.
- * Kerolox placeholders: RP-1/LOX O/F ≈ 2.3 (F-1 ~2.27, Merlin ~2.34). Combined tank is a
- * common-bulkhead vessel (Centaur / S-II / S-IVB), not two fluids mixed in one volume.
- * 20 kN is 1 m-segment scale (~2 g on a tonne), not an F-1.
+ * Placeholder catalog until ChemMod supplies materials. Do not grow this as a KSP SKU list.
+ * Kerolox/hydrolox numbers are physics stand-ins (O/F 2.3 / 6.0), not Merlin/F-1/RL10 products.
+ * Apparatus (electronics, ECLSS, optics) lives here; feedstock and foundry live in ChemMod.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";
@@ -72,6 +71,10 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec HIGH_GAIN_ANTENNA = VesselPartSpec.antenna(
             "high_gain_antenna", 22.0, CellOccupancy.DISH);
     public static final VesselPartSpec LAB = VesselPartSpec.lab("research_lab", 220.0);
+    /** Cabin O2. Not LOX. */
+    public static final VesselPartSpec OXYGEN = VesselPartSpec.oxygen("cabin_oxygen", 40.0);
+    public static final VesselPartSpec TRANSPONDER = VesselPartSpec.transponder("radio_transponder", 12.0);
+    public static final VesselPartSpec TELESCOPE = VesselPartSpec.telescope("space_telescope", 85.0);
 
     private VesselPartCatalog() {
     }
@@ -82,7 +85,7 @@ public final class VesselPartCatalog {
                 OXIDIZER_TANK, OXIDIZER_TANK_SMALL, OXIDIZER_TANK_LARGE, LH2_TANK,
                 ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, FAIRING, PAYLOAD,
                 HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR,
-                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB);
+                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE);
     }
 
     public static VesselPartSpec byId(String id) {

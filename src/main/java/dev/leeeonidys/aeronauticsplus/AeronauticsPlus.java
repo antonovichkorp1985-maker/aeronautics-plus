@@ -18,6 +18,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.DockingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.SplitTankSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VarietySlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.ElectronicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -269,6 +270,18 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.LAB, MapColor.COLOR_CYAN);
     public static final DeferredItem<BlockItem> RESEARCH_LAB_ITEM =
             ITEMS.registerSimpleBlockItem(RESEARCH_LAB);
+    public static final DeferredBlock<VesselPartBlock> CABIN_OXYGEN =
+            registerVesselPart(VesselPartCatalog.OXYGEN, MapColor.COLOR_LIGHT_BLUE);
+    public static final DeferredItem<BlockItem> CABIN_OXYGEN_ITEM =
+            ITEMS.registerSimpleBlockItem(CABIN_OXYGEN);
+    public static final DeferredBlock<VesselPartBlock> RADIO_TRANSPONDER =
+            registerVesselPart(VesselPartCatalog.TRANSPONDER, MapColor.COLOR_GREEN);
+    public static final DeferredItem<BlockItem> RADIO_TRANSPONDER_ITEM =
+            ITEMS.registerSimpleBlockItem(RADIO_TRANSPONDER);
+    public static final DeferredBlock<VesselPartBlock> SPACE_TELESCOPE =
+            registerVesselPart(VesselPartCatalog.TELESCOPE, MapColor.COLOR_BLACK);
+    public static final DeferredItem<BlockItem> SPACE_TELESCOPE_ITEM =
+            ITEMS.registerSimpleBlockItem(SPACE_TELESCOPE);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -303,6 +316,9 @@ public final class AeronauticsPlus {
                         output.accept(OMNI_ANTENNA_ITEM.get());
                         output.accept(HIGH_GAIN_ANTENNA_ITEM.get());
                         output.accept(RESEARCH_LAB_ITEM.get());
+                        output.accept(CABIN_OXYGEN_ITEM.get());
+                        output.accept(RADIO_TRANSPONDER_ITEM.get());
+                        output.accept(SPACE_TELESCOPE_ITEM.get());
                     })
                     .build());
 
@@ -312,7 +328,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.30: tank sizes, hydrolox LH2, antennas, station lab, docking battery radiator, split RP-1/LOX tanks, habitat RCS gyrodyne solar, kerolox O/F 2.3, payload fairing jettison, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.31: cabin oxygen, transponder, telescope; apparatus not rocket SKUs; ChemMod keeps feedstock.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -480,6 +496,16 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus variety slice failed", exception);
             }
             try {
+                ElectronicsSlice.Result electronics = ElectronicsSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus electronics slice OK: oxygen={}, transponder={}, complete={}",
+                        electronics.oxygen(),
+                        electronics.transponder(),
+                        electronics.complete());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus electronics slice failed", exception);
+            }
+            try {
                 PayloadSlice.Result payload = PayloadSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus payload slice OK: fairing={}, payload={}, dropped={}, launchable={}",
@@ -533,8 +559,11 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(OMNI_ANTENNA_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(HIGH_GAIN_ANTENNA_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(RESEARCH_LAB_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(CABIN_OXYGEN_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(RADIO_TRANSPONDER_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(SPACE_TELESCOPE_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 36
+            boolean allRegistered = registeredItems.size() == 39
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(
