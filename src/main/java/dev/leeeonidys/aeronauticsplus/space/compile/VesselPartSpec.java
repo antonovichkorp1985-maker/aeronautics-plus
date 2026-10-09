@@ -117,6 +117,23 @@ public record VesselPartSpec(
     }
 
     /**
+     * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
+     * tanks expose only that species — oxidizer does not travel through the fuel hull.
+     */
+    private Set<VesselConnection.ConnectionKind> tankPorts() {
+        EnumSet<VesselConnection.ConnectionKind> ports = EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+        if (defaultPropellant != null) {
+            if (defaultPropellant.fuelMassKg() > 0.0) {
+                ports.add(VesselConnection.ConnectionKind.FUEL);
+            }
+            if (defaultPropellant.oxidizerMassKg() > 0.0) {
+                ports.add(VesselConnection.ConnectionKind.OXIDIZER);
+            }
+        }
+        return ports;
+    }
+
+    /**
      * Ports exposed on {@code face}. {@code facing} is exhaust for an engine and the
      * upper-stage direction for a separator.
      */
@@ -126,22 +143,18 @@ public record VesselPartSpec(
             case SOLAR, GYRO -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.ELECTRIC);
-            case TANK -> EnumSet.of(
-                    VesselConnection.ConnectionKind.STRUCTURAL,
-                    VesselConnection.ConnectionKind.FUEL,
-                    VesselConnection.ConnectionKind.OXIDIZER);
+            case TANK -> tankPorts();
             case ENGINE -> {
                 if (face == facing) {
                     // Nozzle may sit on a decoupler; it is not a structural load path.
                     yield EnumSet.of(VesselConnection.ConnectionKind.SEPARATION);
                 }
-                if (face == facing.opposite()) {
-                    yield EnumSet.of(
-                            VesselConnection.ConnectionKind.STRUCTURAL,
-                            VesselConnection.ConnectionKind.FUEL,
-                            VesselConnection.ConnectionKind.OXIDIZER);
-                }
-                yield EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+                // Sides and the tank-facing end carry feed so split RP-1 / LOX tanks
+                // can sit beside the engine (Falcon / Soyuz cross-section), not through the hull.
+                yield EnumSet.of(
+                        VesselConnection.ConnectionKind.STRUCTURAL,
+                        VesselConnection.ConnectionKind.FUEL,
+                        VesselConnection.ConnectionKind.OXIDIZER);
             }
             case SEPARATOR -> face == facing
                     ? EnumSet.of(VesselConnection.ConnectionKind.SEPARATION)

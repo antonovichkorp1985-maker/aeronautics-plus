@@ -509,6 +509,26 @@ def tank_tex(x, y, s):
     return (220, 222, 226) if (x + y) % 3 else (206, 210, 216)
 
 
+def fuel_tank_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.40 <= ny <= 0.58:
+        return (48, 36, 28) if (x + y) % 4 else (36, 28, 22)
+    if x % 8 == 0 or y in (0, s - 1):
+        return (118, 96, 64)
+    return (168, 92, 36) if (x + y) % 3 else (148, 78, 28)
+
+
+def oxidizer_tank_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.40 <= ny <= 0.58:
+        return (210, 232, 240) if (x + y) % 4 else (186, 214, 226)
+    if x % 8 == 0 or y in (0, s - 1):
+        return (148, 168, 184)
+    if (x + y) % 11 == 0:
+        return (236, 246, 252)
+    return (198, 220, 232) if (x + y) % 3 else (176, 204, 220)
+
+
 def structure_tex(x, y, s):
     if x % 8 == 0 or y % 8 == 0:
         return (176, 182, 192)
@@ -589,7 +609,7 @@ def mount_tex(x, y, s):
 
 JSON_MODEL = """{{
   "loader": "neoforge:obj",
-  "model": "aeronauticsplus:models/block/rockets/geometry/{block_id}.obj",
+  "model": "aeronauticsplus:models/block/rockets/geometry/{obj_id}.obj",
   "automatic_culling": false,
   "shade_quads": true,
   "flip_v": false,
@@ -628,6 +648,12 @@ UP_STATES = {
     "facing=west": {"x": 90, "y": 270},
     "facing=east": {"x": 90, "y": 90},
 }
+
+
+def write_part_models(block_id: str, obj_id: str | None = None) -> None:
+    body = JSON_MODEL.format(block_id=block_id, obj_id=obj_id or block_id)
+    (ASSETS / "models/block" / f"{block_id}.json").write_text(body, encoding="utf-8")
+    (ASSETS / "models/item" / f"{block_id}.json").write_text(body, encoding="utf-8")
 
 
 def write_blockstate(block_id: str, mapping: dict) -> None:
@@ -670,6 +696,8 @@ def main() -> None:
 
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_tank.png", paint(64, tank_tex))
+    write_png(TEX / "rocket_fuel_tank.png", paint(64, fuel_tank_tex))
+    write_png(TEX / "rocket_oxidizer_tank.png", paint(64, oxidizer_tank_tex))
     write_png(TEX / "rocket_structure.png", paint(64, structure_tex))
     write_png(TEX / "stage_separator.png", paint(64, separator_tex))
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
@@ -684,12 +712,14 @@ def main() -> None:
             "rocket_engine", "rocket_tank", "rocket_structure", "stage_separator",
             "rocket_mount", "rocket_fairing", "rocket_payload",
             "crew_habitat", "solar_panel", "control_gyro", "rcs_thruster"):
-        body = JSON_MODEL.format(block_id=block_id)
-        (ASSETS / "models/block" / f"{block_id}.json").write_text(body, encoding="utf-8")
-        (ASSETS / "models/item" / f"{block_id}.json").write_text(body, encoding="utf-8")
+        write_part_models(block_id)
+    write_part_models("rocket_fuel_tank", "rocket_tank")
+    write_part_models("rocket_oxidizer_tank", "rocket_tank")
 
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_tank", UP_STATES)
+    write_blockstate("rocket_fuel_tank", UP_STATES)
+    write_blockstate("rocket_oxidizer_tank", UP_STATES)
     write_blockstate("rocket_structure", UP_STATES)
     write_blockstate("stage_separator", UP_STATES)
     write_blockstate("rocket_mount", UP_STATES)

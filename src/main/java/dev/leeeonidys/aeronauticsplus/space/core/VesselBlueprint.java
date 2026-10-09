@@ -194,7 +194,9 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
         Set<String> tankIds = tanks.stream()
                 .filter(tank -> kind == VesselConnection.ConnectionKind.FUEL
                         ? tank.tank().contents().fuelId().equals(resourceId)
-                        : tank.tank().contents().oxidizerId().equals(resourceId))
+                                && tank.tank().contents().fuelMassKg() > 0.0
+                        : tank.tank().contents().oxidizerId().equals(resourceId)
+                                && tank.tank().contents().oxidizerMassKg() > 0.0)
                 .map(VesselComponent::id).collect(Collectors.toSet());
         return connections.stream().anyMatch(connection -> connection.kind() == kind
                 && ((connection.fromId().equals(engineId) && tankIds.contains(connection.toId()))

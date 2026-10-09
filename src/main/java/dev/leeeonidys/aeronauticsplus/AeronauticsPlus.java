@@ -14,6 +14,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PayloadSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.SpacecraftSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.SplitTankSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
@@ -174,6 +175,14 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.TANK, MapColor.SNOW);
     public static final DeferredItem<BlockItem> ROCKET_TANK_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_TANK);
+    public static final DeferredBlock<VesselPartBlock> ROCKET_FUEL_TANK =
+            registerVesselPart(VesselPartCatalog.FUEL_TANK, MapColor.TERRACOTTA_ORANGE);
+    public static final DeferredItem<BlockItem> ROCKET_FUEL_TANK_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_FUEL_TANK);
+    public static final DeferredBlock<VesselPartBlock> ROCKET_OXIDIZER_TANK =
+            registerVesselPart(VesselPartCatalog.OXIDIZER_TANK, MapColor.ICE);
+    public static final DeferredItem<BlockItem> ROCKET_OXIDIZER_TANK_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_OXIDIZER_TANK);
     public static final DeferredBlock<VesselPartBlock> ROCKET_ENGINE =
             registerVesselPart(VesselPartCatalog.ENGINE, MapColor.COLOR_ORANGE);
     public static final DeferredItem<BlockItem> ROCKET_ENGINE_ITEM =
@@ -221,6 +230,8 @@ public final class AeronauticsPlus {
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
                         output.accept(ROCKET_STRUCTURE_ITEM.get());
                         output.accept(ROCKET_TANK_ITEM.get());
+                        output.accept(ROCKET_FUEL_TANK_ITEM.get());
+                        output.accept(ROCKET_OXIDIZER_TANK_ITEM.get());
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(ROCKET_MOUNT_ITEM.get());
@@ -239,7 +250,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.27: habitat RCS gyrodyne solar, kerolox O/F 2.3, payload fairing jettison, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.28: split RP-1/LOX tanks, habitat RCS gyrodyne solar, kerolox O/F 2.3, payload fairing jettison, no launch while on train mount, Create-train rocket mount, vessel envelope diameter, closed tank skin, nozzle mesh, RU-pack cleanup, residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -266,6 +277,18 @@ public final class AeronauticsPlus {
                         compiled.separationLinks());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus vessel compiler slice failed", exception);
+            }
+            try {
+                SplitTankSlice.Result split = SplitTankSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus split-tank slice OK: sideBySide={}, common={}, fuel={}, oxidizer={}, dropped={}",
+                        split.sideBySideLaunchable(),
+                        split.commonBulkheadLaunchable(),
+                        split.fuelLinks(),
+                        split.oxidizerLinks(),
+                        String.format(java.util.Locale.ROOT, "%.3f", split.massDroppedKg()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus split-tank slice failed", exception);
             }
             try {
                 MissionSlice.Result mission = MissionSlice.execute();
@@ -403,6 +426,8 @@ public final class AeronauticsPlus {
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_STRUCTURE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_TANK_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FUEL_TANK_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_OXIDIZER_TANK_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
@@ -413,7 +438,7 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(CONTROL_GYRO_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 22
+            boolean allRegistered = registeredItems.size() == 24
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

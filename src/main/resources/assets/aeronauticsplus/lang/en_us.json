@@ -14,6 +14,8 @@
   "block.aeronauticsplus.rocket_payload": "Orbital Payload",
   "block.aeronauticsplus.rocket_structure": "Rocket Airframe",
   "block.aeronauticsplus.rocket_tank": "Rocket Tank",
+  "block.aeronauticsplus.rocket_fuel_tank": "RP-1 Fuel Tank",
+  "block.aeronauticsplus.rocket_oxidizer_tank": "LOX Tank",
   "block.aeronauticsplus.stage_separator": "Stage Separator",
   "block.aeronauticsplus.steel_four_blade_propeller": "Steel 4-Blade Aircraft Propeller",
   "block.aeronauticsplus.steel_three_blade_propeller": "Steel 3-Blade Aircraft Propeller",

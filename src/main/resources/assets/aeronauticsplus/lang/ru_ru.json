@@ -14,6 +14,8 @@
   "block.aeronauticsplus.rocket_payload": "Полезная нагрузка",
   "block.aeronauticsplus.rocket_structure": "Каркас ракеты",
   "block.aeronauticsplus.rocket_tank": "Топливный бак",
+  "block.aeronauticsplus.rocket_fuel_tank": "Бак горючего (RP-1)",
+  "block.aeronauticsplus.rocket_oxidizer_tank": "Бак окислителя (LOX)",
   "block.aeronauticsplus.stage_separator": "Разделитель ступеней",
   "block.aeronauticsplus.steel_four_blade_propeller": "Стальной 4-лопастной авиационный винт",
   "block.aeronauticsplus.steel_three_blade_propeller": "Стальной 3-лопастной авиационный винт",

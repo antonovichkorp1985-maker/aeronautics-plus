@@ -18,6 +18,12 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec STRUCTURE = VesselPartSpec.structure("rocket_structure", 120.0);
     public static final VesselPartSpec TANK = VesselPartSpec.tank(
             "rocket_tank", 80.0, 1_000.0, new PropellantState(FUEL_ID, OXIDIZER_ID, 200.0, 460.0));
+    /** RP-1 barrel. Does not carry LOX. */
+    public static final VesselPartSpec FUEL_TANK = VesselPartSpec.tank(
+            "rocket_fuel_tank", 70.0, 500.0, new PropellantState(FUEL_ID, OXIDIZER_ID, 400.0, 0.0));
+    /** LOX barrel. Does not carry RP-1. */
+    public static final VesselPartSpec OXIDIZER_TANK = VesselPartSpec.tank(
+            "rocket_oxidizer_tank", 75.0, 1_000.0, new PropellantState(FUEL_ID, OXIDIZER_ID, 0.0, 920.0));
     public static final VesselPartSpec ENGINE = VesselPartSpec.engine(
             "rocket_engine", 90.0, 20_000.0, 300.0, FUEL_ID, OXIDIZER_ID, KEROLX_MIXTURE);
     public static final VesselPartSpec SEPARATOR = VesselPartSpec.separator("stage_separator", 40.0);
@@ -35,7 +41,8 @@ public final class VesselPartCatalog {
 
     public static List<VesselPartSpec> all() {
         return List.of(
-                STRUCTURE, TANK, ENGINE, SEPARATOR, MOUNT, FAIRING, PAYLOAD, HABITAT, SOLAR, GYRO, RCS);
+                STRUCTURE, TANK, FUEL_TANK, OXIDIZER_TANK, ENGINE, SEPARATOR, MOUNT, FAIRING, PAYLOAD,
+                HABITAT, SOLAR, GYRO, RCS);
     }
 
     public static VesselPartSpec byId(String id) {
