@@ -126,6 +126,14 @@ public record StageState(
         return new ThrustGeometry(centerOfMass, centerOfThrust, netThrust, momentArm, offset);
     }
 
+    public StageState withEngines(List<EngineState> nextEngines) {
+        return new StageState(id, structure, tanks, nextEngines, separable);
+    }
+
+    public StageState withDisabledEngines() {
+        return withEngines(engines.stream().map(engine -> engine.withEnabled(false)).toList());
+    }
+
     /** Burns propellant deterministically, stopping exactly when either resource is exhausted. */
     public StageBurnResult burn(double requestedSeconds) {
         if (requestedSeconds < 0.0 || !Double.isFinite(requestedSeconds)) {

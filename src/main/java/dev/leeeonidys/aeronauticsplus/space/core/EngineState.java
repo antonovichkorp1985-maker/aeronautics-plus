@@ -57,6 +57,12 @@ public record EngineState(
         return thrustAxis.multiply(activeThrustNewtons());
     }
 
+    public EngineState withEnabled(boolean nextEnabled) {
+        return new EngineState(
+                id, fuelId, oxidizerId, dryMassKg, thrustNewtons, specificImpulseSeconds,
+                throttle, gimbalDegrees, nextEnabled, localPositionMeters, thrustAxis);
+    }
+
     private static void requireName(String value, String label) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(label + " id must not be blank");

@@ -12,6 +12,7 @@ import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
+import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
 import java.util.ArrayList;
@@ -193,7 +194,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.13: rocket part meshes, mission map and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.14: in-flight faults, mission map and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -230,6 +231,16 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3e", mission.energyGain()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus mission map slice failed", exception);
+            }
+            try {
+                FailureSlice.Result faults = FailureSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus failure slice OK: dryTank={}, zeroThrust={}, feedBreakElapsed={}",
+                        faults.dryTank().split(":", 2)[0],
+                        faults.zeroThrust().split(":", 2)[0],
+                        String.format(java.util.Locale.ROOT, "%.3f", faults.feedBreakElapsed()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus failure slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();
