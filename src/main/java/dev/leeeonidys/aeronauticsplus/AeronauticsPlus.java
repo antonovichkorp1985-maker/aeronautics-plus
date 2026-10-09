@@ -201,7 +201,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.20: residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.21: residual spin, crane assembly, cell packing, sub-cell occupancy, burn torque, mixture feed, vessel attitude and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {

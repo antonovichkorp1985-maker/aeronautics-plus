@@ -30,7 +30,8 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
                 || origin.z() + size.z() > 1.0 + 1.0e-9) {
             throw new IllegalArgumentException("Occupancy must fit inside the 1 m cell");
         }
-        if (volume() > 1.0 + 1.0e-9) {
+        // Compact constructors assign fields after this body, so do not call volume().
+        if (size.x() * size.y() * size.z() > 1.0 + 1.0e-9) {
             throw new IllegalArgumentException("Occupancy volume cannot exceed one cubic metre");
         }
     }
