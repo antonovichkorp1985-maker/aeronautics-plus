@@ -17,7 +17,7 @@ Do **not** upload ChemMod from this repository.
 | Main category | Technology |
 | Additional | Create, Aerospace / Transportation (only if they fit; do not spam categories) |
 | License | MIT |
-| Logo | `src/main/resources/icon.png` (replace with a 512×512 unique icon before submit if CF rejects 32×32) |
+| Logo | `docs/curseforge/logo.png` (square Create-hatch + rocket; do not use the 32×32 in-game `icon.png`) |
 | Environment | Client & Server |
 | Authors | LEEEONIDys |
 
