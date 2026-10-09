@@ -12,6 +12,7 @@ import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
+import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
 import java.util.ArrayList;
 import java.util.List;
@@ -192,7 +193,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.12: vessel block compiler and propeller registration queued.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.13: rocket part meshes, mission map and propeller registration queued.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -219,6 +220,16 @@ public final class AeronauticsPlus {
                         compiled.separationLinks());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus vessel compiler slice failed", exception);
+            }
+            try {
+                MissionSlice.Result mission = MissionSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus mission map OK: plan={}, remainingStages={}, energyGain={}",
+                        mission.planText(),
+                        mission.remainingStages(),
+                        String.format(java.util.Locale.ROOT, "%.3e", mission.energyGain()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus mission map slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();
@@ -248,7 +259,8 @@ public final class AeronauticsPlus {
                 spec,
                 BlockBehaviour.Properties.of()
                         .mapColor(color)
-                        .strength(3.0f, 6.0f)));
+                        .strength(3.0f, 6.0f)
+                        .noOcclusion()));
     }
 
     private static PropellerEntry registerAircraftPropeller(PropellerSpec spec) {

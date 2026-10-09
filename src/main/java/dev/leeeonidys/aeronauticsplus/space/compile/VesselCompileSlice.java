@@ -93,7 +93,7 @@ public final class VesselCompileSlice {
                 upperTank.localPositionMeters().y());
     }
 
-    private static VesselBlockGrid twoStageStack() {
+    public static VesselBlockGrid twoStageStack() {
         return VesselBlockGrid.of(
                 new VesselBlockOccupant(new GridPos(0, 0, 0), VesselPartCatalog.ENGINE, BlockFace.DOWN),
                 new VesselBlockOccupant(new GridPos(0, 1, 0), VesselPartCatalog.TANK, BlockFace.UP),

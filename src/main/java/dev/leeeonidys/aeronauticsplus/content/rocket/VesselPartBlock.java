@@ -17,9 +17,12 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * Physical rocket part. Right-click compiles the connected grid into a vessel blueprint
@@ -27,6 +30,8 @@ import net.minecraft.world.phys.BlockHitResult;
  */
 public final class VesselPartBlock extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    private static final VoxelShape COLUMN = Block.box(2, 0, 2, 14, 16, 14);
+    private static final VoxelShape RING = Block.box(1, 5, 1, 15, 11, 15);
 
     private final VesselPartSpec spec;
 
@@ -50,6 +55,11 @@ public final class VesselPartBlock extends Block {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return spec.kind() == VesselPartKind.SEPARATOR ? RING : COLUMN;
     }
 
     @Override
@@ -85,11 +95,12 @@ public final class VesselPartBlock extends Block {
             return InteractionResult.CONSUME;
         }
         if (compilation.isLaunchable()) {
+            double mass = compilation.stages().stream().mapToDouble(stage -> stage.totalMassKg()).sum();
+            double deltaV = compilation.stages().stream().mapToDouble(stage -> stage.idealDeltaV()).sum();
             player.displayClientMessage(Component.literal(
                     "Сборка пригодна: ступеней " + compilation.stages().size()
-                            + ", масса " + Math.round(compilation.stages().stream()
-                            .mapToDouble(stage -> stage.totalMassKg()).sum())
-                            + " кг."), false);
+                            + ", масса " + Math.round(mass)
+                            + " кг, Δv " + Math.round(deltaV) + " м/с."), false);
         }
         String text = compilation.diagnosticText();
         if (!text.isBlank()) {

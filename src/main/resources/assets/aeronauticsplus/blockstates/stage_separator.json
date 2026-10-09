@@ -1,26 +1,28 @@
 {
   "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/stage_separator"
+    },
     "facing=down": {
+      "model": "aeronauticsplus:block/stage_separator",
+      "x": 180
+    },
+    "facing=north": {
       "model": "aeronauticsplus:block/stage_separator",
       "x": 90
     },
-    "facing=up": {
+    "facing=south": {
       "model": "aeronauticsplus:block/stage_separator",
       "x": 270
     },
-    "facing=north": {
-      "model": "aeronauticsplus:block/stage_separator"
-    },
-    "facing=south": {
-      "model": "aeronauticsplus:block/stage_separator",
-      "y": 180
-    },
     "facing=west": {
       "model": "aeronauticsplus:block/stage_separator",
+      "x": 90,
       "y": 270
     },
     "facing=east": {
       "model": "aeronauticsplus:block/stage_separator",
+      "x": 90,
       "y": 90
     }
   }

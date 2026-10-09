@@ -1,26 +1,28 @@
 {
   "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/rocket_structure"
+    },
     "facing=down": {
+      "model": "aeronauticsplus:block/rocket_structure",
+      "x": 180
+    },
+    "facing=north": {
       "model": "aeronauticsplus:block/rocket_structure",
       "x": 90
     },
-    "facing=up": {
+    "facing=south": {
       "model": "aeronauticsplus:block/rocket_structure",
       "x": 270
     },
-    "facing=north": {
-      "model": "aeronauticsplus:block/rocket_structure"
-    },
-    "facing=south": {
-      "model": "aeronauticsplus:block/rocket_structure",
-      "y": 180
-    },
     "facing=west": {
       "model": "aeronauticsplus:block/rocket_structure",
+      "x": 90,
       "y": 270
     },
     "facing=east": {
       "model": "aeronauticsplus:block/rocket_structure",
+      "x": 90,
       "y": 90
     }
   }
