@@ -127,4 +127,12 @@ public record VesselState(
         List<StageState> remaining = List.copyOf(stages.subList(activeStageIndex + 1, stages.size()));
         return new VesselState(id, orbit, remaining, 0, attitude, angularVelocityBody);
     }
+
+    /** The live stage as its own vessel, still on the same trajectory. */
+    public VesselState discardedBooster() {
+        StageState spent = activeStage();
+        StageState booster = new StageState(
+                spent.id(), spent.structure(), spent.tanks(), spent.engines(), false);
+        return new VesselState(id + "-booster", orbit, List.of(booster), 0, attitude, angularVelocityBody);
+    }
 }

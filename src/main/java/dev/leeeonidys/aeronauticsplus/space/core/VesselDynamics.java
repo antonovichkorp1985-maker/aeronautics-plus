@@ -117,6 +117,15 @@ public final class VesselDynamics {
         return vessel.separateActiveStage();
     }
 
+    /** Falcon-class sep: upper keeps going, booster remains a flyable vehicle. */
+    public static StageSplit splitActiveStage(VesselState vessel) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        VesselState booster = vessel.discardedBooster();
+        return new StageSplit(vessel.separateActiveStage(), booster);
+    }
+
     /**
      * Coast in vacuum until apoapsis (radial speed crosses down through zero).
      * Bound orbits only; not ChemMod world gas.
@@ -534,6 +543,125 @@ public final class VesselDynamics {
                 orbit.flightPathAngleRadians(),
                 orbit.altitudeMeters(),
                 padTw, faults);
+    }
+
+    /**
+     * Vacuum suicide burn to the surface. Grid fins and entry heat wait on ChemMod air.
+     * Thrust is radial-out when the stopping distance reaches altitude (Falcon landing burn).
+     */
+    public static LandingOutcome attemptLanding(VesselState vessel, double maxSeconds, double stepSeconds) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (maxSeconds < 0.0 || !Double.isFinite(maxSeconds)) {
+            throw new IllegalArgumentException("Landing duration must be finite and non-negative");
+        }
+        if (!(stepSeconds > 0.0) || !Double.isFinite(stepSeconds)) {
+            throw new IllegalArgumentException("Landing step must be finite and positive");
+        }
+
+        List<FlightFault> faults = new ArrayList<>();
+        double weight = vessel.totalMassKg()
+                * vessel.orbit().centralBody().surfaceGravityMetersPerSecond2();
+        double tw = weight > 0.0 ? vessel.activeStage().thrustNewtons() / weight : 0.0;
+        if (!(vessel.activeStage().hasCompatibleFeed()) && vessel.activeStage().thrustNewtons() > 0.0) {
+            faults.add(FlightFault.wrongPropellant());
+            return snapshotLanding(vessel, maxSeconds, 0.0, tw, faults);
+        }
+
+        VesselState state = vessel;
+        double remaining = maxSeconds;
+        double flown = 0.0;
+        while (remaining > 0.0) {
+            double dt = Math.min(stepSeconds, remaining);
+            OrbitState orbit = state.orbit();
+            double mass = state.totalMassKg();
+            if (!(mass > 0.0)) {
+                break;
+            }
+            Vector3d radial = orbit.radialUnit();
+            double altitude = orbit.altitudeMeters();
+            double speed = orbit.velocityMetersPerSecond().magnitude();
+            double vDown = -orbit.radialSpeedMetersPerSecond();
+            if (altitude <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS
+                    && speed <= LandingOutcome.TOUCHDOWN_SPEED_METERS_PER_SECOND) {
+                return snapshotLanding(touchdown(state), maxSeconds, flown, tw, faults);
+            }
+
+            state = state.withAttitude(Attitude.pointing(Vector3d.UNIT_Y, radial));
+            double g = orbit.centralBody().gravitationalParameter()
+                    / orbit.positionMeters().magnitudeSquared();
+            double thrust = state.activeStage().thrustNewtons();
+            double aNet = thrust / mass - g;
+            boolean ignite = vDown > 0.0 && aNet > 0.1
+                    && altitude <= (vDown * vDown) / (2.0 * aNet) + 8.0;
+            Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
+                    orbit.centralBody(), orbit.positionMeters());
+            Vector3d acceleration = gravity;
+            if (ignite) {
+                if (!(thrust > 0.0)) {
+                    faults.add(FlightFault.zeroThrust());
+                    break;
+                }
+                acceleration = gravity.add(radial.multiply(thrust / mass));
+            }
+            Vector3d nextPosition = orbit.positionMeters()
+                    .add(orbit.velocityMetersPerSecond().multiply(dt))
+                    .add(acceleration.multiply(0.5 * dt * dt));
+            Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
+            double surface = orbit.centralBody().radiusMeters();
+            if (nextPosition.magnitude() <= surface) {
+                double hitSpeed = nextVelocity.magnitude();
+                if (hitSpeed <= LandingOutcome.TOUCHDOWN_SPEED_METERS_PER_SECOND) {
+                    return snapshotLanding(touchdown(state.withOrbit(new OrbitState(
+                            orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt))),
+                            maxSeconds, flown + dt, tw, faults);
+                }
+                faults.add(FlightFault.impact(flown + dt));
+                state = state.withOrbit(new OrbitState(
+                        orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
+                flown += dt;
+                break;
+            }
+            if (ignite) {
+                StageBurnResult burn = state.activeStage().burn(dt);
+                state = replaceActive(state, burn.stage()).withOrbit(new OrbitState(
+                        orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt))
+                        .withAttitude(state.attitude());
+                flown += burn.elapsedSeconds();
+                remaining -= burn.elapsedSeconds();
+                if (burn.propellantDepleted()) {
+                    faults.add(FlightFault.dryTank(flown));
+                    break;
+                }
+                if (burn.elapsedSeconds() + 1.0e-12 < dt) {
+                    break;
+                }
+            } else {
+                state = state.withOrbit(new OrbitState(
+                        orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
+                flown += dt;
+                remaining -= dt;
+            }
+        }
+        return snapshotLanding(state, maxSeconds, flown, tw, faults);
+    }
+
+    private static VesselState touchdown(VesselState vessel) {
+        OrbitState orbit = vessel.orbit();
+        Vector3d surface = orbit.radialUnit().multiply(orbit.centralBody().radiusMeters());
+        return vessel.withOrbit(new OrbitState(
+                orbit.centralBody(), surface, Vector3d.ZERO, orbit.epochSeconds()));
+    }
+
+    private static LandingOutcome snapshotLanding(
+            VesselState vessel, double requested, double elapsed, double tw, List<FlightFault> faults) {
+        OrbitState orbit = vessel.orbit();
+        return new LandingOutcome(
+                vessel, requested, elapsed,
+                Math.max(0.0, orbit.altitudeMeters()),
+                orbit.velocityMetersPerSecond().magnitude(),
+                tw, faults);
     }
 
     /**
