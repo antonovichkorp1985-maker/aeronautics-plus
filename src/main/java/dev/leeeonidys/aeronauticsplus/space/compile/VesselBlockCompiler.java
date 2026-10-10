@@ -15,6 +15,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,6 +75,64 @@ public final class VesselBlockCompiler {
             throw new IllegalStateException("Pyro ring did not cut a stage");
         }
         return new GridSplit(new VesselBlockGrid(continuing), new VesselBlockGrid(booster));
+    }
+
+    /**
+     * Fire horizontal pyro rings (Soyuz / Falcon Heavy sides).
+     * The ring stays on the core; each island on the SEPARATION face becomes a booster.
+     */
+    public static RadialSplit fireRadial(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            throw new IllegalArgumentException("Stack is required");
+        }
+        List<VesselBlockOccupant> flying = new ArrayList<>();
+        boolean hasRadial = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.PAD) {
+                continue;
+            }
+            if (occupant.spec().kind() == VesselPartKind.SEPARATOR && occupant.facing().horizontal()) {
+                hasRadial = true;
+            }
+            flying.add(occupant);
+        }
+        if (!hasRadial) {
+            throw new IllegalStateException("No radial pyro");
+        }
+        Map<GridPos, List<VesselBlockOccupant>> byPos = index(flying);
+        Map<GridPos, String> stageByPos = assignStages(flying, byPos);
+        java.util.LinkedHashSet<String> sideStages = new java.util.LinkedHashSet<>();
+        for (VesselBlockOccupant occupant : flying) {
+            if (occupant.spec().kind() != VesselPartKind.SEPARATOR || !occupant.facing().horizontal()) {
+                continue;
+            }
+            String ringStage = stageByPos.get(occupant.pos());
+            String sideStage = stageByPos.get(occupant.pos().offset(occupant.facing()));
+            if (sideStage != null && ringStage != null && !sideStage.equals(ringStage)) {
+                sideStages.add(sideStage);
+            }
+        }
+        if (sideStages.isEmpty()) {
+            throw new IllegalStateException("Radial pyro did not cut a side booster");
+        }
+        Map<String, List<VesselBlockOccupant>> sideOccupants = new LinkedHashMap<>();
+        List<VesselBlockOccupant> core = new ArrayList<>();
+        for (VesselBlockOccupant occupant : flying) {
+            String stage = stageByPos.get(occupant.pos());
+            if (sideStages.contains(stage)) {
+                sideOccupants.computeIfAbsent(stage, ignored -> new ArrayList<>()).add(occupant);
+            } else {
+                core.add(occupant);
+            }
+        }
+        if (core.isEmpty()) {
+            throw new IllegalStateException("Radial pyro left no core");
+        }
+        List<VesselBlockGrid> sides = new ArrayList<>();
+        for (List<VesselBlockOccupant> occupants : sideOccupants.values()) {
+            sides.add(new VesselBlockGrid(occupants));
+        }
+        return new RadialSplit(new VesselBlockGrid(core), sides);
     }
 
     private static List<VesselDiagnostic> padDiagnostics(VesselBlockGrid grid) {

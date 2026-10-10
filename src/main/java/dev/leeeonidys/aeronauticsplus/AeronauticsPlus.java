@@ -21,6 +21,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VarietySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ElectronicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ControllerSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PadSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.RadialSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.RecoverySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
@@ -234,7 +235,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.49: 20 km world-to-map handoff; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.50: radial pyro for side boosters; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -601,6 +602,18 @@ public final class AeronauticsPlus {
                         recovery.recoveredParts());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus recovery slice failed", exception);
+            }
+            try {
+                RadialSlice.Result radial = RadialSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus radial slice OK: sides={}, coreSeat={}, sideEngines={}, axial={}, notRadial={}",
+                        radial.sideCount(),
+                        radial.coreKeepsController(),
+                        radial.sidesHaveEngines(),
+                        radial.axialStillCuts(),
+                        radial.axialNotRadial());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus radial slice failed", exception);
             }
             try {
                 TransporterSlice.Result haul = TransporterSlice.execute();

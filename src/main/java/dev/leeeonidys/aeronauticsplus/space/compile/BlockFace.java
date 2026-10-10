@@ -33,6 +33,10 @@ public enum BlockFace {
         return dz;
     }
 
+    public boolean horizontal() {
+        return dy == 0;
+    }
+
     public BlockFace opposite() {
         return switch (this) {
             case DOWN -> UP;
