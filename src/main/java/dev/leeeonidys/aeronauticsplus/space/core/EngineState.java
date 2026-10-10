@@ -161,6 +161,52 @@ public record EngineState(
                 rcs, seaLevelSpecificImpulseSeconds);
     }
 
+    public EngineState withThrustAxis(Vector3d nextAxis) {
+        return new EngineState(
+                id, fuelId, oxidizerId, dryMassKg, thrustNewtons, specificImpulseSeconds,
+                mixtureRatio, throttle, gimbalDegrees, enabled, localPositionMeters, nextAxis,
+                rcs, seaLevelSpecificImpulseSeconds);
+    }
+
+    /**
+     * Deflect the nozzle toward {@code bodyDesired}, clamped to {@code gimbalDegrees}.
+     * Merlin / RS-25 class is ~8–15°. Zero gimbal is a fixed nozzle.
+     */
+    public Vector3d gimballedAxisToward(Vector3d bodyDesired) {
+        if (bodyDesired == null || !(bodyDesired.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Gimbal command must be finite and non-zero");
+        }
+        Vector3d rest = thrustAxis;
+        Vector3d desired = bodyDesired.normalized();
+        double maxAngle = Math.toRadians(gimbalDegrees);
+        if (maxAngle <= 1.0e-12) {
+            return rest;
+        }
+        double dot = Math.max(-1.0, Math.min(1.0, rest.dot(desired)));
+        double angle = Math.acos(dot);
+        if (angle <= maxAngle + 1.0e-12) {
+            return desired;
+        }
+        Vector3d hinge = rest.cross(desired);
+        if (!(hinge.magnitudeSquared() > 1.0e-16)) {
+            Vector3d ortho = Math.abs(rest.x()) < 0.9 ? Vector3d.UNIT_X : Vector3d.UNIT_Y;
+            hinge = rest.cross(ortho);
+        }
+        return Quaternion.fromAxisAngle(hinge, maxAngle).rotate(rest).normalized();
+    }
+
+    public EngineState gimbalToward(Vector3d bodyDesired) {
+        return withThrustAxis(gimballedAxisToward(bodyDesired));
+    }
+
+    public double angleFrom(Vector3d otherAxis) {
+        if (otherAxis == null || !(otherAxis.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Comparison axis must be finite and non-zero");
+        }
+        double dot = Math.max(-1.0, Math.min(1.0, thrustAxis.dot(otherAxis.normalized())));
+        return Math.acos(dot);
+    }
+
     private static void requireName(String value, String label) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(label + " id must not be blank");

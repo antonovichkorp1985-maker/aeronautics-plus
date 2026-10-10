@@ -26,6 +26,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
@@ -216,7 +217,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.36: gravity turn / pitch kick; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.37: engine gimbal TVC; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -299,6 +300,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", turn.turnedAltitude()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus gravity-turn slice failed", exception);
+            }
+            try {
+                GimbalSlice.Result gimbal = GimbalSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus gimbal slice OK: limited={}, frozen={}, steered={}, fixed={}",
+                        String.format(java.util.Locale.ROOT, "%.2f", gimbal.limitedDegrees()),
+                        String.format(java.util.Locale.ROOT, "%.3f", gimbal.frozenDegrees()),
+                        String.format(java.util.Locale.ROOT, "%.4f", gimbal.steeredAngle()),
+                        String.format(java.util.Locale.ROOT, "%.4f", gimbal.fixedAngle()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus gimbal slice failed", exception);
             }
             try {
                 AttitudeSlice.Result attitude = AttitudeSlice.execute();

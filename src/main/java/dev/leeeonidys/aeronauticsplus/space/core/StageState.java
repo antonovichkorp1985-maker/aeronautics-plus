@@ -283,6 +283,16 @@ public record StageState(
         return withEngines(engines.stream().map(engine -> engine.withEnabled(false)).toList());
     }
 
+    /** Deflect main nozzles toward a body-frame command. RCS stays put. */
+    public StageState gimbalMainToward(Vector3d bodyDesired) {
+        if (bodyDesired == null || !(bodyDesired.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Gimbal command must be finite and non-zero");
+        }
+        return withEngines(engines.stream()
+                .map(engine -> engine.rcs() ? engine : engine.gimbalToward(bodyDesired))
+                .toList());
+    }
+
     /** True when every firing main engine has a tank with matching fuel and oxidizer ids. */
     public boolean hasCompatibleFeed() {
         return hasCompatibleFeed(mainEngines());

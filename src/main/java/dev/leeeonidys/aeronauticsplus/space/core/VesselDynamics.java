@@ -118,6 +118,21 @@ public final class VesselDynamics {
     }
 
     /**
+     * Point main-engine gimbals at an inertial direction, clamped per engine.
+     * Attitude does not jump; torque from the new thrust axis rotates it on burn.
+     */
+    public static VesselState gimbalTowardInertial(VesselState vessel, Vector3d inertialDirection) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (inertialDirection == null || !(inertialDirection.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Gimbal target must be finite and non-zero");
+        }
+        Vector3d bodyDesired = vessel.attitude().toBody(inertialDirection);
+        return replaceActive(vessel, vessel.activeStage().gimbalMainToward(bodyDesired));
+    }
+
+    /**
      * Powered ascent from the pad: hold-down if T/W ≤ 1 at sea level, then integrate
      * gravity + ambient thrust + drag. Vacuum impulsive burns stay on {@link #attemptBurn}.
      */

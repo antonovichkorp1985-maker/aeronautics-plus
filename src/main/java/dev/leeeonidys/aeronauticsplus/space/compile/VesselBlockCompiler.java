@@ -261,7 +261,7 @@ public final class VesselBlockCompiler {
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
             case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(
                     id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
-                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 0.0, true, position,
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 8.0, true, position,
                     occupant.facing().opposite().vector(), false,
                     EngineState.defaultSeaLevelIsp(spec.fuelId(), spec.specificImpulseSeconds())));
             case RCS -> VesselComponent.rcs(id, stageId, new EngineState(
