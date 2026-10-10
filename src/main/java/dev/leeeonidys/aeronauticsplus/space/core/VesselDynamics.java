@@ -665,6 +665,85 @@ public final class VesselDynamics {
     }
 
     /**
+     * Falcon boostback: thrust against the horizon until downrange speed dies.
+     * Vacuum Kepler; grid fins still wait on ChemMod air.
+     */
+    public static BoostbackOutcome attemptBoostback(VesselState vessel, double maxSeconds, double stepSeconds) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (maxSeconds < 0.0 || !Double.isFinite(maxSeconds)) {
+            throw new IllegalArgumentException("Boostback duration must be finite and non-negative");
+        }
+        if (!(stepSeconds > 0.0) || !Double.isFinite(stepSeconds)) {
+            throw new IllegalArgumentException("Boostback step must be finite and positive");
+        }
+
+        List<FlightFault> faults = new ArrayList<>();
+        double startHorizontal = vessel.orbit().horizontalSpeedMetersPerSecond();
+        if (startHorizontal <= BoostbackOutcome.DONE_HORIZONTAL_METERS_PER_SECOND) {
+            return new BoostbackOutcome(vessel, maxSeconds, 0.0, startHorizontal, startHorizontal, faults);
+        }
+        if (!(vessel.activeStage().thrustNewtons() > 0.0)) {
+            faults.add(FlightFault.zeroThrust());
+            return new BoostbackOutcome(vessel, maxSeconds, 0.0, startHorizontal, startHorizontal, faults);
+        }
+        if (!vessel.activeStage().hasCompatibleFeed()) {
+            faults.add(FlightFault.wrongPropellant());
+            return new BoostbackOutcome(vessel, maxSeconds, 0.0, startHorizontal, startHorizontal, faults);
+        }
+
+        VesselState state = vessel;
+        double remaining = maxSeconds;
+        double flown = 0.0;
+        while (remaining > 0.0) {
+            double dt = Math.min(stepSeconds, remaining);
+            OrbitState orbit = state.orbit();
+            double mass = state.totalMassKg();
+            if (!(mass > 0.0)) {
+                break;
+            }
+            double horizontal = orbit.horizontalSpeedMetersPerSecond();
+            if (horizontal <= BoostbackOutcome.DONE_HORIZONTAL_METERS_PER_SECOND) {
+                return new BoostbackOutcome(state, maxSeconds, flown, startHorizontal, horizontal, faults);
+            }
+            Vector3d radial = orbit.radialUnit();
+            Vector3d horizVec = orbit.velocityMetersPerSecond()
+                    .subtract(radial.multiply(orbit.velocityMetersPerSecond().dot(radial)));
+            Vector3d antiDownrange = horizVec.multiply(-1.0);
+            state = state.withAttitude(Attitude.pointing(Vector3d.UNIT_Y, antiDownrange));
+            double thrust = state.activeStage().thrustNewtons();
+            Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
+                    orbit.centralBody(), orbit.positionMeters());
+            Vector3d acceleration = gravity.add(antiDownrange.normalized().multiply(thrust / mass));
+            Vector3d nextPosition = orbit.positionMeters()
+                    .add(orbit.velocityMetersPerSecond().multiply(dt))
+                    .add(acceleration.multiply(0.5 * dt * dt));
+            if (nextPosition.magnitude() < orbit.centralBody().radiusMeters()) {
+                faults.add(FlightFault.impact(flown + dt));
+                break;
+            }
+            Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
+            StageBurnResult burn = state.activeStage().burn(dt);
+            state = replaceActive(state, burn.stage()).withOrbit(new OrbitState(
+                    orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt))
+                    .withAttitude(state.attitude());
+            flown += burn.elapsedSeconds();
+            remaining -= burn.elapsedSeconds();
+            if (burn.propellantDepleted()) {
+                faults.add(FlightFault.dryTank(flown));
+                break;
+            }
+            if (burn.elapsedSeconds() + 1.0e-12 < dt) {
+                break;
+            }
+        }
+        return new BoostbackOutcome(
+                state, maxSeconds, flown, startHorizontal,
+                state.orbit().horizontalSpeedMetersPerSecond(), faults);
+    }
+
+    /**
      * CMG/gyrodyne despin: torque without propellant. Needs a gyro and solar power
      * (ISS гиродины, Soyuz has no CMGs — RCS instead).
      */

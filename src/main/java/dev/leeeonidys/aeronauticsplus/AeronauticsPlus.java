@@ -26,6 +26,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.BoostbackSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.CircularizationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DeorbitSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EarthRotationSlice;
@@ -224,7 +225,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.44: booster landing burn; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.45: Falcon boostback; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -386,6 +387,17 @@ public final class AeronauticsPlus {
                         landing.upperStages());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus landing slice failed", exception);
+            }
+            try {
+                BoostbackSlice.Result boostback = BoostbackSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus boostback slice OK: startHoriz={}, after={}, directImpact={}, recovered={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", boostback.startHorizontal()),
+                        String.format(java.util.Locale.ROOT, "%.1f", boostback.afterBoostback()),
+                        boostback.directImpact(),
+                        boostback.recovered());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus boostback slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();
