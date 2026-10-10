@@ -1,7 +1,9 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /** Operations that change a vessel flight state without rendering or Minecraft dependencies. */
 public final class VesselDynamics {
@@ -124,6 +126,91 @@ public final class VesselDynamics {
         }
         VesselState booster = vessel.discardedBooster();
         return new StageSplit(vessel.separateActiveStage(), booster);
+    }
+
+    /**
+     * Radial pyro in flight: strap-ons become their own vessels on the same trajectory.
+     * Core and any upper continue. Not ChemMod air.
+     */
+    public static StrapSplit dropStrapOns(VesselState vessel) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (!vessel.hasStrapOns()) {
+            throw new IllegalStateException("No strap-on boosters");
+        }
+        List<VesselState> sides = new ArrayList<>();
+        List<StageState> core = new ArrayList<>();
+        for (StageState stage : vessel.stages()) {
+            if (stage.strapOn()) {
+                sides.add(new VesselState(
+                        vessel.id() + "-" + stage.id(),
+                        vessel.orbit(),
+                        List.of(stage),
+                        0,
+                        vessel.attitude(),
+                        vessel.angularVelocityBody()));
+            } else {
+                core.add(stage);
+            }
+        }
+        if (core.isEmpty() || sides.isEmpty()) {
+            throw new IllegalStateException("Radial pyro must leave a core and at least one side");
+        }
+        return new StrapSplit(
+                new VesselState(
+                        vessel.id(), vessel.orbit(), core, 0,
+                        vessel.attitude(), vessel.angularVelocityBody()),
+                sides);
+    }
+
+    /**
+     * Core and strap-ons burn together. Axial upper waits. Vacuum rocket equation.
+     */
+    public static VesselState burnLiveCluster(VesselState vessel, double requestedSeconds) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (requestedSeconds < 0.0 || !Double.isFinite(requestedSeconds)) {
+            throw new IllegalArgumentException("Burn duration must be finite and non-negative");
+        }
+        List<StageState> live = vessel.liveCluster();
+        double allowed = requestedSeconds;
+        for (StageState stage : live) {
+            allowed = Math.min(allowed, stage.burn(requestedSeconds).elapsedSeconds());
+        }
+        if (!(allowed > 0.0)) {
+            return vessel;
+        }
+        Set<String> liveIds = new HashSet<>();
+        for (StageState stage : live) {
+            liveIds.add(stage.id());
+        }
+        double mass0 = vessel.totalMassKg();
+        double thrust = vessel.clusterThrustNewtons();
+        List<StageState> next = new ArrayList<>();
+        for (StageState stage : vessel.stages()) {
+            if (liveIds.contains(stage.id())) {
+                next.add(stage.burn(allowed).stage());
+            } else {
+                next.add(stage);
+            }
+        }
+        VesselState burned = vessel.withStages(next);
+        double mass1 = burned.totalMassKg();
+        if (thrust > 0.0 && mass0 > mass1 && mass1 > 0.0) {
+            double mdot = (mass0 - mass1) / allowed;
+            double ve = mdot > 0.0 ? thrust / mdot : 0.0;
+            double dv = ve > 0.0 ? ve * Math.log(mass0 / mass1) : 0.0;
+            if (dv > 0.0) {
+                Vector3d direction = burned.inertialThrustNewtons();
+                if (!(direction.magnitudeSquared() > 0.0)) {
+                    direction = burned.attitude().toInertial(Vector3d.UNIT_Y);
+                }
+                burned = applyImpulse(burned, direction.normalized().multiply(dv));
+            }
+        }
+        return burned;
     }
 
     /**

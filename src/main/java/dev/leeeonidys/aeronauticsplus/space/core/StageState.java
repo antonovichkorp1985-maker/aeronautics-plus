@@ -10,7 +10,8 @@ public record StageState(
         List<MassElement> structure,
         List<TankState> tanks,
         List<EngineState> engines,
-        boolean separable) {
+        boolean separable,
+        boolean strapOn) {
     public StageState {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Stage id must not be blank");
@@ -24,6 +25,15 @@ public record StageState(
         if (engines.isEmpty()) {
             throw new IllegalArgumentException("A stage must contain at least one engine");
         }
+    }
+
+    public StageState(
+            String id,
+            List<MassElement> structure,
+            List<TankState> tanks,
+            List<EngineState> engines,
+            boolean separable) {
+        this(id, structure, tanks, engines, separable, false);
     }
 
     public double structuralDryMassKg() {
@@ -276,11 +286,11 @@ public record StageState(
         if (kept.size() == structure.size()) {
             return this;
         }
-        return new StageState(id, kept, tanks, engines, separable);
+        return new StageState(id, kept, tanks, engines, separable, strapOn);
     }
 
     public StageState withEngines(List<EngineState> nextEngines) {
-        return new StageState(id, structure, tanks, nextEngines, separable);
+        return new StageState(id, structure, tanks, nextEngines, separable, strapOn);
     }
 
     public StageState withDisabledEngines() {
@@ -398,7 +408,7 @@ public record StageState(
                     ? pairUsed[1] * tank.contents().oxidizerMassKg() / stock[1] : 0.0;
             return tank.consume(fuelShare, oxidizerShare);
         }).toList();
-        StageState next = new StageState(id, structure, nextTanks, engines, separable);
+        StageState next = new StageState(id, structure, nextTanks, engines, separable, strapOn);
         boolean depleted = elapsed + 1.0e-9 < requestedSeconds;
         return new StageBurnResult(next, elapsed, fuelUsed, oxidizerUsed, depleted);
     }

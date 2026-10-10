@@ -38,6 +38,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
@@ -235,7 +236,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.50: radial pyro for side boosters; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.51: strap-ons burn with the core; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -431,6 +432,18 @@ public final class AeronauticsPlus {
                         handoff.reentryInWorld());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus handoff slice failed", exception);
+            }
+            try {
+                StrapOnSlice.Result straps = StrapOnSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus strap-on slice OK: clusterT={}, coreT={}, sides={}, upperWait={}, sameOrbit={}",
+                        String.format(java.util.Locale.ROOT, "%.0f", straps.clusterThrust()),
+                        String.format(java.util.Locale.ROOT, "%.0f", straps.coreThrust()),
+                        straps.sides(),
+                        straps.upperUntouched(),
+                        straps.sidesShareOrbit());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus strap-on slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Logical flight state of a multi-stage vessel. Stages are ordered bottom to top. */
@@ -40,6 +41,44 @@ public record VesselState(
 
     public StageState activeStage() {
         return stages.get(activeStageIndex);
+    }
+
+    /**
+     * Strap-ons plus the core, burning together until radial pyro.
+     * Axial upper stages wait. A stack with no strap-ons is just the first core.
+     */
+    public List<StageState> liveCluster() {
+        List<StageState> cluster = new ArrayList<>();
+        boolean coreSeen = false;
+        for (StageState stage : stages) {
+            if (stage.strapOn()) {
+                cluster.add(stage);
+            } else if (!coreSeen) {
+                cluster.add(stage);
+                coreSeen = true;
+            }
+        }
+        if (cluster.isEmpty()) {
+            return List.of(activeStage());
+        }
+        return List.copyOf(cluster);
+    }
+
+    public double clusterThrustNewtons() {
+        return liveCluster().stream().mapToDouble(StageState::thrustNewtons).sum();
+    }
+
+    public boolean hasStrapOns() {
+        return stages.stream().anyMatch(StageState::strapOn);
+    }
+
+    public VesselState withStages(List<StageState> nextStages) {
+        List<StageState> copy = List.copyOf(nextStages == null ? List.of() : nextStages);
+        if (copy.isEmpty()) {
+            throw new IllegalArgumentException("Vessel must contain at least one stage");
+        }
+        int index = Math.min(activeStageIndex, copy.size() - 1);
+        return new VesselState(id, orbit, copy, index, attitude, angularVelocityBody);
     }
 
     public double totalMassKg() {
