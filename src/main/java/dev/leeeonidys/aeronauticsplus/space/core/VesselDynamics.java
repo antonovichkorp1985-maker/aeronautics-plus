@@ -330,6 +330,10 @@ public final class VesselDynamics {
             flown += burn.elapsedSeconds();
             remaining -= burn.elapsedSeconds();
             if (burn.propellantDepleted()) {
+                if (state.canSeparateActive()) {
+                    state = state.separateActiveStage();
+                    continue;
+                }
                 faults.add(FlightFault.dryTank(flown));
                 break;
             }

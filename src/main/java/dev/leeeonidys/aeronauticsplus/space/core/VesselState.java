@@ -114,9 +114,14 @@ public record VesselState(
         return new VesselState(id, orbit, stages, activeStageIndex, attitude, nextOmega);
     }
 
+    /** True when the live stage is marked separable and another stage sits above it. */
+    public boolean canSeparateActive() {
+        return activeStage().separable() && activeStageIndex < stages.size() - 1;
+    }
+
     /** Drops the currently active stage and activates the next one. */
     public VesselState separateActiveStage() {
-        if (activeStageIndex >= stages.size() - 1) {
+        if (!canSeparateActive()) {
             throw new IllegalStateException("Cannot separate the final active stage");
         }
         List<StageState> remaining = List.copyOf(stages.subList(activeStageIndex + 1, stages.size()));

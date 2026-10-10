@@ -28,6 +28,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MixtureSlice;
@@ -217,7 +218,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.37: engine gimbal TVC; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.38: hot-staging on gravity turn; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -300,6 +301,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", turn.turnedAltitude()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus gravity-turn slice failed", exception);
+            }
+            try {
+                StagingSlice.Result staging = StagingSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus staging slice OK: stagesLeft={}, stagedAlt={}, stuckAlt={}, stuckDry={}",
+                        staging.stagedStagesLeft(),
+                        String.format(java.util.Locale.ROOT, "%.1f", staging.stagedAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.1f", staging.stuckAltitude()),
+                        staging.stuckDry());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus staging slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();
