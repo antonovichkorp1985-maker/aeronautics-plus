@@ -13,4 +13,8 @@ public record CelestialBody(String id, double gravitationalParameter, double rad
             throw new IllegalArgumentException("Radius must be finite and positive");
         }
     }
+
+    public double surfaceGravityMetersPerSecond2() {
+        return gravitationalParameter / (radiusMeters * radiusMeters);
+    }
 }

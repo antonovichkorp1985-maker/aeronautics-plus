@@ -5,6 +5,10 @@ import java.util.List;
 
 /** Operations that change a vessel flight state without rendering or Minecraft dependencies. */
 public final class VesselDynamics {
+    /** Falcon-class ignition on the clamps before release. Saturn V held longer. */
+    public static final double HOLD_DOWN_SECONDS = 3.0;
+    public static final double DEFAULT_ASCENT_STEP_SECONDS = 0.1;
+
     private VesselDynamics() {
     }
 
@@ -114,9 +118,114 @@ public final class VesselDynamics {
     }
 
     /**
-     * Jettisons remaining fairings on every remaining stage. Payload stays.
-     * Historical sequence: after leaving dense atmosphere (Soyuz, Falcon 9, Saturn V).
+     * Powered ascent from the pad: hold-down if T/W ≤ 1 at sea level, then integrate
+     * gravity + ambient thrust + drag. Vacuum impulsive burns stay on {@link #attemptBurn}.
      */
+    public static AscentOutcome attemptAscent(
+            VesselState vessel, Atmosphere atmosphere, double durationSeconds,
+            double stepSeconds, double dragCoefficient, double referenceAreaM2) {
+        if (vessel == null || atmosphere == null) {
+            throw new IllegalArgumentException("Vessel and atmosphere are required");
+        }
+        if (durationSeconds < 0.0 || !Double.isFinite(durationSeconds)) {
+            throw new IllegalArgumentException("Ascent duration must be finite and non-negative");
+        }
+        if (!(stepSeconds > 0.0) || !Double.isFinite(stepSeconds)) {
+            throw new IllegalArgumentException("Ascent step must be finite and positive");
+        }
+        if (dragCoefficient < 0.0 || !Double.isFinite(dragCoefficient)
+                || referenceAreaM2 < 0.0 || !Double.isFinite(referenceAreaM2)) {
+            throw new IllegalArgumentException("Drag coefficient and area must be finite and non-negative");
+        }
+
+        List<FlightFault> faults = new ArrayList<>();
+        double padPressure = atmosphere.pressurePascals(Math.max(0.0, vessel.orbit().altitudeMeters()));
+        double padThrust = vessel.activeStage().thrustNewtonsAt(padPressure);
+        double padWeight = vessel.totalMassKg() * vessel.orbit().centralBody().surfaceGravityMetersPerSecond2();
+        double padTw = padWeight > 0.0 ? padThrust / padWeight : 0.0;
+        if (!(padThrust > padWeight)) {
+            faults.add(FlightFault.holdDown(padTw));
+            return new AscentOutcome(
+                    vessel, durationSeconds, 0.0, 0.0, vessel.orbit().altitudeMeters(), padTw, faults);
+        }
+        if (!(vessel.activeStage().hasCompatibleFeed())) {
+            faults.add(FlightFault.wrongPropellant());
+            return new AscentOutcome(
+                    vessel, durationSeconds, 0.0, 0.0, vessel.orbit().altitudeMeters(), padTw, faults);
+        }
+        if (!(padThrust > 0.0)) {
+            faults.add(FlightFault.zeroThrust());
+            return new AscentOutcome(
+                    vessel, durationSeconds, 0.0, 0.0, vessel.orbit().altitudeMeters(), padTw, faults);
+        }
+
+        VesselState state = vessel;
+        double peakQ = atmosphere.dynamicPressurePascals(state.orbit());
+        double peakAlt = state.orbit().altitudeMeters();
+
+        StageBurnResult hold = state.activeStage().burn(HOLD_DOWN_SECONDS);
+        state = replaceActive(state, hold.stage()).withOrbit(new OrbitState(
+                state.orbit().centralBody(),
+                state.orbit().positionMeters(),
+                state.orbit().velocityMetersPerSecond(),
+                state.orbit().epochSeconds() + hold.elapsedSeconds()));
+        if (hold.propellantDepleted()) {
+            faults.add(FlightFault.dryTank(hold.elapsedSeconds()));
+            return new AscentOutcome(
+                    state, durationSeconds, 0.0, peakQ, peakAlt, padTw, faults);
+        }
+
+        double remaining = durationSeconds;
+        double flown = 0.0;
+        while (remaining > 0.0) {
+            double dt = Math.min(stepSeconds, remaining);
+            OrbitState orbit = state.orbit();
+            double mass = state.totalMassKg();
+            if (!(mass > 0.0)) {
+                break;
+            }
+            double pressure = atmosphere.pressureAt(orbit);
+            double density = atmosphere.densityAt(orbit);
+            Vector3d thrust = state.inertialThrustNewtonsAt(pressure);
+            if (!(thrust.magnitudeSquared() > 0.0)) {
+                faults.add(FlightFault.zeroThrust());
+                break;
+            }
+            Vector3d drag = Aerodynamics.dragForceNewtons(
+                    density, orbit.velocityMetersPerSecond(), dragCoefficient, referenceAreaM2);
+            Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
+                    orbit.centralBody(), orbit.positionMeters());
+            Vector3d acceleration = gravity
+                    .add(thrust.multiply(1.0 / mass))
+                    .add(drag.multiply(1.0 / mass));
+            Vector3d nextPosition = orbit.positionMeters()
+                    .add(orbit.velocityMetersPerSecond().multiply(dt))
+                    .add(acceleration.multiply(0.5 * dt * dt));
+            double nextRadius = nextPosition.magnitude();
+            if (nextRadius < orbit.centralBody().radiusMeters()) {
+                faults.add(FlightFault.impact(flown + dt));
+                break;
+            }
+            Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
+            StageBurnResult burn = state.activeStage().burn(dt);
+            state = replaceActive(state, burn.stage()).withOrbit(new OrbitState(
+                    orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
+            flown += burn.elapsedSeconds();
+            remaining -= burn.elapsedSeconds();
+            peakQ = Math.max(peakQ, atmosphere.dynamicPressurePascals(state.orbit()));
+            peakAlt = Math.max(peakAlt, state.orbit().altitudeMeters());
+            if (burn.propellantDepleted()) {
+                faults.add(FlightFault.dryTank(flown));
+                break;
+            }
+            if (burn.elapsedSeconds() + 1.0e-12 < dt) {
+                break;
+            }
+        }
+
+        return new AscentOutcome(state, durationSeconds, flown, peakQ, peakAlt, padTw, faults);
+    }
+
     /**
      * CMG/gyrodyne despin: torque without propellant. Needs a gyro and solar power
      * (ISS гиродины, Soyuz has no CMGs — RCS instead).
@@ -187,21 +296,43 @@ public final class VesselDynamics {
                 : consumed;
     }
 
+    /**
+     * Jettisons remaining fairings on every remaining stage. Payload stays.
+     * Historical sequence: after leaving dense atmosphere (Soyuz, Falcon 9, Saturn V).
+     */
     public static VesselState jettisonFairing(VesselState vessel) {
+        return jettisonFairing(vessel, Atmosphere.earth());
+    }
+
+    public static VesselState jettisonFairing(VesselState vessel, Atmosphere atmosphere) {
         if (vessel == null) {
             throw new IllegalArgumentException("Vessel is required");
         }
-        ArrayList<StageState> next = new ArrayList<>(vessel.stages().size());
-        boolean dropped = false;
-        for (StageState stage : vessel.stages()) {
-            StageState stripped = stage.withoutFairings();
-            if (stripped != stage) {
-                dropped = true;
-            }
-            next.add(stripped);
+        if (atmosphere == null) {
+            throw new IllegalArgumentException("Atmosphere is required");
         }
-        if (!dropped) {
+        boolean hasFairing = false;
+        for (StageState stage : vessel.stages()) {
+            if (stage.hasFairing()) {
+                hasFairing = true;
+                break;
+            }
+        }
+        if (!hasFairing) {
             throw new IllegalStateException("No fairing to jettison");
+        }
+        if (!Aerodynamics.fairingSafe(vessel.orbit(), atmosphere)) {
+            throw new IllegalStateException(
+                    FlightFault.FAIRING_ATMOSPHERE
+                            + ": обтекатель не сбрасывают в плотных слоях (h="
+                            + vessel.orbit().altitudeMeters()
+                            + " м, q="
+                            + atmosphere.dynamicPressurePascals(vessel.orbit())
+                            + " Па)");
+        }
+        ArrayList<StageState> next = new ArrayList<>(vessel.stages().size());
+        for (StageState stage : vessel.stages()) {
+            next.add(stage.withoutFairings());
         }
         return new VesselState(
                 vessel.id(), vessel.orbit(), next, vessel.activeStageIndex(),

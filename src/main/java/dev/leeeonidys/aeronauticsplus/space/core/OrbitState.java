@@ -15,4 +15,9 @@ public record OrbitState(CelestialBody centralBody, Vector3d positionMeters, Vec
         return 0.5 * velocityMetersPerSecond().magnitudeSquared()
                 - centralBody.gravitationalParameter() / positionMeters().magnitude();
     }
+
+    /** Geometric altitude above the spherical body. Negative means inside the radius. */
+    public double altitudeMeters() {
+        return positionMeters.magnitude() - centralBody.radiusMeters();
+    }
 }

@@ -8,6 +8,9 @@ public record FlightFault(String code, String message, double atSeconds) {
     public static final String ZERO_THRUST = "ZERO_THRUST";
     public static final String FEED_BREAK = "FEED_BREAK";
     public static final String WRONG_PROPELLANT = "WRONG_PROPELLANT";
+    public static final String HOLD_DOWN = "HOLD_DOWN";
+    public static final String IMPACT = "IMPACT";
+    public static final String FAIRING_ATMOSPHERE = "FAIRING_ATMOSPHERE";
 
     public FlightFault {
         if (code == null || code.isBlank() || message == null || message.isBlank()) {
@@ -39,6 +42,26 @@ public record FlightFault(String code, String message, double atSeconds) {
     public static FlightFault wrongPropellant() {
         return new FlightFault(WRONG_PROPELLANT,
                 "Состав рабочего тела не совпадает с двигателем — burn отменён",
+                0.0);
+    }
+
+    public static FlightFault holdDown(double thrustToWeight) {
+        return new FlightFault(HOLD_DOWN,
+                "Тяга на уровне моря не поднимает ракету (T/W=" + format(thrustToWeight)
+                        + ") — зажимы не отпускают",
+                0.0);
+    }
+
+    public static FlightFault impact(double atSeconds) {
+        return new FlightFault(IMPACT,
+                "Удар о поверхность на " + format(atSeconds) + " с",
+                atSeconds);
+    }
+
+    public static FlightFault fairingAtmosphere(double altitudeMeters, double dynamicPressurePascals) {
+        return new FlightFault(FAIRING_ATMOSPHERE,
+                "Обтекатель не сбрасывают в плотных слоях (h=" + format(altitudeMeters)
+                        + " м, q=" + format(dynamicPressurePascals) + " Па)",
                 0.0);
     }
 

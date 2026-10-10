@@ -111,10 +111,24 @@ public record StageState(
         return mainEngines().stream().mapToDouble(EngineState::activeThrustNewtons).sum();
     }
 
+    public double thrustNewtonsAt(double ambientPascals) {
+        return mainEngines().stream()
+                .mapToDouble(engine -> engine.activeThrustNewtonsAt(ambientPascals))
+                .sum();
+    }
+
     public Vector3d netThrustNewtons() {
         Vector3d sum = Vector3d.ZERO;
         for (EngineState engine : mainEngines()) {
             sum = sum.add(engine.activeThrustVectorNewtons());
+        }
+        return sum;
+    }
+
+    public Vector3d netThrustNewtonsAt(double ambientPascals) {
+        Vector3d sum = Vector3d.ZERO;
+        for (EngineState engine : mainEngines()) {
+            sum = sum.add(engine.activeThrustVectorNewtonsAt(ambientPascals));
         }
         return sum;
     }

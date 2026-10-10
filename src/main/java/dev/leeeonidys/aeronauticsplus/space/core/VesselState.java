@@ -88,6 +88,10 @@ public record VesselState(
         return attitude.toInertial(activeStage().netThrustNewtons());
     }
 
+    public Vector3d inertialThrustNewtonsAt(double ambientPascals) {
+        return attitude.toInertial(activeStage().netThrustNewtonsAt(ambientPascals));
+    }
+
     public boolean hasResidualSpin() {
         return angularVelocityBody.magnitudeSquared() > 1.0e-18;
     }

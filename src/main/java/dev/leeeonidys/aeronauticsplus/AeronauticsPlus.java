@@ -23,6 +23,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.ControllerSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
+import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
@@ -207,7 +208,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.33: engine and control seat; ChemMod tanks adapted later, no AP tank SKUs.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.34: pad ascent, atmosphere, Max-Q, hold-down; no AP tank SKUs.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -266,6 +267,19 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3f", faults.feedBreakElapsed()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus failure slice failed", exception);
+            }
+            try {
+                AscentSlice.Result ascent = AscentSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus ascent slice OK: padTW={}, alt={}, dragLoss={}, maxQ={}, heldDown={}, fairingBlocked={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", ascent.padThrustToWeight()),
+                        String.format(java.util.Locale.ROOT, "%.1f", ascent.altitudeMeters()),
+                        String.format(java.util.Locale.ROOT, "%.1f", ascent.dragAltitudeLossMeters()),
+                        String.format(java.util.Locale.ROOT, "%.1f", ascent.peakDynamicPressurePascals()),
+                        ascent.heldDown(),
+                        ascent.fairingBlockedOnPad());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus ascent slice failed", exception);
             }
             try {
                 AttitudeSlice.Result attitude = AttitudeSlice.execute();
