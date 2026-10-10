@@ -27,6 +27,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.CircularizationSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.DeorbitSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
@@ -220,7 +221,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.40: Hohmann transfer; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.41: deorbit to periapsis; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -337,6 +338,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.4f", hohmann.circularEccentricity()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus Hohmann slice failed", exception);
+            }
+            try {
+                DeorbitSlice.Result deorbit = DeorbitSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus deorbit slice OK: parkAlt={}, e={}, periAlt={}, coastAlt={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", deorbit.parkingAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.4f", deorbit.deorbitEccentricity()),
+                        String.format(java.util.Locale.ROOT, "%.1f", deorbit.periapsisAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.1f", deorbit.coastAltitude()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus deorbit slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

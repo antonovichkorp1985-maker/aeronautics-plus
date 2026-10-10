@@ -154,6 +154,42 @@ public final class VesselDynamics {
     }
 
     /**
+     * Coast in vacuum until periapsis (radial speed crosses up through zero).
+     * Bound orbits only; not ChemMod world gas.
+     */
+    public static VesselState coastToPeriapsis(VesselState vessel, double maxSeconds, double stepSeconds) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (maxSeconds < 0.0 || !Double.isFinite(maxSeconds)) {
+            throw new IllegalArgumentException("Coast duration must be finite and non-negative");
+        }
+        if (!(stepSeconds > 0.0) || !Double.isFinite(stepSeconds)) {
+            throw new IllegalArgumentException("Coast step must be finite and positive");
+        }
+        if (!(vessel.orbit().specificOrbitalEnergy() < 0.0)) {
+            throw new IllegalArgumentException("Periapsis coast needs a bound orbit");
+        }
+        if (vessel.orbit().eccentricity() < 1.0e-4) {
+            return vessel;
+        }
+        VesselState state = vessel;
+        double prevRadial = state.orbit().radialSpeedMetersPerSecond();
+        double remaining = maxSeconds;
+        while (remaining > 0.0) {
+            double dt = Math.min(stepSeconds, remaining);
+            state = propagate(state, dt, dt);
+            remaining -= dt;
+            double radial = state.orbit().radialSpeedMetersPerSecond();
+            if (prevRadial < 0.0 && radial >= 0.0) {
+                return state;
+            }
+            prevRadial = radial;
+        }
+        throw new IllegalStateException("Periapsis was not reached in " + maxSeconds + " s");
+    }
+
+    /**
      * Hohmann first burn: prograde at periapsis (radial speed ~ 0) raises apoapsis.
      * Vacuum Kepler, not ChemMod world gas.
      */
@@ -178,6 +214,37 @@ public final class VesselDynamics {
         Vector3d velocity = orbit.velocityMetersPerSecond();
         if (!(velocity.magnitudeSquared() > 0.0)) {
             throw new IllegalArgumentException("Apoapsis raise needs orbital velocity");
+        }
+        Vector3d targetVelocity = velocity.normalized().multiply(transferSpeed);
+        return applyImpulse(vessel, targetVelocity.subtract(velocity));
+    }
+
+    /**
+     * Deorbit: retrograde at apoapsis (radial speed ~ 0) lowers periapsis.
+     * Vacuum Kepler; entry heating waits on ChemMod world gas.
+     */
+    public static VesselState lowerPeriapsis(VesselState vessel, double periapsisRadiusMeters) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        OrbitState orbit = vessel.orbit();
+        double radius = orbit.positionMeters().magnitude();
+        if (!(periapsisRadiusMeters > 0.0) || !(periapsisRadiusMeters < radius)
+                || !Double.isFinite(periapsisRadiusMeters)) {
+            throw new IllegalArgumentException("Target periapsis must be below the current radius");
+        }
+        if (Math.abs(orbit.radialSpeedMetersPerSecond()) > 50.0) {
+            throw new IllegalArgumentException("Lower periapsis at apoapsis (radial speed near zero)");
+        }
+        if (!(orbit.specificOrbitalEnergy() < 0.0)) {
+            throw new IllegalArgumentException("Periapsis lower needs a bound orbit");
+        }
+        double mu = orbit.centralBody().gravitationalParameter();
+        double semiMajor = 0.5 * (radius + periapsisRadiusMeters);
+        double transferSpeed = Math.sqrt(mu * (2.0 / radius - 1.0 / semiMajor));
+        Vector3d velocity = orbit.velocityMetersPerSecond();
+        if (!(velocity.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Periapsis lower needs orbital velocity");
         }
         Vector3d targetVelocity = velocity.normalized().multiply(transferSpeed);
         return applyImpulse(vessel, targetVelocity.subtract(velocity));
