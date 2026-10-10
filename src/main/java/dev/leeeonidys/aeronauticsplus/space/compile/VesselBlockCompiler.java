@@ -30,7 +30,37 @@ public final class VesselBlockCompiler {
     public static VesselCompilation analyze(VesselBlockGrid grid) {
         List<VesselDiagnostic> extra = new ArrayList<>(CellPacking.diagnostics(grid));
         extra.addAll(transporterDiagnostics(grid));
+        extra.addAll(padDiagnostics(grid));
         return compile(grid).analyze().withDiagnostics(extra);
+    }
+
+    private static List<VesselDiagnostic> padDiagnostics(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            return List.of();
+        }
+        boolean pad = false;
+        boolean engine = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.PAD) {
+                pad = true;
+            }
+            if (occupant.spec().kind() == VesselPartKind.ENGINE) {
+                engine = true;
+            }
+        }
+        if (pad) {
+            return List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.INFO,
+                    "ON_PAD",
+                    "Стол с зажимами: земля остаётся, ракета уходит только при T/W > 1"));
+        }
+        if (engine) {
+            return List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.WARNING,
+                    "NOT_ON_PAD",
+                    "Нет стартового стола AP: зажимы и огневой колодец — не ChemMod"));
+        }
+        return List.of();
     }
 
     private static List<VesselDiagnostic> transporterDiagnostics(VesselBlockGrid grid) {
@@ -52,6 +82,16 @@ public final class VesselBlockCompiler {
         if (grid == null || grid.isEmpty()) {
             return new VesselBlueprint(List.of(), List.of());
         }
+        List<VesselBlockOccupant> flying = new ArrayList<>();
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() != VesselPartKind.PAD) {
+                flying.add(occupant);
+            }
+        }
+        if (flying.isEmpty()) {
+            return new VesselBlueprint(List.of(), List.of());
+        }
+        grid = new VesselBlockGrid(flying);
         GridPos origin = grid.origin();
         Map<GridPos, List<VesselBlockOccupant>> byPos = index(grid.occupants());
         Map<GridPos, String> stageByPos = assignStages(grid.occupants(), byPos);
@@ -186,6 +226,7 @@ public final class VesselBlockCompiler {
         String id = occupant.componentId();
         VesselPartSpec spec = occupant.spec();
         return switch (spec.kind()) {
+            case PAD -> throw new IllegalArgumentException("Launch pad is ground infrastructure, not a flying part");
             case STRUCTURE, SEPARATOR, MOUNT -> VesselComponent.structure(
                     id, stageId, VesselComponent.ComponentKind.STRUCTURE, spec.massKg(), position);
             case FAIRING -> VesselComponent.structure(

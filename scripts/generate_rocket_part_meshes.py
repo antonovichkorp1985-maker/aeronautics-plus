@@ -650,6 +650,28 @@ def mount_mesh() -> Mesh:
     return mesh
 
 
+def pad_mesh() -> Mesh:
+    """Launch table: concrete deck, flame well, hold-down arms. Stays on the ground."""
+    mesh = Mesh()
+    n = 16
+    deck = []
+    deck.extend(box(0.00, 0.00, 0.00, 1.00, 0.10, 0.32, 0.05, 0.05, 0.45, 0.40))
+    deck.extend(box(0.00, 0.00, 0.68, 1.00, 0.10, 1.00, 0.05, 0.05, 0.45, 0.40))
+    deck.extend(box(0.00, 0.00, 0.32, 0.32, 0.10, 0.68, 0.05, 0.05, 0.45, 0.40))
+    deck.extend(box(0.68, 0.00, 0.32, 1.00, 0.10, 0.68, 0.05, 0.05, 0.45, 0.40))
+    mesh.add("deck", deck)
+    mesh.add(
+        "well",
+        frustum(0.00, 0.22, 0.10, 0.18, n, 0.50, 0.72, invert=True),
+    )
+    arms = []
+    for dx, dz in ((0.14, 0.14), (0.86, 0.14), (0.14, 0.86), (0.86, 0.86)):
+        arms.extend(box(dx - 0.05, 0.10, dz - 0.05, dx + 0.05, 0.40, dz + 0.05, 0.70, 0.10, 0.95, 0.55))
+        arms.extend(box(dx - 0.08, 0.36, dz - 0.08, dx + 0.08, 0.48, dz + 0.08, 0.70, 0.55, 0.95, 0.80))
+    mesh.add("clamps", arms)
+    return mesh
+
+
 def controller_mesh() -> Mesh:
     """Seat plus console. Marks the pile as a rocket. Not a KSP command pod."""
     mesh = Mesh()
@@ -907,6 +929,15 @@ def payload_tex(x, y, s):
     return (198, 156, 64) if (x + y) % 3 else (184, 140, 52)
 
 
+def pad_tex(x, y, s):
+    ny = y / (s - 1)
+    if 0.18 <= ny <= 0.28 or 0.72 <= ny <= 0.82:
+        return (214, 176, 36) if x % 4 else (196, 148, 28)
+    if x % 8 == 0 or y % 8 == 0:
+        return (148, 152, 158)
+    return (118, 118, 112) if (x // 4 + y // 4) % 2 == 0 else (96, 96, 90)
+
+
 def mount_tex(x, y, s):
     ny = y / (s - 1)
     if 0.18 <= ny <= 0.28 or 0.72 <= ny <= 0.82:
@@ -990,18 +1021,22 @@ def assert_outward() -> None:
 
 
 def main() -> None:
-    """AP world blocks: mount, engine, control seat. Tanks stay ChemMod."""
+    """AP world blocks: mount, pad, engine, control seat. Tanks stay ChemMod."""
     assert_outward()
     mount_mesh().write(GEO / "rocket_mount.obj")
+    pad_mesh().write(GEO / "launch_pad.obj")
     engine_mesh().write(GEO / "rocket_engine.obj")
     controller_mesh().write(GEO / "rocket_controller.obj")
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
+    write_png(TEX / "launch_pad.png", paint(64, pad_tex))
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_controller.png", paint(64, controller_tex))
     write_part_models("rocket_mount")
+    write_part_models("launch_pad")
     write_part_models("rocket_engine")
     write_part_models("rocket_controller")
     write_blockstate("rocket_mount", UP_STATES)
+    write_blockstate("launch_pad", UP_STATES)
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_controller", UP_STATES)
     print("AP rocket fixtures written; ChemMod owns tanks")

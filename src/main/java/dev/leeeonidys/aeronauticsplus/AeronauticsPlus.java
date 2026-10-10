@@ -20,6 +20,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VarietySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ElectronicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ControllerSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.PadSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -187,6 +188,11 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.CONTROLLER, MapColor.COLOR_BLACK);
     public static final DeferredItem<BlockItem> ROCKET_CONTROLLER_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_CONTROLLER);
+    /** Ground table with hold-down clamps. Does not fly. */
+    public static final DeferredBlock<VesselPartBlock> LAUNCH_PAD =
+            registerVesselPart(VesselPartCatalog.PAD, MapColor.STONE);
+    public static final DeferredItem<BlockItem> LAUNCH_PAD_ITEM =
+            ITEMS.registerSimpleBlockItem(LAUNCH_PAD);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -197,6 +203,7 @@ public final class AeronauticsPlus {
                         output.accept(PROTOTYPE_PROPELLER_ITEM.get());
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
                         output.accept(ROCKET_MOUNT_ITEM.get());
+                        output.accept(LAUNCH_PAD_ITEM.get());
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                     })
@@ -208,7 +215,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.34: pad ascent, atmosphere, Max-Q, hold-down; no AP tank SKUs.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.35: launch pad is AP ground; ChemMod gases still not AP.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -419,6 +426,16 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus controller slice failed", exception);
             }
             try {
+                PadSlice.Result pad = PadSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus pad slice OK: onPad={}, notOnPad={}, padMassExcluded={}",
+                        pad.onPad(),
+                        pad.notOnPad(),
+                        pad.padMassExcluded());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus pad slice failed", exception);
+            }
+            try {
                 TransporterSlice.Result haul = TransporterSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus transporter slice OK: diameter={}, height={}, haulSeconds={}, padX={}, launchable={}",
@@ -437,10 +454,11 @@ public final class AeronauticsPlus {
             AIRCRAFT_PROPELLERS.forEach(entry ->
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(LAUNCH_PAD_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 14
+            boolean allRegistered = registeredItems.size() == 15
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

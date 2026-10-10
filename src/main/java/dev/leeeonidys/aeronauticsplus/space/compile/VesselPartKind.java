@@ -8,6 +8,8 @@ public enum VesselPartKind {
     SEPARATOR,
     /** Fixture on a Create train. The train plus this block is the transporter. */
     MOUNT,
+    /** Ground launch table with hold-down clamps. Not a flying part. */
+    PAD,
     /** Ogive covering the payload through dense atmosphere. */
     FAIRING,
     /** Orbital apparatus under the fairing. */

@@ -5,8 +5,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.PropellantState;
 import java.util.List;
 
 /**
- * Compiler fixtures. Minecraft items from this catalog are only the engine, control
- * seat and train mount. Tanks stay ChemMod (adapt those). Hull SKUs are not AP items.
+ * Compiler fixtures. Minecraft items from this catalog are the engine, control
+ * seat, train mount and launch pad. Tanks stay ChemMod (adapt those). Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";
@@ -52,6 +52,8 @@ public final class VesselPartCatalog {
             "hydrolox_engine", 40.0, 8_000.0, 450.0, HYDROGEN_ID, OXIDIZER_ID, HYDROLOX_MIXTURE);
     public static final VesselPartSpec SEPARATOR = VesselPartSpec.separator("stage_separator", 40.0);
     public static final VesselPartSpec MOUNT = VesselPartSpec.mount("rocket_mount", 160.0);
+    /** Ground table. Not ChemMod, not a flying SKU. */
+    public static final VesselPartSpec PAD = VesselPartSpec.pad("launch_pad", 420.0);
     public static final VesselPartSpec FAIRING = VesselPartSpec.fairing("rocket_fairing", 45.0);
     public static final VesselPartSpec PAYLOAD = VesselPartSpec.payload("rocket_payload", 180.0);
     public static final VesselPartSpec HABITAT = VesselPartSpec.habitat("crew_habitat", 250.0);
@@ -84,7 +86,7 @@ public final class VesselPartCatalog {
         return List.of(
                 STRUCTURE, TANK, FUEL_TANK, FUEL_TANK_SMALL, FUEL_TANK_LARGE,
                 OXIDIZER_TANK, OXIDIZER_TANK_SMALL, OXIDIZER_TANK_LARGE, LH2_TANK,
-                ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, FAIRING, PAYLOAD,
+                ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, PAD, FAIRING, PAYLOAD,
                 HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR,
                 OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER);
     }

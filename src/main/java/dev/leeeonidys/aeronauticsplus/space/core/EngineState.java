@@ -2,10 +2,10 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
  * Logical engine with a stage-local position and installed thrust axis.
- * {@code mixtureRatio} is oxidizer/fuel by mass declared by the engine;
- * ChemMod remains the chemistry source for real mixture data.
- * {@code specificImpulseSeconds} is vacuum; sea-level Isp is lower because of
- * ambient back-pressure on the nozzle (Merlin ~282/311 s, F-1 ~263/304 s).
+ * {@code mixtureRatio}, thrust and Isp are declared stand-ins until ChemMod can
+ * say what is in the tank. AP does not solve chamber gas. ChemMod remains the
+ * chemistry source. {@code specificImpulseSeconds} is vacuum; sea-level Isp is
+ * lower because ambient pressure sits on the nozzle exit (Merlin ~282/311 s).
  */
 public record EngineState(
         String id,

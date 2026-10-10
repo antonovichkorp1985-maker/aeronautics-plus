@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/launch_pad"
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/launch_pad",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/launch_pad",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/launch_pad",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/launch_pad",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/launch_pad",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

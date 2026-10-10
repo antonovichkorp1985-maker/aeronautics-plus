@@ -1,7 +1,7 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
- * Exponential atmosphere for the first launch slice.
+ * Planetary air the vehicle flies through — not ChemMod tank gas.
  * Scale height 8.5 km is an Earth-mean fit, not a layered ISA table.
  */
 public record Atmosphere(

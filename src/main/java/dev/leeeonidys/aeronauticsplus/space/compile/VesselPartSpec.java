@@ -88,6 +88,11 @@ public record VesselPartSpec(
                 id, VesselPartKind.MOUNT, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CRADLE);
     }
 
+    public static VesselPartSpec pad(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.PAD, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.PAD);
+    }
+
     public static VesselPartSpec fairing(String id, double massKg) {
         return new VesselPartSpec(
                 id, VesselPartKind.FAIRING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.OGIVE);
@@ -237,7 +242,7 @@ public record VesselPartSpec(
             case SEPARATOR -> face == facing
                     ? EnumSet.of(VesselConnection.ConnectionKind.SEPARATION)
                     : EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
-            case MOUNT -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case MOUNT, PAD -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             case RCS -> {
                 if (face == facing) {
                     yield EnumSet.of(VesselConnection.ConnectionKind.SEPARATION);
