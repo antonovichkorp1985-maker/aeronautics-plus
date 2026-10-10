@@ -28,6 +28,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.CircularizationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DeorbitSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.EarthRotationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
@@ -222,7 +223,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.42: inclination change; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.43: Earth rotation on the pad; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -361,6 +362,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.4f", inclination.speedChange()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus inclination slice failed", exception);
+            }
+            try {
+                EarthRotationSlice.Result spin = EarthRotationSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus Earth-rotation slice OK: inertialHoriz={}, padHoriz={}, flownHoriz={}, alt={}",
+                        String.format(java.util.Locale.ROOT, "%.2f", spin.inertialHorizontal()),
+                        String.format(java.util.Locale.ROOT, "%.1f", spin.rotatingHorizontal()),
+                        String.format(java.util.Locale.ROOT, "%.1f", spin.flownHorizontal()),
+                        String.format(java.util.Locale.ROOT, "%.1f", spin.flownAltitude()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus Earth-rotation slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

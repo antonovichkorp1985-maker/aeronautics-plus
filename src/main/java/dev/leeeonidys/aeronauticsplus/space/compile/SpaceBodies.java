@@ -10,10 +10,12 @@ public final class SpaceBodies {
     }
 
     public static CelestialBody earth() {
-        return new CelestialBody("earth", 3.986004418e14, 6_371_000.0);
+        return new CelestialBody(
+                "earth", 3.986004418e14, 6_371_000.0,
+                CelestialBody.EARTH_SIDEREAL_RADIANS_PER_SECOND);
     }
 
-    /** Pad rest: on the surface, no Earth rotation yet. */
+    /** Inertial pad rest: no Earth rotation. Vertical hops stay radial. */
     public static OrbitState pad() {
         CelestialBody earth = earth();
         return new OrbitState(
@@ -21,6 +23,13 @@ public final class SpaceBodies {
                 new Vector3d(earth.radiusMeters(), 0.0, 0.0),
                 Vector3d.ZERO,
                 0.0);
+    }
+
+    /** Equatorial pad with sidereal east (~465 m/s). Not ChemMod air. */
+    public static OrbitState rotatingPad() {
+        CelestialBody earth = earth();
+        Vector3d position = new Vector3d(earth.radiusMeters(), 0.0, 0.0);
+        return new OrbitState(earth, position, earth.surfaceVelocityMetersPerSecond(position), 0.0);
     }
 
     public static OrbitState parkingOrbit() {
