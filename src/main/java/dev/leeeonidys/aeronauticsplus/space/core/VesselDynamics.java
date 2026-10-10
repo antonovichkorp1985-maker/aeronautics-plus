@@ -272,6 +272,33 @@ public final class VesselDynamics {
     }
 
     /**
+     * Combined-plane change: rotate velocity around the radius at a node
+     * (radial speed ~ 0). Vacuum Kepler, not ChemMod world gas.
+     */
+    public static VesselState changeInclination(VesselState vessel, double deltaRadians) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (!Double.isFinite(deltaRadians) || Math.abs(deltaRadians) > Math.PI) {
+            throw new IllegalArgumentException("Inclination change must be finite and at most 180°");
+        }
+        OrbitState orbit = vessel.orbit();
+        if (Math.abs(orbit.radialSpeedMetersPerSecond()) > 50.0) {
+            throw new IllegalArgumentException("Plane change at a node (radial speed near zero)");
+        }
+        Vector3d position = orbit.positionMeters();
+        Vector3d velocity = orbit.velocityMetersPerSecond();
+        if (!(position.cross(velocity).magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Plane change needs orbital angular momentum");
+        }
+        if (Math.abs(deltaRadians) <= 1.0e-12) {
+            return vessel;
+        }
+        Vector3d nextVelocity = Quaternion.fromAxisAngle(position, deltaRadians).rotate(velocity);
+        return applyImpulse(vessel, nextVelocity.subtract(velocity));
+    }
+
+    /**
      * Point main-engine gimbals at an inertial direction, clamped per engine.
      * Attitude does not jump; torque from the new thrust axis rotates it on burn.
      */

@@ -30,6 +30,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.CircularizationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DeorbitSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
@@ -221,7 +222,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.41: deorbit to periapsis; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.42: inclination change; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -349,6 +350,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", deorbit.coastAltitude()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus deorbit slice failed", exception);
+            }
+            try {
+                InclinationSlice.Result inclination = InclinationSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus inclination slice OK: startI={}, turnedI={}, alt={}, dVmag={}",
+                        String.format(java.util.Locale.ROOT, "%.2f", inclination.startInclinationDegrees()),
+                        String.format(java.util.Locale.ROOT, "%.2f", inclination.turnedInclinationDegrees()),
+                        String.format(java.util.Locale.ROOT, "%.1f", inclination.altitudeMeters()),
+                        String.format(java.util.Locale.ROOT, "%.4f", inclination.speedChange()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus inclination slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

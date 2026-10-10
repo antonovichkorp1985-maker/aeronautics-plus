@@ -75,4 +75,17 @@ public record OrbitState(CelestialBody centralBody, Vector3d positionMeters, Vec
     public double apoapsisRadiusMeters() {
         return semiMajorAxisMeters() * (1.0 + eccentricity());
     }
+
+    /**
+     * Angle between {@code h} and +Y (pole of the XZ parking plane).
+     * Parking in this core is equatorial in XZ, so this is ~π (retrograde).
+     */
+    public double inclinationRadians() {
+        Vector3d h = specificAngularMomentum();
+        if (!(h.magnitudeSquared() > 0.0)) {
+            throw new IllegalStateException("Inclination needs orbital angular momentum");
+        }
+        double cosine = Math.max(-1.0, Math.min(1.0, h.normalized().dot(Vector3d.UNIT_Y)));
+        return Math.acos(cosine);
+    }
 }
