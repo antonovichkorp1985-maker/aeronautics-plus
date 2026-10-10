@@ -154,6 +154,36 @@ public final class VesselDynamics {
     }
 
     /**
+     * Hohmann first burn: prograde at periapsis (radial speed ~ 0) raises apoapsis.
+     * Vacuum Kepler, not ChemMod world gas.
+     */
+    public static VesselState raiseApoapsis(VesselState vessel, double apoapsisRadiusMeters) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        OrbitState orbit = vessel.orbit();
+        double radius = orbit.positionMeters().magnitude();
+        if (!(apoapsisRadiusMeters > radius) || !Double.isFinite(apoapsisRadiusMeters)) {
+            throw new IllegalArgumentException("Target apoapsis must be above the current radius");
+        }
+        if (Math.abs(orbit.radialSpeedMetersPerSecond()) > 50.0) {
+            throw new IllegalArgumentException("Raise apoapsis at periapsis (radial speed near zero)");
+        }
+        if (!(orbit.specificOrbitalEnergy() < 0.0)) {
+            throw new IllegalArgumentException("Apoapsis raise needs a bound orbit");
+        }
+        double mu = orbit.centralBody().gravitationalParameter();
+        double semiMajor = 0.5 * (radius + apoapsisRadiusMeters);
+        double transferSpeed = Math.sqrt(mu * (2.0 / radius - 1.0 / semiMajor));
+        Vector3d velocity = orbit.velocityMetersPerSecond();
+        if (!(velocity.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Apoapsis raise needs orbital velocity");
+        }
+        Vector3d targetVelocity = velocity.normalized().multiply(transferSpeed);
+        return applyImpulse(vessel, targetVelocity.subtract(velocity));
+    }
+
+    /**
      * Impulsive prograde circularization at the current radius (Hohmann second burn).
      * Attitude does not jump.
      */

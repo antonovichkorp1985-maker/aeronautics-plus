@@ -28,6 +28,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.CircularizationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
@@ -219,7 +220,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.39: circularize at apoapsis; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.40: Hohmann transfer; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -324,6 +325,18 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", circ.circularAltitude()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus circularization slice failed", exception);
+            }
+            try {
+                HohmannSlice.Result hohmann = HohmannSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus Hohmann slice OK: parkAlt={}, transferE={}, apoAlt={}, circAlt={}, circE={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", hohmann.parkingAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.4f", hohmann.transferEccentricity()),
+                        String.format(java.util.Locale.ROOT, "%.1f", hohmann.transferApoapsisAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.1f", hohmann.circularAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.4f", hohmann.circularEccentricity()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus Hohmann slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();
