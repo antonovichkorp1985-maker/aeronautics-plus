@@ -4,7 +4,7 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 public record MassElement(String id, double massKg, Vector3d localPositionMeters, Role role) {
     public enum Role {
         STRUCTURE, FAIRING, PAYLOAD, HABITAT, SOLAR, GYRO, DOCKING, BATTERY, RADIATOR,
-        ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE
+        ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER
     }
 
     public MassElement {

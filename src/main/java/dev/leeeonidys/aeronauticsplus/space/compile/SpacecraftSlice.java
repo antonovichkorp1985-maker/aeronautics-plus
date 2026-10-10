@@ -38,7 +38,8 @@ public final class SpacecraftSlice {
                 || bus.diagnosticText().contains("NO_ANTENNA")
                 || bus.diagnosticText().contains("NO_OXYGEN")
                 || bus.diagnosticText().contains("ANTENNA_WITHOUT_TRANSPONDER")
-                || bus.diagnosticText().contains("TRANSPONDER_WITHOUT_ANTENNA")) {
+                || bus.diagnosticText().contains("TRANSPONDER_WITHOUT_ANTENNA")
+                || bus.diagnosticText().contains("NO_CONTROLLER")) {
             throw new IllegalStateException("Complete bus must not warn about ACS/power/heat:\n"
                     + bus.diagnosticText());
         }
@@ -127,6 +128,7 @@ public final class SpacecraftSlice {
                 new VesselBlockOccupant(new GridPos(0, 2, -1), VesselPartCatalog.DOCKING, BlockFace.NORTH),
                 new VesselBlockOccupant(new GridPos(1, 2, 0), VesselPartCatalog.RADIATOR, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.GYRO, BlockFace.UP),
+                new VesselBlockOccupant(new GridPos(0, 3, 1), VesselPartCatalog.CONTROLLER, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(-1, 3, 0), VesselPartCatalog.BATTERY, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(1, 3, 0), VesselPartCatalog.SOLAR, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.PAYLOAD, BlockFace.UP),

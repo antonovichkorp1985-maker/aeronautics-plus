@@ -173,6 +173,12 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
         boolean hasOxygen = hasKind(VesselComponent.ComponentKind.OXYGEN);
         boolean hasTransponder = hasKind(VesselComponent.ComponentKind.TRANSPONDER);
         boolean hasTelescope = hasKind(VesselComponent.ComponentKind.TELESCOPE);
+        boolean hasEngine = hasKind(VesselComponent.ComponentKind.ENGINE);
+        boolean hasController = hasKind(VesselComponent.ComponentKind.CONTROLLER);
+        if (hasEngine && !hasController) {
+            diagnostics.add(warning("NO_CONTROLLER",
+                    "Нет блока управления: куча материалов ещё не ракета"));
+        }
         if (hasHabitat && !hasOxygen) {
             diagnostics.add(warning("NO_OXYGEN",
                     "Жилой модуль без бака кислорода: это не LOX и не окислитель двигателя"));
@@ -245,6 +251,7 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
             case OXYGEN -> MassElement.Role.OXYGEN;
             case TRANSPONDER -> MassElement.Role.TRANSPONDER;
             case TELESCOPE -> MassElement.Role.TELESCOPE;
+            case CONTROLLER -> MassElement.Role.CONTROLLER;
             default -> MassElement.Role.STRUCTURE;
         };
     }

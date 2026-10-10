@@ -650,6 +650,24 @@ def mount_mesh() -> Mesh:
     return mesh
 
 
+def controller_mesh() -> Mesh:
+    """Seat plus console. Marks the pile as a rocket. Not a KSP command pod."""
+    mesh = Mesh()
+    mesh.add("deck", box(0.12, 0.02, 0.12, 0.88, 0.10, 0.88, 0.20, 0.15, 0.40, 0.35))
+    seat = []
+    seat.extend(box(0.28, 0.10, 0.30, 0.72, 0.22, 0.70, 0.35, 0.20, 0.55, 0.45))
+    seat.extend(box(0.28, 0.22, 0.58, 0.72, 0.62, 0.72, 0.35, 0.20, 0.55, 0.45))
+    seat.extend(box(0.28, 0.22, 0.30, 0.36, 0.48, 0.58, 0.40, 0.25, 0.58, 0.50))
+    seat.extend(box(0.64, 0.22, 0.30, 0.72, 0.48, 0.58, 0.40, 0.25, 0.58, 0.50))
+    mesh.add("seat", seat)
+    mesh.add(
+        "console",
+        box(0.22, 0.10, 0.12, 0.78, 0.42, 0.28, 0.08, 0.08, 0.45, 0.55)
+        + box(0.32, 0.42, 0.16, 0.68, 0.48, 0.24, 0.70, 0.20, 0.90, 0.40),
+    )
+    return mesh
+
+
 def chunk(tag: bytes, data: bytes) -> bytes:
     return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
 
@@ -683,6 +701,15 @@ def engine_tex(x, y, s):
     if (x + y) % 5 == 0:
         return (72, 48, 32)
     return (64, 56, 50)
+
+
+def controller_tex(x, y, s):
+    ny = y / (s - 1)
+    if ny > 0.72:
+        return (36, 40, 48) if (x + y) % 3 else (52, 56, 64)
+    if 0.40 <= ny <= 0.58:
+        return (48, 140, 72) if x % 6 < 2 else (32, 48, 64)
+    return (92, 72, 48) if (x + y) % 4 else (70, 54, 38)
 
 
 def tank_tex(x, y, s):
@@ -963,13 +990,21 @@ def assert_outward() -> None:
 
 
 def main() -> None:
-    """Only the Create-train mount is an AP block. Hull SKUs belong to ChemMod."""
+    """AP world blocks: mount, engine, control seat. Tanks stay ChemMod."""
     assert_outward()
     mount_mesh().write(GEO / "rocket_mount.obj")
+    engine_mesh().write(GEO / "rocket_engine.obj")
+    controller_mesh().write(GEO / "rocket_controller.obj")
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
+    write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
+    write_png(TEX / "rocket_controller.png", paint(64, controller_tex))
     write_part_models("rocket_mount")
+    write_part_models("rocket_engine")
+    write_part_models("rocket_controller")
     write_blockstate("rocket_mount", UP_STATES)
-    print("rocket mount mesh written; ChemMod owns hull SKUs")
+    write_blockstate("rocket_engine", ENGINE_STATES)
+    write_blockstate("rocket_controller", UP_STATES)
+    print("AP rocket fixtures written; ChemMod owns tanks")
 
 
 if __name__ == "__main__":

@@ -35,5 +35,7 @@ public enum VesselPartKind {
     /** Radio transponder. The antenna is the aperture; this is the electronics. */
     TRANSPONDER,
     /** Optical telescope / Earth-observation tube. */
-    TELESCOPE
+    TELESCOPE,
+    /** Seat / console that marks the pile as a rocket. */
+    CONTROLLER
 }

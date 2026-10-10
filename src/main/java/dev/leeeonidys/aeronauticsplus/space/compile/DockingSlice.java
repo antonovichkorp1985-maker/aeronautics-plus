@@ -37,7 +37,8 @@ public final class DockingSlice {
                 || completeText.contains("BATTERY_WITHOUT_SOLAR")
                 || completeText.contains("NO_ANTENNA")
                 || completeText.contains("NO_OXYGEN")
-                || completeText.contains("ANTENNA_WITHOUT_TRANSPONDER")) {
+                || completeText.contains("ANTENNA_WITHOUT_TRANSPONDER")
+                || completeText.contains("NO_CONTROLLER")) {
             throw new IllegalStateException("Complete bus must not warn about dock/power/heat:\\n" + completeText);
         }
         if (!complete.stages().get(0).hasDocking()

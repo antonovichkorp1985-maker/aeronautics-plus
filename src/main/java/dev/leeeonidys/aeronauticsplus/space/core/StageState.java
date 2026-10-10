@@ -99,6 +99,10 @@ public record StageState(
         return structure.stream().anyMatch(element -> element.role() == MassElement.Role.TELESCOPE);
     }
 
+    public boolean hasController() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.CONTROLLER);
+    }
+
     public int gyroCount() {
         return (int) structure.stream().filter(element -> element.role() == MassElement.Role.GYRO).count();
     }

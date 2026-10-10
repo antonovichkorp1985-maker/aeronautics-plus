@@ -19,6 +19,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.SplitTankSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VarietySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ElectronicsSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.ControllerSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -170,11 +171,21 @@ public final class AeronauticsPlus {
         return new AircraftPropellerBlockEntity(AIRCRAFT_PROPELLER_BE.get(), pos, state);
     }
 
-    /** Create-train fixture. Hull, tanks and internals come from ChemMod, not from AP SKUs. */
+    /** Create-train fixture. Hull and tanks come from ChemMod. */
     public static final DeferredBlock<VesselPartBlock> ROCKET_MOUNT =
             registerVesselPart(VesselPartCatalog.MOUNT, MapColor.COLOR_YELLOW);
     public static final DeferredItem<BlockItem> ROCKET_MOUNT_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_MOUNT);
+    /** Dynamics. Not a ChemMod tank. */
+    public static final DeferredBlock<VesselPartBlock> ROCKET_ENGINE =
+            registerVesselPart(VesselPartCatalog.ENGINE, MapColor.COLOR_ORANGE);
+    public static final DeferredItem<BlockItem> ROCKET_ENGINE_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_ENGINE);
+    /** Seat that marks the pile as a rocket. */
+    public static final DeferredBlock<VesselPartBlock> ROCKET_CONTROLLER =
+            registerVesselPart(VesselPartCatalog.CONTROLLER, MapColor.COLOR_BLACK);
+    public static final DeferredItem<BlockItem> ROCKET_CONTROLLER_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_CONTROLLER);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -185,6 +196,8 @@ public final class AeronauticsPlus {
                         output.accept(PROTOTYPE_PROPELLER_ITEM.get());
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
                         output.accept(ROCKET_MOUNT_ITEM.get());
+                        output.accept(ROCKET_ENGINE_ITEM.get());
+                        output.accept(ROCKET_CONTROLLER_ITEM.get());
                     })
                     .build());
 
@@ -194,7 +207,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.32: rocket SKUs removed; ChemMod assembles the pile, AP gives it rocket physics.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.33: engine and control seat; ChemMod tanks adapted later, no AP tank SKUs.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -383,6 +396,15 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus payload slice failed", exception);
             }
             try {
+                ControllerSlice.Result control = ControllerSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus controller slice OK: designated={}, unmarked={}",
+                        control.designated(),
+                        control.unmarked());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus controller slice failed", exception);
+            }
+            try {
                 TransporterSlice.Result haul = TransporterSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus transporter slice OK: diameter={}, height={}, haulSeconds={}, padX={}, launchable={}",
@@ -401,8 +423,10 @@ public final class AeronauticsPlus {
             AIRCRAFT_PROPELLERS.forEach(entry ->
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 12
+            boolean allRegistered = registeredItems.size() == 14
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

@@ -5,8 +5,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.PropellantState;
 import java.util.List;
 
 /**
- * In-memory physics fixtures for the compiler. These are not Minecraft items.
- * ChemMod owns hull, tanks, internals and assembly. AP assigns rocket properties.
+ * Compiler fixtures. Minecraft items from this catalog are only the engine, control
+ * seat and train mount. Tanks stay ChemMod (adapt those). Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";
@@ -74,6 +74,8 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec OXYGEN = VesselPartSpec.oxygen("cabin_oxygen", 40.0);
     public static final VesselPartSpec TRANSPONDER = VesselPartSpec.transponder("radio_transponder", 12.0);
     public static final VesselPartSpec TELESCOPE = VesselPartSpec.telescope("space_telescope", 85.0);
+    /** Marks the pile as a rocket. */
+    public static final VesselPartSpec CONTROLLER = VesselPartSpec.controller("rocket_controller", 35.0);
 
     private VesselPartCatalog() {
     }
@@ -84,7 +86,7 @@ public final class VesselPartCatalog {
                 OXIDIZER_TANK, OXIDIZER_TANK_SMALL, OXIDIZER_TANK_LARGE, LH2_TANK,
                 ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, FAIRING, PAYLOAD,
                 HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR,
-                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE);
+                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER);
     }
 
     public static VesselPartSpec byId(String id) {

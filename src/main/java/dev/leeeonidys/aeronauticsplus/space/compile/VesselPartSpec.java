@@ -162,6 +162,12 @@ public record VesselPartSpec(
                 id, VesselPartKind.TELESCOPE, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.COLUMN);
     }
 
+    /** Control seat. Placing it is what makes the ChemMod pile a rocket. */
+    public static VesselPartSpec controller(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.CONTROLLER, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CAN);
+    }
+
     /**
      * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
      * tanks expose only that species — oxidizer does not travel through the fuel hull.
@@ -197,7 +203,7 @@ public record VesselPartSpec(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.THERMAL,
                     VesselConnection.ConnectionKind.DATA);
-            case ANTENNA, TELESCOPE -> EnumSet.of(
+            case ANTENNA, TELESCOPE, CONTROLLER -> EnumSet.of(
                     VesselConnection.ConnectionKind.STRUCTURAL,
                     VesselConnection.ConnectionKind.DATA);
             case TRANSPONDER -> EnumSet.of(

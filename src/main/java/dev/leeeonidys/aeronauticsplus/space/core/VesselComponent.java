@@ -11,7 +11,7 @@ public record VesselComponent(
         Vector3d localPositionMeters) {
     public enum ComponentKind {
         STRUCTURE, TANK, ENGINE, RCS, AVIONICS, FAIRING, PAYLOAD, HABITAT, SOLAR, GYRO,
-        DOCKING, BATTERY, RADIATOR, ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE
+        DOCKING, BATTERY, RADIATOR, ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER
     }
 
     public VesselComponent {
