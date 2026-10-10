@@ -26,6 +26,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.CircularizationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
@@ -218,7 +219,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.38: hot-staging on gravity turn; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.39: circularize at apoapsis; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -312,6 +313,17 @@ public final class AeronauticsPlus {
                         staging.stuckDry());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus staging slice failed", exception);
+            }
+            try {
+                CircularizationSlice.Result circ = CircularizationSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus circularization slice OK: startE={}, apoAlt={}, circE={}, circAlt={}",
+                        String.format(java.util.Locale.ROOT, "%.4f", circ.startEccentricity()),
+                        String.format(java.util.Locale.ROOT, "%.1f", circ.apoapsisAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.4f", circ.circularEccentricity()),
+                        String.format(java.util.Locale.ROOT, "%.1f", circ.circularAltitude()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus circularization slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

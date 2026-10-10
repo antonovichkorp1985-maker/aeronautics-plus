@@ -118,6 +118,63 @@ public final class VesselDynamics {
     }
 
     /**
+     * Coast in vacuum until apoapsis (radial speed crosses down through zero).
+     * Bound orbits only; not ChemMod world gas.
+     */
+    public static VesselState coastToApoapsis(VesselState vessel, double maxSeconds, double stepSeconds) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        if (maxSeconds < 0.0 || !Double.isFinite(maxSeconds)) {
+            throw new IllegalArgumentException("Coast duration must be finite and non-negative");
+        }
+        if (!(stepSeconds > 0.0) || !Double.isFinite(stepSeconds)) {
+            throw new IllegalArgumentException("Coast step must be finite and positive");
+        }
+        if (!(vessel.orbit().specificOrbitalEnergy() < 0.0)) {
+            throw new IllegalArgumentException("Apoapsis coast needs a bound orbit");
+        }
+        if (vessel.orbit().eccentricity() < 1.0e-4) {
+            return vessel;
+        }
+        VesselState state = vessel;
+        double prevRadial = state.orbit().radialSpeedMetersPerSecond();
+        double remaining = maxSeconds;
+        while (remaining > 0.0) {
+            double dt = Math.min(stepSeconds, remaining);
+            state = propagate(state, dt, dt);
+            remaining -= dt;
+            double radial = state.orbit().radialSpeedMetersPerSecond();
+            if (prevRadial > 0.0 && radial <= 0.0) {
+                return state;
+            }
+            prevRadial = radial;
+        }
+        throw new IllegalStateException("Apoapsis was not reached in " + maxSeconds + " s");
+    }
+
+    /**
+     * Impulsive prograde circularization at the current radius (Hohmann second burn).
+     * Attitude does not jump.
+     */
+    public static VesselState circularize(VesselState vessel) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        OrbitState orbit = vessel.orbit();
+        Vector3d position = orbit.positionMeters();
+        Vector3d velocity = orbit.velocityMetersPerSecond();
+        Vector3d angularMomentum = position.cross(velocity);
+        if (!(angularMomentum.magnitudeSquared() > 0.0)) {
+            throw new IllegalArgumentException("Circularization needs orbital angular momentum");
+        }
+        double radius = position.magnitude();
+        double circularSpeed = Math.sqrt(orbit.centralBody().gravitationalParameter() / radius);
+        Vector3d circularVelocity = angularMomentum.cross(position).normalized().multiply(circularSpeed);
+        return applyImpulse(vessel, circularVelocity.subtract(velocity));
+    }
+
+    /**
      * Point main-engine gimbals at an inertial direction, clamped per engine.
      * Attitude does not jump; torque from the new thrust axis rotates it on burn.
      */

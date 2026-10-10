@@ -43,4 +43,36 @@ public record OrbitState(CelestialBody centralBody, Vector3d positionMeters, Vec
         }
         return Math.atan2(radialSpeedMetersPerSecond(), horizontal);
     }
+
+    public Vector3d specificAngularMomentum() {
+        return positionMeters.cross(velocityMetersPerSecond);
+    }
+
+    /** Laplace–Runge–Lenz: 0 on a circle, 1 on a parabola. */
+    public Vector3d eccentricityVector() {
+        double mu = centralBody.gravitationalParameter();
+        Vector3d h = specificAngularMomentum();
+        return velocityMetersPerSecond.cross(h).multiply(1.0 / mu).subtract(radialUnit());
+    }
+
+    public double eccentricity() {
+        return eccentricityVector().magnitude();
+    }
+
+    /** Bound ellipses only. */
+    public double semiMajorAxisMeters() {
+        double energy = specificOrbitalEnergy();
+        if (!(energy < 0.0)) {
+            throw new IllegalStateException("Semi-major axis is defined for bound orbits");
+        }
+        return -centralBody.gravitationalParameter() / (2.0 * energy);
+    }
+
+    public double periapsisRadiusMeters() {
+        return semiMajorAxisMeters() * (1.0 - eccentricity());
+    }
+
+    public double apoapsisRadiusMeters() {
+        return semiMajorAxisMeters() * (1.0 + eccentricity());
+    }
 }
