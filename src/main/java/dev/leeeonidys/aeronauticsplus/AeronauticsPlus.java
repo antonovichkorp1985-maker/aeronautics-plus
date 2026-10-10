@@ -26,6 +26,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MissionSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MixtureSlice;
@@ -215,7 +216,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.35: launch pad is AP ground; ChemMod gases still not AP.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.36: gravity turn / pitch kick; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -287,6 +288,17 @@ public final class AeronauticsPlus {
                         ascent.fairingBlockedOnPad());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus ascent slice failed", exception);
+            }
+            try {
+                GravityTurnSlice.Result turn = GravityTurnSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus gravity-turn slice OK: verticalHoriz={}, turnedHoriz={}, fpa={}, alt={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", turn.verticalHorizontal()),
+                        String.format(java.util.Locale.ROOT, "%.1f", turn.turnedHorizontal()),
+                        String.format(java.util.Locale.ROOT, "%.1f", turn.turnedFlightPathDegrees()),
+                        String.format(java.util.Locale.ROOT, "%.1f", turn.turnedAltitude()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus gravity-turn slice failed", exception);
             }
             try {
                 AttitudeSlice.Result attitude = AttitudeSlice.execute();

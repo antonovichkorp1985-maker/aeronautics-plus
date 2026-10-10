@@ -20,4 +20,27 @@ public record OrbitState(CelestialBody centralBody, Vector3d positionMeters, Vec
     public double altitudeMeters() {
         return positionMeters.magnitude() - centralBody.radiusMeters();
     }
+
+    public Vector3d radialUnit() {
+        return positionMeters.normalized();
+    }
+
+    public double radialSpeedMetersPerSecond() {
+        return velocityMetersPerSecond.dot(radialUnit());
+    }
+
+    /** Speed tangent to the local horizon. Zero on a purely vertical hop. */
+    public double horizontalSpeedMetersPerSecond() {
+        Vector3d radial = radialUnit();
+        return velocityMetersPerSecond.subtract(radial.multiply(velocityMetersPerSecond.dot(radial))).magnitude();
+    }
+
+    /** 0 = local horizon, π/2 = straight up. */
+    public double flightPathAngleRadians() {
+        double horizontal = horizontalSpeedMetersPerSecond();
+        if (!(horizontal > 1.0e-12)) {
+            return velocityMetersPerSecond.dot(radialUnit()) >= 0.0 ? Math.PI / 2.0 : -Math.PI / 2.0;
+        }
+        return Math.atan2(radialSpeedMetersPerSecond(), horizontal);
+    }
 }

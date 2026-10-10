@@ -227,6 +227,116 @@ public final class VesselDynamics {
     }
 
     /**
+     * Vacuum gravity turn: declared thrust, no ChemMod air.
+     * Vertical, pitch kick, then thrust follows velocity.
+     */
+    public static GravityTurnOutcome attemptGravityTurn(
+            VesselState vessel, PitchProgram program, double durationSeconds, double stepSeconds) {
+        if (vessel == null || program == null) {
+            throw new IllegalArgumentException("Vessel and pitch program are required");
+        }
+        if (durationSeconds < 0.0 || !Double.isFinite(durationSeconds)) {
+            throw new IllegalArgumentException("Gravity-turn duration must be finite and non-negative");
+        }
+        if (!(stepSeconds > 0.0) || !Double.isFinite(stepSeconds)) {
+            throw new IllegalArgumentException("Gravity-turn step must be finite and positive");
+        }
+
+        List<FlightFault> faults = new ArrayList<>();
+        double padThrust = vessel.activeStage().thrustNewtons();
+        double padWeight = vessel.totalMassKg() * vessel.orbit().centralBody().surfaceGravityMetersPerSecond2();
+        double padTw = padWeight > 0.0 ? padThrust / padWeight : 0.0;
+        if (!(padThrust > padWeight)) {
+            faults.add(FlightFault.holdDown(padTw));
+            return snapshotTurn(vessel, durationSeconds, 0.0, padTw, faults);
+        }
+        if (!(vessel.activeStage().hasCompatibleFeed())) {
+            faults.add(FlightFault.wrongPropellant());
+            return snapshotTurn(vessel, durationSeconds, 0.0, padTw, faults);
+        }
+        if (!(padThrust > 0.0)) {
+            faults.add(FlightFault.zeroThrust());
+            return snapshotTurn(vessel, durationSeconds, 0.0, padTw, faults);
+        }
+
+        VesselState state = vessel;
+        StageBurnResult hold = state.activeStage().burn(HOLD_DOWN_SECONDS);
+        state = replaceActive(state, hold.stage()).withOrbit(new OrbitState(
+                state.orbit().centralBody(),
+                state.orbit().positionMeters(),
+                state.orbit().velocityMetersPerSecond(),
+                state.orbit().epochSeconds() + hold.elapsedSeconds()));
+        if (hold.propellantDepleted()) {
+            faults.add(FlightFault.dryTank(hold.elapsedSeconds()));
+            return snapshotTurn(state, durationSeconds, 0.0, padTw, faults);
+        }
+
+        double remaining = durationSeconds;
+        double flown = 0.0;
+        boolean kicked = false;
+        while (remaining > 0.0) {
+            double dt = Math.min(stepSeconds, remaining);
+            OrbitState orbit = state.orbit();
+            double mass = state.totalMassKg();
+            if (!(mass > 0.0)) {
+                break;
+            }
+            Vector3d radial = orbit.radialUnit();
+            Attitude attitude;
+            if (!kicked && flown + 1.0e-12 >= program.kickSeconds()) {
+                attitude = Attitude.pointing(Vector3d.UNIT_Y, program.aimed(radial));
+                kicked = true;
+            } else if (kicked && orbit.velocityMetersPerSecond().magnitude() > 5.0) {
+                attitude = Attitude.pointing(Vector3d.UNIT_Y, orbit.velocityMetersPerSecond());
+            } else {
+                attitude = Attitude.pointing(Vector3d.UNIT_Y, radial);
+            }
+            state = state.withAttitude(attitude);
+            Vector3d thrust = state.inertialThrustNewtons();
+            if (!(thrust.magnitudeSquared() > 0.0)) {
+                faults.add(FlightFault.zeroThrust());
+                break;
+            }
+            Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
+                    orbit.centralBody(), orbit.positionMeters());
+            Vector3d acceleration = gravity.add(thrust.multiply(1.0 / mass));
+            Vector3d nextPosition = orbit.positionMeters()
+                    .add(orbit.velocityMetersPerSecond().multiply(dt))
+                    .add(acceleration.multiply(0.5 * dt * dt));
+            if (nextPosition.magnitude() < orbit.centralBody().radiusMeters()) {
+                faults.add(FlightFault.impact(flown + dt));
+                break;
+            }
+            Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
+            StageBurnResult burn = state.activeStage().burn(dt);
+            state = replaceActive(state, burn.stage()).withOrbit(new OrbitState(
+                    orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt))
+                    .withAttitude(attitude);
+            flown += burn.elapsedSeconds();
+            remaining -= burn.elapsedSeconds();
+            if (burn.propellantDepleted()) {
+                faults.add(FlightFault.dryTank(flown));
+                break;
+            }
+            if (burn.elapsedSeconds() + 1.0e-12 < dt) {
+                break;
+            }
+        }
+        return snapshotTurn(state, durationSeconds, flown, padTw, faults);
+    }
+
+    private static GravityTurnOutcome snapshotTurn(
+            VesselState vessel, double requested, double elapsed, double padTw, List<FlightFault> faults) {
+        OrbitState orbit = vessel.orbit();
+        return new GravityTurnOutcome(
+                vessel, requested, elapsed,
+                orbit.horizontalSpeedMetersPerSecond(),
+                orbit.flightPathAngleRadians(),
+                orbit.altitudeMeters(),
+                padTw, faults);
+    }
+
+    /**
      * CMG/gyrodyne despin: torque without propellant. Needs a gyro and solar power
      * (ISS гиродины, Soyuz has no CMGs — RCS instead).
      */
