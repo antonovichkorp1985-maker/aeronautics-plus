@@ -4,8 +4,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.SpaceBodies;
 import java.util.List;
 
 /**
- * Deterministic pad ascent: Earth atmosphere, sea-level vs vacuum Isp, hold-down
- * clamps, drag, Max-Q, and fairing stay-on in dense air. No orientation GUI.
+ * Deterministic pad ascent against a stand-in ambient profile.
+ * World gas is ChemMod; this slice does not own the planet's air.
  */
 public final class AscentSlice {
     private AscentSlice() {

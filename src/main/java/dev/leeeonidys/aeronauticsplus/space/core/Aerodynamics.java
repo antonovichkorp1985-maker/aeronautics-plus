@@ -1,8 +1,8 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
- * Continuum drag on a rocket in atmosphere. Cd ~ 0.5 is a fairing-on order of
- * magnitude (Soyuz / Falcon 9 class), not a CFD table.
+ * Continuum drag given a density. Density itself comes from ChemMod world gas
+ * later; until then {@link Atmosphere} is a stand-in. Cd ~ 0.5 is order of magnitude.
  */
 public final class Aerodynamics {
     public static final double ROCKET_CD = 0.5;

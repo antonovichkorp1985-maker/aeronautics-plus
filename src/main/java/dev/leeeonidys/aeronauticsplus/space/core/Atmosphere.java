@@ -1,8 +1,9 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
- * Planetary air the vehicle flies through — not ChemMod tank gas.
- * Scale height 8.5 km is an Earth-mean fit, not a layered ISA table.
+ * Temporary stand-in for ambient density/pressure.
+ * World gas (the medium of the world) belongs to ChemMod — not tank contents
+ * and not an AP atmosphere. Replace this when ChemMod exposes the medium.
  */
 public record Atmosphere(
         String id,
