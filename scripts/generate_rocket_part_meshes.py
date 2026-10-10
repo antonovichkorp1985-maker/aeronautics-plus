@@ -1021,24 +1021,28 @@ def assert_outward() -> None:
 
 
 def main() -> None:
-    """AP world blocks: mount, pad, engine, control seat. Tanks stay ChemMod."""
+    """AP world blocks: mount, pad, engine, control seat, pyro ring. Tanks stay ChemMod."""
     assert_outward()
     mount_mesh().write(GEO / "rocket_mount.obj")
     pad_mesh().write(GEO / "launch_pad.obj")
     engine_mesh().write(GEO / "rocket_engine.obj")
     controller_mesh().write(GEO / "rocket_controller.obj")
+    separator_mesh().write(GEO / "stage_separator.obj")
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
     write_png(TEX / "launch_pad.png", paint(64, pad_tex))
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_controller.png", paint(64, controller_tex))
+    write_png(TEX / "stage_separator.png", paint(64, separator_tex))
     write_part_models("rocket_mount")
     write_part_models("launch_pad")
     write_part_models("rocket_engine")
     write_part_models("rocket_controller")
+    write_part_models("stage_separator")
     write_blockstate("rocket_mount", UP_STATES)
     write_blockstate("launch_pad", UP_STATES)
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_controller", UP_STATES)
+    write_blockstate("stage_separator", UP_STATES)
     print("AP rocket fixtures written; ChemMod owns tanks")
 
 

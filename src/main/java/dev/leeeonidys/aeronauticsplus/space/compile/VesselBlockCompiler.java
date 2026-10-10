@@ -34,6 +34,48 @@ public final class VesselBlockCompiler {
         return compile(grid).analyze().withDiagnostics(extra);
     }
 
+    /**
+     * Fire the pyro ring: structural islands become two piles. Pad stays behind.
+     * The ring stays on the booster (KSP decoupler). Upper flies on.
+     */
+    public static GridSplit firePyro(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            throw new IllegalArgumentException("Stack is required");
+        }
+        List<VesselBlockOccupant> flying = new ArrayList<>();
+        boolean hasRing = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.PAD) {
+                continue;
+            }
+            if (occupant.spec().kind() == VesselPartKind.SEPARATOR) {
+                hasRing = true;
+            }
+            flying.add(occupant);
+        }
+        if (!hasRing) {
+            throw new IllegalStateException("No pyro ring");
+        }
+        if (flying.isEmpty()) {
+            throw new IllegalStateException("Nothing to separate");
+        }
+        Map<GridPos, List<VesselBlockOccupant>> byPos = index(flying);
+        Map<GridPos, String> stageByPos = assignStages(flying, byPos);
+        List<VesselBlockOccupant> booster = new ArrayList<>();
+        List<VesselBlockOccupant> continuing = new ArrayList<>();
+        for (VesselBlockOccupant occupant : flying) {
+            if ("stage-0".equals(stageByPos.get(occupant.pos()))) {
+                booster.add(occupant);
+            } else {
+                continuing.add(occupant);
+            }
+        }
+        if (booster.isEmpty() || continuing.isEmpty()) {
+            throw new IllegalStateException("Pyro ring did not cut a stage");
+        }
+        return new GridSplit(new VesselBlockGrid(continuing), new VesselBlockGrid(booster));
+    }
+
     private static List<VesselDiagnostic> padDiagnostics(VesselBlockGrid grid) {
         if (grid == null || grid.isEmpty()) {
             return List.of();

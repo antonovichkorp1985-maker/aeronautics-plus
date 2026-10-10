@@ -21,6 +21,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VarietySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ElectronicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ControllerSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PadSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.RecoverySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselCompileSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -204,6 +205,11 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.PAD, MapColor.STONE);
     public static final DeferredItem<BlockItem> LAUNCH_PAD_ITEM =
             ITEMS.registerSimpleBlockItem(LAUNCH_PAD);
+    /** KSP-class pyro clamp ring. Cuts stages; stays on the booster. */
+    public static final DeferredBlock<VesselPartBlock> STAGE_SEPARATOR =
+            registerVesselPart(VesselPartCatalog.SEPARATOR, MapColor.METAL);
+    public static final DeferredItem<BlockItem> STAGE_SEPARATOR_ITEM =
+            ITEMS.registerSimpleBlockItem(STAGE_SEPARATOR);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -216,6 +222,7 @@ public final class AeronauticsPlus {
                         output.accept(ROCKET_MOUNT_ITEM.get());
                         output.accept(LAUNCH_PAD_ITEM.get());
                         output.accept(ROCKET_ENGINE_ITEM.get());
+                        output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                     })
                     .build());
@@ -226,7 +233,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.47: Falcon landing pad; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.48: pyro ring returns booster as blocks; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -570,6 +577,19 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus pad slice failed", exception);
             }
             try {
+                RecoverySlice.Result recovery = RecoverySlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus recovery slice OK: pyro={}, boosterEngine={}, upperEngine={}, padGround={}, onPad={}, parts={}",
+                        recovery.pyroCut(),
+                        recovery.boosterHasEngine(),
+                        recovery.upperHasEngine(),
+                        recovery.padStayedOnGround(),
+                        recovery.planOnPad(),
+                        recovery.recoveredParts());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus recovery slice failed", exception);
+            }
+            try {
                 TransporterSlice.Result haul = TransporterSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus transporter slice OK: diameter={}, height={}, haulSeconds={}, padX={}, launchable={}",
@@ -590,9 +610,10 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LAUNCH_PAD_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 15
+            boolean allRegistered = registeredItems.size() == 16
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

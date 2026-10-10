@@ -5,6 +5,7 @@ public enum VesselPartKind {
     STRUCTURE,
     TANK,
     ENGINE,
+    /** Pyro clamp ring. Cuts stages like a KSP decoupler. */
     SEPARATOR,
     /** Fixture on a Create train. The train plus this block is the transporter. */
     MOUNT,
