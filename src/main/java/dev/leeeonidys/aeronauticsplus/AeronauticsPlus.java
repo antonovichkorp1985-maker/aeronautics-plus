@@ -225,7 +225,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.45: Falcon boostback; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.46: Falcon landing legs; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -379,9 +379,10 @@ public final class AeronauticsPlus {
             try {
                 LandingSlice.Result landing = LandingSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus landing slice OK: hopper={}, deadImpact={}, booster={}, v={}, upperStages={}",
+                        "Aeronautics Plus landing slice OK: hopper={}, deadImpact={}, noLegs={}, booster={}, v={}, upperStages={}",
                         landing.hopperLanded(),
                         landing.deadImpact(),
+                        landing.noLegs(),
                         landing.boosterLanded(),
                         String.format(java.util.Locale.ROOT, "%.2f", landing.touchdownSpeed()),
                         landing.upperStages());

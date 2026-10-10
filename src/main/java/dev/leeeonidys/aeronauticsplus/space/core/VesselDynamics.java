@@ -546,7 +546,8 @@ public final class VesselDynamics {
     }
 
     /**
-     * Vacuum suicide burn to the surface. Grid fins and entry heat wait on ChemMod air.
+     * Vacuum suicide burn to the surface. Soft contact without landing legs is {@code NO_LEGS}.
+     * Grid fins and entry heat wait on ChemMod air.
      * Thrust is radial-out when the stopping distance reaches altitude (Falcon landing burn).
      */
     public static LandingOutcome attemptLanding(VesselState vessel, double maxSeconds, double stepSeconds) {
@@ -585,7 +586,7 @@ public final class VesselDynamics {
             double vDown = -orbit.radialSpeedMetersPerSecond();
             if (altitude <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS
                     && speed <= LandingOutcome.TOUCHDOWN_SPEED_METERS_PER_SECOND) {
-                return snapshotLanding(touchdown(state), maxSeconds, flown, tw, faults);
+                return finishLanding(state, maxSeconds, flown, tw, faults);
             }
 
             state = state.withAttitude(Attitude.pointing(Vector3d.UNIT_Y, radial));
@@ -613,8 +614,8 @@ public final class VesselDynamics {
             if (nextPosition.magnitude() <= surface) {
                 double hitSpeed = nextVelocity.magnitude();
                 if (hitSpeed <= LandingOutcome.TOUCHDOWN_SPEED_METERS_PER_SECOND) {
-                    return snapshotLanding(touchdown(state.withOrbit(new OrbitState(
-                            orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt))),
+                    return finishLanding(state.withOrbit(new OrbitState(
+                            orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt)),
                             maxSeconds, flown + dt, tw, faults);
                 }
                 faults.add(FlightFault.impact(flown + dt));
@@ -645,6 +646,15 @@ public final class VesselDynamics {
             }
         }
         return snapshotLanding(state, maxSeconds, flown, tw, faults);
+    }
+
+    private static LandingOutcome finishLanding(
+            VesselState vessel, double requested, double elapsed, double tw, List<FlightFault> faults) {
+        if (!vessel.activeStage().hasLandingLegs()) {
+            faults.add(FlightFault.noLegs(elapsed));
+            return snapshotLanding(vessel, requested, elapsed, tw, faults);
+        }
+        return snapshotLanding(touchdown(vessel), requested, elapsed, tw, faults);
     }
 
     private static VesselState touchdown(VesselState vessel) {

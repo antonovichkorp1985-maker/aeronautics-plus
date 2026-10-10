@@ -10,6 +10,7 @@ public record FlightFault(String code, String message, double atSeconds) {
     public static final String WRONG_PROPELLANT = "WRONG_PROPELLANT";
     public static final String HOLD_DOWN = "HOLD_DOWN";
     public static final String IMPACT = "IMPACT";
+    public static final String NO_LEGS = "NO_LEGS";
     public static final String FAIRING_ATMOSPHERE = "FAIRING_ATMOSPHERE";
 
     public FlightFault {
@@ -55,6 +56,12 @@ public record FlightFault(String code, String message, double atSeconds) {
     public static FlightFault impact(double atSeconds) {
         return new FlightFault(IMPACT,
                 "Удар о поверхность на " + format(atSeconds) + " с",
+                atSeconds);
+    }
+
+    public static FlightFault noLegs(double atSeconds) {
+        return new FlightFault(NO_LEGS,
+                "Нет посадочных ног — касание на " + format(atSeconds) + " с ломает ступень",
                 atSeconds);
     }
 

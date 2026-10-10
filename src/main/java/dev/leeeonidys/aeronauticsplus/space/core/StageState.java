@@ -55,6 +55,10 @@ public record StageState(
         return engines.stream().filter(EngineState::rcs).toList();
     }
 
+    public boolean hasLandingLegs() {
+        return structure.stream().anyMatch(element -> element.role() == MassElement.Role.LEGS);
+    }
+
     public boolean hasGyro() {
         return structure.stream().anyMatch(element -> element.role() == MassElement.Role.GYRO);
     }

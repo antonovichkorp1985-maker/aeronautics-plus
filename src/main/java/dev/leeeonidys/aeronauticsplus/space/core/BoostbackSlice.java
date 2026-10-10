@@ -60,7 +60,9 @@ public final class BoostbackSlice {
                 1.0, 0.0, true, new Vector3d(0.0, -1.0, 0.0), Vector3d.UNIT_Y);
         StageState stage = new StageState(
                 "booster",
-                List.of(new MassElement("frame", 120.0, Vector3d.ZERO)),
+                List.of(
+                        new MassElement("frame", 120.0, Vector3d.ZERO),
+                        new MassElement("legs", 25.0, new Vector3d(0.0, -1.2, 0.0), MassElement.Role.LEGS)),
                 List.of(new TankState(
                         "tank", 80.0, 400.0,
                         new PropellantState("rp1", "lox", 80.0, 184.0),
