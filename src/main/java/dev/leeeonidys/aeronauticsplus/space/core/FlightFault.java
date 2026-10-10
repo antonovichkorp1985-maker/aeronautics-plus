@@ -11,6 +11,7 @@ public record FlightFault(String code, String message, double atSeconds) {
     public static final String HOLD_DOWN = "HOLD_DOWN";
     public static final String IMPACT = "IMPACT";
     public static final String NO_LEGS = "NO_LEGS";
+    public static final String OFF_PAD = "OFF_PAD";
     public static final String FAIRING_ATMOSPHERE = "FAIRING_ATMOSPHERE";
 
     public FlightFault {
@@ -62,6 +63,13 @@ public record FlightFault(String code, String message, double atSeconds) {
     public static FlightFault noLegs(double atSeconds) {
         return new FlightFault(NO_LEGS,
                 "Нет посадочных ног — касание на " + format(atSeconds) + " с ломает ступень",
+                atSeconds);
+    }
+
+    public static FlightFault offPad(double atSeconds, double missMeters) {
+        return new FlightFault(OFF_PAD,
+                "Мимо посадочной площадки на " + format(atSeconds) + " с (промах "
+                        + format(missMeters) + " м)",
                 atSeconds);
     }
 

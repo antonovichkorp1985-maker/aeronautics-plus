@@ -33,6 +33,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.EarthRotationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
@@ -225,7 +226,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.46: Falcon landing legs; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.47: Falcon landing pad; no ChemMod world gas.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -399,6 +400,16 @@ public final class AeronauticsPlus {
                         boostback.recovered());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus boostback slice failed", exception);
+            }
+            try {
+                LandingPadSlice.Result padLand = LandingPadSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus landing-pad slice OK: lz={}, missedAsds={}, missM={}",
+                        padLand.hitLz(),
+                        padLand.missedAsds(),
+                        String.format(java.util.Locale.ROOT, "%.0f", padLand.missMeters()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus landing-pad slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();
