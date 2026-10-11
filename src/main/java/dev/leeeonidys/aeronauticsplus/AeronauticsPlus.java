@@ -17,6 +17,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.PayloadSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.SpacecraftSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.DockingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.SplitTankSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.TrainMountSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VarietySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ElectronicsSlice;
@@ -308,7 +309,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.76: coast warp, SAS hold. Not ChemMod air.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.77: Create train carries rocket_mount. Crew keys remappable.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -942,6 +943,19 @@ public final class AeronauticsPlus {
                         haul.launchableAtPad());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus transporter slice failed", exception);
+            }
+            try {
+                TrainMountSlice.Result train = TrainMountSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus train-mount slice OK: bay={}, onTransporter={}, launchable={}, haulSeconds={}, mounts={}, noTreads={}",
+                        train.horizontalBay(),
+                        train.onTransporter(),
+                        train.launchableAfterUnclamp(),
+                        String.format(java.util.Locale.ROOT, "%.1f", train.haulSeconds()),
+                        train.mountCells(),
+                        train.noTreads());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus train-mount slice failed", exception);
             }
 
             List<String> registeredItems = new ArrayList<>();

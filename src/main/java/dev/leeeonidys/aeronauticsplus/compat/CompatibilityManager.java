@@ -31,6 +31,7 @@ public final class CompatibilityManager {
      * Dedicated API adapters will be dispatched from here as they are implemented.
      */
     public static void initialize() {
+        CreateTrainMount.register();
         if (ModList.get().isLoaded(TERRAFIRMACRAFT_MOD_ID)) {
             AeronauticsPlus.LOGGER.info(
                     "TerraFirmaCraft detected: blade-material tags and pad latitude from Z are active "

@@ -3,8 +3,10 @@ package dev.leeeonidys.aeronauticsplus.content.rocket;
 import com.mojang.serialization.MapCodec;
 import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
 import dev.leeeonidys.aeronauticsplus.compat.TfcLatitude;
+import dev.leeeonidys.aeronauticsplus.space.compile.TrainMount;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselEnvelope;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
@@ -163,6 +165,12 @@ public final class VesselPartBlock extends Block {
                 return InteractionResult.CONSUME;
             }
         }
+        if (spec.kind() == VesselPartKind.MOUNT && player.isShiftKeyDown()) {
+            String fail = unclampMount(level, pos);
+            player.displayClientMessage(
+                    Component.literal(fail.isBlank() ? "Снято с крепления поезда." : fail), false);
+            return InteractionResult.CONSUME;
+        }
         VesselBlockGrid grid = WorldVesselScanner.scan(level, pos);
         VesselCompilation compilation = VesselBlockCompiler.analyze(grid);
         if (grid.isEmpty() && compilation.diagnostics().isEmpty()) {
@@ -207,6 +215,23 @@ public final class VesselPartBlock extends Block {
             }
         }
         return InteractionResult.CONSUME;
+    }
+
+    private static String unclampMount(Level level, BlockPos pos) {
+        VesselBlockGrid grid = WorldVesselScanner.scan(level, pos);
+        if (!TrainMount.hasCargo(grid) || TrainMount.mounts(grid).isEmpty()) {
+            return "Нечего снимать с крепления.";
+        }
+        int removed = 0;
+        for (VesselBlockOccupant occupant : TrainMount.mounts(grid)) {
+            BlockPos at = new BlockPos(occupant.pos().x(), occupant.pos().y(), occupant.pos().z());
+            BlockState state = level.getBlockState(at);
+            if (state.getBlock() instanceof VesselPartBlock part && part.spec().kind() == VesselPartKind.MOUNT) {
+                level.destroyBlock(at, true);
+                removed++;
+            }
+        }
+        return removed == 0 ? "Нечего снимать с крепления." : "";
     }
 
     private static void sit(Level level, BlockPos pos, Player player) {

@@ -26,18 +26,7 @@ public final class AeronauticsPlusClientEvents {
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
-        event.register(OrbitMapClient.OPEN_MAP);
-        event.register(OrbitMapClient.ENTER_STATION);
-        event.register(OrbitMapClient.DROP_FAIRING);
-        event.register(OrbitMapClient.THROTTLE_CUT);
-        event.register(OrbitMapClient.THROTTLE_FULL);
-        event.register(OrbitMapClient.STAGE);
-        event.register(OrbitMapClient.THROTTLE_DOWN);
-        event.register(OrbitMapClient.THROTTLE_UP);
-        event.register(OrbitMapClient.RCS);
-        event.register(OrbitMapClient.WARP_UP);
-        event.register(OrbitMapClient.WARP_DOWN);
-        event.register(OrbitMapClient.HOLD);
+        CrewKeys.register(event);
     }
 
     @SubscribeEvent
