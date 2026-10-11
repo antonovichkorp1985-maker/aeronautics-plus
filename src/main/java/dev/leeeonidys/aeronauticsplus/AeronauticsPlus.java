@@ -308,7 +308,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.75: seated HUD, C/V throttle detents, R is RCS.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.76: coast warp, SAS hold. Not ChemMod air.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
