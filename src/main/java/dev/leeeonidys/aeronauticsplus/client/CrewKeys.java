@@ -23,6 +23,7 @@ public final class CrewKeys {
     public static final KeyMapping WARP_UP = bind("warp_up", InputConstants.KEY_PERIOD);
     public static final KeyMapping WARP_DOWN = bind("warp_down", InputConstants.KEY_COMMA);
     public static final KeyMapping HOLD = bind("hold", InputConstants.KEY_T);
+    public static final KeyMapping CRANE = bind("crane", InputConstants.KEY_B);
 
     /** Register this array. Forgetting a mapping here is how a key becomes hardcoded. */
     public static final KeyMapping[] ALL = {
@@ -37,7 +38,8 @@ public final class CrewKeys {
         RCS,
         WARP_UP,
         WARP_DOWN,
-        HOLD
+        HOLD,
+        CRANE
     };
 
     private CrewKeys() {

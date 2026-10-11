@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    { "id": "create:gantry_carriage", "required": false },
+    { "id": "create:gantry_shaft", "required": false },
+    { "id": "create:rope_pulley", "required": false },
+    { "id": "create:elevator_pulley", "required": false },
+    { "id": "create:mechanical_piston", "required": false },
+    { "id": "create:sticky_mechanical_piston", "required": false }
+  ]
+}

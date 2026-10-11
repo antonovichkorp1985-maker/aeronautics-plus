@@ -8,8 +8,6 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlo
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
-import dev.leeeonidys.aeronauticsplus.content.rocket.AssemblyCraneBlock;
-import dev.leeeonidys.aeronauticsplus.content.rocket.AssemblyCraneBlockEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.CraneLoadEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.SeatEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
@@ -62,6 +60,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.PyroLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
+import dev.leeeonidys.aeronauticsplus.space.world.CraneCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
@@ -81,12 +80,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -116,6 +117,9 @@ import org.slf4j.LoggerFactory;
 public final class AeronauticsPlus {
     public static final String MODID = "aeronauticsplus";
     public static final Logger LOGGER = LoggerFactory.getLogger("AeronauticsPlus");
+    /** Pack/Create machines that can lift. AP does not register a crane block. */
+    public static final TagKey<Block> CRANES = TagKey.create(
+            Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(MODID, "cranes"));
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
@@ -267,18 +271,6 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.PAD, MapColor.STONE);
     public static final DeferredItem<BlockItem> LAUNCH_PAD_ITEM =
             ITEMS.registerSimpleBlockItem(LAUNCH_PAD);
-    /** VAB gantry. Ground apparatus. The lift is timed, not a spawn. */
-    public static final DeferredBlock<AssemblyCraneBlock> ASSEMBLY_CRANE =
-            BLOCKS.register("assembly_crane", () -> new AssemblyCraneBlock(
-                    BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.COLOR_YELLOW)
-                            .strength(3.5f, 6.0f)
-                            .noOcclusion()));
-    public static final DeferredItem<BlockItem> ASSEMBLY_CRANE_ITEM =
-            ITEMS.registerSimpleBlockItem(ASSEMBLY_CRANE);
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblyCraneBlockEntity>> ASSEMBLY_CRANE_BE =
-            BLOCK_ENTITIES.register("assembly_crane", () -> BlockEntityType.Builder.of(
-                    AssemblyCraneBlockEntity::new, ASSEMBLY_CRANE.get()).build(null));
     /** KSP-class pyro clamp ring. Cuts stages; stays on the booster. */
     public static final DeferredBlock<VesselPartBlock> STAGE_SEPARATOR =
             registerVesselPart(VesselPartCatalog.SEPARATOR, MapColor.METAL);
@@ -315,7 +307,6 @@ public final class AeronauticsPlus {
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
                         output.accept(ROCKET_MOUNT_ITEM.get());
                         output.accept(LAUNCH_PAD_ITEM.get());
-                        output.accept(ASSEMBLY_CRANE_ITEM.get());
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(LANDING_LEGS_ITEM.get());
@@ -334,7 +325,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.78: world gantry crane. Lift is timed, not a spawn.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.79: crane is a capability (tower/carriage/mobile), not an AP block.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -351,6 +342,10 @@ public final class AeronauticsPlus {
                 CrewCommandPayload.TYPE,
                 CrewCommandPayload.STREAM_CODEC,
                 CrewCommandPayload::handle);
+        registrar.playToServer(
+                CraneCommandPayload.TYPE,
+                CraneCommandPayload.STREAM_CODEC,
+                CraneCommandPayload::handle);
         registrar.playToClient(
                 OrbitMapSnapshotPayload.TYPE,
                 OrbitMapSnapshotPayload.STREAM_CODEC,
@@ -849,12 +844,15 @@ public final class AeronauticsPlus {
             try {
                 WorldCraneSlice.Result worldCrane = WorldCraneSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus world-crane slice OK: liftSeconds={}, midEmpty={}, tooFar={}, busy={}, placed={}",
+                        "Aeronautics Plus world-crane slice OK: liftSeconds={}, midEmpty={}, tooFar={}, busy={}, placed={}, tower={}, carriage={}, mobile={}",
                         String.format(java.util.Locale.ROOT, "%.3f", worldCrane.liftSeconds()),
                         worldCrane.midEmpty(),
                         worldCrane.tooFar(),
                         worldCrane.busy(),
-                        worldCrane.placed());
+                        worldCrane.placed(),
+                        worldCrane.tower(),
+                        worldCrane.carriage(),
+                        worldCrane.mobile());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus world-crane slice failed", exception);
             }
@@ -1002,7 +1000,6 @@ public final class AeronauticsPlus {
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LAUNCH_PAD_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(ASSEMBLY_CRANE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LANDING_LEGS_ITEM.get()).toString());
@@ -1011,7 +1008,7 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 21
+            boolean allRegistered = registeredItems.size() == 20
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(
