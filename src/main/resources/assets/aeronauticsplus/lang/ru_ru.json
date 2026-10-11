@@ -10,6 +10,8 @@
   "block.aeronauticsplus.stage_separator": "Пирокольцо",
   "block.aeronauticsplus.rocket_controller": "Кресло управления",
   "block.aeronauticsplus.landing_legs": "Посадочные ноги",
+  "block.aeronauticsplus.rocket_fairing": "Обтекатель",
+  "block.aeronauticsplus.rocket_payload": "Полезная нагрузка",
   "block.aeronauticsplus.steel_four_blade_propeller": "Стальной 4-лопастной авиационный винт",
   "block.aeronauticsplus.steel_three_blade_propeller": "Стальной 3-лопастной авиационный винт",
   "block.aeronauticsplus.steel_two_blade_propeller": "Стальной 2-лопастной авиационный винт",

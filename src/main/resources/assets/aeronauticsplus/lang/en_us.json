@@ -10,6 +10,8 @@
   "block.aeronauticsplus.stage_separator": "Pyro Clamp Ring",
   "block.aeronauticsplus.rocket_controller": "Rocket Control Seat",
   "block.aeronauticsplus.landing_legs": "Landing Legs",
+  "block.aeronauticsplus.rocket_fairing": "Payload Fairing",
+  "block.aeronauticsplus.rocket_payload": "Payload",
   "block.aeronauticsplus.steel_four_blade_propeller": "Steel 4-Blade Aircraft Propeller",
   "block.aeronauticsplus.steel_three_blade_propeller": "Steel 3-Blade Aircraft Propeller",
   "block.aeronauticsplus.steel_two_blade_propeller": "Steel 2-Blade Aircraft Propeller",

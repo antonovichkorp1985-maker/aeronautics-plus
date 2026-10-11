@@ -93,7 +93,9 @@ public final class VesselPartBlock extends Block {
             }
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
-        if (spec.kind() == VesselPartKind.MOUNT || spec.kind() == VesselPartKind.FAIRING) {
+        if (spec.kind() == VesselPartKind.MOUNT
+                || spec.kind() == VesselPartKind.FAIRING
+                || spec.kind() == VesselPartKind.PAYLOAD) {
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
         return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());

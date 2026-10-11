@@ -174,6 +174,31 @@ public record FlightLoop(
         return false;
     }
 
+    public boolean hasFairing() {
+        for (StageState stage : vessel.stages()) {
+            if (stage.hasFairing()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Drop the shroud at 50 km geometric altitude. Payload stays. ChemMod q is not this gate.
+     * Recovered blocks no longer include the fairing.
+     */
+    public FlightLoop dropFairing() {
+        if (presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("Fairing drops in flight, not on the pad");
+        }
+        VesselState dropped = VesselDynamics.jettisonFairingAboveDenseAir(vessel);
+        FlightPresence nextPresence = WorldHandoff.inWorld(dropped.orbit())
+                ? FlightPresence.WORLD_ENTITY
+                : FlightPresence.ORBIT_MAP;
+        return new FlightLoop(
+                nextPresence, stacked, padLeft, stripKind(flying, VesselPartKind.FAIRING), dropped, null);
+    }
+
     public boolean strapOnsDry() {
         if (!vessel.hasStrapOns()) {
             return false;
@@ -226,6 +251,16 @@ public record FlightLoop(
         for (VesselBlockOccupant occupant : grid.occupants()) {
             boolean isPad = occupant.spec().kind() == VesselPartKind.PAD;
             if (isPad == pad) {
+                occupants.add(occupant);
+            }
+        }
+        return new VesselBlockGrid(occupants);
+    }
+
+    private static VesselBlockGrid stripKind(VesselBlockGrid grid, VesselPartKind kind) {
+        List<VesselBlockOccupant> occupants = new ArrayList<>();
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() != kind) {
                 occupants.add(occupant);
             }
         }

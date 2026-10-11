@@ -1060,7 +1060,7 @@ def assert_outward() -> None:
 
 
 def main() -> None:
-    """AP world blocks: mount, pad, engine, control seat, pyro ring, landing legs. Tanks stay ChemMod."""
+    """AP world blocks: mount, pad, engine, seat, pyro, legs, fairing, payload. Tanks stay ChemMod."""
     assert_outward()
     mount_mesh().write(GEO / "rocket_mount.obj")
     pad_mesh().write(GEO / "launch_pad.obj")
@@ -1068,24 +1068,32 @@ def main() -> None:
     controller_mesh().write(GEO / "rocket_controller.obj")
     separator_mesh().write(GEO / "stage_separator.obj")
     legs_mesh().write(GEO / "landing_legs.obj")
+    fairing_mesh().write(GEO / "rocket_fairing.obj")
+    payload_mesh().write(GEO / "rocket_payload.obj")
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
     write_png(TEX / "launch_pad.png", paint(64, pad_tex))
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_controller.png", paint(64, controller_tex))
     write_png(TEX / "stage_separator.png", paint(64, separator_tex))
     write_png(TEX / "landing_legs.png", paint(64, legs_tex))
+    write_png(TEX / "rocket_fairing.png", paint(64, fairing_tex))
+    write_png(TEX / "rocket_payload.png", paint(64, payload_tex))
     write_part_models("rocket_mount")
     write_part_models("launch_pad")
     write_part_models("rocket_engine")
     write_part_models("rocket_controller")
     write_part_models("stage_separator")
     write_part_models("landing_legs")
+    write_part_models("rocket_fairing")
+    write_part_models("rocket_payload")
     write_blockstate("rocket_mount", UP_STATES)
     write_blockstate("launch_pad", UP_STATES)
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_controller", UP_STATES)
     write_blockstate("stage_separator", UP_STATES)
     write_blockstate("landing_legs", UP_STATES)
+    write_blockstate("rocket_fairing", UP_STATES)
+    write_blockstate("rocket_payload", UP_STATES)
     print("AP rocket fixtures written; ChemMod owns tanks")
 
 

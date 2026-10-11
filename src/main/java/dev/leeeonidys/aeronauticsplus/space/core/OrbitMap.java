@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Kepler-map vehicles. Coast only — burns stay on the world entity.
  * Crossing back under 20 km returns WORLD_ENTITY for spawn.
+ * Fairing drops at 50 km geometric altitude; ChemMod q is not this gate.
  */
 public final class OrbitMap {
     private final List<FlightLoop> vessels = new ArrayList<>();
@@ -35,6 +36,10 @@ public final class OrbitMap {
         for (FlightLoop loop : vessels) {
             VesselState next = VesselDynamics.propagate(loop.vessel(), dt, Math.min(dt, 0.1));
             FlightLoop stepped = loop.withVessel(next);
+            if (stepped.hasFairing()
+                    && next.orbit().altitudeMeters() >= Aerodynamics.FAIRING_MIN_ALTITUDE_METERS) {
+                stepped = stepped.dropFairing();
+            }
             if (stepped.presence() == FlightPresence.WORLD_ENTITY) {
                 reentered.add(stepped);
             } else {

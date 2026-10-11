@@ -37,6 +37,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingLoopSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.FairingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
@@ -242,6 +243,16 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.LEGS, MapColor.COLOR_LIGHT_GRAY);
     public static final DeferredItem<BlockItem> LANDING_LEGS_ITEM =
             ITEMS.registerSimpleBlockItem(LANDING_LEGS);
+    /** Ogive covering the payload. Drops at 50 km by altitude, not ChemMod q. */
+    public static final DeferredBlock<VesselPartBlock> ROCKET_FAIRING =
+            registerVesselPart(VesselPartCatalog.FAIRING, MapColor.WOOL);
+    public static final DeferredItem<BlockItem> ROCKET_FAIRING_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_FAIRING);
+    /** Orbital apparatus under the fairing. Stays after the shroud drops. */
+    public static final DeferredBlock<VesselPartBlock> ROCKET_PAYLOAD =
+            registerVesselPart(VesselPartCatalog.PAYLOAD, MapColor.COLOR_CYAN);
+    public static final DeferredItem<BlockItem> ROCKET_PAYLOAD_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_PAYLOAD);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -256,6 +267,8 @@ public final class AeronauticsPlus {
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(LANDING_LEGS_ITEM.get());
+                        output.accept(ROCKET_FAIRING_ITEM.get());
+                        output.accept(ROCKET_PAYLOAD_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                     })
                     .build());
@@ -268,7 +281,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.59: Kepler map screen on key M.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.60: fairing and payload blocks; shroud drops at 50 km.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -567,6 +580,19 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus boostback-loop slice failed", exception);
             }
             try {
+                FairingLoopSlice.Result fairing = FairingLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus fairing-loop slice OK: compiler={}, held={}, dropped={}, payload={}, recovered={}, map={}",
+                        fairing.compilerShroud(),
+                        fairing.heldAtHandoff(),
+                        fairing.droppedAtFifty(),
+                        fairing.payloadStayed(),
+                        fairing.recoveredWithoutFairing(),
+                        fairing.mapDropsFairing());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus fairing-loop slice failed", exception);
+            }
+            try {
                 MapViewSlice.Result mapView = MapViewSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus map-view slice OK: padR={}, hopperR={}, handoffR={}, parkingR={}, hopperWorld={}, parkingMap={}",
@@ -786,9 +812,11 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LANDING_LEGS_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FAIRING_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_PAYLOAD_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 17
+            boolean allRegistered = registeredItems.size() == 19
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

@@ -1055,16 +1055,7 @@ public final class VesselDynamics {
         if (atmosphere == null) {
             throw new IllegalArgumentException("Atmosphere is required");
         }
-        boolean hasFairing = false;
-        for (StageState stage : vessel.stages()) {
-            if (stage.hasFairing()) {
-                hasFairing = true;
-                break;
-            }
-        }
-        if (!hasFairing) {
-            throw new IllegalStateException("No fairing to jettison");
-        }
+        requireFairing(vessel);
         if (!Aerodynamics.fairingSafe(vessel.orbit(), atmosphere)) {
             throw new IllegalStateException(
                     FlightFault.FAIRING_ATMOSPHERE
@@ -1074,6 +1065,38 @@ public final class VesselDynamics {
                             + atmosphere.dynamicPressurePascals(vessel.orbit())
                             + " Па)");
         }
+        return dropFairings(vessel);
+    }
+
+    /**
+     * In-flight drop once geometric altitude is 50 km. ChemMod q is not this gate.
+     * 20 km is the world/map line, not fairing jettison.
+     */
+    public static VesselState jettisonFairingAboveDenseAir(VesselState vessel) {
+        if (vessel == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        requireFairing(vessel);
+        if (vessel.orbit().altitudeMeters() < Aerodynamics.FAIRING_MIN_ALTITUDE_METERS) {
+            throw new IllegalStateException(
+                    FlightFault.FAIRING_ATMOSPHERE
+                            + ": обтекатель держится до 50 км (h="
+                            + vessel.orbit().altitudeMeters()
+                            + " м). ChemMod q — не этот порог");
+        }
+        return dropFairings(vessel);
+    }
+
+    private static void requireFairing(VesselState vessel) {
+        for (StageState stage : vessel.stages()) {
+            if (stage.hasFairing()) {
+                return;
+            }
+        }
+        throw new IllegalStateException("No fairing to jettison");
+    }
+
+    private static VesselState dropFairings(VesselState vessel) {
         ArrayList<StageState> next = new ArrayList<>(vessel.stages().size());
         for (StageState stage : vessel.stages()) {
             next.add(stage.withoutFairings());

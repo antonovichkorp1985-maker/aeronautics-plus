@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/rocket_payload"
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/rocket_payload",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/rocket_payload",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/rocket_payload",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/rocket_payload",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/rocket_payload",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
