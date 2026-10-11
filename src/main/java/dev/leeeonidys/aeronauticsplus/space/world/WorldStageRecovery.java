@@ -1,14 +1,10 @@
 package dev.leeeonidys.aeronauticsplus.space.world;
 
-import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
-import dev.leeeonidys.aeronauticsplus.space.compile.BlockFace;
+import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlocks;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 import dev.leeeonidys.aeronauticsplus.space.compile.RecoveryPlan;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -29,8 +25,8 @@ public final class WorldStageRecovery {
         }
         int placed = 0;
         for (RecoveryPlan.Placement placement : plan.placements()) {
-            Block block = blockFor(placement.spec().id());
-            if (block == null) {
+            BlockState state = VesselPartBlocks.stateFor(placement.spec().id(), placement.facing());
+            if (state == null) {
                 continue;
             }
             GridPos relative = placement.relativeToPad();
@@ -38,34 +34,10 @@ public final class WorldStageRecovery {
             if (!level.getBlockState(at).canBeReplaced()) {
                 continue;
             }
-            BlockState state = block.defaultBlockState();
-            if (state.hasProperty(VesselPartBlock.FACING)) {
-                state = state.setValue(VesselPartBlock.FACING, toDirection(placement.facing()));
-            }
             if (level.setBlock(at, state, 3)) {
                 placed++;
             }
         }
         return placed;
-    }
-
-    private static Block blockFor(String specId) {
-        for (Block block : BuiltInRegistries.BLOCK) {
-            if (block instanceof VesselPartBlock part && part.spec().id().equals(specId)) {
-                return block;
-            }
-        }
-        return null;
-    }
-
-    private static Direction toDirection(BlockFace face) {
-        return switch (face) {
-            case DOWN -> Direction.DOWN;
-            case UP -> Direction.UP;
-            case NORTH -> Direction.NORTH;
-            case SOUTH -> Direction.SOUTH;
-            case WEST -> Direction.WEST;
-            case EAST -> Direction.EAST;
-        };
     }
 }

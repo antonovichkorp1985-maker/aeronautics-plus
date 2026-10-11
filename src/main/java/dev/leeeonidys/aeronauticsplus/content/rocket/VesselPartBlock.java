@@ -9,6 +9,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.CellOccupancy;
 import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
+import dev.leeeonidys.aeronauticsplus.space.world.VesselLaunch;
 import dev.leeeonidys.aeronauticsplus.space.world.WorldVesselScanner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -118,6 +119,17 @@ public final class VesselPartBlock extends Block {
         VesselCompilation compilation = VesselBlockCompiler.analyze(grid);
         if (grid.isEmpty() && compilation.diagnostics().isEmpty()) {
             player.displayClientMessage(Component.literal("Сборка пуста."), false);
+            return InteractionResult.CONSUME;
+        }
+        if (spec.kind() == VesselPartKind.CONTROLLER
+                && compilation.isLaunchable()
+                && compilation.diagnosticText().contains("ON_PAD")) {
+            String fail = VesselLaunch.ignite(level, pos);
+            if (fail.isBlank()) {
+                player.displayClientMessage(Component.literal("Старт. Игрок остаётся на земле."), false);
+            } else {
+                player.displayClientMessage(Component.literal(fail), false);
+            }
             return InteractionResult.CONSUME;
         }
         if (!grid.isEmpty()) {

@@ -15,5 +15,6 @@
   "block.aeronauticsplus.wooden_four_blade_propeller": "Деревянный 4-лопастной авиационный винт",
   "block.aeronauticsplus.wooden_three_blade_propeller": "Деревянный 3-лопастной авиационный винт",
   "block.aeronauticsplus.wooden_two_blade_propeller": "Деревянный 2-лопастной авиационный винт",
-  "itemGroup.aeronauticsplus": "Aeronautics Plus"
+  "itemGroup.aeronauticsplus": "Aeronautics Plus",
+  "entity.aeronauticsplus.vessel": "Ракета"
 }

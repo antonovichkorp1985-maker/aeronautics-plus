@@ -519,6 +519,97 @@ public final class VesselDynamics {
     }
 
     /**
+     * One flight step after the pile has already left as an entity.
+     * Hold-down is not repeated; it only finishes if epoch is still on the clamps.
+     */
+    public static AscentOutcome advanceAscent(
+            VesselState vessel, Atmosphere atmosphere, double dt,
+            double dragCoefficient, double referenceAreaM2) {
+        if (vessel == null || atmosphere == null) {
+            throw new IllegalArgumentException("Vessel and atmosphere are required");
+        }
+        if (!(dt > 0.0) || !Double.isFinite(dt)) {
+            throw new IllegalArgumentException("Flight step must be finite and positive");
+        }
+        if (dragCoefficient < 0.0 || !Double.isFinite(dragCoefficient)
+                || referenceAreaM2 < 0.0 || !Double.isFinite(referenceAreaM2)) {
+            throw new IllegalArgumentException("Drag coefficient and area must be finite and non-negative");
+        }
+
+        List<FlightFault> faults = new ArrayList<>();
+        double padPressure = atmosphere.pressurePascals(Math.max(0.0, vessel.orbit().altitudeMeters()));
+        double padThrust = vessel.activeStage().thrustNewtonsAt(padPressure);
+        double padWeight = vessel.totalMassKg() * vessel.orbit().centralBody().surfaceGravityMetersPerSecond2();
+        double padTw = padWeight > 0.0 ? padThrust / padWeight : 0.0;
+        if (vessel.orbit().altitudeMeters() < 1.0 && !(padThrust > padWeight)) {
+            faults.add(FlightFault.holdDown(padTw));
+            return new AscentOutcome(vessel, dt, 0.0, 0.0, vessel.orbit().altitudeMeters(), padTw, faults);
+        }
+        if (!(vessel.activeStage().hasCompatibleFeed())) {
+            faults.add(FlightFault.wrongPropellant());
+            return new AscentOutcome(vessel, dt, 0.0, 0.0, vessel.orbit().altitudeMeters(), padTw, faults);
+        }
+
+        VesselState state = vessel;
+        if (state.orbit().altitudeMeters() < 1.0 && state.orbit().epochSeconds() < HOLD_DOWN_SECONDS) {
+            double holdDt = Math.min(dt, HOLD_DOWN_SECONDS - state.orbit().epochSeconds());
+            StageBurnResult hold = state.activeStage().burn(holdDt);
+            state = replaceActive(state, hold.stage()).withOrbit(new OrbitState(
+                    state.orbit().centralBody(),
+                    state.orbit().positionMeters(),
+                    state.orbit().velocityMetersPerSecond(),
+                    state.orbit().epochSeconds() + hold.elapsedSeconds()));
+            if (hold.propellantDepleted()) {
+                faults.add(FlightFault.dryTank(hold.elapsedSeconds()));
+            }
+            return new AscentOutcome(
+                    state, dt, hold.elapsedSeconds(),
+                    atmosphere.dynamicPressurePascals(state.orbit()),
+                    state.orbit().altitudeMeters(), padTw, faults);
+        }
+
+        OrbitState orbit = state.orbit();
+        double mass = state.totalMassKg();
+        if (!(mass > 0.0)) {
+            return new AscentOutcome(state, dt, 0.0, 0.0, orbit.altitudeMeters(), padTw, faults);
+        }
+        double pressure = atmosphere.pressureAt(orbit);
+        double density = atmosphere.densityAt(orbit);
+        Vector3d thrust = state.inertialThrustNewtonsAt(pressure);
+        if (!(thrust.magnitudeSquared() > 0.0)) {
+            faults.add(FlightFault.zeroThrust());
+            return new AscentOutcome(state, dt, 0.0, atmosphere.dynamicPressurePascals(orbit),
+                    orbit.altitudeMeters(), padTw, faults);
+        }
+        Vector3d drag = Aerodynamics.dragForceNewtons(
+                density, orbit.velocityMetersPerSecond(), dragCoefficient, referenceAreaM2);
+        Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
+                orbit.centralBody(), orbit.positionMeters());
+        Vector3d acceleration = gravity
+                .add(thrust.multiply(1.0 / mass))
+                .add(drag.multiply(1.0 / mass));
+        Vector3d nextPosition = orbit.positionMeters()
+                .add(orbit.velocityMetersPerSecond().multiply(dt))
+                .add(acceleration.multiply(0.5 * dt * dt));
+        if (nextPosition.magnitude() < orbit.centralBody().radiusMeters()) {
+            faults.add(FlightFault.impact(dt));
+            return new AscentOutcome(state, dt, 0.0, atmosphere.dynamicPressurePascals(orbit),
+                    orbit.altitudeMeters(), padTw, faults);
+        }
+        Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
+        StageBurnResult burn = state.activeStage().burn(dt);
+        state = replaceActive(state, burn.stage()).withOrbit(new OrbitState(
+                orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
+        if (burn.propellantDepleted()) {
+            faults.add(FlightFault.dryTank(burn.elapsedSeconds()));
+        }
+        return new AscentOutcome(
+                state, dt, burn.elapsedSeconds(),
+                atmosphere.dynamicPressurePascals(state.orbit()),
+                state.orbit().altitudeMeters(), padTw, faults);
+    }
+
+    /**
      * Vacuum gravity turn: declared thrust, no ChemMod air.
      * Vertical, pitch kick, then thrust follows velocity.
      */

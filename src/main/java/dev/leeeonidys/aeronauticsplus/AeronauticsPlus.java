@@ -38,8 +38,10 @@ import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
+import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FailureSlice;
@@ -54,6 +56,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -92,6 +96,16 @@ public final class AeronauticsPlus {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<EntityType<?>> ENTITIES =
+            DeferredRegister.create(Registries.ENTITY_TYPE, MODID);
+
+    public static final DeferredHolder<EntityType<?>, EntityType<VesselEntity>> VESSEL =
+            ENTITIES.register("vessel", () -> EntityType.Builder.<VesselEntity>of(VesselEntity::new, MobCategory.MISC)
+                    .sized(1.5f, 6.0f)
+                    .clientTrackingRange(80)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .build("aeronauticsplus:vessel"));
 
     // Э2: prototype aircraft propeller, built on CA's MIT-licensed propeller classes.
     public static final DeferredBlock<PrototypePropellerBlock> PROTOTYPE_PROPELLER =
@@ -236,8 +250,9 @@ public final class AeronauticsPlus {
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
+        ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.52: pad to entity to 20 km map; booster returns as blocks.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.53: flying vessel entity from part models; player stays on the ground.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -459,6 +474,18 @@ public final class AeronauticsPlus {
                         flight.recoveredParts());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus flight-loop slice failed", exception);
+            }
+            try {
+                EntitySlice.Result entity = EntitySlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus entity slice OK: afterLiftoff={}, climbed={}, alt={}, map={}, playerOff={}",
+                        entity.entityAfterLiftoff(),
+                        entity.heldThenClimbed(),
+                        String.format(java.util.Locale.ROOT, "%.1f", entity.climbAltitude()),
+                        entity.mapAtTwentyKm(),
+                        entity.playerNotOnBoard());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus entity slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

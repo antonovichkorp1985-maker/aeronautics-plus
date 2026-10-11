@@ -33,5 +33,6 @@ public final class AeronauticsPlusClientEvents {
                 AeronauticsPlus.PROPELLER_SHAFT_ADAPTER_BE.get(),
                 PropellerShaftAdapterRenderer::new
         );
+        event.registerEntityRenderer(AeronauticsPlus.VESSEL.get(), VesselEntityRenderer::new);
     }
 }

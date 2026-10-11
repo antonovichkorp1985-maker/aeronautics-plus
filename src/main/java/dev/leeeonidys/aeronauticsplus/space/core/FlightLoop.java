@@ -82,6 +82,26 @@ public record FlightLoop(
                 null);
     }
 
+    public FlightLoop withVessel(VesselState next) {
+        if (presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("Blocks on the pad do not swap to the map");
+        }
+        if (next == null) {
+            throw new IllegalArgumentException("Vessel is required");
+        }
+        FlightPresence nextPresence = WorldHandoff.inWorld(next.orbit())
+                ? FlightPresence.WORLD_ENTITY
+                : FlightPresence.ORBIT_MAP;
+        return new FlightLoop(nextPresence, stacked, padLeft, flying, next, null);
+    }
+
+    /** One physics step while the pile is already the world entity or on the map. */
+    public FlightLoop advance(double dt) {
+        AscentOutcome outcome = VesselDynamics.advanceAscent(
+                vessel, Atmosphere.earth(), dt, Aerodynamics.ROCKET_CD, 1.0);
+        return withVessel(outcome.vessel());
+    }
+
     public FlightLoop withOrbit(OrbitState nextOrbit) {
         if (presence == FlightPresence.BLOCKS_ON_PAD) {
             throw new IllegalStateException("Blocks on the pad do not swap to the map");
