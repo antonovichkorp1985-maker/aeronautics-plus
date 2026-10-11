@@ -106,7 +106,7 @@ public record EngineState(
         if (!(vacuumIspSeconds > 0.0) || !Double.isFinite(vacuumIspSeconds)) {
             throw new IllegalArgumentException("Vacuum Isp must be finite and positive");
         }
-        if (fuelId != null && fuelId.equalsIgnoreCase("lh2")) {
+        if (PropellantIds.hydrogenFuel(fuelId)) {
             return vacuumIspSeconds * 0.40;
         }
         return vacuumIspSeconds * 0.88;

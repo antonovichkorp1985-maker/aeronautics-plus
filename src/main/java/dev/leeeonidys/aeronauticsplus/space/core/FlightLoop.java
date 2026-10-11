@@ -205,7 +205,7 @@ public record FlightLoop(
     }
 
     /**
-     * Commanded shroud drop. Illegal below 50 km until ChemMod q exists.
+     * Commanded shroud drop. Illegal while q is still dense-air.
      * Payload stays. Parking orbit is a legal drop.
      */
     public FlightLoop dropFairing() {

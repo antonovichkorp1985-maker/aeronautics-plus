@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.world;
 
+import dev.leeeonidys.aeronauticsplus.compat.ChemAtmosphereHooks;
 import dev.leeeonidys.aeronauticsplus.space.compile.BlockFace;
 import dev.leeeonidys.aeronauticsplus.space.compile.DockCapture;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
@@ -9,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.AABB;
 import dev.leeeonidys.aeronauticsplus.space.core.Aerodynamics;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentOutcome;
-import dev.leeeonidys.aeronauticsplus.space.core.Atmosphere;
 import dev.leeeonidys.aeronauticsplus.space.core.BoostbackOutcome;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightFault;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
@@ -60,6 +60,8 @@ public final class VesselEntity extends Entity {
     private static final EntityDataAccessor<Float> HUD_RADIAL =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HUD_THROTTLE =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HUD_Q =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> HUD_WARP =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
@@ -125,6 +127,10 @@ public final class VesselEntity extends Entity {
 
     public float hudThrottle() {
         return entityData.get(HUD_THROTTLE);
+    }
+
+    public float hudDynamicPressurePascals() {
+        return entityData.get(HUD_Q);
     }
 
     public int hudWarp() {
@@ -395,7 +401,7 @@ public final class VesselEntity extends Entity {
             }
         } else if (thrusting) {
             AscentOutcome outcome = VesselDynamics.advanceAscent(
-                    loop.vessel(), Atmosphere.earth(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
+                    loop.vessel(), ChemAtmosphereHooks.ambient(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
             if (outcome.has(FlightFault.HOLD_DOWN) || outcome.has(FlightFault.IMPACT)) {
                 landAndDiscard();
                 return true;
@@ -504,6 +510,7 @@ public final class VesselEntity extends Entity {
         entityData.set(HUD_HORIZ, (float) orbit.horizontalSpeedMetersPerSecond());
         entityData.set(HUD_RADIAL, (float) orbit.radialSpeedMetersPerSecond());
         entityData.set(HUD_THROTTLE, (float) loop.vessel().liveThrottle());
+        entityData.set(HUD_Q, (float) ChemAtmosphereHooks.dynamicPressurePascals(orbit));
     }
 
     private void syncPosition() {
@@ -556,6 +563,7 @@ public final class VesselEntity extends Entity {
         builder.define(HUD_HORIZ, 0.0f);
         builder.define(HUD_RADIAL, 0.0f);
         builder.define(HUD_THROTTLE, 1.0f);
+        builder.define(HUD_Q, 0.0f);
         builder.define(HUD_WARP, 0);
         builder.define(HUD_HOLD, 0);
     }

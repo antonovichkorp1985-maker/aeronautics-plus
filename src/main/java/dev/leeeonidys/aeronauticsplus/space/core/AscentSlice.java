@@ -4,8 +4,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.SpaceBodies;
 import java.util.List;
 
 /**
- * Deterministic pad ascent against a stand-in ambient profile.
- * World gas is ChemMod; this slice does not own the planet's air.
+ * Deterministic pad ascent against the ISA column.
+ * Same numbers ChemMod exposes as ChemAtmosphere. Not the leak field.
  */
 public final class AscentSlice {
     private AscentSlice() {
@@ -22,15 +22,20 @@ public final class AscentSlice {
 
     public static Result execute() {
         Atmosphere earth = Atmosphere.earth();
-        if (Math.abs(earth.densityKgPerM3(0.0) - 1.225) > 1.0e-12) {
-            throw new IllegalStateException("Sea-level density must be 1.225 kg/m³");
+        if (Math.abs(earth.densityKgPerM3(0.0) - 1.225) > 1.0e-4) {
+            throw new IllegalStateException("Sea-level density must be 1.225 kg/m³, got "
+                    + earth.densityKgPerM3(0.0));
         }
-        double atScaleHeight = earth.densityKgPerM3(earth.scaleHeightMeters());
-        if (Math.abs(atScaleHeight - 1.225 / Math.E) > 1.0e-9) {
-            throw new IllegalStateException("Density at scale height must fall by 1/e");
+        if (Math.abs(earth.temperatureKelvin(11_000.0) - 216.77) > 0.05) {
+            throw new IllegalStateException("Geometric 11 km must be ISA tropopause, T="
+                    + earth.temperatureKelvin(11_000.0));
+        }
+        if (!(earth.densityKgPerM3(20_000.0) < 0.1) || !(earth.densityKgPerM3(20_000.0) > 0.001)) {
+            throw new IllegalStateException("20 km must still be air, rho="
+                    + earth.densityKgPerM3(20_000.0));
         }
         if (!(earth.densityKgPerM3(200_000.0) < 1.0e-9)) {
-            throw new IllegalStateException("200 km must be vacuum for this exponential model");
+            throw new IllegalStateException("200 km must be vacuum for this column");
         }
         if (Math.abs(earth.pressurePascals(0.0) - PropulsionMath.SEA_LEVEL_PRESSURE_PASCALS) > 1.0e-6) {
             throw new IllegalStateException("Sea-level pressure must be 101325 Pa");
@@ -51,8 +56,14 @@ public final class AscentSlice {
         if (Math.abs(booster.activeThrustNewtonsAt(0.0) - booster.activeThrustNewtons()) > 1.0e-6) {
             throw new IllegalStateException("Vacuum thrust must match the declared engine thrust");
         }
-        if (Math.abs(EngineState.defaultSeaLevelIsp("lh2", 450.0) - 180.0) > 1.0e-12) {
+        if (Math.abs(EngineState.defaultSeaLevelIsp("lh2", 450.0) - 180.0) > 1.0e-12
+                || Math.abs(EngineState.defaultSeaLevelIsp("hydrogen", 450.0) - 180.0) > 1.0e-12) {
             throw new IllegalStateException("LH2 vacuum nozzles must derate hard at the pad");
+        }
+        if (Math.abs(EngineState.defaultSeaLevelIsp("kerosene", 300.0) - 264.0) > 1.0e-12
+                || Math.abs(EngineState.defaultSeaLevelIsp("octane", 300.0) - 264.0) > 1.0e-12
+                || Math.abs(EngineState.defaultSeaLevelIsp("rp1", 300.0) - 264.0) > 1.0e-12) {
+            throw new IllegalStateException("RP-1 / kerosene / octane share kerolox sea-level Isp");
         }
 
         VesselState lifter = stack(booster, 120.0, false);

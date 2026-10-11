@@ -1,14 +1,14 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
- * Continuum drag given a density. Density itself comes from ChemMod world gas
- * later; until then {@link Atmosphere} is a stand-in. Cd ~ 0.5 is order of magnitude.
+ * Continuum drag given a density. Density is the planetary column
+ * ({@link Atmosphere} / ChemMod {@code ChemAtmosphere}). Cd ~ 0.5 is order of magnitude.
  */
 public final class Aerodynamics {
     public static final double ROCKET_CD = 0.5;
 
     /**
-     * Earliest commanded jettison until ChemMod q exists.
+     * Slice fixture: a quiet 50 km coast. Drop itself is q, not this floor.
      * Not an automatic drop. Real shrouds usually go ~80–110 km, still on demand.
      */
     public static final double FAIRING_MIN_ALTITUDE_METERS = 50_000.0;
@@ -47,7 +47,9 @@ public final class Aerodynamics {
         if (orbit == null || atmosphere == null) {
             throw new IllegalArgumentException("Orbit and atmosphere are required");
         }
-        return orbit.altitudeMeters() >= FAIRING_MIN_ALTITUDE_METERS
-                && atmosphere.dynamicPressurePascals(orbit) <= FAIRING_MAX_DYNAMIC_PRESSURE_PASCALS;
+        if (orbit.altitudeMeters() < 1.0) {
+            return false;
+        }
+        return atmosphere.dynamicPressurePascals(orbit) <= FAIRING_MAX_DYNAMIC_PRESSURE_PASCALS;
     }
 }

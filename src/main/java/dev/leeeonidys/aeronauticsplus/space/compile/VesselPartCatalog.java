@@ -13,7 +13,11 @@ import java.util.List;
  * Tanks, solar and radiator stay ChemMod. Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
+    /** AP name for ChemMod kerosene-cut hydrocarbons. Not a tank block. */
     public static final String FUEL_ID = "rp1";
+    public static final String KEROSENE_ID = "kerosene";
+    public static final String OCTANE_ID = "octane";
+    /** AP name for ChemMod O2. Not a LOX barrel item. */
     public static final String OXIDIZER_ID = "lox";
     public static final String HYDROGEN_ID = "lh2";
     /** Oxidizer/fuel by mass for RP-1/LOX. */

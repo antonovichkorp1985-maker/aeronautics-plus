@@ -34,12 +34,17 @@ public final class CompatibilityManager {
     public static void initialize() {
         CreateTrainMount.register();
         if (ModList.get().isLoaded(CHEMMOD_MOD_ID)) {
-            AeronauticsPlus.LOGGER.info(
-                    "ChemMod detected: WorldGasField is sparse leaks in 4 m cells, not hydrostatic ρ/P. "
-                            + "Rocket drag/Max-Q stay AP Atmosphere until ChemMod exposes ambient density. "
-                            + "No ChemMod class is imported.");
+            if (ChemAtmosphereHooks.columnPresent()) {
+                AeronauticsPlus.LOGGER.info(
+                        "ChemMod ChemAtmosphere column present. Geometric ρ/P/T via reflection. "
+                                + "No ChemMod class is imported. Leak field is not this column.");
+            } else {
+                AeronauticsPlus.LOGGER.info(
+                        "ChemMod loaded without ChemAtmosphere (tank/field only). "
+                                + "Rocket column stays AP ISA. No ChemMod class is imported.");
+            }
         } else {
-            AeronauticsPlus.LOGGER.debug("ChemMod not detected; rocket drag stays AP Atmosphere.earth().");
+            AeronauticsPlus.LOGGER.debug("ChemMod not detected; rocket column is AP ISA.");
         }
         if (ModList.get().isLoaded(TERRAFIRMACRAFT_MOD_ID)) {
             AeronauticsPlus.LOGGER.info(

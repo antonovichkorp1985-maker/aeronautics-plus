@@ -1069,22 +1069,11 @@ public final class VesselDynamics {
     }
 
     /**
-     * Commanded drop. 50 km is the floor until ChemMod q exists, not a timer.
+     * Commanded drop. Dense air is q, not a 50 km timer. Pad (h&lt;1 m) stays illegal.
      * 20 km is the world/map line. Parking orbit is a legal drop (satellites).
      */
     public static VesselState jettisonFairingAboveDenseAir(VesselState vessel) {
-        if (vessel == null) {
-            throw new IllegalArgumentException("Vessel is required");
-        }
-        requireFairing(vessel);
-        if (vessel.orbit().altitudeMeters() < Aerodynamics.FAIRING_MIN_ALTITUDE_METERS) {
-            throw new IllegalStateException(
-                    FlightFault.FAIRING_ATMOSPHERE
-                            + ": обтекатель не сбрасывают ниже 50 км (h="
-                            + vessel.orbit().altitudeMeters()
-                            + " м). Сброс по команде, ChemMod q — не этот порог");
-        }
-        return dropFairings(vessel);
+        return jettisonFairing(vessel, Atmosphere.earth());
     }
 
     private static void requireFairing(VesselState vessel) {

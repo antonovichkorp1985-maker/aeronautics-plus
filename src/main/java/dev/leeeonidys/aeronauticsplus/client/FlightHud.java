@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 /**
- * Seated strip: altitude, speed, throttle, warp, hold. Not the orientation GUI.
+ * Seated strip: altitude, speed, throttle, q, warp, hold. Not the orientation GUI.
  */
 public final class FlightHud {
     private FlightHud() {
@@ -27,7 +27,8 @@ public final class FlightHud {
                 vessel.hudRadialMetersPerSecond(),
                 vessel.hudThrottle(),
                 vessel.hudWarp(),
-                vessel.hudHoldLabel());
+                vessel.hudHoldLabel(),
+                vessel.hudDynamicPressurePascals());
         int y = 8;
         for (String line : lines) {
             graphics.drawString(minecraft.font, line, 8, y, 0xFFEAECEE, true);

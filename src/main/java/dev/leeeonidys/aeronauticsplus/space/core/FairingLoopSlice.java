@@ -45,9 +45,9 @@ public final class FairingLoopSlice {
         }
         try {
             atHandoff.dropFairing();
-            throw new IllegalStateException("Fairing must not drop at 20 km");
+            throw new IllegalStateException("Fairing must not drop at 20 km while q is still high");
         } catch (IllegalStateException exception) {
-            if (exception.getMessage() == null || !exception.getMessage().contains("50")) {
+            if (exception.getMessage() == null || !exception.getMessage().contains(FlightFault.FAIRING_ATMOSPHERE)) {
                 throw exception;
             }
         }
@@ -56,15 +56,15 @@ public final class FairingLoopSlice {
                 .withOrbit(atAltitude(19_000.0));
         try {
             tooLow.dropFairing();
-            throw new IllegalStateException("Fairing must not drop in the Overworld");
+            throw new IllegalStateException("Fairing must not drop in dense air");
         } catch (IllegalStateException exception) {
-            if (exception.getMessage() == null || !exception.getMessage().contains("50")) {
+            if (exception.getMessage() == null || !exception.getMessage().contains(FlightFault.FAIRING_ATMOSPHERE)) {
                 throw exception;
             }
         }
 
         FlightLoop atFifty = FlightLoop.sit(shrouded()).liftoff()
-                .withOrbit(atAltitude(Aerodynamics.FAIRING_MIN_ALTITUDE_METERS));
+                .withOrbit(quiet(Aerodynamics.FAIRING_MIN_ALTITUDE_METERS));
         if (!atFifty.hasFairing()) {
             throw new IllegalStateException("Crossing 50 km must not peel the shroud by itself");
         }
@@ -107,6 +107,13 @@ public final class FairingLoopSlice {
     }
 
     private static OrbitState atAltitude(double altitudeMeters) {
+        CelestialBody earth = SpaceBodies.earth();
+        double radius = earth.radiusMeters() + altitudeMeters;
+        return new OrbitState(earth, new Vector3d(radius, 0.0, 0.0), new Vector3d(0.0, 0.0, 1_000.0), 0.0);
+    }
+
+    /** Coasting: q ≈ 0 so the commanded drop is legal. */
+    private static OrbitState quiet(double altitudeMeters) {
         CelestialBody earth = SpaceBodies.earth();
         double radius = earth.radiusMeters() + altitudeMeters;
         return new OrbitState(earth, new Vector3d(radius, 0.0, 0.0), Vector3d.ZERO, 0.0);
