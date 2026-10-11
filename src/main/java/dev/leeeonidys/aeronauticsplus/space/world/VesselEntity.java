@@ -92,6 +92,26 @@ public final class VesselEntity extends Entity {
         return String.format(java.util.Locale.ROOT, "Тяга %.0f%%.", throttle * 100.0);
     }
 
+    public String commandStage() {
+        if (loop == null) {
+            return "Нет полёта.";
+        }
+        try {
+            if (loop.hasRadialRing() && loop.vessel().hasStrapOns()) {
+                applyRadial(loop.fireRadial());
+                return "Боковушки отделены.";
+            }
+            if (loop.hasPyroRing() && loop.vessel().canSeparateActive()) {
+                applyAxial(loop.firePyro());
+                return "Ступень отделена.";
+            }
+            return "Нет пирокольца или верхней ступени.";
+        } catch (RuntimeException exception) {
+            String message = exception.getMessage();
+            return message == null || message.isBlank() ? "Кольцо не сработало." : message;
+        }
+    }
+
     public String commandDropFairing() {
         if (loop == null) {
             return "Нет полёта.";
@@ -163,12 +183,7 @@ public final class VesselEntity extends Entity {
         syncVisualAttitude();
         if (loop.hasRadialRing() && loop.vessel().hasStrapOns() && loop.strapOnsDry()) {
             try {
-                RadialFlightSplit split = loop.fireRadial();
-                for (FlightLoop side : split.sides()) {
-                    releaseCompanion(side);
-                }
-                loop = split.core();
-                entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+                applyRadial(loop.fireRadial());
             } catch (IllegalStateException ignored) {
                 // rings present but they did not cut sides
             }
@@ -177,10 +192,7 @@ public final class VesselEntity extends Entity {
                 && loop.vessel().canSeparateActive()
                 && !(loop.vessel().activeStage().propellantMassKg() > 1.0e-9)) {
             try {
-                FlightSplit split = loop.firePyro();
-                releaseCompanion(split.booster());
-                loop = split.continuing();
-                entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+                applyAxial(loop.firePyro());
             } catch (IllegalStateException ignored) {
                 // ring present but it did not cut a stage
             }
@@ -239,6 +251,20 @@ public final class VesselEntity extends Entity {
         ejectPassengers();
         WorldLiftoff.land(level(), padPos(), loop);
         discard();
+    }
+
+    private void applyRadial(RadialFlightSplit split) {
+        for (FlightLoop side : split.sides()) {
+            releaseCompanion(side);
+        }
+        loop = split.core();
+        entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+    }
+
+    private void applyAxial(FlightSplit split) {
+        releaseCompanion(split.booster());
+        loop = split.continuing();
+        entityData.set(PARTS, FlightCodec.encodeFlying(loop));
     }
 
     private void releaseCompanion(FlightLoop companion) {

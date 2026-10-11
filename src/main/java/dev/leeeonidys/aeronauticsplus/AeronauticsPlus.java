@@ -48,6 +48,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LatitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.ThrottleSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.CrewStageSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
@@ -305,7 +306,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.73: X cuts the cluster, Z is full throttle.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.74: G fires the pyro ring with fuel still in the booster.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -443,6 +444,16 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", throttle.fullAltitude()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus throttle slice failed", exception);
+            }
+            try {
+                CrewStageSlice.Result crewStage = CrewStageSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus crew-stage slice OK: boosterProp={}, upperProp={}, upperStages={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", crewStage.boosterPropellantKg()),
+                        String.format(java.util.Locale.ROOT, "%.1f", crewStage.upperPropellantKg()),
+                        crewStage.upperStages());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus crew-stage slice failed", exception);
             }
             try {
                 StagingSlice.Result staging = StagingSlice.execute();

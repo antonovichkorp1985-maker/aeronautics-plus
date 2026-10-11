@@ -28,6 +28,7 @@
   "key.aeronauticsplus.drop_fairing": "Drop Fairing",
   "key.aeronauticsplus.throttle_cut": "Cut Throttle",
   "key.aeronauticsplus.throttle_full": "Full Throttle",
+  "key.aeronauticsplus.stage": "Stage",
   "screen.aeronauticsplus.orbit_map": "Kepler Map",
   "screen.aeronauticsplus.orbit_map.hint": "Altitude linear to 200 km — not Earth scale. Yellow ring is 20 km.",
   "screen.aeronauticsplus.orbit_map.empty": "No vehicles on the map.",

@@ -28,6 +28,7 @@
   "key.aeronauticsplus.drop_fairing": "Сбросить обтекатель",
   "key.aeronauticsplus.throttle_cut": "Сбросить тягу",
   "key.aeronauticsplus.throttle_full": "Полная тяга",
+  "key.aeronauticsplus.stage": "Отделить ступень",
   "screen.aeronauticsplus.orbit_map": "Карта Kepler",
   "screen.aeronauticsplus.orbit_map.hint": "Высота линейная до 200 км — не масштаб Земли. Жёлтое кольцо — 20 км.",
   "screen.aeronauticsplus.orbit_map.empty": "На карте нет аппаратов.",

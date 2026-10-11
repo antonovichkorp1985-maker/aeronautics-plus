@@ -10,11 +10,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Seated crew command. Not the orientation GUI. 0 = fairing, 1 = cut, 2 = full. */
+/** Seated crew command. Not the orientation GUI. 0 = fairing, 1 = cut, 2 = full, 3 = stage. */
 public record CrewCommandPayload(int command) implements CustomPacketPayload {
     public static final int DROP_FAIRING = 0;
     public static final int THROTTLE_CUT = 1;
     public static final int THROTTLE_FULL = 2;
+    public static final int STAGE = 3;
 
     public static final Type<CrewCommandPayload> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(AeronauticsPlus.MODID, "crew_command"));
@@ -47,6 +48,8 @@ public record CrewCommandPayload(int command) implements CustomPacketPayload {
                 double throttle = payload.command == THROTTLE_FULL ? 1.0 : 0.0;
                 serverPlayer.displayClientMessage(
                         Component.literal(vessel.commandThrottle(throttle)), false);
+            } else if (payload.command == STAGE) {
+                serverPlayer.displayClientMessage(Component.literal(vessel.commandStage()), false);
             }
         });
     }
