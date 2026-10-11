@@ -270,11 +270,6 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.DOCKING, MapColor.METAL);
     public static final DeferredItem<BlockItem> DOCKING_PORT_ITEM =
             ITEMS.registerSimpleBlockItem(DOCKING_PORT);
-    /** Vacuum radiator. There is no convection off-atmosphere. Solar stays ChemMod. */
-    public static final DeferredBlock<VesselPartBlock> HEAT_RADIATOR =
-            registerVesselPart(VesselPartCatalog.RADIATOR, MapColor.COLOR_ORANGE);
-    public static final DeferredItem<BlockItem> HEAT_RADIATOR_ITEM =
-            ITEMS.registerSimpleBlockItem(HEAT_RADIATOR);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -294,7 +289,6 @@ public final class AeronauticsPlus {
                         output.accept(CREW_HABITAT_ITEM.get());
                         output.accept(RCS_THRUSTER_ITEM.get());
                         output.accept(DOCKING_PORT_ITEM.get());
-                        output.accept(HEAT_RADIATOR_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                     })
                     .build());
@@ -307,7 +301,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.62: docking port and vacuum radiator.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.63: docking port stays AP; radiator is ChemMod.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -866,10 +860,9 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(CREW_HABITAT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(HEAT_RADIATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 23
+            boolean allRegistered = registeredItems.size() == 22
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

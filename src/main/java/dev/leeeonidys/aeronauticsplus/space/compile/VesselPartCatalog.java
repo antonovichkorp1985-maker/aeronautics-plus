@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Compiler fixtures. Minecraft items from this catalog are the engine, control
  * seat, train mount, launch pad, pyro ring, landing legs, fairing, payload,
- * habitat, RCS, docking and radiator. Tanks stay ChemMod (adapt those). Solar stays ChemMod. Hull SKUs are not AP items.
+ * habitat, RCS and docking. Tanks, solar and radiator stay ChemMod. Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";
@@ -66,7 +66,7 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec DOCKING = VesselPartSpec.docking("docking_port", 80.0);
     /** Eclipse store. Solar does not work in shadow. */
     public static final VesselPartSpec BATTERY = VesselPartSpec.battery("battery_pack", 55.0);
-    /** ISS-style deployable panel. Vacuum has no convection. */
+    /** ChemMod thermal rejector. Not an AP item. */
     public static final VesselPartSpec RADIATOR = VesselPartSpec.radiator("heat_radiator", 35.0);
     public static final VesselPartSpec OMNI_ANTENNA = VesselPartSpec.antenna(
             "omni_antenna", 8.0, CellOccupancy.MAST);

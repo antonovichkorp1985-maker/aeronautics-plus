@@ -11,8 +11,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
- * Docking ring and vacuum radiator fly with the habitat. Capture faces look at
- * each other. Solar stays ChemMod; battery waits on that panel.
+ * Docking ring is AP. Capture faces look at each other.
+ * Radiator and solar stay ChemMod.
  */
 public final class DockingLoopSlice {
     private DockingLoopSlice() {
@@ -29,14 +29,13 @@ public final class DockingLoopSlice {
         VesselCompilation compiled = VesselBlockCompiler.analyze(bus());
         if (!compiled.isLaunchable()
                 || !compiled.stages().get(0).hasHabitat()
-                || !compiled.stages().get(0).hasDocking()
-                || !compiled.stages().get(0).hasRadiator()) {
-            throw new IllegalStateException("Pad stack with docking and radiator must compile:\n"
+                || !compiled.stages().get(0).hasDocking()) {
+            throw new IllegalStateException("Pad stack with docking must compile:\n"
                     + compiled.diagnosticText());
         }
-        String text = compiled.diagnosticText();
-        if (text.contains("NO_DOCKING") || text.contains("NO_RADIATOR") || text.contains("NO_THERMAL_PATH")) {
-            throw new IllegalStateException("Bus with port and radiator must not warn dock/heat:\n" + text);
+        if (compiled.diagnosticText().contains("NO_DOCKING")) {
+            throw new IllegalStateException("Bus with a port must not warn NO_DOCKING:\n"
+                    + compiled.diagnosticText());
         }
 
         int links = 0;
@@ -53,19 +52,17 @@ public final class DockingLoopSlice {
         FlightLoop flown = FlightLoop.sit(bus()).liftoff()
                 .withOrbit(atAltitude(80_000.0))
                 .dropFairing();
-        if (!flown.vessel().activeStage().hasDocking()
-                || !flown.vessel().activeStage().hasRadiator()
-                || flown.hasFairing()) {
-            throw new IllegalStateException("After the shroud drops the port and radiator stay");
+        if (!flown.vessel().activeStage().hasDocking() || flown.hasFairing()) {
+            throw new IllegalStateException("After the shroud drops the docking port stays");
         }
 
         FlightLoop recovered = flown.withOrbit(atAltitude(2_000.0)).recover();
         if (recovered.recovery() == null
                 || !recovered.recovery().includesKind(VesselPartKind.DOCKING)
-                || !recovered.recovery().includesKind(VesselPartKind.RADIATOR)
                 || !recovered.recovery().includesKind(VesselPartKind.HABITAT)
-                || recovered.recovery().includesKind(VesselPartKind.FAIRING)) {
-            throw new IllegalStateException("Recovered blocks keep port, radiator and habitat, not the fairing");
+                || recovered.recovery().includesKind(VesselPartKind.FAIRING)
+                || recovered.recovery().includesKind(VesselPartKind.RADIATOR)) {
+            throw new IllegalStateException("Recovered blocks keep the port and habitat, not the fairing");
         }
 
         return new Result(true, true, true, true);
@@ -85,7 +82,6 @@ public final class DockingLoopSlice {
                 new VesselBlockOccupant(new GridPos(1, 2, 0), VesselPartCatalog.RCS, BlockFace.EAST),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(1, 4, 0), VesselPartCatalog.RADIATOR, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, -1), VesselPartCatalog.DOCKING, BlockFace.NORTH),
                 new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.PAYLOAD, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 6, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
