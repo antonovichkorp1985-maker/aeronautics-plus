@@ -28,6 +28,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AttitudeSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.BoostbackLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.BoostbackSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.CircularizationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DeorbitSlice;
@@ -261,7 +262,7 @@ public final class AeronauticsPlus {
         TABS.register(modEventBus);
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.57: Falcon landing legs; suicide burn recovers as blocks.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.58: Falcon boostback then landing; recovered booster is blocks.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -534,6 +535,18 @@ public final class AeronauticsPlus {
                         legs.recoveredOnPad());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus landing-loop slice failed", exception);
+            }
+            try {
+                BoostbackLoopSlice.Result boostLoop = BoostbackLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus boostback-loop slice OK: legs={}, skipImpact={}, killed={}, hopper={}, recovered={}",
+                        boostLoop.compilerLegs(),
+                        boostLoop.skippedImpact(),
+                        boostLoop.killedDownrange(),
+                        boostLoop.hopperLanded(),
+                        boostLoop.recoveredOnPad());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus boostback-loop slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

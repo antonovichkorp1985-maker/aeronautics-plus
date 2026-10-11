@@ -5,6 +5,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 import dev.leeeonidys.aeronauticsplus.space.core.Aerodynamics;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentOutcome;
 import dev.leeeonidys.aeronauticsplus.space.core.Atmosphere;
+import dev.leeeonidys.aeronauticsplus.space.core.BoostbackOutcome;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightFault;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
@@ -106,10 +107,20 @@ public final class VesselEntity extends Entity {
                 && loop.vessel().clusterThrustNewtons() > 0.0;
         boolean falling = loop.vessel().orbit().radialSpeedMetersPerSecond() < 0.0;
         double altitude = loop.vessel().orbit().altitudeMeters();
-        boolean landingBurn = falling
-                && altitude < 2_500.0
-                && loop.vessel().activeStage().hasLandingLegs();
-        if (landingBurn) {
+        boolean hasLegs = loop.vessel().activeStage().hasLandingLegs();
+        boolean downrange = loop.vessel().orbit().horizontalSpeedMetersPerSecond()
+                > BoostbackOutcome.DONE_HORIZONTAL_METERS_PER_SECOND;
+        boolean landingBurn = falling && altitude < 2_500.0 && hasLegs;
+        if (thrusting && downrange && hasLegs) {
+            BoostbackOutcome boost = VesselDynamics.attemptBoostback(
+                    loop.vessel(), STEP_SECONDS, STEP_SECONDS);
+            loop = loop.withVessel(boost.vessel());
+            if (boost.has(FlightFault.IMPACT)
+                    || loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
+                landAndDiscard();
+                return;
+            }
+        } else if (landingBurn) {
             LandingOutcome landing = VesselDynamics.attemptLanding(
                     loop.vessel(), STEP_SECONDS, STEP_SECONDS);
             loop = loop.withVessel(landing.vessel());
