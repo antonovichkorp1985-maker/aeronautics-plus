@@ -32,7 +32,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * AP fixture on a ChemMod pile (currently the Create-train mount). Collision follows
- * {@link CellOccupancy}. Right-click compiles the grid; there is no mission-map GUI.
+ * {@link CellOccupancy}. Right-click compiles the grid. Kepler map is key M, not this click.
  */
 public final class VesselPartBlock extends Block {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -126,7 +126,8 @@ public final class VesselPartBlock extends Block {
                 && compilation.diagnosticText().contains("ON_PAD")) {
             String fail = VesselLaunch.ignite(level, pos);
             if (fail.isBlank()) {
-                player.displayClientMessage(Component.literal("Старт. Игрок остаётся на земле."), false);
+                player.displayClientMessage(
+                        Component.literal("Старт. Игрок остаётся на земле. Карта: клавиша M."), false);
             } else {
                 player.displayClientMessage(Component.literal(fail), false);
             }

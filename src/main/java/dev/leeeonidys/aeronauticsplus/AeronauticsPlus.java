@@ -37,6 +37,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingLoopSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
@@ -45,6 +46,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.PyroLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
+import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
+import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
@@ -73,6 +76,8 @@ import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -262,7 +267,20 @@ public final class AeronauticsPlus {
         TABS.register(modEventBus);
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.58: Falcon boostback then landing; recovered booster is blocks.");
+        modEventBus.addListener(AeronauticsPlus::registerPayloads);
+        LOGGER.info("Aeronautics Plus 0.2.2-test.59: Kepler map screen on key M.");
+    }
+
+    private static void registerPayloads(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar("1");
+        registrar.playToServer(
+                OrbitMapRequestPayload.TYPE,
+                OrbitMapRequestPayload.STREAM_CODEC,
+                OrbitMapRequestPayload::handle);
+        registrar.playToClient(
+                OrbitMapSnapshotPayload.TYPE,
+                OrbitMapSnapshotPayload.STREAM_CODEC,
+                OrbitMapSnapshotPayload::handle);
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -547,6 +565,19 @@ public final class AeronauticsPlus {
                         boostLoop.recoveredOnPad());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus boostback-loop slice failed", exception);
+            }
+            try {
+                MapViewSlice.Result mapView = MapViewSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus map-view slice OK: padR={}, hopperR={}, handoffR={}, parkingR={}, hopperWorld={}, parkingMap={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", mapView.padRadius()),
+                        String.format(java.util.Locale.ROOT, "%.3f", mapView.hopperRadius()),
+                        String.format(java.util.Locale.ROOT, "%.3f", mapView.handoffRadius()),
+                        String.format(java.util.Locale.ROOT, "%.3f", mapView.parkingRadius()),
+                        mapView.hopperInWorld(),
+                        mapView.parkingOnMap());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus map-view slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

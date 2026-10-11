@@ -17,5 +17,11 @@
   "block.aeronauticsplus.wooden_three_blade_propeller": "Wooden 3-Blade Aircraft Propeller",
   "block.aeronauticsplus.wooden_two_blade_propeller": "Wooden 2-Blade Aircraft Propeller",
   "itemGroup.aeronauticsplus": "Aeronautics Plus",
-  "entity.aeronauticsplus.vessel": "Rocket"
+  "entity.aeronauticsplus.vessel": "Rocket",
+  "key.categories.aeronauticsplus": "Aeronautics Plus",
+  "key.aeronauticsplus.orbit_map": "Orbit Map",
+  "screen.aeronauticsplus.orbit_map": "Kepler Map",
+  "screen.aeronauticsplus.orbit_map.hint": "Altitude linear to 200 km — not Earth scale. Yellow ring is 20 km.",
+  "screen.aeronauticsplus.orbit_map.empty": "No vehicles on the map.",
+  "screen.aeronauticsplus.orbit_map.handoff": "Yellow ring: 20 km. Below = Overworld entity. At/above = map."
 }

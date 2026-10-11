@@ -17,5 +17,11 @@
   "block.aeronauticsplus.wooden_three_blade_propeller": "Деревянный 3-лопастной авиационный винт",
   "block.aeronauticsplus.wooden_two_blade_propeller": "Деревянный 2-лопастной авиационный винт",
   "itemGroup.aeronauticsplus": "Aeronautics Plus",
-  "entity.aeronauticsplus.vessel": "Ракета"
+  "entity.aeronauticsplus.vessel": "Ракета",
+  "key.categories.aeronauticsplus": "Aeronautics Plus",
+  "key.aeronauticsplus.orbit_map": "Карта орбиты",
+  "screen.aeronauticsplus.orbit_map": "Карта Kepler",
+  "screen.aeronauticsplus.orbit_map.hint": "Высота линейная до 200 км — не масштаб Земли. Жёлтое кольцо — 20 км.",
+  "screen.aeronauticsplus.orbit_map.empty": "На карте нет аппаратов.",
+  "screen.aeronauticsplus.orbit_map.handoff": "Жёлтое кольцо: 20 км. Ниже — сущность мира. На линии и выше — карта."
 }

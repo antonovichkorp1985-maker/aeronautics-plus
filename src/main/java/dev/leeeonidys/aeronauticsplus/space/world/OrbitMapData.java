@@ -4,7 +4,9 @@ import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMap;
+import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
+import net.minecraft.world.entity.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.HolderLookup;
@@ -55,6 +57,25 @@ public final class OrbitMapData extends SavedData {
     public void enter(FlightLoop loop) {
         map.enter(loop);
         setDirty();
+    }
+
+    /** Map vehicles plus Overworld entities, for the Kepler screen. */
+    public List<OrbitMapTrack> tracks(ServerLevel level) {
+        List<OrbitMapTrack> tracks = new ArrayList<>();
+        for (FlightLoop loop : map.snapshot()) {
+            tracks.add(OrbitMapTrack.from(loop));
+        }
+        if (level != null) {
+            for (Entity entity : level.getAllEntities()) {
+                if (entity instanceof VesselEntity vessel) {
+                    OrbitMapTrack track = vessel.mapTrack();
+                    if (track != null) {
+                        tracks.add(track);
+                    }
+                }
+            }
+        }
+        return tracks;
     }
 
     public void tick(ServerLevel level) {

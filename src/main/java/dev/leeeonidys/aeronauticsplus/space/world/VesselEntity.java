@@ -11,6 +11,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightSplit;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingOutcome;
+import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialFlightSplit;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselDynamics;
@@ -67,6 +68,10 @@ public final class VesselEntity extends Entity {
 
     public BlockPos padPos() {
         return new BlockPos(entityData.get(PAD_X), entityData.get(PAD_Y), entityData.get(PAD_Z));
+    }
+
+    public OrbitMapTrack mapTrack() {
+        return loop == null ? null : OrbitMapTrack.from(loop);
     }
 
     @Override
