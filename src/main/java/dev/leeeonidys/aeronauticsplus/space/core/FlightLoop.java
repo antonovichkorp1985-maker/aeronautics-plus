@@ -47,8 +47,15 @@ public record FlightLoop(
     }
 
     public static FlightLoop sit(VesselBlockGrid grid) {
+        return sit(grid, SpaceBodies.pad());
+    }
+
+    public static FlightLoop sit(VesselBlockGrid grid, OrbitState pad) {
         if (grid == null || grid.isEmpty()) {
             throw new IllegalArgumentException("Pad stack is required");
+        }
+        if (pad == null) {
+            throw new IllegalArgumentException("Pad orbit is required");
         }
         VesselCompilation compilation = VesselBlockCompiler.analyze(grid);
         if (compilation.diagnosticText().contains("ON_TRANSPORTER")) {
@@ -60,7 +67,7 @@ public record FlightLoop(
                     ? "Stack is not launchable"
                     : "Stack is not launchable:\n" + text);
         }
-        VesselState vessel = compilation.toVesselState("flight", SpaceBodies.pad());
+        VesselState vessel = compilation.toVesselState("flight", pad);
         return new FlightLoop(
                 FlightPresence.BLOCKS_ON_PAD,
                 grid,

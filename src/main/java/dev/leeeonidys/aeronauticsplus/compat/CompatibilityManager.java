@@ -33,7 +33,7 @@ public final class CompatibilityManager {
     public static void initialize() {
         if (ModList.get().isLoaded(TERRAFIRMACRAFT_MOD_ID)) {
             AeronauticsPlus.LOGGER.info(
-                    "TerraFirmaCraft detected: Aeronautics Plus blade-material tag bridge is active "
+                    "TerraFirmaCraft detected: blade-material tags and pad latitude from Z are active "
                             + "(wood={}, steel={}).",
                     WOOD_BLADE_MATERIALS.location(),
                     STEEL_BLADE_MATERIALS.location());

@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.world;
 
+import dev.leeeonidys.aeronauticsplus.compat.TfcLatitude;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
@@ -23,7 +24,7 @@ public final class WorldLiftoff {
             throw new IllegalStateException("Liftoff is server-side");
         }
         VesselBlockGrid grid = WorldVesselScanner.scan(level, origin);
-        FlightLoop loop = FlightLoop.sit(grid).liftoff();
+        FlightLoop loop = FlightLoop.sit(grid, TfcLatitude.padOrbit(level, origin)).liftoff();
         for (VesselBlockOccupant occupant : loop.flying().occupants()) {
             BlockPos at = new BlockPos(occupant.pos().x(), occupant.pos().y(), occupant.pos().z());
             level.removeBlock(at, false);

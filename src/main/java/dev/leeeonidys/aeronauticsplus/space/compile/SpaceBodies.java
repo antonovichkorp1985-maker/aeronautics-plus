@@ -2,6 +2,7 @@ package dev.leeeonidys.aeronauticsplus.space.compile;
 
 import dev.leeeonidys.aeronauticsplus.space.core.CelestialBody;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
+import dev.leeeonidys.aeronauticsplus.space.core.PadLatitude;
 import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 
 /** Shared celestial fixtures for compiler and core slices. */
@@ -27,9 +28,15 @@ public final class SpaceBodies {
 
     /** Equatorial pad with sidereal east (~465 m/s). Not ChemMod air. */
     public static OrbitState rotatingPad() {
-        CelestialBody earth = earth();
-        Vector3d position = new Vector3d(earth.radiusMeters(), 0.0, 0.0);
-        return new OrbitState(earth, position, earth.surfaceVelocityMetersPerSecond(position), 0.0);
+        return padAtLatitude(0.0);
+    }
+
+    /**
+     * Sidereal pad at geographic latitude. φ = 0 equator, + north. TFC Z maps through
+     * {@link PadLatitude#latitudeRadians(int, double)}.
+     */
+    public static OrbitState padAtLatitude(double latitudeRadians) {
+        return PadLatitude.rotatingPad(earth(), latitudeRadians);
     }
 
     public static OrbitState parkingOrbit() {

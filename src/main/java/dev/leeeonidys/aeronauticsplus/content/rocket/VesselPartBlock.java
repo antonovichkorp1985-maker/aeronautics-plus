@@ -2,6 +2,7 @@ package dev.leeeonidys.aeronauticsplus.content.rocket;
 
 import com.mojang.serialization.MapCodec;
 import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
+import dev.leeeonidys.aeronauticsplus.compat.TfcLatitude;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselEnvelope;
@@ -181,6 +182,10 @@ public final class VesselPartBlock extends Block {
                         envelope.height(),
                         Math.round(mass),
                         Math.round(deltaV))), false);
+                String latitude = TfcLatitude.describe(level, pos);
+                if (!latitude.isBlank()) {
+                    player.displayClientMessage(Component.literal(latitude), false);
+                }
             } else if (compilation.diagnosticText().contains("ON_TRANSPORTER")) {
                 player.displayClientMessage(Component.literal(String.format(
                         java.util.Locale.ROOT,

@@ -46,6 +46,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.LatitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
@@ -303,7 +304,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.71: seated look steers; F drops the fairing.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.72: TFC latitude is the pad; equator is the cheap launch.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -417,6 +418,18 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", look.pitchedHorizontal()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus look-steer slice failed", exception);
+            }
+            try {
+                LatitudeSlice.Result latitude = LatitudeSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus latitude slice OK: equatorEast={}, midEast={}, poleEast={}, spawnDeg={}, equatorDeg={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", latitude.equatorEast()),
+                        String.format(java.util.Locale.ROOT, "%.1f", latitude.midEast()),
+                        String.format(java.util.Locale.ROOT, "%.1f", latitude.poleEast()),
+                        String.format(java.util.Locale.ROOT, "%.1f", latitude.spawnDegrees()),
+                        String.format(java.util.Locale.ROOT, "%.1f", latitude.equatorDegrees()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus latitude slice failed", exception);
             }
             try {
                 StagingSlice.Result staging = StagingSlice.execute();
