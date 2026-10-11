@@ -10,10 +10,13 @@ import dev.leeeonidys.aeronauticsplus.space.core.FlightFault;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightSplit;
+import dev.leeeonidys.aeronauticsplus.space.core.Attitude;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingOutcome;
+import dev.leeeonidys.aeronauticsplus.space.core.LookGuidance;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialFlightSplit;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
+import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselDynamics;
 import dev.leeeonidys.aeronauticsplus.space.core.WorldHandoff;
 import net.minecraft.core.BlockPos;
@@ -80,6 +83,52 @@ public final class VesselEntity extends Entity {
         return loop == null ? null : OrbitMapTrack.from(loop);
     }
 
+    public String commandDropFairing() {
+        if (loop == null) {
+            return "Нет полёта.";
+        }
+        try {
+            loop = loop.dropFairing();
+            entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+            return "";
+        } catch (RuntimeException exception) {
+            String message = exception.getMessage();
+            return message == null || message.isBlank() ? "Обтекатель не сброшен." : message;
+        }
+    }
+
+    private Player pilot() {
+        for (Entity passenger : getPassengers()) {
+            if (passenger instanceof Player player) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    private void applyPilotLook() {
+        Player pilot = pilot();
+        if (pilot == null || loop == null) {
+            return;
+        }
+        Attitude attitude = LookGuidance.attitudeFromLook(
+                loop.vessel().orbit(), pilot.getYRot(), pilot.getXRot());
+        Vector3d aim = LookGuidance.inertialAim(
+                loop.vessel().orbit(), pilot.getYRot(), pilot.getXRot());
+        loop = loop.withVessel(VesselDynamics.gimbalTowardInertial(
+                loop.vessel().withAttitude(attitude), aim));
+    }
+
+    private void syncVisualAttitude() {
+        Player pilot = pilot();
+        if (pilot != null) {
+            setYRot(pilot.getYRot());
+            setXRot(pilot.getXRot() + 90.0f);
+        } else {
+            setXRot(0.0f);
+        }
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -98,6 +147,11 @@ public final class VesselEntity extends Entity {
             handoffToMap();
             return;
         }
+        boolean crewed = pilot() != null;
+        if (crewed) {
+            applyPilotLook();
+        }
+        syncVisualAttitude();
         if (loop.hasRadialRing() && loop.vessel().hasStrapOns() && loop.strapOnsDry()) {
             try {
                 RadialFlightSplit split = loop.fireRadial();
@@ -130,7 +184,7 @@ public final class VesselEntity extends Entity {
         boolean downrange = loop.vessel().orbit().horizontalSpeedMetersPerSecond()
                 > BoostbackOutcome.DONE_HORIZONTAL_METERS_PER_SECOND;
         boolean landingBurn = falling && altitude < 2_500.0 && hasLegs;
-        if (thrusting && downrange && hasLegs) {
+        if (!crewed && thrusting && downrange && hasLegs) {
             BoostbackOutcome boost = VesselDynamics.attemptBoostback(
                     loop.vessel(), STEP_SECONDS, STEP_SECONDS);
             loop = loop.withVessel(boost.vessel());
@@ -139,7 +193,7 @@ public final class VesselEntity extends Entity {
                 landAndDiscard();
                 return;
             }
-        } else if (landingBurn) {
+        } else if (!crewed && landingBurn) {
             LandingOutcome landing = VesselDynamics.attemptLanding(
                     loop.vessel(), STEP_SECONDS, STEP_SECONDS);
             loop = loop.withVessel(landing.vessel());

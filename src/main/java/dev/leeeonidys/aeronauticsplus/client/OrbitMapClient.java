@@ -2,6 +2,7 @@ package dev.leeeonidys.aeronauticsplus.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
+import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapClientHooks;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
@@ -21,6 +22,11 @@ public final class OrbitMapClient {
             "key.aeronauticsplus.enter_station",
             InputConstants.Type.KEYSYM,
             InputConstants.KEY_N,
+            "key.categories.aeronauticsplus");
+    public static final KeyMapping DROP_FAIRING = new KeyMapping(
+            "key.aeronauticsplus.drop_fairing",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_F,
             "key.categories.aeronauticsplus");
 
     private OrbitMapClient() {
@@ -46,6 +52,9 @@ public final class OrbitMapClient {
         }
         if (ENTER_STATION.consumeClick() && minecraft.screen == null) {
             PacketDistributor.sendToServer(new StationEnterPayload());
+        }
+        if (DROP_FAIRING.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.DROP_FAIRING));
         }
         if (!OPEN_MAP.consumeClick()) {
             return;

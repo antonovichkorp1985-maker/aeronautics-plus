@@ -84,12 +84,13 @@ public record FlightLoop(
         if (!WorldHandoff.inWorld(vessel.orbit())) {
             throw new IllegalStateException("Pad altitude must stay in the Overworld");
         }
+        Attitude radial = Attitude.pointing(Vector3d.UNIT_Y, vessel.orbit().radialUnit());
         return new FlightLoop(
                 FlightPresence.WORLD_ENTITY,
                 stacked,
                 padLeft,
                 airframe,
-                vessel,
+                vessel.withAttitude(radial),
                 null);
     }
 

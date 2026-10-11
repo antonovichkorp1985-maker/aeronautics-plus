@@ -45,12 +45,14 @@ import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.PyroLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
+import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
@@ -301,7 +303,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.70: sit in the seat and the stack launches you.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.71: seated look steers; F drops the fairing.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -314,6 +316,10 @@ public final class AeronauticsPlus {
                 StationEnterPayload.TYPE,
                 StationEnterPayload.STREAM_CODEC,
                 StationEnterPayload::handle);
+        registrar.playToServer(
+                CrewCommandPayload.TYPE,
+                CrewCommandPayload.STREAM_CODEC,
+                CrewCommandPayload::handle);
         registrar.playToClient(
                 OrbitMapSnapshotPayload.TYPE,
                 OrbitMapSnapshotPayload.STREAM_CODEC,
@@ -400,6 +406,17 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", turn.turnedAltitude()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus gravity-turn slice failed", exception);
+            }
+            try {
+                LookSteerSlice.Result look = LookSteerSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus look-steer slice OK: skyRadial={}, horizonOff={}, verticalHoriz={}, pitchedHoriz={}",
+                        look.skyIsRadial(),
+                        look.horizonIsOffRadial(),
+                        String.format(java.util.Locale.ROOT, "%.1f", look.verticalHorizontal()),
+                        String.format(java.util.Locale.ROOT, "%.1f", look.pitchedHorizontal()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus look-steer slice failed", exception);
             }
             try {
                 StagingSlice.Result staging = StagingSlice.execute();

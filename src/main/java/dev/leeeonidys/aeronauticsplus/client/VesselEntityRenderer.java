@@ -1,6 +1,7 @@
 package dev.leeeonidys.aeronauticsplus.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlocks;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import net.minecraft.client.Minecraft;
@@ -35,6 +36,8 @@ public final class VesselEntityRenderer extends EntityRenderer<VesselEntity> {
             int packedLight) {
         super.render(entity, entityYaw, partialTick, pose, buffer, packedLight);
         pose.pushPose();
+        pose.mulPose(Axis.YP.rotationDegrees(-entity.getYRot()));
+        pose.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));
         pose.translate(-0.5, 0.0, -0.5);
         for (VesselEntity.PartView part : VesselEntity.decodeParts(entity.partsPayload())) {
             BlockState state = VesselPartBlocks.stateFor(part.specId(), part.facing());
