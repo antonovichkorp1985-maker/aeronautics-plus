@@ -119,7 +119,7 @@ public record FlightLoop(
         return withVessel(outcome.vessel());
     }
 
-    /** Coast without thrust — burnout must not hang in the air. */
+    /** Coast without thrust. Dense air still drags; vacuum coast is Kepler. */
     public FlightLoop coast(double dt) {
         if (presence == FlightPresence.BLOCKS_ON_PAD) {
             throw new IllegalStateException("Blocks on the pad do not coast");
@@ -127,7 +127,10 @@ public record FlightLoop(
         if (!(dt > 0.0) || !Double.isFinite(dt)) {
             throw new IllegalArgumentException("Coast step must be finite and positive");
         }
-        return withVessel(VesselDynamics.propagate(vessel, dt, Math.min(dt, 0.1)));
+        double throttle = vessel.liveThrottle();
+        AscentOutcome outcome = VesselDynamics.advanceAscent(
+                vessel.withLiveThrottle(0.0), Atmosphere.earth(), dt, Aerodynamics.ROCKET_CD, 1.0);
+        return withVessel(outcome.vessel().withLiveThrottle(throttle));
     }
 
     /**

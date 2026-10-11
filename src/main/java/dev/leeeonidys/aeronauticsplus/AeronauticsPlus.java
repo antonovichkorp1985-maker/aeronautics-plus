@@ -311,7 +311,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.83: ChemMod v1.0.0 column, 1 m engine integral feed.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.84: ballistic air coast, Ap/Pe on the HUD.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

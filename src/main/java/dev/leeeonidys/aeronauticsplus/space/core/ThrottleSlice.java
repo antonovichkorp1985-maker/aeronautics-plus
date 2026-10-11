@@ -4,7 +4,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.SpaceBodies;
 import java.util.List;
 
 /**
- * Cut throttle coasts. Full throttle burns. Not a GUI, not ChemMod air.
+ * Cut throttle coasts through the column. Full throttle burns. Not a GUI.
  */
 public final class ThrottleSlice {
     private ThrottleSlice() {
@@ -43,6 +43,24 @@ public final class ThrottleSlice {
         if (cut.clusterThrustNewtons() > 1.0e-6) {
             throw new IllegalStateException("Cut cluster must be silent, F=" + cut.clusterThrustNewtons());
         }
+        if (Math.abs(cut.orbit().altitudeMeters() - risen.orbit().altitudeMeters()) < 1.0e-6) {
+            throw new IllegalStateException("Cut throttle must still coast, not freeze");
+        }
+
+        VesselState airStart = coastingAtTenKm();
+        VesselState air = fly(airStart, 20);
+        VesselState vacuum = airStart;
+        for (int i = 0; i < 20; i++) {
+            AscentOutcome step = VesselDynamics.advanceAscent(
+                    vacuum, Atmosphere.earth(), 0.1, 0.0, 1.0);
+            vacuum = step.vessel();
+        }
+        double airSpeed = air.orbit().velocityMetersPerSecond().magnitude();
+        double vacuumSpeed = vacuum.orbit().velocityMetersPerSecond().magnitude();
+        if (!(airSpeed < vacuumSpeed - 10.0)) {
+            throw new IllegalStateException(
+                    "Dense-air coast must drag vs Cd=0, air=" + airSpeed + " vac=" + vacuumSpeed);
+        }
         return new Result(
                 risen.orbit().altitudeMeters(),
                 cut.livePropellantKg(),
@@ -60,6 +78,17 @@ public final class ThrottleSlice {
             state = step.vessel();
         }
         return state;
+    }
+
+    private static VesselState coastingAtTenKm() {
+        CelestialBody earth = SpaceBodies.earth();
+        double radius = earth.radiusMeters() + 10_000.0;
+        OrbitState orbit = new OrbitState(
+                earth,
+                new Vector3d(radius, 0.0, 0.0),
+                new Vector3d(0.0, 0.0, 800.0),
+                0.0);
+        return stack().withOrbit(orbit).withLiveThrottle(0.0);
     }
 
     private static VesselState stack() {

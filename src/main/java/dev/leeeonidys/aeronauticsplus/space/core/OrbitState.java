@@ -76,6 +76,35 @@ public record OrbitState(CelestialBody centralBody, Vector3d positionMeters, Vec
         return semiMajorAxisMeters() * (1.0 + eccentricity());
     }
 
+    /** Bound ellipse. Hyperbolic / parabolic escape is not this. */
+    public boolean bound() {
+        return specificOrbitalEnergy() < 0.0;
+    }
+
+    /**
+     * Geometric periapsis altitude. Negative means the periapsis is underground.
+     * Defined for every conic (radial fall → −R).
+     */
+    public double periapsisAltitudeMeters() {
+        double mu = centralBody.gravitationalParameter();
+        double h2 = specificAngularMomentum().magnitudeSquared();
+        if (!(h2 > 0.0)) {
+            return -centralBody.radiusMeters();
+        }
+        double rp = h2 / (mu * (1.0 + eccentricity()));
+        return rp - centralBody.radiusMeters();
+    }
+
+    /**
+     * Geometric apoapsis altitude. {@link Double#POSITIVE_INFINITY} on escape.
+     */
+    public double apoapsisAltitudeMeters() {
+        if (!bound()) {
+            return Double.POSITIVE_INFINITY;
+        }
+        return apoapsisRadiusMeters() - centralBody.radiusMeters();
+    }
+
     /**
      * Angle between {@code h} and +Y (pole of the XZ parking plane).
      * Parking in this core is equatorial in XZ, so this is ~π (retrograde).

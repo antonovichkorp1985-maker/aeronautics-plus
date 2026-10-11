@@ -576,18 +576,15 @@ public final class VesselDynamics {
         double pressure = atmosphere.pressureAt(orbit);
         double density = atmosphere.densityAt(orbit);
         Vector3d thrust = state.inertialClusterThrustNewtonsAt(pressure);
-        if (!(thrust.magnitudeSquared() > 0.0)) {
-            faults.add(FlightFault.zeroThrust());
-            return new AscentOutcome(state, dt, 0.0, atmosphere.dynamicPressurePascals(orbit),
-                    orbit.altitudeMeters(), padTw, faults);
-        }
         Vector3d drag = Aerodynamics.dragForceNewtons(
                 density, orbit.velocityMetersPerSecond(), dragCoefficient, referenceAreaM2);
         Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
                 orbit.centralBody(), orbit.positionMeters());
-        Vector3d acceleration = gravity
-                .add(thrust.multiply(1.0 / mass))
-                .add(drag.multiply(1.0 / mass));
+        Vector3d acceleration = gravity.add(drag.multiply(1.0 / mass));
+        boolean thrusting = thrust.magnitudeSquared() > 0.0;
+        if (thrusting) {
+            acceleration = acceleration.add(thrust.multiply(1.0 / mass));
+        }
         Vector3d nextPosition = orbit.positionMeters()
                 .add(orbit.velocityMetersPerSecond().multiply(dt))
                 .add(acceleration.multiply(0.5 * dt * dt));
@@ -597,11 +594,17 @@ public final class VesselDynamics {
                     orbit.altitudeMeters(), padTw, faults);
         }
         Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
-        double fuel0 = state.livePropellantKg();
-        state = consumeLiveCluster(state, dt).withOrbit(new OrbitState(
-                orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
-        if (fuel0 > 1.0e-9 && !(state.livePropellantKg() > 1.0e-9)) {
-            faults.add(FlightFault.dryTank(dt));
+        OrbitState nextOrbit = new OrbitState(
+                orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt);
+        if (thrusting) {
+            double fuel0 = state.livePropellantKg();
+            state = consumeLiveCluster(state, dt).withOrbit(nextOrbit);
+            if (fuel0 > 1.0e-9 && !(state.livePropellantKg() > 1.0e-9)) {
+                faults.add(FlightFault.dryTank(dt));
+            }
+        } else {
+            state = state.withOrbit(nextOrbit)
+                    .withAttitude(state.attitude().integrateBodyRate(state.angularVelocityBody(), dt));
         }
         return new AscentOutcome(
                 state, dt, dt,

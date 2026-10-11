@@ -63,6 +63,10 @@ public final class VesselEntity extends Entity {
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HUD_Q =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HUD_AP =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HUD_PE =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> HUD_WARP =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> HUD_HOLD =
@@ -131,6 +135,14 @@ public final class VesselEntity extends Entity {
 
     public float hudDynamicPressurePascals() {
         return entityData.get(HUD_Q);
+    }
+
+    public float hudApoapsisAltitudeMeters() {
+        return entityData.get(HUD_AP);
+    }
+
+    public float hudPeriapsisAltitudeMeters() {
+        return entityData.get(HUD_PE);
     }
 
     public int hudWarp() {
@@ -408,8 +420,12 @@ public final class VesselEntity extends Entity {
             }
             loop = loop.withVessel(outcome.vessel());
         } else {
-            loop = loop.coast(STEP_SECONDS);
-            if (loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
+            AscentOutcome coasted = VesselDynamics.advanceAscent(
+                    loop.vessel(), ChemAtmosphereHooks.ambient(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
+            loop = loop.withVessel(coasted.vessel());
+            if (coasted.has(FlightFault.HOLD_DOWN)
+                    || coasted.has(FlightFault.IMPACT)
+                    || loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
                 landAndDiscard();
                 return true;
             }
@@ -511,6 +527,8 @@ public final class VesselEntity extends Entity {
         entityData.set(HUD_RADIAL, (float) orbit.radialSpeedMetersPerSecond());
         entityData.set(HUD_THROTTLE, (float) loop.vessel().liveThrottle());
         entityData.set(HUD_Q, (float) ChemAtmosphereHooks.dynamicPressurePascals(orbit));
+        entityData.set(HUD_AP, (float) orbit.apoapsisAltitudeMeters());
+        entityData.set(HUD_PE, (float) orbit.periapsisAltitudeMeters());
     }
 
     private void syncPosition() {
@@ -564,6 +582,8 @@ public final class VesselEntity extends Entity {
         builder.define(HUD_RADIAL, 0.0f);
         builder.define(HUD_THROTTLE, 1.0f);
         builder.define(HUD_Q, 0.0f);
+        builder.define(HUD_AP, 0.0f);
+        builder.define(HUD_PE, 0.0f);
         builder.define(HUD_WARP, 0);
         builder.define(HUD_HOLD, 0);
     }

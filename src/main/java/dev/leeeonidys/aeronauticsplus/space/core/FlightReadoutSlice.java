@@ -22,11 +22,24 @@ public final class FlightReadoutSlice {
         if (floor.liveThrottle() > 1.0e-9) {
             throw new IllegalStateException("Throttle must not go below zero");
         }
-        String[] lines = FlightReadout.lines(12_345.0, 320.4, -12.2, 0.7, 50, "prograde", 12_000.0);
-        if (lines.length != 7 || !lines[0].contains("12345") || !lines[3].contains("70")
-                || !lines[4].contains("12000") || !lines[5].contains("50")
-                || !lines[6].contains("prograde")) {
+        String[] lines = FlightReadout.lines(
+                12_345.0, 320.4, -12.2, 0.7, 50, "prograde", 12_000.0, 80_000.0, -4_000.0);
+        if (lines.length != 9 || !lines[0].contains("12345") || !lines[3].contains("70")
+                || !lines[4].contains("12000") || !lines[5].contains("80000")
+                || !lines[6].contains("-4000") || !lines[7].contains("50")
+                || !lines[8].contains("prograde")) {
             throw new IllegalStateException("Readout lost the numbers: " + String.join(" | ", lines));
+        }
+        String[] escaping = FlightReadout.lines(
+                200_000.0, 11_000.0, 100.0, 0.0, 1, "off", 0.0, Double.POSITIVE_INFINITY, 80_000.0);
+        if (!escaping[5].contains("esc") || !escaping[6].contains("80000")) {
+            throw new IllegalStateException("Escape must read Ap esc, got " + String.join(" | ", escaping));
+        }
+        OrbitState parking = SpaceBodies.parkingOrbit();
+        if (Math.abs(parking.apoapsisAltitudeMeters() - 200_000.0) > 5_000.0
+                || Math.abs(parking.periapsisAltitudeMeters() - 200_000.0) > 5_000.0) {
+            throw new IllegalStateException("Parking Ap/Pe must sit near 200 km, Ap="
+                    + parking.apoapsisAltitudeMeters() + " Pe=" + parking.periapsisAltitudeMeters());
         }
         return new Result(lines[0], lines[3]);
     }
