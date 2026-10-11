@@ -10,7 +10,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
- * Fairing covers the apparatus (habitat). Payload is a property, not a block.
+ * Fairing covers the apparatus. Payload is a property, not a block.
  * Drop is commanded: illegal in dense air, legal on parking orbit (satellites).
  * 20 km is the map line. Coast does not peel the shroud.
  */
@@ -92,8 +92,8 @@ public final class FairingLoopSlice {
         FlightLoop recovered = dropped.withOrbit(atAltitude(2_000.0)).recover();
         if (recovered.recovery() == null
                 || recovered.recovery().includesKind(VesselPartKind.FAIRING)
-                || !recovered.recovery().includesKind(VesselPartKind.HABITAT)) {
-            throw new IllegalStateException("Recovered blocks keep the habitat and not the fairing");
+                || !recovered.recovery().includesKind(VesselPartKind.CONTROLLER)) {
+            throw new IllegalStateException("Recovered blocks keep the seat and not the fairing");
         }
 
         OrbitMap map = new OrbitMap();
@@ -118,7 +118,6 @@ public final class FairingLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 1, 0), VesselPartCatalog.ENGINE, BlockFace.DOWN),
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 }

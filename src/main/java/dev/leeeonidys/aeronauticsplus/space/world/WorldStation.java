@@ -69,7 +69,7 @@ public final class WorldStation {
     }
 
     public static BlockPos stand(BlockPos island, StationPlan plan) {
-        GridPos stand = plan.habitatStand();
+        GridPos stand = plan.crewStand();
         return island.offset(stand.x(), stand.y(), stand.z());
     }
 }

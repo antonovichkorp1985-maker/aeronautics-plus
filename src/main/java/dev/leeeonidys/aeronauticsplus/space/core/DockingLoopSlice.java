@@ -28,7 +28,7 @@ public final class DockingLoopSlice {
     public static Result execute() {
         VesselCompilation compiled = VesselBlockCompiler.analyze(bus());
         if (!compiled.isLaunchable()
-                || !compiled.stages().get(0).hasHabitat()
+                || !compiled.stages().get(0).hasController()
                 || !compiled.stages().get(0).hasDocking()) {
             throw new IllegalStateException("Pad stack with docking must compile:\n"
                     + compiled.diagnosticText());
@@ -59,10 +59,10 @@ public final class DockingLoopSlice {
         FlightLoop recovered = flown.withOrbit(atAltitude(2_000.0)).recover();
         if (recovered.recovery() == null
                 || !recovered.recovery().includesKind(VesselPartKind.DOCKING)
-                || !recovered.recovery().includesKind(VesselPartKind.HABITAT)
+                || !recovered.recovery().includesKind(VesselPartKind.CONTROLLER)
                 || recovered.recovery().includesKind(VesselPartKind.FAIRING)
                 || recovered.recovery().includesKind(VesselPartKind.RADIATOR)) {
-            throw new IllegalStateException("Recovered blocks keep the port and habitat, not the fairing");
+            throw new IllegalStateException("Recovered blocks keep the port and seat, not the fairing");
         }
 
         return new Result(true, true, true, true);
@@ -81,8 +81,7 @@ public final class DockingLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(1, 2, 0), VesselPartCatalog.RCS, BlockFace.EAST),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 4, -1), VesselPartCatalog.DOCKING, BlockFace.NORTH),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 3, -1), VesselPartCatalog.DOCKING, BlockFace.NORTH),
+                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 }

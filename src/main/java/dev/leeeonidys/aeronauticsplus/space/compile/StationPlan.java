@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Block layout of a parked station. Same grid as flight, not sat on a pad,
- * not Overworld Y. Habitat is the walkable core (Aftermath / ISS).
+ * not Overworld Y. The control seat is what marks players aboard.
  */
 public record StationPlan(List<Placement> placements) {
     public record Placement(GridPos pos, VesselPartSpec spec, BlockFace facing) {
@@ -28,18 +28,18 @@ public record StationPlan(List<Placement> placements) {
             throw new IllegalArgumentException("Station grid is required");
         }
         List<Placement> list = new ArrayList<>();
-        boolean habitat = false;
+        boolean seat = false;
         for (VesselBlockOccupant occupant : flying.occupants()) {
             if (occupant.spec().kind() == VesselPartKind.PAD) {
                 throw new IllegalStateException("Station must not include the launch pad");
             }
-            if (occupant.spec().kind() == VesselPartKind.HABITAT) {
-                habitat = true;
+            if (occupant.spec().kind() == VesselPartKind.CONTROLLER) {
+                seat = true;
             }
             list.add(new Placement(occupant.pos(), occupant.spec(), occupant.facing()));
         }
-        if (!habitat) {
-            throw new IllegalStateException("Station needs a habitat to walk");
+        if (!seat) {
+            throw new IllegalStateException("Station needs a control seat");
         }
         return new StationPlan(list);
     }
@@ -60,17 +60,17 @@ public record StationPlan(List<Placement> placements) {
         return new GridPos(minX, minY, minZ);
     }
 
-    /** Stand on the habitat roof relative to {@link #origin()}. */
-    public GridPos habitatStand() {
+    /** Stand on the control seat relative to {@link #origin()}. */
+    public GridPos crewStand() {
         GridPos origin = origin();
         for (Placement placement : placements) {
-            if (placement.spec().kind() == VesselPartKind.HABITAT) {
+            if (placement.spec().kind() == VesselPartKind.CONTROLLER) {
                 return new GridPos(
                         placement.pos().x() - origin.x(),
                         placement.pos().y() - origin.y() + 1,
                         placement.pos().z() - origin.z());
             }
         }
-        throw new IllegalStateException("Station needs a habitat to walk");
+        throw new IllegalStateException("Station needs a control seat");
     }
 }

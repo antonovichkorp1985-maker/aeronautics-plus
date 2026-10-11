@@ -11,7 +11,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
- * Enter-station is a command. Parking with a habitat stays on the Kepler map
+ * Enter-station is a command. Parking with a control seat stays on the Kepler map
  * until that command. Unmanned sats cannot enter. Pocket islands are spaced.
  */
 public final class StationLoopSlice {
@@ -33,8 +33,8 @@ public final class StationLoopSlice {
 
     public static Result execute() {
         VesselCompilation compiled = VesselBlockCompiler.analyze(bus());
-        if (!compiled.isLaunchable() || !compiled.stages().get(0).hasHabitat()) {
-            throw new IllegalStateException("Pad stack with habitat must compile:\n"
+        if (!compiled.isLaunchable() || !compiled.stages().get(0).hasController()) {
+            throw new IllegalStateException("Pad stack with a control seat must compile:\n"
                     + compiled.diagnosticText());
         }
 
@@ -42,8 +42,8 @@ public final class StationLoopSlice {
                 .withOrbit(atAltitude(Aerodynamics.FAIRING_MIN_ALTITUDE_METERS))
                 .dropFairing()
                 .withOrbit(SpaceBodies.parkingOrbit());
-        if (coasting.presence() != FlightPresence.ORBIT_MAP || !coasting.hasHabitat()) {
-            throw new IllegalStateException("A burn/coast with a habitat stays on the Kepler map");
+        if (coasting.presence() != FlightPresence.ORBIT_MAP || !coasting.hasController()) {
+            throw new IllegalStateException("A burn/coast with a seat stays on the Kepler map");
         }
 
         FlightLoop parked = coasting.occupyStation();
@@ -52,10 +52,10 @@ public final class StationLoopSlice {
         }
         StationPlan plan = parked.station();
         if (plan == null
-                || !plan.includesKind(VesselPartKind.HABITAT)
+                || !plan.includesKind(VesselPartKind.CONTROLLER)
                 || plan.includesKind(VesselPartKind.PAD)
                 || plan.includesKind(VesselPartKind.FAIRING)) {
-            throw new IllegalStateException("Station blocks keep the habitat, not the pad or fairing");
+            throw new IllegalStateException("Station blocks keep the seat, not the pad or fairing");
         }
 
         FlightLoop transfer = FlightLoop.sit(bus()).liftoff()
@@ -88,9 +88,10 @@ public final class StationLoopSlice {
             FlightLoop.sit(booster()).liftoff()
                     .withOrbit(SpaceBodies.parkingOrbit())
                     .occupyStation();
-            throw new IllegalStateException("A booster without a habitat must not become a station");
+            throw new IllegalStateException("A booster without a control seat must not become a station");
         } catch (IllegalStateException expected) {
-            if (expected.getMessage() == null || !expected.getMessage().contains("habitat")) {
+            String msg = expected.getMessage();
+            if (msg == null || !(msg.contains("seat") || msg.contains("launchable"))) {
                 throw expected;
             }
         }
@@ -119,15 +120,13 @@ public final class StationLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 1, 0), VesselPartCatalog.ENGINE, BlockFace.DOWN),
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 
     private static VesselBlockGrid booster() {
         return VesselBlockGrid.of(
                 new VesselBlockOccupant(new GridPos(0, 0, 0), VesselPartCatalog.PAD, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 1, 0), VesselPartCatalog.ENGINE, BlockFace.DOWN),
-                new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP));
     }
 }

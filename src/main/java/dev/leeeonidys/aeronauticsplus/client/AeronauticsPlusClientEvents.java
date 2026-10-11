@@ -44,5 +44,6 @@ public final class AeronauticsPlusClientEvents {
                 PropellerShaftAdapterRenderer::new
         );
         event.registerEntityRenderer(AeronauticsPlus.VESSEL.get(), VesselEntityRenderer::new);
+        event.registerEntityRenderer(AeronauticsPlus.SEAT.get(), SeatRenderer::new);
     }
 }

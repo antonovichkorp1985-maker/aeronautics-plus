@@ -41,7 +41,7 @@ public final class StationEnter {
         }
         FlightLoop occupied = OrbitMapData.get(overworld).takeParkedHabitat();
         if (occupied == null) {
-            return "Нет круговой стоянки с жилым. Манёвр остаётся на карте. Беспилотник в карман не входит.";
+            return "Нет круговой стоянки с креслом. Манёвр остаётся на карте. Беспилотник в карман не входит.";
         }
         StationPlan plan = occupied.station();
         BlockPos returnPos = player.blockPosition();
@@ -51,7 +51,7 @@ public final class StationEnter {
         WorldStation.place(station, origin, plan);
         BlockPos stand = WorldStation.stand(origin, plan);
         teleport(player, station, stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5);
-        return "Карман станции. Переползание. Выход: клавиша N или ПКМ по жилому.";
+        return "Карман станции. Переползание. Выход: клавиша N или Shift+ПКМ по креслу.";
     }
 
     public static String leave(ServerPlayer player) {

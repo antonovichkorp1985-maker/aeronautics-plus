@@ -6,8 +6,10 @@ import java.util.List;
 
 /**
  * Compiler fixtures. Minecraft items from this catalog are the engine, control
- * seat, train mount, launch pad, pyro ring, landing legs, fairing, payload,
- * habitat, RCS and docking. Payload is a property of the stack, not an item.
+ * seat, train mount, launch pad, pyro ring, landing legs, fairing,
+ * RCS and docking. Habitat is a compiler fixture, not an AP item.
+ * Life support is ChemMod; the seat marks players aboard.
+ * Payload is a property of the stack, not an item.
  * Tanks, solar and radiator stay ChemMod. Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
@@ -59,6 +61,7 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec FAIRING = VesselPartSpec.fairing("rocket_fairing", 45.0);
     /** Compiler satellite fixture. Not an AP item; payload is a property. */
     public static final VesselPartSpec PAYLOAD = VesselPartSpec.payload("rocket_payload", 180.0);
+    /** Compiler fixture only. Not a registered AP block. */
     public static final VesselPartSpec HABITAT = VesselPartSpec.habitat("crew_habitat", 250.0);
     public static final VesselPartSpec SOLAR = VesselPartSpec.solar("solar_panel", 25.0);
     public static final VesselPartSpec GYRO = VesselPartSpec.gyro("control_gyro", 40.0);

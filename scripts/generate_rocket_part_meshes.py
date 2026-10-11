@@ -159,37 +159,47 @@ def cylinder_x(x0, x1, cy, cz, radius, n, u0, u1) -> list:
 
 
 def engine_mesh() -> Mesh:
+    """1 m nozzle piece: steel bell, not a copper pumpkin. Cluster = several of these."""
     mesh = Mesh()
-    n = 24
-    # RS-25 silhouette scaled into one metre cell. No cooling tubes through the bell.
+    n = 28
+    mesh.add(
+        "lip",
+        frustum(0.00, 0.48, 0.05, 0.46, n, 0.02, 0.10)
+        + disk(0.00, 0.48, n, False, (0.80, 0.22)),
+    )
     mesh.add(
         "bell_outer",
-        frustum(0.02, 0.47, 0.30, 0.20, n, 0.02, 0.42)
-        + frustum(0.30, 0.20, 0.42, 0.10, n, 0.42, 0.55)
-        + frustum(0.42, 0.10, 0.50, 0.12, n, 0.55, 0.62),
+        frustum(0.05, 0.46, 0.22, 0.30, n, 0.10, 0.32)
+        + frustum(0.22, 0.30, 0.38, 0.14, n, 0.32, 0.50)
+        + frustum(0.38, 0.14, 0.46, 0.09, n, 0.50, 0.58),
     )
     mesh.add(
         "bell_inner",
-        frustum(0.04, 0.43, 0.30, 0.17, n, 0.78, 0.90, invert=True)
-        + frustum(0.30, 0.17, 0.42, 0.08, n, 0.90, 0.97, invert=True)
-        + disk(0.04, 0.43, n, False, (0.80, 0.22)),
+        frustum(0.05, 0.42, 0.22, 0.26, n, 0.82, 0.90, invert=True)
+        + frustum(0.22, 0.26, 0.38, 0.11, n, 0.90, 0.96, invert=True)
+        + frustum(0.38, 0.11, 0.46, 0.07, n, 0.96, 0.99, invert=True),
     )
+    rings = []
+    for y0, radius in ((0.10, 0.445), (0.18, 0.355), (0.26, 0.265)):
+        rings.extend(frustum(y0, radius + 0.012, y0 + 0.028, radius + 0.012, n, 0.60, 0.70))
+    mesh.add("channels", rings)
     mesh.add(
         "chamber",
-        frustum(0.50, 0.17, 0.78, 0.17, n, 0.05, 0.28)
-        + disk(0.78, 0.17, n, True, (0.22, 0.78)),
+        frustum(0.46, 0.14, 0.72, 0.18, n, 0.05, 0.28)
+        + disk(0.72, 0.18, n, True, (0.22, 0.78)),
     )
     mesh.add(
         "gimbal",
-        frustum(0.78, 0.20, 0.90, 0.16, n, 0.30, 0.40)
-        + frustum(0.90, 0.16, 0.98, 0.10, n, 0.40, 0.48)
-        + disk(0.98, 0.10, n, True, (0.22, 0.22)),
+        frustum(0.72, 0.16, 0.86, 0.20, 16, 0.30, 0.42)
+        + frustum(0.86, 0.20, 0.98, 0.12, 16, 0.42, 0.52)
+        + disk(0.98, 0.12, 16, True, (0.22, 0.22)),
     )
     pumps = []
-    pumps.extend(cylinder_x(0.06, 0.30, 0.68, 0.50, 0.07, 12, 0.50, 0.70))
-    pumps.extend(cylinder_x(0.70, 0.94, 0.68, 0.50, 0.07, 12, 0.50, 0.70))
-    pumps.extend(box(0.28, 0.62, 0.46, 0.36, 0.74, 0.54, 0.72, 0.55, 0.88, 0.72))
-    pumps.extend(box(0.64, 0.62, 0.46, 0.72, 0.74, 0.54, 0.72, 0.55, 0.88, 0.72))
+    pumps.extend(cylinder_x(0.02, 0.28, 0.70, 0.50, 0.08, 12, 0.55, 0.72))
+    pumps.extend(cylinder_x(0.72, 0.98, 0.70, 0.50, 0.08, 12, 0.55, 0.72))
+    pumps.extend(box(0.26, 0.64, 0.44, 0.36, 0.78, 0.56, 0.70, 0.50, 0.90, 0.70))
+    pumps.extend(box(0.64, 0.64, 0.44, 0.74, 0.78, 0.56, 0.70, 0.50, 0.90, 0.70))
+    pumps.extend(box(0.30, 0.86, 0.30, 0.70, 0.94, 0.70, 0.08, 0.08, 0.40, 0.30))
     mesh.add("turbopumps", pumps)
     return mesh
 
@@ -501,35 +511,33 @@ def lab_mesh() -> Mesh:
 
 
 def docking_mesh() -> Mesh:
-    """Androgynous capture ring: flange, tunnel, petals. Original, APAS/IDSS silhouette."""
+    """1 m capture-ring piece: steel flange, tunnel, thin petals. Not a gold hat."""
     mesh = Mesh()
-    n = 20
+    n = 24
     mesh.add(
-        "base",
-        frustum(0.00, 0.42, 0.10, 0.42, n, 0.05, 0.22)
-        + frustum(0.00, 0.28, 0.10, 0.28, n, 0.05, 0.22, invert=True),
+        "flange",
+        frustum(0.00, 0.46, 0.08, 0.46, n, 0.02, 0.16)
+        + disk(0.00, 0.46, n, False, (0.22, 0.22))
+        + frustum(0.00, 0.30, 0.08, 0.30, n, 0.02, 0.16, invert=True),
     )
     mesh.add(
         "tunnel",
-        frustum(0.10, 0.30, 0.48, 0.30, n, 0.22, 0.50)
-        + frustum(0.10, 0.22, 0.48, 0.22, n, 0.22, 0.50, invert=True),
+        frustum(0.08, 0.32, 0.58, 0.32, n, 0.16, 0.50)
+        + frustum(0.08, 0.24, 0.58, 0.24, n, 0.80, 0.95, invert=True),
     )
     mesh.add(
         "ring",
-        frustum(0.48, 0.36, 0.62, 0.36, n, 0.50, 0.72)
-        + frustum(0.48, 0.24, 0.62, 0.24, n, 0.50, 0.72, invert=True),
+        frustum(0.58, 0.38, 0.70, 0.40, n, 0.50, 0.70)
+        + frustum(0.58, 0.22, 0.70, 0.22, n, 0.70, 0.82, invert=True)
+        + disk(0.70, 0.40, n, True, (0.50, 0.22))
+        + disk(0.70, 0.22, n, False, (0.80, 0.50)),
     )
     petals = []
-    for i in range(3):
-        ang = 2 * math.pi * i / 3
-        c, s = math.cos(ang), math.sin(ang)
-        x, z = 0.5 + 0.34 * c, 0.5 + 0.34 * s
-        petals.extend(box(x - 0.05, 0.50, z - 0.05, x + 0.05, 0.78, z + 0.05, 0.72, 0.10, 0.95, 0.45))
+    petals.extend(box(0.36, 0.68, 0.04, 0.64, 0.90, 0.10, 0.50, 0.05, 0.80, 0.40))
+    petals.extend(box(0.80, 0.68, 0.34, 0.96, 0.90, 0.66, 0.50, 0.05, 0.80, 0.40))
+    petals.extend(box(0.04, 0.68, 0.34, 0.20, 0.90, 0.66, 0.50, 0.05, 0.80, 0.40))
     mesh.add("petals", petals)
-    mesh.add(
-        "guide",
-        frustum(0.62, 0.18, 0.72, 0.08, n, 0.78, 0.92) + disk(0.72, 0.08, n, True, (0.80, 0.78)),
-    )
+    mesh.add("target", box(0.46, 0.70, 0.08, 0.54, 0.84, 0.16, 0.82, 0.70, 0.95, 0.90))
     return mesh
 
 
@@ -600,52 +608,23 @@ def payload_mesh() -> Mesh:
 
 
 def mount_mesh() -> Mesh:
-    """Train-car cradle: rails, ring, hold-down clamps. Not a homemade crawler."""
+    """1 m transporter bay slice. Open ±Z so a row of them is a long horizontal cradle."""
     mesh = Mesh()
-    n = 16
-    rails = []
-    rails.extend(box(0.06, 0.00, 0.06, 0.20, 0.08, 0.94, 0.05, 0.05, 0.40, 0.35))
-    rails.extend(box(0.80, 0.00, 0.06, 0.94, 0.08, 0.94, 0.05, 0.05, 0.40, 0.35))
-    rails.extend(box(0.06, 0.00, 0.06, 0.94, 0.08, 0.20, 0.05, 0.05, 0.40, 0.35))
-    rails.extend(box(0.06, 0.00, 0.80, 0.94, 0.08, 0.94, 0.05, 0.05, 0.40, 0.35))
-    mesh.add("rails", rails)
-    mesh.add(
-        "ring",
-        frustum(0.08, 0.42, 0.16, 0.42, n, 0.45, 0.70)
-        + frustum(0.08, 0.28, 0.16, 0.28, n, 0.45, 0.70, invert=True),
-    )
+    mesh.add("deck", box(0.10, 0.00, 0.00, 0.90, 0.06, 1.00, 0.05, 0.05, 0.40, 0.35))
+    beams = []
+    for x0, x1 in ((0.04, 0.16), (0.84, 0.96)):
+        beams.extend(box(x0, 0.06, 0.00, x1, 0.14, 1.00, 0.08, 0.40, 0.38, 0.70))
+        beams.extend(box(x0 - 0.02, 0.14, 0.00, x1 + 0.02, 0.18, 1.00, 0.08, 0.40, 0.38, 0.70))
+    mesh.add("ibeams", beams)
+    ties = []
+    for z in (0.16, 0.50, 0.84):
+        ties.extend(box(0.14, 0.08, z - 0.04, 0.86, 0.13, z + 0.04, 0.10, 0.50, 0.30, 0.62))
+    mesh.add("ties", ties)
     clamps = []
-    for i in range(4):
-        ang = math.pi / 4 + i * math.pi / 2
-        dx, dz = 0.38 * math.cos(ang), 0.38 * math.sin(ang)
-        clamps.extend(
-            box(
-                0.5 + dx - 0.04,
-                0.08,
-                0.5 + dz - 0.04,
-                0.5 + dx + 0.04,
-                0.42,
-                0.5 + dz + 0.04,
-                0.72,
-                0.10,
-                0.95,
-                0.55,
-            )
-        )
-        clamps.extend(
-            box(
-                0.5 + dx - 0.06,
-                0.38,
-                0.5 + dz - 0.06,
-                0.5 + dx + 0.06,
-                0.46,
-                0.5 + dz + 0.06,
-                0.72,
-                0.55,
-                0.95,
-                0.80,
-            )
-        )
+    clamps.extend(box(0.02, 0.18, 0.28, 0.12, 0.58, 0.72, 0.55, 0.05, 0.95, 0.40))
+    clamps.extend(box(0.10, 0.40, 0.34, 0.22, 0.50, 0.66, 0.55, 0.42, 0.95, 0.70))
+    clamps.extend(box(0.88, 0.18, 0.28, 0.98, 0.58, 0.72, 0.55, 0.05, 0.95, 0.40))
+    clamps.extend(box(0.78, 0.40, 0.34, 0.90, 0.50, 0.66, 0.55, 0.42, 0.95, 0.70))
     mesh.add("clamps", clamps)
     return mesh
 
@@ -673,20 +652,26 @@ def pad_mesh() -> Mesh:
 
 
 def controller_mesh() -> Mesh:
-    """Seat plus console. Marks the pile as a rocket. Not a KSP command pod."""
+    """Sittable 1 m control seat: pedestal, bucket, armrests, panel. Not a cabin."""
     mesh = Mesh()
-    mesh.add("deck", box(0.12, 0.02, 0.12, 0.88, 0.10, 0.88, 0.20, 0.15, 0.40, 0.35))
+    mesh.add("pedestal", box(0.34, 0.00, 0.36, 0.66, 0.12, 0.68, 0.05, 0.05, 0.38, 0.28))
+    mesh.add("column", box(0.40, 0.12, 0.42, 0.60, 0.30, 0.62, 0.08, 0.30, 0.36, 0.55))
     seat = []
-    seat.extend(box(0.28, 0.10, 0.30, 0.72, 0.22, 0.70, 0.35, 0.20, 0.55, 0.45))
-    seat.extend(box(0.28, 0.22, 0.58, 0.72, 0.62, 0.72, 0.35, 0.20, 0.55, 0.45))
-    seat.extend(box(0.28, 0.22, 0.30, 0.36, 0.48, 0.58, 0.40, 0.25, 0.58, 0.50))
-    seat.extend(box(0.64, 0.22, 0.30, 0.72, 0.48, 0.58, 0.40, 0.25, 0.58, 0.50))
-    mesh.add("seat", seat)
+    seat.extend(box(0.22, 0.28, 0.24, 0.78, 0.40, 0.76, 0.45, 0.05, 0.95, 0.38))
+    seat.extend(box(0.24, 0.40, 0.64, 0.76, 0.90, 0.80, 0.45, 0.40, 0.95, 0.95))
+    seat.extend(box(0.30, 0.86, 0.60, 0.70, 0.98, 0.82, 0.48, 0.70, 0.90, 0.95))
+    seat.extend(box(0.16, 0.36, 0.28, 0.24, 0.54, 0.70, 0.08, 0.60, 0.30, 0.90))
+    seat.extend(box(0.76, 0.36, 0.28, 0.84, 0.54, 0.70, 0.08, 0.60, 0.30, 0.90))
+    mesh.add("bucket", seat)
     mesh.add(
         "console",
-        box(0.22, 0.10, 0.12, 0.78, 0.42, 0.28, 0.08, 0.08, 0.45, 0.55)
-        + box(0.32, 0.42, 0.16, 0.68, 0.48, 0.24, 0.70, 0.20, 0.90, 0.40),
+        box(0.26, 0.32, 0.06, 0.74, 0.56, 0.22, 0.05, 0.70, 0.40, 0.95)
+        + box(0.30, 0.56, 0.08, 0.70, 0.62, 0.18, 0.70, 0.20, 0.90, 0.40),
     )
+    rails = []
+    rails.extend(box(0.18, 0.00, 0.30, 0.26, 0.30, 0.38, 0.10, 0.05, 0.28, 0.28))
+    rails.extend(box(0.74, 0.00, 0.30, 0.82, 0.30, 0.38, 0.10, 0.05, 0.28, 0.28))
+    mesh.add("rails", rails)
     return mesh
 
 
@@ -741,27 +726,25 @@ def paint(size: int, fn) -> list[list[tuple[int, int, int]]]:
 
 def engine_tex(x, y, s):
     nx, ny = x / (s - 1), y / (s - 1)
-    cx, cy = nx - 0.5, ny - 0.5
-    r = math.hypot(cx, cy)
-    if r < 0.14:
-        return (18, 14, 12)
-    if r < 0.46:
-        t = (r - 0.14) / 0.32
-        return (int(168 + 40 * t), int(86 + 18 * t), int(42 + 10 * t))
-    if ny > 0.70:
-        return (118, 122, 130)
-    if (x + y) % 5 == 0:
-        return (72, 48, 32)
-    return (64, 56, 50)
+    if ny > 0.78:
+        return (16, 14, 12) if (x * 3 + y) % 7 else (28, 24, 20)
+    ring = int(ny * 18)
+    if (x + ring * 3) % 11 == 0:
+        return (150, 146, 138)
+    if ring % 2 == 0:
+        return (88, 84, 78) if (x + y) % 4 else (72, 68, 62)
+    return (54, 50, 46) if (x // 2 + y) % 3 else (40, 38, 36)
 
 
 def controller_tex(x, y, s):
-    ny = y / (s - 1)
-    if ny > 0.72:
-        return (36, 40, 48) if (x + y) % 3 else (52, 56, 64)
-    if 0.40 <= ny <= 0.58:
-        return (48, 140, 72) if x % 6 < 2 else (32, 48, 64)
-    return (92, 72, 48) if (x + y) % 4 else (70, 54, 38)
+    nx, ny = x / (s - 1), y / (s - 1)
+    if 0.08 <= nx <= 0.55 and 0.12 <= ny <= 0.55:
+        return (42, 48, 36) if (x // 3 + y // 2) % 2 else (32, 38, 28)
+    if 0.72 <= ny <= 0.80:
+        return (214, 176, 36) if x % 5 else (48, 44, 40)
+    if ny > 0.82 and x % 8 < 3:
+        return (48, 160, 72) if y % 6 < 3 else (32, 48, 80)
+    return (78, 82, 88) if (x + y) % 4 else (58, 62, 68)
 
 
 def tank_tex(x, y, s):
@@ -927,12 +910,17 @@ def lab_tex(x, y, s):
 
 
 def docking_tex(x, y, s):
-    ny = y / (s - 1)
-    if 0.35 <= ny <= 0.55:
-        return (196, 164, 48) if (x + y) % 4 else (176, 140, 36)
-    if x % 8 == 0:
-        return (168, 172, 178)
-    return (118, 122, 130) if (x + y) % 3 else (98, 102, 110)
+    nx, ny = x / (s - 1), y / (s - 1)
+    r = math.hypot(nx - 0.5, ny - 0.5)
+    if r < 0.12:
+        return (18, 18, 22)
+    if 0.18 <= r <= 0.22:
+        return (232, 232, 236)
+    if abs(nx - 0.5) < 0.04 and ny > 0.55:
+        return (214, 176, 36)
+    if (x + y) % 9 == 0:
+        return (176, 180, 186)
+    return (98, 102, 108) if (x // 3 + y // 3) % 2 else (78, 82, 88)
 
 
 def battery_tex(x, y, s):
@@ -979,11 +967,11 @@ def pad_tex(x, y, s):
 
 def mount_tex(x, y, s):
     ny = y / (s - 1)
-    if 0.18 <= ny <= 0.28 or 0.72 <= ny <= 0.82:
-        return (214, 176, 36)
+    if ny > 0.55:
+        return (214, 176, 36) if (x + y) % 5 else (196, 148, 28)
     if x % 8 == 0 or y % 8 == 0:
         return (168, 172, 178)
-    return (78, 82, 90) if (x // 4 + y // 4) % 2 == 0 else (58, 62, 70)
+    return (72, 76, 82) if (x // 4 + y // 4) % 2 == 0 else (52, 56, 62)
 
 
 JSON_MODEL = """{{
@@ -1028,6 +1016,16 @@ UP_STATES = {
     "facing=east": {"x": 90, "y": 90},
 }
 
+# Horizontal bay: Y-up trough, yaw only. Do not stand the cradle on its end.
+MOUNT_STATES = {
+    "facing=north": {},
+    "facing=south": {"y": 180},
+    "facing=west": {"y": 270},
+    "facing=east": {"y": 90},
+    "facing=up": {},
+    "facing=down": {"y": 180},
+}
+
 
 def write_part_models(block_id: str, obj_id: str | None = None) -> None:
     body = JSON_MODEL.format(block_id=block_id, obj_id=obj_id or block_id)
@@ -1060,7 +1058,7 @@ def assert_outward() -> None:
 
 
 def main() -> None:
-    """AP world blocks: mount, pad, engine, seat, pyro, legs, fairing, habitat, RCS, docking. Payload is a property. Tanks and radiator stay ChemMod."""
+    """AP world blocks: mount, pad, engine, seat, pyro, legs, fairing, RCS, docking. No habitat SKU. Tanks stay ChemMod."""
     assert_outward()
     mount_mesh().write(GEO / "rocket_mount.obj")
     pad_mesh().write(GEO / "launch_pad.obj")
@@ -1069,7 +1067,6 @@ def main() -> None:
     separator_mesh().write(GEO / "stage_separator.obj")
     legs_mesh().write(GEO / "landing_legs.obj")
     fairing_mesh().write(GEO / "rocket_fairing.obj")
-    habitat_mesh().write(GEO / "crew_habitat.obj")
     rcs_mesh().write(GEO / "rcs_thruster.obj")
     docking_mesh().write(GEO / "docking_port.obj")
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
@@ -1079,7 +1076,6 @@ def main() -> None:
     write_png(TEX / "stage_separator.png", paint(64, separator_tex))
     write_png(TEX / "landing_legs.png", paint(64, legs_tex))
     write_png(TEX / "rocket_fairing.png", paint(64, fairing_tex))
-    write_png(TEX / "crew_habitat.png", paint(64, habitat_tex))
     write_png(TEX / "rcs_thruster.png", paint(64, rcs_tex))
     write_png(TEX / "docking_port.png", paint(64, docking_tex))
     write_part_models("rocket_mount")
@@ -1089,20 +1085,18 @@ def main() -> None:
     write_part_models("stage_separator")
     write_part_models("landing_legs")
     write_part_models("rocket_fairing")
-    write_part_models("crew_habitat")
     write_part_models("rcs_thruster")
     write_part_models("docking_port")
-    write_blockstate("rocket_mount", UP_STATES)
+    write_blockstate("rocket_mount", MOUNT_STATES)
     write_blockstate("launch_pad", UP_STATES)
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_controller", UP_STATES)
     write_blockstate("stage_separator", UP_STATES)
     write_blockstate("landing_legs", UP_STATES)
     write_blockstate("rocket_fairing", UP_STATES)
-    write_blockstate("crew_habitat", UP_STATES)
     write_blockstate("rcs_thruster", ENGINE_STATES)
     write_blockstate("docking_port", ENGINE_STATES)
-    print("AP rocket fixtures written; ChemMod owns tanks and radiator")
+    print("AP rocket fixtures written; no habitat SKU; ChemMod owns tanks and radiator")
 
 
 if __name__ == "__main__":

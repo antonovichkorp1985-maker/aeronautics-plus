@@ -1,6 +1,7 @@
 package dev.leeeonidys.aeronauticsplus.content.rocket;
 
 import com.mojang.serialization.MapCodec;
+import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselEnvelope;
@@ -45,8 +46,10 @@ public final class VesselPartBlock extends Block {
     public VesselPartBlock(VesselPartSpec spec, Properties properties) {
         super(properties);
         this.spec = spec;
-        registerDefaultState(stateDefinition.any().setValue(
-                FACING, spec.kind() == VesselPartKind.ENGINE ? Direction.DOWN : Direction.UP));
+        Direction facing = spec.kind() == VesselPartKind.ENGINE
+                ? Direction.DOWN
+                : spec.kind() == VesselPartKind.MOUNT ? Direction.NORTH : Direction.UP;
+        registerDefaultState(stateDefinition.any().setValue(FACING, facing));
     }
 
     public VesselPartSpec spec() {
@@ -96,9 +99,10 @@ public final class VesselPartBlock extends Block {
             }
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
-        if (spec.kind() == VesselPartKind.MOUNT
-                || spec.kind() == VesselPartKind.FAIRING
-                || spec.kind() == VesselPartKind.HABITAT) {
+        if (spec.kind() == VesselPartKind.MOUNT) {
+            return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+        }
+        if (spec.kind() == VesselPartKind.FAIRING) {
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
         return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
@@ -120,27 +124,34 @@ public final class VesselPartBlock extends Block {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
-        if (spec.kind() == VesselPartKind.HABITAT && StationPocket.isStation(level)
-                && player instanceof ServerPlayer serverPlayer) {
-            StationEnter.tell(serverPlayer, StationEnter.leave(serverPlayer));
-            return InteractionResult.CONSUME;
+        if (spec.kind() == VesselPartKind.CONTROLLER) {
+            if (StationPocket.isStation(level) && player.isShiftKeyDown()
+                    && player instanceof ServerPlayer serverPlayer) {
+                StationEnter.tell(serverPlayer, StationEnter.leave(serverPlayer));
+                return InteractionResult.CONSUME;
+            }
+            if (player.isShiftKeyDown()) {
+                VesselBlockGrid padGrid = WorldVesselScanner.scan(level, pos);
+                VesselCompilation padCompilation = VesselBlockCompiler.analyze(padGrid);
+                if (padCompilation.isLaunchable() && padCompilation.diagnosticText().contains("ON_PAD")) {
+                    String fail = VesselLaunch.ignite(level, pos);
+                    if (fail.isBlank()) {
+                        player.displayClientMessage(
+                                Component.literal("Старт. Игрок остаётся на земле. Карта: клавиша M."), false);
+                    } else {
+                        player.displayClientMessage(Component.literal(fail), false);
+                    }
+                    return InteractionResult.CONSUME;
+                }
+            } else {
+                sit(level, pos, player);
+                return InteractionResult.CONSUME;
+            }
         }
         VesselBlockGrid grid = WorldVesselScanner.scan(level, pos);
         VesselCompilation compilation = VesselBlockCompiler.analyze(grid);
         if (grid.isEmpty() && compilation.diagnostics().isEmpty()) {
             player.displayClientMessage(Component.literal("Сборка пуста."), false);
-            return InteractionResult.CONSUME;
-        }
-        if (spec.kind() == VesselPartKind.CONTROLLER
-                && compilation.isLaunchable()
-                && compilation.diagnosticText().contains("ON_PAD")) {
-            String fail = VesselLaunch.ignite(level, pos);
-            if (fail.isBlank()) {
-                player.displayClientMessage(
-                        Component.literal("Старт. Игрок остаётся на земле. Карта: клавиша M."), false);
-            } else {
-                player.displayClientMessage(Component.literal(fail), false);
-            }
             return InteractionResult.CONSUME;
         }
         if (!grid.isEmpty()) {
@@ -177,5 +188,15 @@ public final class VesselPartBlock extends Block {
             }
         }
         return InteractionResult.CONSUME;
+    }
+
+    private static void sit(Level level, BlockPos pos, Player player) {
+        if (player.isPassenger()) {
+            return;
+        }
+        SeatEntity seat = new SeatEntity(AeronauticsPlus.SEAT.get(), level);
+        seat.moveTo(pos.getX() + 0.5, pos.getY() + 0.28, pos.getZ() + 0.5, player.getYRot(), 0.0f);
+        level.addFreshEntity(seat);
+        player.startRiding(seat);
     }
 }

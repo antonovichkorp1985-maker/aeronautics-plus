@@ -10,12 +10,14 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
     public static final CellOccupancy FULL = fromPixels(0, 0, 0, 16, 16, 16);
     /** 12×16×12 px column used by tanks and structure. */
     public static final CellOccupancy COLUMN = fromPixels(2, 0, 2, 14, 16, 14);
-    /** Narrower nozzle column; an engine is not a full block. */
-    public static final CellOccupancy NOZZLE = fromPixels(4, 0, 4, 12, 16, 12);
+    /** Bell fills most of the cell; still not a full cube. */
+    public static final CellOccupancy NOZZLE = fromPixels(1, 0, 1, 15, 16, 15);
     /** Thin separator ring. */
     public static final CellOccupancy RING = fromPixels(1, 5, 1, 15, 11, 15);
-    /** Low cradle on a train car; not a full cube. */
-    public static final CellOccupancy CRADLE = fromPixels(1, 0, 1, 15, 6, 15);
+    /** Horizontal transporter bay slice; clamps, not a full cube. */
+    public static final CellOccupancy CRADLE = fromPixels(1, 0, 1, 15, 11, 15);
+    /** Control seat bucket. */
+    public static final CellOccupancy SEAT = fromPixels(2, 0, 2, 14, 16, 14);
     /** Launch table: deck and clamps. Stays on the ground. */
     public static final CellOccupancy PAD = fromPixels(0, 0, 0, 16, 8, 16);
     /** Ogive payload fairing; not a full cube. */

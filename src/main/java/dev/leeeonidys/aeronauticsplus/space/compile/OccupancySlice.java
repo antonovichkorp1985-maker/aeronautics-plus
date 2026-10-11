@@ -22,7 +22,7 @@ public final class OccupancySlice {
                 || CellOccupancy.OGIVE.isFullBlock() || CellOccupancy.BUS.isFullBlock()
                 || CellOccupancy.WING.isFullBlock() || CellOccupancy.CAN.isFullBlock()
                 || CellOccupancy.POD.isFullBlock() || CellOccupancy.PAD.isFullBlock()
-                || CellOccupancy.LEGS.isFullBlock()) {
+                || CellOccupancy.LEGS.isFullBlock() || CellOccupancy.SEAT.isFullBlock()) {
             throw new IllegalStateException("Catalog rocket parts must not occupy a full cube");
         }
         if (!(VesselPartCatalog.FAIRING.occupancy().volume() < 1.0)

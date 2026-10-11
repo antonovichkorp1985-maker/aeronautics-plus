@@ -10,8 +10,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
- * Habitat and RCS are AP service-module parts. RCS is ACS, not the main engine.
- * Solar stays ChemMod; gyro waits on that panel.
+ * Control seat and RCS are AP service-module parts. RCS is ACS, not the main engine.
+ * Solar stays ChemMod; gyro waits on that panel. Life support is ChemMod.
  */
 public final class ServiceLoopSlice {
     private ServiceLoopSlice() {
@@ -28,9 +28,9 @@ public final class ServiceLoopSlice {
     public static Result execute() {
         VesselCompilation compiled = VesselBlockCompiler.analyze(bus());
         if (!compiled.isLaunchable()
-                || !compiled.stages().get(0).hasHabitat()
+                || !compiled.stages().get(0).hasController()
                 || compiled.stages().get(0).rcsThrusters().isEmpty()) {
-            throw new IllegalStateException("Pad stack with habitat and RCS must compile:\n"
+            throw new IllegalStateException("Pad stack with a seat and RCS must compile:\n"
                     + compiled.diagnosticText());
         }
         if (compiled.diagnosticText().contains("NO_RCS")) {
@@ -41,13 +41,13 @@ public final class ServiceLoopSlice {
         FlightLoop flown = FlightLoop.sit(bus()).liftoff()
                 .withOrbit(atAltitude(80_000.0))
                 .dropFairing();
-        if (!flown.hasHabitat() || !flown.hasRcs() || flown.hasFairing()) {
-            throw new IllegalStateException("After the shroud drops the habitat and RCS stay");
+        if (!flown.hasController() || !flown.hasRcs() || flown.hasFairing()) {
+            throw new IllegalStateException("After the shroud drops the seat and RCS stay");
         }
         double massBefore = flown.vessel().totalMassKg();
         FlightLoop pulsed = flown.fireRcs(2.0);
-        if (!(pulsed.vessel().totalMassKg() < massBefore - 0.1) || !pulsed.hasHabitat()) {
-            throw new IllegalStateException("RCS must spend propellant and keep the habitat");
+        if (!(pulsed.vessel().totalMassKg() < massBefore - 0.1) || !pulsed.hasController()) {
+            throw new IllegalStateException("RCS must spend propellant and keep the seat");
         }
 
         FlightLoop bare = FlightLoop.sit(busWithoutRcs()).liftoff()
@@ -63,10 +63,10 @@ public final class ServiceLoopSlice {
 
         FlightLoop recovered = pulsed.withOrbit(atAltitude(2_000.0)).recover();
         if (recovered.recovery() == null
-                || !recovered.recovery().includesKind(VesselPartKind.HABITAT)
+                || !recovered.recovery().includesKind(VesselPartKind.CONTROLLER)
                 || !recovered.recovery().includesKind(VesselPartKind.RCS)
                 || recovered.recovery().includesKind(VesselPartKind.FAIRING)) {
-            throw new IllegalStateException("Recovered blocks keep habitat and RCS, not the fairing");
+            throw new IllegalStateException("Recovered blocks keep the seat and RCS, not the fairing");
         }
 
         return new Result(true, true, true, true, true);
@@ -85,8 +85,7 @@ public final class ServiceLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(1, 2, 0), VesselPartCatalog.RCS, BlockFace.EAST),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 
     private static VesselBlockGrid busWithoutRcs() {
@@ -95,7 +94,6 @@ public final class ServiceLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 1, 0), VesselPartCatalog.ENGINE, BlockFace.DOWN),
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 }

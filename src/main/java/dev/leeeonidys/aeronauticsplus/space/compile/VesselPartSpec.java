@@ -128,7 +128,7 @@ public record VesselPartSpec(
 
     public static VesselPartSpec docking(String id, double massKg) {
         return new VesselPartSpec(
-                id, VesselPartKind.DOCKING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.RING);
+                id, VesselPartKind.DOCKING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.COLUMN);
     }
 
     public static VesselPartSpec battery(String id, double massKg) {
@@ -170,7 +170,7 @@ public record VesselPartSpec(
     /** Control seat. Placing it is what makes the ChemMod pile a rocket. */
     public static VesselPartSpec controller(String id, double massKg) {
         return new VesselPartSpec(
-                id, VesselPartKind.CONTROLLER, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CAN);
+                id, VesselPartKind.CONTROLLER, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.SEAT);
     }
 
     /** Falcon landing legs. Not ChemMod air, not grid fins. */

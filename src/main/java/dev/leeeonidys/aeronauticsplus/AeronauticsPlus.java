@@ -8,6 +8,7 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlo
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
+import dev.leeeonidys.aeronauticsplus.content.rocket.SeatEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
@@ -120,6 +121,15 @@ public final class AeronauticsPlus {
                     .updateInterval(1)
                     .fireImmune()
                     .build("aeronauticsplus:vessel"));
+
+    public static final DeferredHolder<EntityType<?>, EntityType<SeatEntity>> SEAT =
+            ENTITIES.register("control_seat", () -> EntityType.Builder.<SeatEntity>of(SeatEntity::new, MobCategory.MISC)
+                    .sized(0.6f, 0.6f)
+                    .clientTrackingRange(8)
+                    .updateInterval(20)
+                    .noSave()
+                    .fireImmune()
+                    .build("aeronauticsplus:control_seat"));
 
     // Э2: prototype aircraft propeller, built on CA's MIT-licensed propeller classes.
     public static final DeferredBlock<PrototypePropellerBlock> PROTOTYPE_PROPELLER =
@@ -252,11 +262,6 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.FAIRING, MapColor.WOOL);
     public static final DeferredItem<BlockItem> ROCKET_FAIRING_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_FAIRING);
-    /** Soyuz-class pressurized cabin. Not a ChemMod tank. */
-    public static final DeferredBlock<VesselPartBlock> CREW_HABITAT =
-            registerVesselPart(VesselPartCatalog.HABITAT, MapColor.COLOR_LIGHT_BLUE);
-    public static final DeferredItem<BlockItem> CREW_HABITAT_ITEM =
-            ITEMS.registerSimpleBlockItem(CREW_HABITAT);
     /** RCS cluster. ACS, not the main engine. */
     public static final DeferredBlock<VesselPartBlock> RCS_THRUSTER =
             registerVesselPart(VesselPartCatalog.RCS, MapColor.COLOR_RED);
@@ -282,7 +287,6 @@ public final class AeronauticsPlus {
                         output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(LANDING_LEGS_ITEM.get());
                         output.accept(ROCKET_FAIRING_ITEM.get());
-                        output.accept(CREW_HABITAT_ITEM.get());
                         output.accept(RCS_THRUSTER_ITEM.get());
                         output.accept(DOCKING_PORT_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
@@ -297,7 +301,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.68: station pocket is a void world, enter is key N.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.69: seat is sittable, habitat SKU is gone, mount is a bay slice.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -875,12 +879,11 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LANDING_LEGS_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FAIRING_ITEM.get()).toString());
-            registeredItems.add(BuiltInRegistries.ITEM.getKey(CREW_HABITAT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 21
+            boolean allRegistered = registeredItems.size() == 20
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

@@ -217,6 +217,10 @@ public record FlightLoop(
         return vessel.activeStage().hasHabitat();
     }
 
+    public boolean hasController() {
+        return vessel.activeStage().hasController();
+    }
+
     /**
      * RCS cluster: ACS, not the main engine. Fires wherever the stack is, including the map.
      * ChemMod air is not this pulse.
@@ -254,7 +258,7 @@ public record FlightLoop(
 
     /**
      * Player command, not circularization. Burns and unmanned sats stay on the map.
-     * Habitat is required, not sufficient. ISS crawl, or CM↔LM while still
+     * The control seat is required, not sufficient. ISS crawl, or CM↔LM while still
      * in lunar orbit — this button. Moon-as-planet is a later world.
      */
     public FlightLoop occupyStation() {
@@ -267,8 +271,8 @@ public record FlightLoop(
         if (hasFairing()) {
             throw new IllegalStateException("Station is still under the fairing");
         }
-        if (!hasHabitat()) {
-            throw new IllegalStateException("Station needs a habitat to walk");
+        if (!hasController()) {
+            throw new IllegalStateException("Station needs a control seat");
         }
         StationPlan.of(flying);
         return new FlightLoop(

@@ -273,7 +273,7 @@ public record StageState(
 
     /** Apparatus under the fairing: habitat, lab, telescope, or a compiler satellite fixture. Not a SKU. */
     public boolean hasPayload() {
-        return payloadMassKg() > 0.0 || hasHabitat() || hasLab() || hasTelescope();
+        return payloadMassKg() > 0.0 || hasController() || hasLab() || hasTelescope();
     }
 
     /**
