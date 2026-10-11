@@ -261,6 +261,7 @@ public record VesselBlueprint(
             case TRANSPONDER -> MassElement.Role.TRANSPONDER;
             case TELESCOPE -> MassElement.Role.TELESCOPE;
             case CONTROLLER -> MassElement.Role.CONTROLLER;
+            case LEGS -> MassElement.Role.LEGS;
             default -> MassElement.Role.STRUCTURE;
         };
     }

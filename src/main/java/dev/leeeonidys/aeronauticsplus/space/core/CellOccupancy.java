@@ -36,6 +36,8 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
     public static final CellOccupancy MAST = fromPixels(6, 0, 6, 10, 16, 10);
     /** High-gain dish. */
     public static final CellOccupancy DISH = fromPixels(2, 3, 2, 14, 13, 14);
+    /** Deployed landing legs: feet and struts, not a full cube. */
+    public static final CellOccupancy LEGS = fromPixels(0, 0, 0, 16, 8, 16);
 
     public CellOccupancy {
         if (origin == null || size == null) {

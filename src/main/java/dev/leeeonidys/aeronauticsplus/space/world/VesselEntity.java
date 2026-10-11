@@ -104,7 +104,23 @@ public final class VesselEntity extends Entity {
         }
         boolean thrusting = loop.vessel().livePropellantKg() > 1.0e-9
                 && loop.vessel().clusterThrustNewtons() > 0.0;
-        if (thrusting) {
+        boolean falling = loop.vessel().orbit().radialSpeedMetersPerSecond() < 0.0;
+        double altitude = loop.vessel().orbit().altitudeMeters();
+        boolean landingBurn = falling
+                && altitude < 2_500.0
+                && loop.vessel().activeStage().hasLandingLegs();
+        if (landingBurn) {
+            LandingOutcome landing = VesselDynamics.attemptLanding(
+                    loop.vessel(), STEP_SECONDS, STEP_SECONDS);
+            loop = loop.withVessel(landing.vessel());
+            if (landing.landed()
+                    || landing.has(FlightFault.IMPACT)
+                    || landing.has(FlightFault.NO_LEGS)
+                    || loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
+                landAndDiscard();
+                return;
+            }
+        } else if (thrusting) {
             AscentOutcome outcome = VesselDynamics.advanceAscent(
                     loop.vessel(), Atmosphere.earth(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
             if (outcome.has(FlightFault.HOLD_DOWN) || outcome.has(FlightFault.IMPACT)) {

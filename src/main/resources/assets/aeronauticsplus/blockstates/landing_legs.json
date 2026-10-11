@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "aeronauticsplus:block/landing_legs"
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/landing_legs",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "aeronauticsplus:block/landing_legs",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/landing_legs",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/landing_legs",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/landing_legs",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

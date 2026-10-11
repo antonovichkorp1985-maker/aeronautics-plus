@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Compiler fixtures. Minecraft items from this catalog are the engine, control
- * seat, train mount, launch pad and pyro ring. Tanks stay ChemMod (adapt those). Hull SKUs are not AP items.
+ * seat, train mount, launch pad, pyro ring and landing legs. Tanks stay ChemMod (adapt those). Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";
@@ -78,6 +78,8 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec TELESCOPE = VesselPartSpec.telescope("space_telescope", 85.0);
     /** Marks the pile as a rocket. */
     public static final VesselPartSpec CONTROLLER = VesselPartSpec.controller("rocket_controller", 35.0);
+    /** Falcon landing legs. Soft contact without them is NO_LEGS. */
+    public static final VesselPartSpec LEGS = VesselPartSpec.legs("landing_legs", 25.0);
 
     private VesselPartCatalog() {
     }
@@ -88,7 +90,7 @@ public final class VesselPartCatalog {
                 OXIDIZER_TANK, OXIDIZER_TANK_SMALL, OXIDIZER_TANK_LARGE, LH2_TANK,
                 ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, PAD, FAIRING, PAYLOAD,
                 HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR,
-                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER);
+                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS);
     }
 
     public static VesselPartSpec byId(String id) {

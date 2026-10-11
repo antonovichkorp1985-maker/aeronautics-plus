@@ -173,6 +173,12 @@ public record VesselPartSpec(
                 id, VesselPartKind.CONTROLLER, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.CAN);
     }
 
+    /** Falcon landing legs. Not ChemMod air, not grid fins. */
+    public static VesselPartSpec legs(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.LEGS, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.LEGS);
+    }
+
     /**
      * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
      * tanks expose only that species — oxidizer does not travel through the fuel hull.
@@ -242,7 +248,7 @@ public record VesselPartSpec(
             case SEPARATOR -> face == facing
                     ? EnumSet.of(VesselConnection.ConnectionKind.SEPARATION)
                     : EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
-            case MOUNT, PAD -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case MOUNT, PAD, LEGS -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             case RCS -> {
                 if (face == facing) {
                     yield EnumSet.of(VesselConnection.ConnectionKind.SEPARATION);

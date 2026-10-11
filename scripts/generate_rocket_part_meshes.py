@@ -690,6 +690,36 @@ def controller_mesh() -> Mesh:
     return mesh
 
 
+def legs_mesh() -> Mesh:
+    """Falcon-class landing legs: four struts and footpads. Not a cube, not grid fins."""
+    mesh = Mesh()
+    mesh.add("hinge", box(0.40, 0.82, 0.40, 0.60, 0.96, 0.60, 0.20, 0.70, 0.40, 0.90))
+    struts = []
+    pads = []
+    hinges = ((0.44, 0.44), (0.56, 0.44), (0.44, 0.56), (0.56, 0.56))
+    feet = ((0.08, 0.08), (0.92, 0.08), (0.08, 0.92), (0.92, 0.92))
+    for (hx, hz), (fx, fz) in zip(hinges, feet):
+        for t in range(4):
+            t0 = t / 4
+            t1 = (t + 1) / 4
+            x0 = hx + (fx - hx) * t0
+            z0 = hz + (fz - hz) * t0
+            y0 = 0.88 + (0.10 - 0.88) * t0
+            x1 = hx + (fx - hx) * t1
+            z1 = hz + (fz - hz) * t1
+            y1 = 0.88 + (0.10 - 0.88) * t1
+            r = 0.035
+            struts.extend(box(
+                min(x0, x1) - r, min(y0, y1) - 0.02, min(z0, z1) - r,
+                max(x0, x1) + r, max(y0, y1) + 0.02, max(z0, z1) + r,
+                0.08, 0.08, 0.45, 0.55))
+        pads.extend(box(fx - 0.09, 0.00, fz - 0.09, fx + 0.09, 0.05, fz + 0.09, 0.70, 0.10, 0.95, 0.40))
+        pads.extend(box(fx - 0.025, 0.05, fz - 0.025, fx + 0.025, 0.16, fz + 0.025, 0.70, 0.40, 0.95, 0.70))
+    mesh.add("struts", struts)
+    mesh.add("pads", pads)
+    return mesh
+
+
 def chunk(tag: bytes, data: bytes) -> bytes:
     return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
 
@@ -778,6 +808,15 @@ def separator_tex(x, y, s):
     if (x + y) % 5 == 0:
         return (232, 198, 64)
     return (214, 176, 36)
+
+
+def legs_tex(x, y, s):
+    if x % 16 == 0 or y % 16 == 0:
+        return (58, 62, 68)
+    if (x % 16 in (4, 12)) and (y % 16 in (4, 12)):
+        return (40, 42, 46)
+    n = ((x * 17 + y * 13) ^ (x * 3 + y * 7)) & 31
+    return (78 + n, 82 + n // 2, 88 + n // 3)
 
 
 def fairing_tex(x, y, s):
@@ -1021,28 +1060,32 @@ def assert_outward() -> None:
 
 
 def main() -> None:
-    """AP world blocks: mount, pad, engine, control seat, pyro ring. Tanks stay ChemMod."""
+    """AP world blocks: mount, pad, engine, control seat, pyro ring, landing legs. Tanks stay ChemMod."""
     assert_outward()
     mount_mesh().write(GEO / "rocket_mount.obj")
     pad_mesh().write(GEO / "launch_pad.obj")
     engine_mesh().write(GEO / "rocket_engine.obj")
     controller_mesh().write(GEO / "rocket_controller.obj")
     separator_mesh().write(GEO / "stage_separator.obj")
+    legs_mesh().write(GEO / "landing_legs.obj")
     write_png(TEX / "rocket_mount.png", paint(64, mount_tex))
     write_png(TEX / "launch_pad.png", paint(64, pad_tex))
     write_png(TEX / "rocket_engine.png", paint(64, engine_tex))
     write_png(TEX / "rocket_controller.png", paint(64, controller_tex))
     write_png(TEX / "stage_separator.png", paint(64, separator_tex))
+    write_png(TEX / "landing_legs.png", paint(64, legs_tex))
     write_part_models("rocket_mount")
     write_part_models("launch_pad")
     write_part_models("rocket_engine")
     write_part_models("rocket_controller")
     write_part_models("stage_separator")
+    write_part_models("landing_legs")
     write_blockstate("rocket_mount", UP_STATES)
     write_blockstate("launch_pad", UP_STATES)
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_controller", UP_STATES)
     write_blockstate("stage_separator", UP_STATES)
+    write_blockstate("landing_legs", UP_STATES)
     print("AP rocket fixtures written; ChemMod owns tanks")
 
 

@@ -35,6 +35,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.EarthRotationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GimbalSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.LandingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
@@ -230,6 +231,11 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.SEPARATOR, MapColor.METAL);
     public static final DeferredItem<BlockItem> STAGE_SEPARATOR_ITEM =
             ITEMS.registerSimpleBlockItem(STAGE_SEPARATOR);
+    /** Falcon landing legs. Soft contact without them is NO_LEGS. */
+    public static final DeferredBlock<VesselPartBlock> LANDING_LEGS =
+            registerVesselPart(VesselPartCatalog.LEGS, MapColor.COLOR_LIGHT_GRAY);
+    public static final DeferredItem<BlockItem> LANDING_LEGS_ITEM =
+            ITEMS.registerSimpleBlockItem(LANDING_LEGS);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -243,6 +249,7 @@ public final class AeronauticsPlus {
                         output.accept(LAUNCH_PAD_ITEM.get());
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
+                        output.accept(LANDING_LEGS_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                     })
                     .build());
@@ -254,7 +261,7 @@ public final class AeronauticsPlus {
         TABS.register(modEventBus);
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.56: radial pyro drops strap-ons in flight; cluster burns with the core.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.57: Falcon landing legs; suicide burn recovers as blocks.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -518,6 +525,17 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus radial-loop slice failed", exception);
             }
             try {
+                LandingLoopSlice.Result legs = LandingLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus landing-loop slice OK: compilerLegs={}, hopper={}, legless={}, recovered={}",
+                        legs.compilerLegs(),
+                        legs.hopperLanded(),
+                        legs.leglessNotLanding(),
+                        legs.recoveredOnPad());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus landing-loop slice failed", exception);
+            }
+            try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus gimbal slice OK: limited={}, frozen={}, steered={}, fixed={}",
@@ -723,9 +741,10 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LAUNCH_PAD_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(LANDING_LEGS_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 16
+            boolean allRegistered = registeredItems.size() == 17
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

@@ -40,5 +40,7 @@ public enum VesselPartKind {
     /** Optical telescope / Earth-observation tube. */
     TELESCOPE,
     /** Seat / console that marks the pile as a rocket. */
-    CONTROLLER
+    CONTROLLER,
+    /** Falcon-class landing legs. Soft contact without them is NO_LEGS. */
+    LEGS
 }

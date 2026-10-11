@@ -365,6 +365,8 @@ public final class VesselBlockCompiler {
                     id, stageId, VesselComponent.ComponentKind.TELESCOPE, spec.massKg(), position);
             case CONTROLLER -> VesselComponent.structure(
                     id, stageId, VesselComponent.ComponentKind.CONTROLLER, spec.massKg(), position);
+            case LEGS -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.LEGS, spec.massKg(), position);
             case TANK -> VesselComponent.tank(id, stageId, new TankState(
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
             case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(
