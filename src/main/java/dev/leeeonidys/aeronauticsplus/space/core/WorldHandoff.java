@@ -5,6 +5,7 @@ package dev.leeeonidys.aeronauticsplus.space.core;
  * Not Minecraft build height, not ChemMod air.
  * Below 20 km the vehicle stays in the world; at 20 km it leaves for the map.
  * Coming back below 20 km returns to the world. Pyro is independent of this line.
+ * Parked circular orbit with a habitat can occupy station blocks; that is not this line.
  */
 public final class WorldHandoff {
     /** Geometric altitude where the stack leaves the Overworld for the orbit map. */

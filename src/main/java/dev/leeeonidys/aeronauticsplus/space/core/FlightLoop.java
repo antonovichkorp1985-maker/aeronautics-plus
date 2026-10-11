@@ -4,6 +4,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.GridSplit;
 import dev.leeeonidys.aeronauticsplus.space.compile.RadialSplit;
 import dev.leeeonidys.aeronauticsplus.space.compile.RecoveryPlan;
 import dev.leeeonidys.aeronauticsplus.space.compile.SpaceBodies;
+import dev.leeeonidys.aeronauticsplus.space.compile.StationPlan;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Pad blocks → world entity → 20 km map → world again → blocks on the pad.
+ * Pad blocks → world entity → 20 km map → parked station blocks → world again → pad.
  * Pyro does not wait for the handoff line. ChemMod air is not this loop.
  */
 public record FlightLoop(
@@ -34,6 +35,14 @@ public record FlightLoop(
         }
         if (presence == FlightPresence.WORLD_ENTITY && WorldHandoff.onMap(vessel.orbit())) {
             throw new IllegalStateException("World entity presence requires altitude below 20 km");
+        }
+        if (presence == FlightPresence.STATION_BLOCKS) {
+            if (WorldHandoff.inWorld(vessel.orbit()) || !StationHandoff.parked(vessel.orbit())) {
+                throw new IllegalStateException("Station blocks need a parked orbit on the map");
+            }
+            if (recovery != null) {
+                throw new IllegalStateException("Station is not a pad recovery");
+            }
         }
     }
 
@@ -91,10 +100,7 @@ public record FlightLoop(
         if (next == null) {
             throw new IllegalArgumentException("Vessel is required");
         }
-        FlightPresence nextPresence = WorldHandoff.inWorld(next.orbit())
-                ? FlightPresence.WORLD_ENTITY
-                : FlightPresence.ORBIT_MAP;
-        return new FlightLoop(nextPresence, stacked, padLeft, flying, next, null);
+        return new FlightLoop(presenceAfter(next.orbit()), stacked, padLeft, flying, next, null);
     }
 
     /** One physics step while the pile is already the world entity or on the map. */
@@ -128,9 +134,12 @@ public record FlightLoop(
             throw new IllegalStateException("Pyro ring did not leave an upper stage");
         }
         StageSplit stages = VesselDynamics.splitActiveStage(vessel);
+        FlightPresence splitPresence = presence == FlightPresence.STATION_BLOCKS
+                ? FlightPresence.ORBIT_MAP
+                : presence;
         return new FlightSplit(
-                new FlightLoop(presence, stacked, padLeft, split.continuing(), stages.continuing(), null),
-                new FlightLoop(presence, stacked, padLeft, split.booster(), stages.booster(), null));
+                new FlightLoop(splitPresence, stacked, padLeft, split.continuing(), stages.continuing(), null),
+                new FlightLoop(splitPresence, stacked, padLeft, split.booster(), stages.booster(), null));
     }
 
     /**
@@ -146,13 +155,16 @@ public record FlightLoop(
         if (split.sides().size() != stages.sides().size()) {
             throw new IllegalStateException("Radial grids and strap-on stages do not match");
         }
+        FlightPresence splitPresence = presence == FlightPresence.STATION_BLOCKS
+                ? FlightPresence.ORBIT_MAP
+                : presence;
         List<FlightLoop> sides = new ArrayList<>();
         for (int i = 0; i < split.sides().size(); i++) {
             sides.add(new FlightLoop(
-                    presence, stacked, padLeft, split.sides().get(i), stages.sides().get(i), null));
+                    splitPresence, stacked, padLeft, split.sides().get(i), stages.sides().get(i), null));
         }
         return new RadialFlightSplit(
-                new FlightLoop(presence, stacked, padLeft, split.core(), stages.core(), null),
+                new FlightLoop(splitPresence, stacked, padLeft, split.core(), stages.core(), null),
                 sides);
     }
 
@@ -192,11 +204,9 @@ public record FlightLoop(
             throw new IllegalStateException("Fairing drops in flight, not on the pad");
         }
         VesselState dropped = VesselDynamics.jettisonFairingAboveDenseAir(vessel);
-        FlightPresence nextPresence = WorldHandoff.inWorld(dropped.orbit())
-                ? FlightPresence.WORLD_ENTITY
-                : FlightPresence.ORBIT_MAP;
+        VesselBlockGrid bare = stripKind(flying, VesselPartKind.FAIRING);
         return new FlightLoop(
-                nextPresence, stacked, padLeft, stripKind(flying, VesselPartKind.FAIRING), dropped, null);
+                presenceAfter(dropped.orbit()), stacked, padLeft, bare, dropped, null);
     }
 
     public boolean hasRcs() {
@@ -216,10 +226,7 @@ public record FlightLoop(
             throw new IllegalStateException("RCS fires in flight, not on the pad");
         }
         VesselState next = VesselDynamics.fireRcs(vessel, seconds);
-        FlightPresence nextPresence = WorldHandoff.inWorld(next.orbit())
-                ? FlightPresence.WORLD_ENTITY
-                : FlightPresence.ORBIT_MAP;
-        return new FlightLoop(nextPresence, stacked, padLeft, flying, next, null);
+        return new FlightLoop(presenceAfter(next.orbit()), stacked, padLeft, flying, next, null);
     }
 
     public boolean strapOnsDry() {
@@ -242,10 +249,45 @@ public record FlightLoop(
             throw new IllegalArgumentException("Orbit is required");
         }
         VesselState next = vessel.withOrbit(nextOrbit);
-        FlightPresence nextPresence = WorldHandoff.inWorld(next.orbit())
-                ? FlightPresence.WORLD_ENTITY
-                : FlightPresence.ORBIT_MAP;
-        return new FlightLoop(nextPresence, stacked, padLeft, flying, next, null);
+        return new FlightLoop(presenceAfter(next.orbit()), stacked, padLeft, flying, next, null);
+    }
+
+    /**
+     * Parked circular orbit with a habitat becomes walkable blocks.
+     * Transfers stay on the Kepler map. Not the pad, not Overworld Y.
+     */
+    public FlightLoop occupyStation() {
+        if (presence != FlightPresence.ORBIT_MAP) {
+            throw new IllegalStateException("Station blocks occupy from the Kepler map");
+        }
+        if (!StationHandoff.parked(vessel.orbit())) {
+            throw new IllegalStateException("Station blocks need a parked circular orbit");
+        }
+        if (hasFairing()) {
+            throw new IllegalStateException("Station is still under the fairing");
+        }
+        if (!hasHabitat()) {
+            throw new IllegalStateException("Station needs a habitat to walk");
+        }
+        StationPlan.of(flying);
+        return new FlightLoop(
+                FlightPresence.STATION_BLOCKS, stacked, padLeft, flying, vessel, null);
+    }
+
+    /** Leave the walkable grid; Kepler map keeps the same orbit. */
+    public FlightLoop leaveStation() {
+        if (presence != FlightPresence.STATION_BLOCKS) {
+            throw new IllegalStateException("Leave station only from station blocks");
+        }
+        return new FlightLoop(
+                FlightPresence.ORBIT_MAP, stacked, padLeft, flying, vessel, null);
+    }
+
+    public StationPlan station() {
+        if (presence != FlightPresence.STATION_BLOCKS) {
+            return null;
+        }
+        return StationPlan.of(flying);
     }
 
     public FlightLoop recover() {
@@ -267,6 +309,16 @@ public record FlightLoop(
 
     public boolean leftThePad() {
         return presence != FlightPresence.BLOCKS_ON_PAD || recovery != null;
+    }
+
+    private FlightPresence presenceAfter(OrbitState orbit) {
+        if (WorldHandoff.inWorld(orbit)) {
+            return FlightPresence.WORLD_ENTITY;
+        }
+        if (presence == FlightPresence.STATION_BLOCKS && StationHandoff.parked(orbit)) {
+            return FlightPresence.STATION_BLOCKS;
+        }
+        return FlightPresence.ORBIT_MAP;
     }
 
     private static VesselBlockGrid filter(VesselBlockGrid grid, boolean pad) {

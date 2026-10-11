@@ -40,6 +40,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.LandingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FairingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.ServiceLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DockingLoopSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
@@ -295,7 +296,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.64: payload is a property, not a block.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.65: parked orbit can be walkable station blocks.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -628,6 +629,21 @@ public final class AeronauticsPlus {
                         dock.recovered());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus docking-loop slice failed", exception);
+            }
+            try {
+                StationLoopSlice.Result station = StationLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus station-loop slice OK: compiler={}, parked={}, transfer={}, hopper={}, booster={}, left={}, noPad={}, habitat={}",
+                        station.compilerBus(),
+                        station.parkedOccupies(),
+                        station.transferRefused(),
+                        station.hopperRefused(),
+                        station.boosterRefused(),
+                        station.leftToMap(),
+                        station.noPad(),
+                        station.habitatWalkable());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus station-loop slice failed", exception);
             }
             try {
                 MapViewSlice.Result mapView = MapViewSlice.execute();
