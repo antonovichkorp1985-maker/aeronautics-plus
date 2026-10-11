@@ -4,6 +4,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.BlockFace;
 import dev.leeeonidys.aeronauticsplus.space.compile.DockCapture;
 import dev.leeeonidys.aeronauticsplus.space.compile.DockCaptureSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
+import dev.leeeonidys.aeronauticsplus.space.compile.SpaceBodies;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
@@ -67,7 +68,39 @@ public final class DockCaptureLoopSlice {
                 throw exception;
             }
         }
+
+        FlightSplit cut = joined.undock();
+        if (cut.continuing().flying().occupants().size() != host.flying().occupants().size()
+                || cut.booster().flying().occupants().size() != guest.flying().occupants().size()) {
+            throw new IllegalStateException("Undock must restore both airframes");
+        }
+        if (cut.continuing().presence() != FlightPresence.WORLD_ENTITY
+                || cut.booster().presence() != FlightPresence.WORLD_ENTITY) {
+            throw new IllegalStateException("Undock stays two world entities");
+        }
+
+        FlightLoop mapHost = host.withOrbit(atMap());
+        FlightLoop mapGuest = guest.withOrbit(atMap());
+        if (mapHost.presence() != FlightPresence.ORBIT_MAP) {
+            throw new IllegalStateException("Map capture starts on the Kepler map");
+        }
+        FlightLoop mapJoined = mapHost.dock(mapGuest, 2.0);
+        if (mapJoined.presence() != FlightPresence.ORBIT_MAP) {
+            throw new IllegalStateException("Map capture stays on the map");
+        }
+        OrbitMap map = new OrbitMap();
+        map.enter(mapHost);
+        map.enter(mapGuest);
+        if (!map.capture() || map.size() != 1) {
+            throw new IllegalStateException("Kepler map must capture two close vehicles");
+        }
         return new Result(true, true, parts, true);
+    }
+
+    private static OrbitState atMap() {
+        CelestialBody earth = SpaceBodies.earth();
+        double radius = earth.radiusMeters() + WorldHandoff.MAP_ALTITUDE_METERS + 1_000.0;
+        return new OrbitState(earth, new Vector3d(radius, 0.0, 0.0), Vector3d.ZERO, 0.0);
     }
 
     private static VesselBlockGrid padFlyer(BlockFace portFace) {

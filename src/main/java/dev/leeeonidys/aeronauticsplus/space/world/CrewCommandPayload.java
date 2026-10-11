@@ -22,6 +22,7 @@ public record CrewCommandPayload(int command) implements CustomPacketPayload {
     public static final int WARP_UP = 7;
     public static final int WARP_DOWN = 8;
     public static final int HOLD = 9;
+    public static final int UNDOCK = 10;
 
     public static final Type<CrewCommandPayload> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(AeronauticsPlus.MODID, "crew_command"));
@@ -70,6 +71,8 @@ public record CrewCommandPayload(int command) implements CustomPacketPayload {
                 serverPlayer.displayClientMessage(Component.literal(vessel.commandWarp(-1)), true);
             } else if (payload.command == HOLD) {
                 serverPlayer.displayClientMessage(Component.literal(vessel.commandHoldCycle()), true);
+            } else if (payload.command == UNDOCK) {
+                serverPlayer.displayClientMessage(Component.literal(vessel.commandUndock()), false);
             }
         });
     }

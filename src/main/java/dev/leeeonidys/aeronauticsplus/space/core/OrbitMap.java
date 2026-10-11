@@ -26,6 +26,28 @@ public final class OrbitMap {
         return List.copyOf(vessels);
     }
 
+    /** Capture the first pair of map vehicles whose ports look at each other. */
+    public boolean capture() {
+        for (int i = 0; i < vessels.size(); i++) {
+            for (int j = i + 1; j < vessels.size(); j++) {
+                FlightLoop a = vessels.get(i);
+                FlightLoop b = vessels.get(j);
+                double dist = a.vessel().orbit().positionMeters()
+                        .subtract(b.vessel().orbit().positionMeters())
+                        .magnitude();
+                try {
+                    FlightLoop joined = a.dock(b, dist);
+                    vessels.set(i, joined);
+                    vessels.remove(j);
+                    return true;
+                } catch (RuntimeException ignored) {
+                    // not this pair
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * Player command: take the first parked habitat off the map into station blocks.
      * Transfers and unmanned sats stay. Fairing must already be gone.

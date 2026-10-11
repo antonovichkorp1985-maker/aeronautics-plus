@@ -262,8 +262,14 @@ public record FlightLoop(
         if (other == null) {
             throw new IllegalArgumentException("The other vehicle is required");
         }
-        if (presence != FlightPresence.WORLD_ENTITY || other.presence != FlightPresence.WORLD_ENTITY) {
-            throw new IllegalStateException("Docking is entity to entity, not pad or map");
+        if (presence == FlightPresence.BLOCKS_ON_PAD || other.presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("Docking is not pad blocks");
+        }
+        if (presence != other.presence) {
+            throw new IllegalStateException("Both vehicles must share presence");
+        }
+        if (presence != FlightPresence.WORLD_ENTITY && presence != FlightPresence.ORBIT_MAP) {
+            throw new IllegalStateException("Docking is entity or map, not the station pocket");
         }
         double closing = Math.abs(
                 vessel.orbit().radialSpeedMetersPerSecond()
@@ -285,6 +291,35 @@ public record FlightLoop(
                 merged,
                 next,
                 null);
+    }
+
+    /** Cut the capture ring. Continuing keeps the seat when one side has it. */
+    public FlightSplit undock() {
+        if (presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("Undock is in flight, not on the pad");
+        }
+        GridSplit split = DockCapture.split(flying);
+        VesselCompilation keep = VesselBlockCompiler.analyze(split.continuing());
+        VesselCompilation leave = VesselBlockCompiler.analyze(split.booster());
+        FlightPresence splitPresence = presence == FlightPresence.STATION_BLOCKS
+                ? FlightPresence.ORBIT_MAP
+                : presence;
+        return new FlightSplit(
+                new FlightLoop(
+                        splitPresence,
+                        stacked,
+                        padLeft,
+                        split.continuing(),
+                        keep.toVesselState(vessel.id(), vessel.orbit()).withAttitude(vessel.attitude()),
+                        null),
+                new FlightLoop(
+                        splitPresence,
+                        stacked,
+                        padLeft,
+                        split.booster(),
+                        leave.toVesselState(vessel.id() + "-undock", vessel.orbit())
+                                .withAttitude(vessel.attitude()),
+                        null));
     }
 
     public FlightLoop withOrbit(OrbitState nextOrbit) {

@@ -310,7 +310,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.80: entity dock. Create winch is the crane. No AP train.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.81: undock and map capture. ChemMod field is leaks, not ρ(h).");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

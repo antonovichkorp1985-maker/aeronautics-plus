@@ -53,6 +53,19 @@ public final class DockCaptureSlice {
         if (!"OVERLAP".equals(DockCapture.reject(blockedHost(), guest, 1.0, 0.0))) {
             throw new IllegalStateException("A body in the capture cell must be OVERLAP");
         }
+        GridSplit split = DockCapture.split(merged);
+        if (split.continuing().occupants().size() != host.occupants().size()
+                || split.booster().occupants().size() != guest.occupants().size()) {
+            throw new IllegalStateException("Undock must return both airframes");
+        }
+        try {
+            DockCapture.split(host);
+            throw new IllegalStateException("A lone stack must be NO_DOCK");
+        } catch (IllegalStateException exception) {
+            if (exception.getMessage() == null || !exception.getMessage().contains("NO_DOCK")) {
+                throw exception;
+            }
+        }
         return new Result(true, links, true, true, true, true, true);
     }
 

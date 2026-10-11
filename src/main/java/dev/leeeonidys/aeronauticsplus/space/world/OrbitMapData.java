@@ -88,6 +88,9 @@ public final class OrbitMapData extends SavedData {
 
     public void tick(ServerLevel level) {
         boolean dirty = map.size() > 0 || !pendingSpawn.isEmpty();
+        while (map.capture()) {
+            dirty = true;
+        }
         List<FlightLoop> reentered = map.size() > 0 ? map.advance(STEP_SECONDS) : List.of();
         List<FlightLoop> waiting = new ArrayList<>(pendingSpawn);
         waiting.addAll(reentered);

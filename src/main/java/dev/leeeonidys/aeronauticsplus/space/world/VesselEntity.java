@@ -211,6 +211,19 @@ public final class VesselEntity extends Entity {
         return "Удержание " + HoldAim.label(next) + ".";
     }
 
+    public String commandUndock() {
+        if (loop == null) {
+            return "Нет полёта.";
+        }
+        try {
+            applyAxial(loop.undock());
+            return "Расстыковка.";
+        } catch (RuntimeException exception) {
+            String message = exception.getMessage();
+            return message == null || message.isBlank() ? "Нет стыка." : message;
+        }
+    }
+
     public String commandDropFairing() {
         if (loop == null) {
             return "Нет полёта.";

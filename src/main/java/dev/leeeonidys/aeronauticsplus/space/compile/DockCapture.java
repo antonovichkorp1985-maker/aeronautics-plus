@@ -1,9 +1,13 @@
 package dev.leeeonidys.aeronauticsplus.space.compile;
 
+import dev.leeeonidys.aeronauticsplus.space.core.VesselConnection;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselDiagnostic;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -57,6 +61,41 @@ public final class DockCapture {
             throw new IllegalStateException("NOT_FACING");
         }
         return fit.merged();
+    }
+
+    /**
+     * Cut the first capture pair. Host keeps the controller island when one side has a seat.
+     */
+    public static GridSplit split(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            throw new IllegalArgumentException("A docked stack is required");
+        }
+        Pair pair = firstPair(grid);
+        if (pair == null) {
+            throw new IllegalStateException("NO_DOCK");
+        }
+        Set<GridPos> hostCells = flood(grid, pair.host().pos());
+        if (hostCells.contains(pair.guest().pos())) {
+            throw new IllegalStateException("NO_DOCK");
+        }
+        List<VesselBlockOccupant> host = new ArrayList<>();
+        List<VesselBlockOccupant> guest = new ArrayList<>();
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (hostCells.contains(occupant.pos())) {
+                host.add(occupant);
+            } else {
+                guest.add(occupant);
+            }
+        }
+        if (host.isEmpty() || guest.isEmpty()) {
+            throw new IllegalStateException("NO_DOCK");
+        }
+        boolean hostSeat = hasController(host);
+        boolean guestSeat = hasController(guest);
+        if (guestSeat && !hostSeat) {
+            return new GridSplit(new VesselBlockGrid(guest), new VesselBlockGrid(host));
+        }
+        return new GridSplit(new VesselBlockGrid(host), new VesselBlockGrid(guest));
     }
 
     private static Fit firstFit(VesselBlockGrid host, VesselBlockGrid guest) {
@@ -129,6 +168,82 @@ public final class DockCapture {
         return cells;
     }
 
+    private static Pair firstPair(VesselBlockGrid grid) {
+        Map<GridPos, List<VesselBlockOccupant>> byPos = new HashMap<>();
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            byPos.computeIfAbsent(occupant.pos(), ignored -> new ArrayList<>()).add(occupant);
+        }
+        for (VesselBlockOccupant portA : ports(grid)) {
+            GridPos capture = portA.pos().offset(portA.facing());
+            List<VesselBlockOccupant> there = byPos.get(capture);
+            if (there == null) {
+                continue;
+            }
+            for (VesselBlockOccupant portB : there) {
+                if (portB.spec().kind() == VesselPartKind.DOCKING
+                        && portB.facing() == portA.facing().opposite()) {
+                    return new Pair(portA, portB);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Set<GridPos> flood(VesselBlockGrid grid, GridPos start) {
+        Map<GridPos, List<VesselBlockOccupant>> byPos = new HashMap<>();
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            byPos.computeIfAbsent(occupant.pos(), ignored -> new ArrayList<>()).add(occupant);
+        }
+        Set<GridPos> visited = new HashSet<>();
+        ArrayDeque<GridPos> pending = new ArrayDeque<>();
+        pending.add(start);
+        visited.add(start);
+        while (!pending.isEmpty()) {
+            GridPos current = pending.remove();
+            List<VesselBlockOccupant> here = byPos.get(current);
+            if (here == null) {
+                continue;
+            }
+            for (BlockFace face : BlockFace.values()) {
+                GridPos next = current.offset(face);
+                if (visited.contains(next) || !byPos.containsKey(next)) {
+                    continue;
+                }
+                if (structurallyLinked(here, byPos.get(next), face)) {
+                    visited.add(next);
+                    pending.add(next);
+                }
+            }
+        }
+        return visited;
+    }
+
+    private static boolean structurallyLinked(
+            List<VesselBlockOccupant> here, List<VesselBlockOccupant> neighbours, BlockFace face) {
+        for (VesselBlockOccupant from : here) {
+            for (VesselBlockOccupant to : neighbours) {
+                if (from.spec().ports(face, from.facing()).contains(VesselConnection.ConnectionKind.STRUCTURAL)
+                        && to.spec().ports(face.opposite(), to.facing())
+                                .contains(VesselConnection.ConnectionKind.STRUCTURAL)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasController(List<VesselBlockOccupant> occupants) {
+        for (VesselBlockOccupant occupant : occupants) {
+            if (occupant.spec().kind() == VesselPartKind.CONTROLLER) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private record Fit(VesselBlockGrid merged) {
+    }
+
+    private record Pair(VesselBlockOccupant host, VesselBlockOccupant guest) {
     }
 }

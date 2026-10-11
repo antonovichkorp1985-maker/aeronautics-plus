@@ -35,6 +35,7 @@
   "key.aeronauticsplus.warp_up": "Варп вверх",
   "key.aeronauticsplus.warp_down": "Варп вниз",
   "key.aeronauticsplus.hold": "Цикл удержания",
+  "key.aeronauticsplus.undock": "Расстыковка",
   "screen.aeronauticsplus.orbit_map": "Карта Kepler",
   "screen.aeronauticsplus.orbit_map.hint": "Высота линейная до 200 км — не масштаб Земли. Жёлтое кольцо — 20 км.",
   "screen.aeronauticsplus.orbit_map.empty": "На карте нет аппаратов.",

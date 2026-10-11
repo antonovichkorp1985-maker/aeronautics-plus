@@ -35,6 +35,7 @@
   "key.aeronauticsplus.warp_up": "Warp Up",
   "key.aeronauticsplus.warp_down": "Warp Down",
   "key.aeronauticsplus.hold": "Hold Cycle",
+  "key.aeronauticsplus.undock": "Undock",
   "screen.aeronauticsplus.orbit_map": "Kepler Map",
   "screen.aeronauticsplus.orbit_map.hint": "Altitude linear to 200 km — not Earth scale. Yellow ring is 20 km.",
   "screen.aeronauticsplus.orbit_map.empty": "No vehicles on the map.",

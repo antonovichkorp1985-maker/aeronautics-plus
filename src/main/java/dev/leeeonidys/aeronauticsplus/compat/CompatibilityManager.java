@@ -17,6 +17,7 @@ import net.neoforged.fml.ModList;
  */
 public final class CompatibilityManager {
     public static final String TERRAFIRMACRAFT_MOD_ID = "tfc";
+    public static final String CHEMMOD_MOD_ID = "chemmod";
 
     public static final TagKey<Item> WOOD_BLADE_MATERIALS = bladeMaterialTag("wood");
     public static final TagKey<Item> IRON_BLADE_MATERIALS = bladeMaterialTag("iron");
@@ -32,6 +33,14 @@ public final class CompatibilityManager {
      */
     public static void initialize() {
         CreateTrainMount.register();
+        if (ModList.get().isLoaded(CHEMMOD_MOD_ID)) {
+            AeronauticsPlus.LOGGER.info(
+                    "ChemMod detected: WorldGasField is sparse leaks in 4 m cells, not hydrostatic ρ/P. "
+                            + "Rocket drag/Max-Q stay AP Atmosphere until ChemMod exposes ambient density. "
+                            + "No ChemMod class is imported.");
+        } else {
+            AeronauticsPlus.LOGGER.debug("ChemMod not detected; rocket drag stays AP Atmosphere.earth().");
+        }
         if (ModList.get().isLoaded(TERRAFIRMACRAFT_MOD_ID)) {
             AeronauticsPlus.LOGGER.info(
                     "TerraFirmaCraft detected: blade-material tags and pad latitude from Z are active "

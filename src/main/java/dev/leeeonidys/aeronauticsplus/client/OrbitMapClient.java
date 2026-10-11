@@ -79,6 +79,9 @@ public final class OrbitMapClient {
         if (minecraft.screen == null && CrewKeys.HOLD.consumeClick()) {
             PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.HOLD));
         }
+        if (minecraft.screen == null && CrewKeys.UNDOCK.consumeClick()) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.UNDOCK));
+        }
         if (!CrewKeys.OPEN_MAP.consumeClick()) {
             return;
         }
