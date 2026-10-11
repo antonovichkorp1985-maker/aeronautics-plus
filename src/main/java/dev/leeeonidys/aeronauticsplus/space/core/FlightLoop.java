@@ -254,7 +254,8 @@ public record FlightLoop(
 
     /**
      * Player command, not circularization. Burns and unmanned sats stay on the map.
-     * Habitat is required, not sufficient. Stations, crew modules, lunar EVA — this button.
+     * Habitat is required, not sufficient. ISS crawl, or CM↔LM while still
+     * in lunar orbit — this button. Moon-as-planet is a later world.
      */
     public FlightLoop occupyStation() {
         if (presence != FlightPresence.ORBIT_MAP) {
