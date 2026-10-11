@@ -38,6 +38,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
@@ -236,7 +237,7 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.51: strap-ons burn with the core; no ChemMod world gas.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.52: pad to entity to 20 km map; booster returns as blocks.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -444,6 +445,20 @@ public final class AeronauticsPlus {
                         straps.sidesShareOrbit());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus strap-on slice failed", exception);
+            }
+            try {
+                FlightLoopSlice.Result flight = FlightLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus flight-loop slice OK: leftPad={}, padStayed={}, edgeMap={}, reentryEntity={}, recovered={}, pyroOnMap={}, parts={}",
+                        flight.leftPad(),
+                        flight.padStayed(),
+                        flight.edgeOnMap(),
+                        flight.reentryEntity(),
+                        flight.recoveredOnPad(),
+                        flight.pyroOnMap(),
+                        flight.recoveredParts());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus flight-loop slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

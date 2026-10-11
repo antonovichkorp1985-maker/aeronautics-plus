@@ -12,8 +12,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Writes a recovered booster back as blocks on a pad. Server-side; everyone
- * on the Level sees it. ChemMod tanks are not AP blocks and are skipped.
+ * Writes a recovered booster back as blocks on a pad. Called from
+ * {@link WorldLiftoff#land} after the world entity is back under 20 km.
+ * Server-side; everyone on the Level sees it. ChemMod tanks are skipped.
  */
 public final class WorldStageRecovery {
     private WorldStageRecovery() {
