@@ -26,6 +26,31 @@ public final class OrbitMap {
         return List.copyOf(vessels);
     }
 
+    /**
+     * Player command: take the first parked habitat off the map into station blocks.
+     * Transfers and unmanned sats stay. Fairing must already be gone.
+     */
+    public FlightLoop takeParkedHabitat() {
+        for (int i = 0; i < vessels.size(); i++) {
+            FlightLoop loop = vessels.get(i);
+            if (loop.hasFairing()) {
+                try {
+                    loop = loop.dropFairing();
+                } catch (IllegalStateException ignored) {
+                    continue;
+                }
+            }
+            try {
+                FlightLoop occupied = loop.occupyStation();
+                vessels.remove(i);
+                return occupied;
+            } catch (IllegalStateException ignored) {
+                // not parked or no habitat
+            }
+        }
+        return null;
+    }
+
     /** Coast every vehicle. Those that fall under 20 km are removed and returned. */
     public List<FlightLoop> advance(double dt) {
         if (!(dt > 0.0) || !Double.isFinite(dt)) {

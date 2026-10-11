@@ -9,12 +9,15 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartSpec;
 import dev.leeeonidys.aeronauticsplus.space.core.CellOccupancy;
 import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
+import dev.leeeonidys.aeronauticsplus.space.world.StationEnter;
+import dev.leeeonidys.aeronauticsplus.space.world.StationPocket;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselLaunch;
 import dev.leeeonidys.aeronauticsplus.space.world.WorldVesselScanner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -116,6 +119,11 @@ public final class VesselPartBlock extends Block {
             BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
+        }
+        if (spec.kind() == VesselPartKind.HABITAT && StationPocket.isStation(level)
+                && player instanceof ServerPlayer serverPlayer) {
+            StationEnter.tell(serverPlayer, StationEnter.leave(serverPlayer));
+            return InteractionResult.CONSUME;
         }
         VesselBlockGrid grid = WorldVesselScanner.scan(level, pos);
         VesselCompilation compilation = VesselBlockCompiler.analyze(grid);

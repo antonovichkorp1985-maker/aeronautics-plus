@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapClientHooks;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
+import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
 import java.util.List;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,11 @@ public final class OrbitMapClient {
             "key.aeronauticsplus.orbit_map",
             InputConstants.Type.KEYSYM,
             InputConstants.KEY_M,
+            "key.categories.aeronauticsplus");
+    public static final KeyMapping ENTER_STATION = new KeyMapping(
+            "key.aeronauticsplus.enter_station",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_N,
             "key.categories.aeronauticsplus");
 
     private OrbitMapClient() {
@@ -35,7 +41,13 @@ public final class OrbitMapClient {
 
     public static void onClientTick() {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || !OPEN_MAP.consumeClick()) {
+        if (minecraft.player == null) {
+            return;
+        }
+        if (ENTER_STATION.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new StationEnterPayload());
+        }
+        if (!OPEN_MAP.consumeClick()) {
             return;
         }
         if (minecraft.screen instanceof OrbitMapScreen) {

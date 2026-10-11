@@ -12,7 +12,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
  * Enter-station is a command. Parking with a habitat stays on the Kepler map
- * until that command. Unmanned sats cannot enter. No dimension yet.
+ * until that command. Unmanned sats cannot enter. Pocket islands are spaced.
  */
 public final class StationLoopSlice {
     private StationLoopSlice() {
@@ -27,7 +27,8 @@ public final class StationLoopSlice {
             boolean boosterRefused,
             boolean leftToMap,
             boolean noPad,
-            boolean habitatWalkable) {
+            boolean habitatWalkable,
+            boolean islandStride) {
     }
 
     public static Result execute() {
@@ -99,7 +100,11 @@ public final class StationLoopSlice {
             throw new IllegalStateException("Leaving the station returns to the Kepler map");
         }
 
-        return new Result(true, true, true, true, true, true, true, true, true);
+        if (StationHandoff.islandX(0) != 0 || StationHandoff.islandX(2) != 2 * StationHandoff.ISLAND_STRIDE) {
+            throw new IllegalStateException("Station islands must be spaced, not stacked");
+        }
+
+        return new Result(true, true, true, true, true, true, true, true, true, true);
     }
 
     private static OrbitState atAltitude(double altitudeMeters) {

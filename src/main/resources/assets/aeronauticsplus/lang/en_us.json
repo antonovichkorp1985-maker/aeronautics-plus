@@ -24,6 +24,7 @@
   "entity.aeronauticsplus.vessel": "Rocket",
   "key.categories.aeronauticsplus": "Aeronautics Plus",
   "key.aeronauticsplus.orbit_map": "Orbit Map",
+  "key.aeronauticsplus.enter_station": "Enter Station",
   "screen.aeronauticsplus.orbit_map": "Kepler Map",
   "screen.aeronauticsplus.orbit_map.hint": "Altitude linear to 200 km — not Earth scale. Yellow ring is 20 km.",
   "screen.aeronauticsplus.orbit_map.empty": "No vehicles on the map.",

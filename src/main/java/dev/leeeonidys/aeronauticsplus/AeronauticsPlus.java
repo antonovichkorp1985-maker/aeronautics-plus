@@ -52,6 +52,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.RadialLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
+import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
@@ -296,7 +297,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.67: enter-station is a command, parking stays on the map.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.68: station pocket is a void world, enter is key N.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -305,6 +306,10 @@ public final class AeronauticsPlus {
                 OrbitMapRequestPayload.TYPE,
                 OrbitMapRequestPayload.STREAM_CODEC,
                 OrbitMapRequestPayload::handle);
+        registrar.playToServer(
+                StationEnterPayload.TYPE,
+                StationEnterPayload.STREAM_CODEC,
+                StationEnterPayload::handle);
         registrar.playToClient(
                 OrbitMapSnapshotPayload.TYPE,
                 OrbitMapSnapshotPayload.STREAM_CODEC,
@@ -635,7 +640,7 @@ public final class AeronauticsPlus {
             try {
                 StationLoopSlice.Result station = StationLoopSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus station-loop slice OK: compiler={}, staysMap={}, occupy={}, transfer={}, hopper={}, booster={}, left={}, noPad={}, habitat={}",
+                        "Aeronautics Plus station-loop slice OK: compiler={}, staysMap={}, occupy={}, transfer={}, hopper={}, booster={}, left={}, noPad={}, habitat={}, islands={}",
                         station.compilerBus(),
                         station.parkedStaysOnMap(),
                         station.parkedOccupies(),
@@ -644,7 +649,8 @@ public final class AeronauticsPlus {
                         station.boosterRefused(),
                         station.leftToMap(),
                         station.noPad(),
-                        station.habitatWalkable());
+                        station.habitatWalkable(),
+                        station.islandStride());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus station-loop slice failed", exception);
             }

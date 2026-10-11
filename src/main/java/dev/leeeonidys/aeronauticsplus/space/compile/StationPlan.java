@@ -47,4 +47,30 @@ public record StationPlan(List<Placement> placements) {
     public boolean includesKind(VesselPartKind kind) {
         return placements.stream().anyMatch(placement -> placement.spec().kind() == kind);
     }
+
+    public GridPos origin() {
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int minZ = Integer.MAX_VALUE;
+        for (Placement placement : placements) {
+            minX = Math.min(minX, placement.pos().x());
+            minY = Math.min(minY, placement.pos().y());
+            minZ = Math.min(minZ, placement.pos().z());
+        }
+        return new GridPos(minX, minY, minZ);
+    }
+
+    /** Stand on the habitat roof relative to {@link #origin()}. */
+    public GridPos habitatStand() {
+        GridPos origin = origin();
+        for (Placement placement : placements) {
+            if (placement.spec().kind() == VesselPartKind.HABITAT) {
+                return new GridPos(
+                        placement.pos().x() - origin.x(),
+                        placement.pos().y() - origin.y() + 1,
+                        placement.pos().z() - origin.z());
+            }
+        }
+        throw new IllegalStateException("Station needs a habitat to walk");
+    }
 }

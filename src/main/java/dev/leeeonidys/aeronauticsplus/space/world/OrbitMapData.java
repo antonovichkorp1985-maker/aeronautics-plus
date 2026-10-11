@@ -59,6 +59,14 @@ public final class OrbitMapData extends SavedData {
         setDirty();
     }
 
+    public FlightLoop takeParkedHabitat() {
+        FlightLoop occupied = map.takeParkedHabitat();
+        if (occupied != null) {
+            setDirty();
+        }
+        return occupied;
+    }
+
     /** Map vehicles plus Overworld entities, for the Kepler screen. */
     public List<OrbitMapTrack> tracks(ServerLevel level) {
         List<OrbitMapTrack> tracks = new ArrayList<>();

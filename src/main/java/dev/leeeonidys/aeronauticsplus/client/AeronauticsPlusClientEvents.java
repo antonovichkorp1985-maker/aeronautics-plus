@@ -25,6 +25,7 @@ public final class AeronauticsPlusClientEvents {
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(OrbitMapClient.OPEN_MAP);
+        event.register(OrbitMapClient.ENTER_STATION);
     }
 
     @SubscribeEvent

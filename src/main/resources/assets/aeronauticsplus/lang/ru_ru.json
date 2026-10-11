@@ -24,6 +24,7 @@
   "entity.aeronauticsplus.vessel": "Ракета",
   "key.categories.aeronauticsplus": "Aeronautics Plus",
   "key.aeronauticsplus.orbit_map": "Карта орбиты",
+  "key.aeronauticsplus.enter_station": "Войти на станцию",
   "screen.aeronauticsplus.orbit_map": "Карта Kepler",
   "screen.aeronauticsplus.orbit_map.hint": "Высота линейная до 200 км — не масштаб Земли. Жёлтое кольцо — 20 км.",
   "screen.aeronauticsplus.orbit_map.empty": "На карте нет аппаратов.",

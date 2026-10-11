@@ -8,6 +8,9 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 public final class StationHandoff {
     /** Apoapsis−periapsis must stay inside this band to count as parked. */
     public static final double PARK_BAND_METERS = 30_000.0;
+    /** Islands in the station pocket, metres = blocks. Not Overworld Y. */
+    public static final int ISLAND_STRIDE = 512;
+    public static final int ISLAND_Y = 64;
 
     private StationHandoff() {
     }
@@ -33,5 +36,12 @@ public final class StationHandoff {
             return false;
         }
         return (apoAlt - periAlt) < PARK_BAND_METERS;
+    }
+
+    public static int islandX(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("Island index must be non-negative");
+        }
+        return index * ISLAND_STRIDE;
     }
 }
