@@ -5,9 +5,10 @@ import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import net.neoforged.fml.ModList;
 
 /**
- * Optional ChemMod air column. No ChemMod class is imported — reflection only
- * when {@code chemmod} is loaded and {@code ChemAtmosphere} exists.
- * Missing class (test.10 tank, no column) falls back to AP ISA.
+ * ChemMod v1.0.0 {@code ChemAtmosphere}: ρ/P/T vs geometric altitude.
+ * No ChemMod class is imported — {@code ModList} + reflection, TFC style.
+ * Missing class falls back to AP ISA (same numbers as ChemMod {@code Atmosphere.EARTH}).
+ * The leak field is not this column.
  */
 public final class ChemAtmosphereHooks {
     private static final String CLASS = "io.github.antonovichkorp.chemmod.gas.ChemAtmosphere";
@@ -44,6 +45,11 @@ public final class ChemAtmosphereHooks {
     public static double temperatureKelvin(double geometricAltitudeMetres) {
         Double sampled = invoke("temperatureKelvinAtAltitudeMetres", geometricAltitudeMetres);
         return sampled != null ? sampled : Atmosphere.earth().temperatureKelvin(geometricAltitudeMetres);
+    }
+
+    public static double geopotentialMetres(double geometricAltitudeMetres) {
+        Double sampled = invoke("geopotentialMetres", Math.max(0.0, geometricAltitudeMetres));
+        return sampled != null ? sampled : Atmosphere.earth().geopotentialMetres(geometricAltitudeMetres);
     }
 
     public static double dynamicPressurePascals(OrbitState orbit) {

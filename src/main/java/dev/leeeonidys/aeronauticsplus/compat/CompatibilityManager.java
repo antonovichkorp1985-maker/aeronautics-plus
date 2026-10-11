@@ -36,8 +36,9 @@ public final class CompatibilityManager {
         if (ModList.get().isLoaded(CHEMMOD_MOD_ID)) {
             if (ChemAtmosphereHooks.columnPresent()) {
                 AeronauticsPlus.LOGGER.info(
-                        "ChemMod ChemAtmosphere column present. Geometric ρ/P/T via reflection. "
-                                + "No ChemMod class is imported. Leak field is not this column.");
+                        "ChemMod ChemAtmosphere (v1.0.0 edge) present. Geometric ρ/P/T via reflection. "
+                                + "No ChemMod class is imported. Leak field is not this column. "
+                                + "Tank feed is not published; 1 m engine carries integral load.");
             } else {
                 AeronauticsPlus.LOGGER.info(
                         "ChemMod loaded without ChemAtmosphere (tank/field only). "

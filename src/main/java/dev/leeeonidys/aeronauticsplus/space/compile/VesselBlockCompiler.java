@@ -1,6 +1,8 @@
 package dev.leeeonidys.aeronauticsplus.space.compile;
 
 import dev.leeeonidys.aeronauticsplus.space.core.EngineState;
+import dev.leeeonidys.aeronauticsplus.space.core.PropellantIds;
+import dev.leeeonidys.aeronauticsplus.space.core.PropellantState;
 import dev.leeeonidys.aeronauticsplus.space.core.TankState;
 import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselBlueprint;
@@ -32,6 +34,7 @@ public final class VesselBlockCompiler {
         List<VesselDiagnostic> extra = new ArrayList<>(CellPacking.diagnostics(grid));
         extra.addAll(transporterDiagnostics(grid));
         extra.addAll(padDiagnostics(grid));
+        extra.addAll(integralFeedDiagnostics(grid));
         return compile(grid).analyze().withDiagnostics(extra);
     }
 
@@ -193,7 +196,91 @@ public final class VesselBlockCompiler {
                     stageByPos.get(occupant.pos()),
                     occupant.pos().occupancyCentroidMeters(origin, occupant.spec().occupancy())));
         }
-        return new VesselBlueprint(components, buildConnections(byPos), radialSideStages(grid.occupants(), stageByPos));
+        List<VesselConnection> connections = new ArrayList<>(buildConnections(byPos));
+        attachIntegralFeed(components, connections);
+        return new VesselBlueprint(components, connections, radialSideStages(grid.occupants(), stageByPos));
+    }
+
+    /**
+     * 1 m engine segment carries its own common-bulkhead load until ChemMod publishes
+     * tank feed (v1.0.0 ADR-0004). Not an AP tank block. A real tank on the stage wins.
+     */
+    private static void attachIntegralFeed(
+            List<VesselComponent> components, List<VesselConnection> connections) {
+        Map<String, List<VesselComponent>> byStage = new LinkedHashMap<>();
+        for (VesselComponent component : components) {
+            byStage.computeIfAbsent(component.stageId(), ignored -> new ArrayList<>()).add(component);
+        }
+        List<VesselComponent> extra = new ArrayList<>();
+        for (Map.Entry<String, List<VesselComponent>> entry : byStage.entrySet()) {
+            List<VesselComponent> stage = entry.getValue();
+            boolean hasTank = false;
+            List<VesselComponent> burners = new ArrayList<>();
+            for (VesselComponent component : stage) {
+                if (component.kind() == VesselComponent.ComponentKind.TANK) {
+                    hasTank = true;
+                }
+                if (component.kind() == VesselComponent.ComponentKind.ENGINE
+                        || component.kind() == VesselComponent.ComponentKind.RCS) {
+                    burners.add(component);
+                }
+            }
+            if (hasTank || burners.isEmpty()) {
+                continue;
+            }
+            VesselComponent sample = burners.get(0);
+            String tankId = "integral-feed@" + entry.getKey();
+            extra.add(VesselComponent.tank(tankId, entry.getKey(), integralTank(tankId, sample.engine())));
+            for (VesselComponent burner : burners) {
+                connections.add(new VesselConnection(
+                        burner.id(), tankId, VesselConnection.ConnectionKind.FUEL));
+                connections.add(new VesselConnection(
+                        burner.id(), tankId, VesselConnection.ConnectionKind.OXIDIZER));
+            }
+        }
+        components.addAll(extra);
+    }
+
+    private static TankState integralTank(String id, EngineState engine) {
+        Vector3d at = engine.localPositionMeters();
+        if (PropellantIds.hydrogenFuel(engine.fuelId())) {
+            double fuelKg = 55.0;
+            double oxKg = fuelKg * VesselPartCatalog.HYDROLOX_MIXTURE;
+            return new TankState(
+                    id, 45.0, 500.0,
+                    new PropellantState(engine.fuelId(), engine.oxidizerId(), fuelKg, oxKg),
+                    at);
+        }
+        double fuelKg = 200.0;
+        double oxKg = fuelKg * VesselPartCatalog.KEROLX_MIXTURE;
+        return new TankState(
+                id, 80.0, 1_000.0,
+                new PropellantState(engine.fuelId(), engine.oxidizerId(), fuelKg, oxKg),
+                at);
+    }
+
+    private static List<VesselDiagnostic> integralFeedDiagnostics(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            return List.of();
+        }
+        boolean tank = false;
+        boolean burner = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.TANK) {
+                tank = true;
+            }
+            if (occupant.spec().kind() == VesselPartKind.ENGINE
+                    || occupant.spec().kind() == VesselPartKind.RCS) {
+                burner = true;
+            }
+        }
+        if (!burner || tank) {
+            return List.of();
+        }
+        return List.of(new VesselDiagnostic(
+                VesselDiagnostic.Severity.INFO,
+                "INTEGRAL_FEED",
+                "1 м двигатель несёт свою заправку, пока ChemMod не отдаёт содержимое бака"));
     }
 
     /** Islands hanging off a horizontal pyro ring become strap-on stages. */

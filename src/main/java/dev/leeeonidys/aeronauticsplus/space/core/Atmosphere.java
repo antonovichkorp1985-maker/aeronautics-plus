@@ -2,8 +2,8 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
  * Planetary air column: geometric altitude in metres above a sphere.
- * Same ISA ChemMod published as {@code ChemAtmosphere}. Not the leak field.
- * Minecraft Y is not this axis.
+ * Same ISA ChemMod v1.0.0 publishes as {@code ChemAtmosphere} / {@code Atmosphere.EARTH}.
+ * Not the leak field. Minecraft Y is not this axis.
  */
 public record Atmosphere(
         String id,

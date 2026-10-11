@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Pad blocks → world entity → 20 km map → parked station blocks → world again → pad.
- * Pyro does not wait for the handoff line. ChemMod air is not this loop.
+ * Pyro does not wait for the handoff line. Air is the ISA column, not the leak field.
  */
 public record FlightLoop(
         FlightPresence presence,

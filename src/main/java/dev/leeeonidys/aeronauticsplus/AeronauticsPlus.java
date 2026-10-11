@@ -23,6 +23,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.TransporterSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.VarietySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ElectronicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.ControllerSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.IntegralFeedSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PadSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.RadialSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.RecoverySlice;
@@ -310,7 +311,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.82: ISA column, RP-1/kerosene/octane/LOX names, q on the HUD.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.83: ChemMod v1.0.0 column, 1 m engine integral feed.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -921,6 +922,16 @@ public final class AeronauticsPlus {
                         control.unmarked());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus controller slice failed", exception);
+            }
+            try {
+                IntegralFeedSlice.Result feed = IntegralFeedSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus integral-feed slice OK: padStack={}, tankWins={}, disconnected={}",
+                        feed.padStackFlies(),
+                        feed.tankStillWins(),
+                        feed.disconnectedStillFails());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus integral-feed slice failed", exception);
             }
             try {
                 PadSlice.Result pad = PadSlice.execute();
