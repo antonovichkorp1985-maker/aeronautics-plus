@@ -40,6 +40,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.PyroLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
@@ -252,7 +253,7 @@ public final class AeronauticsPlus {
         TABS.register(modEventBus);
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.54: map reentry entity, orbit persist, compiler strapOn; player stays on the ground.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.55: in-flight pyro splits the pile; burnout coasts; booster returns as blocks.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -478,15 +479,29 @@ public final class AeronauticsPlus {
             try {
                 EntitySlice.Result entity = EntitySlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus entity slice OK: afterLiftoff={}, climbed={}, alt={}, map={}, reentry={}, playerOff={}",
+                        "Aeronautics Plus entity slice OK: afterLiftoff={}, climbed={}, alt={}, map={}, reentry={}, recovered={}, playerOff={}",
                         entity.entityAfterLiftoff(),
                         entity.heldThenClimbed(),
                         String.format(java.util.Locale.ROOT, "%.1f", entity.climbAltitude()),
                         entity.mapAtTwentyKm(),
                         entity.reentryEntity(),
+                        entity.recoveredOnPad(),
                         entity.playerNotOnBoard());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus entity slice failed", exception);
+            }
+            try {
+                PyroLoopSlice.Result pyro = PyroLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus pyro-loop slice OK: world={}, map={}, boosterEngine={}, upperSeat={}, recovered={}, parts={}",
+                        pyro.pyroInWorld(),
+                        pyro.pyroOnMap(),
+                        pyro.boosterHasEngine(),
+                        pyro.upperHasSeat(),
+                        pyro.recoveredOnPad(),
+                        pyro.recoveredParts());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus pyro-loop slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

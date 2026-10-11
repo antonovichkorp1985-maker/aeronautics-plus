@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
+import dev.leeeonidys.aeronauticsplus.space.compile.GridSplit;
 import dev.leeeonidys.aeronauticsplus.space.compile.RecoveryPlan;
 import dev.leeeonidys.aeronauticsplus.space.compile.SpaceBodies;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
@@ -100,6 +101,44 @@ public record FlightLoop(
         AscentOutcome outcome = VesselDynamics.advanceAscent(
                 vessel, Atmosphere.earth(), dt, Aerodynamics.ROCKET_CD, 1.0);
         return withVessel(outcome.vessel());
+    }
+
+    /** Coast without thrust — burnout must not hang in the air. */
+    public FlightLoop coast(double dt) {
+        if (presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("Blocks on the pad do not coast");
+        }
+        if (!(dt > 0.0) || !Double.isFinite(dt)) {
+            throw new IllegalArgumentException("Coast step must be finite and positive");
+        }
+        return withVessel(VesselDynamics.propagate(vessel, dt, Math.min(dt, 0.1)));
+    }
+
+    /**
+     * Fire the pyro ring: parts split like KSP, wherever the stack is.
+     * Upper keeps going; booster is its own vehicle on the same trajectory.
+     */
+    public FlightSplit firePyro() {
+        if (presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("Pyro fires in flight, not on the pad");
+        }
+        GridSplit split = VesselBlockCompiler.firePyro(flying);
+        if (!vessel.canSeparateActive()) {
+            throw new IllegalStateException("Pyro ring did not leave an upper stage");
+        }
+        StageSplit stages = VesselDynamics.splitActiveStage(vessel);
+        return new FlightSplit(
+                new FlightLoop(presence, stacked, padLeft, split.continuing(), stages.continuing(), null),
+                new FlightLoop(presence, stacked, padLeft, split.booster(), stages.booster(), null));
+    }
+
+    public boolean hasPyroRing() {
+        for (VesselBlockOccupant occupant : flying.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.SEPARATOR) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public FlightLoop withOrbit(OrbitState nextOrbit) {

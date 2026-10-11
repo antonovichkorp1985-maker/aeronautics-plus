@@ -23,6 +23,7 @@ public final class EntitySlice {
             double climbAltitude,
             boolean mapAtTwentyKm,
             boolean reentryEntity,
+            boolean recoveredOnPad,
             boolean playerNotOnBoard) {
     }
 
@@ -82,7 +83,11 @@ public final class EntitySlice {
         if (WorldHandoff.onMap(back.vessel().orbit()) || map.size() != 0) {
             throw new IllegalStateException("Reentry must leave the map");
         }
-        return new Result(true, true, alt, true, true, true);
+        FlightLoop recovered = back.recover();
+        if (recovered.presence() != FlightPresence.BLOCKS_ON_PAD || recovered.recovery() == null) {
+            throw new IllegalStateException("World entity under 20 km returns as blocks");
+        }
+        return new Result(true, true, alt, true, true, true, true);
     }
 
     private static OrbitState atAltitude(double altitudeMeters) {

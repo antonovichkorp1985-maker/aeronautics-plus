@@ -8,6 +8,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.Atmosphere;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightFault;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
+import dev.leeeonidys.aeronauticsplus.space.core.FlightSplit;
+import dev.leeeonidys.aeronauticsplus.space.core.LandingOutcome;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselDynamics;
 import net.minecraft.core.BlockPos;
@@ -75,18 +77,55 @@ public final class VesselEntity extends Entity {
             handoffToMap();
             return;
         }
-        AscentOutcome outcome = VesselDynamics.advanceAscent(
-                loop.vessel(), Atmosphere.earth(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
-        if (outcome.has(FlightFault.HOLD_DOWN)) {
-            WorldLiftoff.land(level(), padPos(), loop);
-            discard();
-            return;
+        if (loop.hasPyroRing()
+                && loop.vessel().canSeparateActive()
+                && !(loop.vessel().activeStage().propellantMassKg() > 1.0e-9)) {
+            try {
+                FlightSplit split = loop.firePyro();
+                releaseCompanion(split.booster());
+                loop = split.continuing();
+                entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+            } catch (IllegalStateException ignored) {
+                // ring present but it did not cut a stage
+            }
         }
-        loop = loop.withVessel(outcome.vessel());
+        boolean thrusting = loop.vessel().activeStage().propellantMassKg() > 1.0e-9
+                && loop.vessel().activeStage().thrustNewtons() > 0.0;
+        if (thrusting) {
+            AscentOutcome outcome = VesselDynamics.advanceAscent(
+                    loop.vessel(), Atmosphere.earth(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
+            if (outcome.has(FlightFault.HOLD_DOWN) || outcome.has(FlightFault.IMPACT)) {
+                landAndDiscard();
+                return;
+            }
+            loop = loop.withVessel(outcome.vessel());
+        } else {
+            loop = loop.coast(STEP_SECONDS);
+            if (loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
+                landAndDiscard();
+                return;
+            }
+        }
         syncPosition();
         if (loop.presence() == FlightPresence.ORBIT_MAP) {
             handoffToMap();
         }
+    }
+
+    private void landAndDiscard() {
+        WorldLiftoff.land(level(), padPos(), loop);
+        discard();
+    }
+
+    private void releaseCompanion(FlightLoop companion) {
+        if (!(level() instanceof ServerLevel server)) {
+            return;
+        }
+        if (companion.presence() == FlightPresence.ORBIT_MAP) {
+            OrbitMapData.get(server).enter(companion);
+            return;
+        }
+        VesselLaunch.spawn(server, companion);
     }
 
     private void handoffToMap() {
