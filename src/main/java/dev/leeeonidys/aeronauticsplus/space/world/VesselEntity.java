@@ -9,6 +9,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.BoostbackOutcome;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightFault;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
+import dev.leeeonidys.aeronauticsplus.space.core.HoldAim;
+import dev.leeeonidys.aeronauticsplus.space.core.Warp;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightSplit;
 import dev.leeeonidys.aeronauticsplus.space.core.Attitude;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingOutcome;
@@ -54,6 +56,10 @@ public final class VesselEntity extends Entity {
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> HUD_THROTTLE =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Integer> HUD_WARP =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> HUD_HOLD =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
 
     private static final double STEP_SECONDS = 0.05;
 
@@ -106,6 +112,23 @@ public final class VesselEntity extends Entity {
 
     public float hudThrottle() {
         return entityData.get(HUD_THROTTLE);
+    }
+
+    public int hudWarp() {
+        return Warp.factor(entityData.get(HUD_WARP));
+    }
+
+    public String hudHoldLabel() {
+        return HoldAim.label(holdMode());
+    }
+
+    private HoldAim.Mode holdMode() {
+        HoldAim.Mode[] modes = HoldAim.Mode.values();
+        int ordinal = entityData.get(HUD_HOLD);
+        if (ordinal < 0 || ordinal >= modes.length) {
+            return HoldAim.Mode.OFF;
+        }
+        return modes[ordinal];
     }
 
     public String commandThrottle(double throttle) {
@@ -163,6 +186,18 @@ public final class VesselEntity extends Entity {
         }
     }
 
+    public String commandWarp(int delta) {
+        int next = Warp.clampIndex(entityData.get(HUD_WARP) + delta);
+        entityData.set(HUD_WARP, next);
+        return String.format(java.util.Locale.ROOT, "x%d.", Warp.factor(next));
+    }
+
+    public String commandHoldCycle() {
+        HoldAim.Mode next = HoldAim.cycle(holdMode());
+        entityData.set(HUD_HOLD, next.ordinal());
+        return "Удержание " + HoldAim.label(next) + ".";
+    }
+
     public String commandDropFairing() {
         if (loop == null) {
             return "Нет полёта.";
@@ -200,7 +235,36 @@ public final class VesselEntity extends Entity {
                 loop.vessel().withAttitude(attitude), aim));
     }
 
+    private void applyHold() {
+        if (loop == null) {
+            return;
+        }
+        HoldAim.Mode mode = holdMode();
+        if (mode == HoldAim.Mode.OFF) {
+            return;
+        }
+        Vector3d aim = HoldAim.inertialAim(loop.vessel().orbit(), mode);
+        Attitude attitude = HoldAim.attitude(loop.vessel().orbit(), mode);
+        loop = loop.withVessel(VesselDynamics.gimbalTowardInertial(
+                loop.vessel().withAttitude(attitude), aim));
+    }
+
+    private void applyCrewSteer() {
+        if (holdMode() != HoldAim.Mode.OFF) {
+            applyHold();
+        } else {
+            applyPilotLook();
+        }
+    }
+
     private void syncVisualAttitude() {
+        if (loop != null && holdMode() != HoldAim.Mode.OFF) {
+            Vector3d aim = HoldAim.inertialAim(loop.vessel().orbit(), holdMode());
+            double[] look = LookGuidance.lookDegreesFromAim(loop.vessel().orbit(), aim);
+            setYRot((float) look[0]);
+            setXRot((float) look[1] + 90.0f);
+            return;
+        }
         Player pilot = pilot();
         if (pilot != null) {
             setYRot(pilot.getYRot());
@@ -230,7 +294,7 @@ public final class VesselEntity extends Entity {
         }
         boolean crewed = pilot() != null;
         if (crewed) {
-            applyPilotLook();
+            applyCrewSteer();
         }
         syncVisualAttitude();
         if (loop.hasRadialRing() && loop.vessel().hasStrapOns() && loop.strapOnsDry()) {
@@ -249,6 +313,30 @@ public final class VesselEntity extends Entity {
                 // ring present but it did not cut a stage
             }
         }
+        int warpIndex = entityData.get(HUD_WARP);
+        for (int step = 0; ; step++) {
+            boolean thrusting = loop.vessel().livePropellantKg() > 1.0e-9
+                    && loop.vessel().clusterThrustNewtons() > 0.0;
+            boolean falling = loop.vessel().orbit().radialSpeedMetersPerSecond() < 0.0;
+            double altitude = loop.vessel().orbit().altitudeMeters();
+            if (step >= Warp.steps(crewed, warpIndex, thrusting, falling, altitude)) {
+                break;
+            }
+            if (crewed && step > 0) {
+                applyCrewSteer();
+            }
+            if (stepPhysics(crewed)) {
+                return;
+            }
+        }
+        syncHud();
+        syncPosition();
+        if (loop.presence() == FlightPresence.ORBIT_MAP && getPassengers().isEmpty()) {
+            handoffToMap();
+        }
+    }
+
+    private boolean stepPhysics(boolean crewed) {
         boolean thrusting = loop.vessel().livePropellantKg() > 1.0e-9
                 && loop.vessel().clusterThrustNewtons() > 0.0;
         boolean falling = loop.vessel().orbit().radialSpeedMetersPerSecond() < 0.0;
@@ -256,7 +344,7 @@ public final class VesselEntity extends Entity {
         boolean hasLegs = loop.vessel().activeStage().hasLandingLegs();
         boolean downrange = loop.vessel().orbit().horizontalSpeedMetersPerSecond()
                 > BoostbackOutcome.DONE_HORIZONTAL_METERS_PER_SECOND;
-        boolean landingBurn = falling && altitude < 2_500.0 && hasLegs;
+        boolean landingBurn = falling && altitude < Warp.LOW_ALTITUDE_METERS && hasLegs;
         if (!crewed && thrusting && downrange && hasLegs) {
             BoostbackOutcome boost = VesselDynamics.attemptBoostback(
                     loop.vessel(), STEP_SECONDS, STEP_SECONDS);
@@ -264,7 +352,7 @@ public final class VesselEntity extends Entity {
             if (boost.has(FlightFault.IMPACT)
                     || loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
                 landAndDiscard();
-                return;
+                return true;
             }
         } else if (!crewed && landingBurn) {
             LandingOutcome landing = VesselDynamics.attemptLanding(
@@ -275,28 +363,24 @@ public final class VesselEntity extends Entity {
                     || landing.has(FlightFault.NO_LEGS)
                     || loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
                 landAndDiscard();
-                return;
+                return true;
             }
         } else if (thrusting) {
             AscentOutcome outcome = VesselDynamics.advanceAscent(
                     loop.vessel(), Atmosphere.earth(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
             if (outcome.has(FlightFault.HOLD_DOWN) || outcome.has(FlightFault.IMPACT)) {
                 landAndDiscard();
-                return;
+                return true;
             }
             loop = loop.withVessel(outcome.vessel());
         } else {
             loop = loop.coast(STEP_SECONDS);
             if (loop.vessel().orbit().altitudeMeters() <= LandingOutcome.TOUCHDOWN_ALTITUDE_METERS) {
                 landAndDiscard();
-                return;
+                return true;
             }
         }
-        syncHud();
-        syncPosition();
-        if (loop.presence() == FlightPresence.ORBIT_MAP && getPassengers().isEmpty()) {
-            handoffToMap();
-        }
+        return false;
     }
 
     private void landAndDiscard() {
@@ -403,6 +487,8 @@ public final class VesselEntity extends Entity {
         builder.define(HUD_HORIZ, 0.0f);
         builder.define(HUD_RADIAL, 0.0f);
         builder.define(HUD_THROTTLE, 1.0f);
+        builder.define(HUD_WARP, 0);
+        builder.define(HUD_HOLD, 0);
     }
 
     @Override
@@ -411,6 +497,12 @@ public final class VesselEntity extends Entity {
         entityData.set(PAD_X, tag.getInt("PadX"));
         entityData.set(PAD_Y, tag.getInt("PadY"));
         entityData.set(PAD_Z, tag.getInt("PadZ"));
+        entityData.set(HUD_WARP, Warp.clampIndex(tag.getInt("WarpIndex")));
+        int hold = tag.getInt("HoldMode");
+        if (hold < 0 || hold >= HoldAim.Mode.values().length) {
+            hold = 0;
+        }
+        entityData.set(HUD_HOLD, hold);
         restoreLoop(tag);
     }
 
@@ -420,6 +512,8 @@ public final class VesselEntity extends Entity {
         tag.putInt("PadX", entityData.get(PAD_X));
         tag.putInt("PadY", entityData.get(PAD_Y));
         tag.putInt("PadZ", entityData.get(PAD_Z));
+        tag.putInt("WarpIndex", entityData.get(HUD_WARP));
+        tag.putInt("HoldMode", entityData.get(HUD_HOLD));
         if (loop != null) {
             FlightCodec.putOrbit(tag, loop.vessel().orbit());
         }

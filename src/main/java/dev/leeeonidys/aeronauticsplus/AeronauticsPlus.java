@@ -49,6 +49,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LatitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.ThrottleSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightReadoutSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.HoldWarpSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.CrewStageSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
@@ -464,6 +465,17 @@ public final class AeronauticsPlus {
                         readout.throttle());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus flight-readout slice failed", exception);
+            }
+            try {
+                HoldWarpSlice.Result holdWarp = HoldWarpSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus hold-warp slice OK: progradeDot={}, retroDot={}, coastWarp={}, thrustWarp={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", holdWarp.progradeDot()),
+                        String.format(java.util.Locale.ROOT, "%.3f", holdWarp.retroDot()),
+                        holdWarp.coastWarp(),
+                        holdWarp.thrustWarp());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus hold-warp slice failed", exception);
             }
             try {
                 StagingSlice.Result staging = StagingSlice.execute();

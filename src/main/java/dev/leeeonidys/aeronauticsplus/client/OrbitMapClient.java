@@ -58,6 +58,21 @@ public final class OrbitMapClient {
             InputConstants.Type.KEYSYM,
             InputConstants.KEY_R,
             "key.categories.aeronauticsplus");
+    public static final KeyMapping WARP_UP = new KeyMapping(
+            "key.aeronauticsplus.warp_up",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_PERIOD,
+            "key.categories.aeronauticsplus");
+    public static final KeyMapping WARP_DOWN = new KeyMapping(
+            "key.aeronauticsplus.warp_down",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_COMMA,
+            "key.categories.aeronauticsplus");
+    public static final KeyMapping HOLD = new KeyMapping(
+            "key.aeronauticsplus.hold",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_T,
+            "key.categories.aeronauticsplus");
 
     private OrbitMapClient() {
     }
@@ -103,6 +118,15 @@ public final class OrbitMapClient {
         }
         if (RCS.consumeClick() && minecraft.screen == null) {
             PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.RCS));
+        }
+        if (WARP_UP.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.WARP_UP));
+        }
+        if (WARP_DOWN.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.WARP_DOWN));
+        }
+        if (HOLD.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.HOLD));
         }
         if (!OPEN_MAP.consumeClick()) {
             return;

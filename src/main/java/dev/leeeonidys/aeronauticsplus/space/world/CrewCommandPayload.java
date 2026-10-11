@@ -19,6 +19,9 @@ public record CrewCommandPayload(int command) implements CustomPacketPayload {
     public static final int THROTTLE_DOWN = 4;
     public static final int THROTTLE_UP = 5;
     public static final int RCS = 6;
+    public static final int WARP_UP = 7;
+    public static final int WARP_DOWN = 8;
+    public static final int HOLD = 9;
 
     public static final Type<CrewCommandPayload> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(AeronauticsPlus.MODID, "crew_command"));
@@ -61,6 +64,12 @@ public record CrewCommandPayload(int command) implements CustomPacketPayload {
                         Component.literal(vessel.commandNudgeThrottle(0.1)), true);
             } else if (payload.command == RCS) {
                 serverPlayer.displayClientMessage(Component.literal(vessel.commandRcs()), true);
+            } else if (payload.command == WARP_UP) {
+                serverPlayer.displayClientMessage(Component.literal(vessel.commandWarp(1)), true);
+            } else if (payload.command == WARP_DOWN) {
+                serverPlayer.displayClientMessage(Component.literal(vessel.commandWarp(-1)), true);
+            } else if (payload.command == HOLD) {
+                serverPlayer.displayClientMessage(Component.literal(vessel.commandHoldCycle()), true);
             }
         });
     }

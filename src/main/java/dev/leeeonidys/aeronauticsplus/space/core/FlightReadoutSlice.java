@@ -22,8 +22,9 @@ public final class FlightReadoutSlice {
         if (floor.liveThrottle() > 1.0e-9) {
             throw new IllegalStateException("Throttle must not go below zero");
         }
-        String[] lines = FlightReadout.lines(12_345.0, 320.4, -12.2, 0.7);
-        if (lines.length != 4 || !lines[0].contains("12345") || !lines[3].contains("70")) {
+        String[] lines = FlightReadout.lines(12_345.0, 320.4, -12.2, 0.7, 50, "prograde");
+        if (lines.length != 6 || !lines[0].contains("12345") || !lines[3].contains("70")
+                || !lines[4].contains("50") || !lines[5].contains("prograde")) {
             throw new IllegalStateException("Readout lost the numbers: " + String.join(" | ", lines));
         }
         return new Result(lines[0], lines[3]);

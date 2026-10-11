@@ -35,6 +35,9 @@ public final class AeronauticsPlusClientEvents {
         event.register(OrbitMapClient.THROTTLE_DOWN);
         event.register(OrbitMapClient.THROTTLE_UP);
         event.register(OrbitMapClient.RCS);
+        event.register(OrbitMapClient.WARP_UP);
+        event.register(OrbitMapClient.WARP_DOWN);
+        event.register(OrbitMapClient.HOLD);
     }
 
     @SubscribeEvent
