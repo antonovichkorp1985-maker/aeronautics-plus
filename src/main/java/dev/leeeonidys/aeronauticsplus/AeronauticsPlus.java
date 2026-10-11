@@ -8,11 +8,10 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlo
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
-import dev.leeeonidys.aeronauticsplus.content.rocket.CraneLoadEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.SeatEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
-import dev.leeeonidys.aeronauticsplus.space.compile.WorldCraneSlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.DockCaptureSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PayloadSlice;
@@ -43,6 +42,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FairingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.ServiceLoopSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.DockCaptureLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DockingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
@@ -60,7 +60,6 @@ import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.PyroLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
-import dev.leeeonidys.aeronauticsplus.space.world.CraneCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
@@ -80,9 +79,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
@@ -117,9 +113,6 @@ import org.slf4j.LoggerFactory;
 public final class AeronauticsPlus {
     public static final String MODID = "aeronauticsplus";
     public static final Logger LOGGER = LoggerFactory.getLogger("AeronauticsPlus");
-    /** Pack/Create machines that can lift. AP does not register a crane block. */
-    public static final TagKey<Block> CRANES = TagKey.create(
-            Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(MODID, "cranes"));
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
@@ -146,14 +139,6 @@ public final class AeronauticsPlus {
                     .noSave()
                     .fireImmune()
                     .build("aeronauticsplus:control_seat"));
-
-    public static final DeferredHolder<EntityType<?>, EntityType<CraneLoadEntity>> CRANE_LOAD =
-            ENTITIES.register("crane_load", () -> EntityType.Builder.<CraneLoadEntity>of(CraneLoadEntity::new, MobCategory.MISC)
-                    .sized(1.0f, 1.0f)
-                    .clientTrackingRange(64)
-                    .updateInterval(1)
-                    .fireImmune()
-                    .build("aeronauticsplus:crane_load"));
 
     // Э2: prototype aircraft propeller, built on CA's MIT-licensed propeller classes.
     public static final DeferredBlock<PrototypePropellerBlock> PROTOTYPE_PROPELLER =
@@ -325,7 +310,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.79: crane is a capability (tower/carriage/mobile), not an AP block.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.80: entity dock. Create winch is the crane. No AP train.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -342,10 +327,6 @@ public final class AeronauticsPlus {
                 CrewCommandPayload.TYPE,
                 CrewCommandPayload.STREAM_CODEC,
                 CrewCommandPayload::handle);
-        registrar.playToServer(
-                CraneCommandPayload.TYPE,
-                CraneCommandPayload.STREAM_CODEC,
-                CraneCommandPayload::handle);
         registrar.playToClient(
                 OrbitMapSnapshotPayload.TYPE,
                 OrbitMapSnapshotPayload.STREAM_CODEC,
@@ -842,19 +823,29 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus assembly slice failed", exception);
             }
             try {
-                WorldCraneSlice.Result worldCrane = WorldCraneSlice.execute();
+                DockCaptureSlice.Result capture = DockCaptureSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus world-crane slice OK: liftSeconds={}, midEmpty={}, tooFar={}, busy={}, placed={}, tower={}, carriage={}, mobile={}",
-                        String.format(java.util.Locale.ROOT, "%.3f", worldCrane.liftSeconds()),
-                        worldCrane.midEmpty(),
-                        worldCrane.tooFar(),
-                        worldCrane.busy(),
-                        worldCrane.placed(),
-                        worldCrane.tower(),
-                        worldCrane.carriage(),
-                        worldCrane.mobile());
+                        "Aeronautics Plus dock-capture slice OK: captured={}, links={}, tooFar={}, noPort={}, notFacing={}, closing={}, overlap={}",
+                        capture.captured(),
+                        capture.dockingLinks(),
+                        capture.tooFar(),
+                        capture.noPort(),
+                        capture.notFacing(),
+                        capture.closing(),
+                        capture.overlap());
             } catch (RuntimeException exception) {
-                LOGGER.error("Aeronautics Plus world-crane slice failed", exception);
+                LOGGER.error("Aeronautics Plus dock-capture slice failed", exception);
+            }
+            try {
+                DockCaptureLoopSlice.Result docked = DockCaptureLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus dock-capture-loop slice OK: compiler={}, entities={}, parts={}, stillWorld={}",
+                        docked.compiler(),
+                        docked.entities(),
+                        docked.parts(),
+                        docked.stillWorld());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus dock-capture-loop slice failed", exception);
             }
             try {
                 SpinSlice.Result spin = SpinSlice.execute();

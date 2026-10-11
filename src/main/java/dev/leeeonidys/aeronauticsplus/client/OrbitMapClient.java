@@ -1,7 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.client;
 
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
-import dev.leeeonidys.aeronauticsplus.space.world.CraneCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapClientHooks;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
@@ -46,9 +45,6 @@ public final class OrbitMapClient {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null) {
             return;
-        }
-        if (minecraft.screen == null && CrewKeys.CRANE.consumeClick()) {
-            PacketDistributor.sendToServer(new CraneCommandPayload());
         }
         if (minecraft.screen == null && CrewKeys.ENTER_STATION.consumeClick()) {
             PacketDistributor.sendToServer(new StationEnterPayload());

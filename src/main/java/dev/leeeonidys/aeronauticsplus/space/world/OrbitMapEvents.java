@@ -18,7 +18,6 @@ public final class OrbitMapEvents {
         if (!(event.getLevel() instanceof ServerLevel level)) {
             return;
         }
-        CraneLiftData.get(level).tick(level);
         if (level.dimension() != Level.OVERWORLD) {
             return;
         }

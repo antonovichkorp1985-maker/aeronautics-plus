@@ -32,8 +32,6 @@ public final class CompatibilityManager {
      */
     public static void initialize() {
         CreateTrainMount.register();
-        AeronauticsPlus.LOGGER.info(
-                "Crane is a capability: tower / carriage / mobile. Tag aeronauticsplus:cranes. AP registers no crane block.");
         if (ModList.get().isLoaded(TERRAFIRMACRAFT_MOD_ID)) {
             AeronauticsPlus.LOGGER.info(
                     "TerraFirmaCraft detected: blade-material tags and pad latitude from Z are active "

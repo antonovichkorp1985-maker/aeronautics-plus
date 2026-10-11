@@ -53,6 +53,5 @@ public final class AeronauticsPlusClientEvents {
         );
         event.registerEntityRenderer(AeronauticsPlus.VESSEL.get(), VesselEntityRenderer::new);
         event.registerEntityRenderer(AeronauticsPlus.SEAT.get(), SeatRenderer::new);
-        event.registerEntityRenderer(AeronauticsPlus.CRANE_LOAD.get(), CraneLoadRenderer::new);
     }
 }

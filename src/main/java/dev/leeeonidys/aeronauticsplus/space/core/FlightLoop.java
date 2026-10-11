@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
+import dev.leeeonidys.aeronauticsplus.space.compile.DockCapture;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridSplit;
 import dev.leeeonidys.aeronauticsplus.space.compile.RadialSplit;
 import dev.leeeonidys.aeronauticsplus.space.compile.RecoveryPlan;
@@ -251,6 +252,39 @@ public record FlightLoop(
             }
         }
         return true;
+    }
+
+    /**
+     * Two world entities become one. Ports must look at each other.
+     * Distance is Minecraft metres between the entities, not Kepler.
+     */
+    public FlightLoop dock(FlightLoop other, double worldDistanceMeters) {
+        if (other == null) {
+            throw new IllegalArgumentException("The other vehicle is required");
+        }
+        if (presence != FlightPresence.WORLD_ENTITY || other.presence != FlightPresence.WORLD_ENTITY) {
+            throw new IllegalStateException("Docking is entity to entity, not pad or map");
+        }
+        double closing = Math.abs(
+                vessel.orbit().radialSpeedMetersPerSecond()
+                        - other.vessel.orbit().radialSpeedMetersPerSecond());
+        String reason = DockCapture.reject(flying, other.flying, worldDistanceMeters, closing);
+        if (!reason.isEmpty()) {
+            throw new IllegalStateException(reason);
+        }
+        VesselBlockGrid merged = DockCapture.merge(flying, other.flying);
+        VesselCompilation compiled = VesselBlockCompiler.analyze(merged);
+        VesselState next = compiled.toVesselState(vessel.id(), vessel.orbit())
+                .withAttitude(vessel.attitude());
+        List<VesselBlockOccupant> stackedOccupants = new ArrayList<>(padLeft.occupants());
+        stackedOccupants.addAll(merged.occupants());
+        return new FlightLoop(
+                presence,
+                new VesselBlockGrid(stackedOccupants),
+                padLeft,
+                merged,
+                next,
+                null);
     }
 
     public FlightLoop withOrbit(OrbitState nextOrbit) {

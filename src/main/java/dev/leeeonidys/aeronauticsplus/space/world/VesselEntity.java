@@ -1,7 +1,12 @@
 package dev.leeeonidys.aeronauticsplus.space.world;
 
 import dev.leeeonidys.aeronauticsplus.space.compile.BlockFace;
+import dev.leeeonidys.aeronauticsplus.space.compile.DockCapture;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.AABB;
 import dev.leeeonidys.aeronauticsplus.space.core.Aerodynamics;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentOutcome;
 import dev.leeeonidys.aeronauticsplus.space.core.Atmosphere;
@@ -70,6 +75,14 @@ public final class VesselEntity extends Entity {
         super(type, level);
         noPhysics = true;
         setNoGravity(true);
+    }
+
+    public FlightLoop loop() {
+        return loop;
+    }
+
+    public void clearLoop() {
+        loop = null;
     }
 
     public void bind(FlightLoop loop) {
@@ -333,7 +346,9 @@ public final class VesselEntity extends Entity {
         syncPosition();
         if (loop.presence() == FlightPresence.ORBIT_MAP && getPassengers().isEmpty()) {
             handoffToMap();
+            return;
         }
+        tryDock();
     }
 
     private boolean stepPhysics(boolean crewed) {
@@ -424,6 +439,47 @@ public final class VesselEntity extends Entity {
             OrbitMapData.get(server).enter(loop);
         }
         discard();
+    }
+
+    private void tryDock() {
+        if (loop == null || loop.presence() != FlightPresence.WORLD_ENTITY) {
+            return;
+        }
+        if (!(level() instanceof ServerLevel server)) {
+            return;
+        }
+        AABB box = getBoundingBox().inflate(DockCapture.REACH_METERS);
+        for (VesselEntity other : server.getEntitiesOfClass(VesselEntity.class, box,
+                candidate -> candidate != this && candidate.isAlive())) {
+            if (getUUID().compareTo(other.getUUID()) > 0) {
+                continue;
+            }
+            if (other.loop() == null || other.loop().presence() != FlightPresence.WORLD_ENTITY) {
+                continue;
+            }
+            try {
+                FlightLoop joined = loop.dock(other.loop(), distanceTo(other));
+                List<Entity> riders = new ArrayList<>(other.getPassengers());
+                other.clearLoop();
+                other.ejectPassengers();
+                other.discard();
+                loop = joined;
+                entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+                syncHud();
+                for (Entity rider : riders) {
+                    if (rider.isAlive() && !rider.isPassenger()) {
+                        rider.startRiding(this, true);
+                    }
+                }
+                Player seated = pilot();
+                if (seated != null) {
+                    seated.displayClientMessage(Component.literal("Стыковка."), false);
+                }
+                return;
+            } catch (RuntimeException ignored) {
+                // not aligned this tick
+            }
+        }
     }
 
     private void syncHud() {
