@@ -538,7 +538,7 @@ public final class VesselDynamics {
 
         List<FlightFault> faults = new ArrayList<>();
         double padPressure = atmosphere.pressurePascals(Math.max(0.0, vessel.orbit().altitudeMeters()));
-        double padThrust = vessel.activeStage().thrustNewtonsAt(padPressure);
+        double padThrust = vessel.clusterThrustNewtonsAt(padPressure);
         double padWeight = vessel.totalMassKg() * vessel.orbit().centralBody().surfaceGravityMetersPerSecond2();
         double padTw = padWeight > 0.0 ? padThrust / padWeight : 0.0;
         if (vessel.orbit().altitudeMeters() < 1.0 && !(padThrust > padWeight)) {
@@ -553,17 +553,17 @@ public final class VesselDynamics {
         VesselState state = vessel;
         if (state.orbit().altitudeMeters() < 1.0 && state.orbit().epochSeconds() < HOLD_DOWN_SECONDS) {
             double holdDt = Math.min(dt, HOLD_DOWN_SECONDS - state.orbit().epochSeconds());
-            StageBurnResult hold = state.activeStage().burn(holdDt);
-            state = replaceActive(state, hold.stage()).withOrbit(new OrbitState(
+            double fuel0 = state.livePropellantKg();
+            state = consumeLiveCluster(state, holdDt).withOrbit(new OrbitState(
                     state.orbit().centralBody(),
                     state.orbit().positionMeters(),
                     state.orbit().velocityMetersPerSecond(),
-                    state.orbit().epochSeconds() + hold.elapsedSeconds()));
-            if (hold.propellantDepleted()) {
-                faults.add(FlightFault.dryTank(hold.elapsedSeconds()));
+                    state.orbit().epochSeconds() + holdDt));
+            if (fuel0 > 1.0e-9 && !(state.livePropellantKg() > 1.0e-9)) {
+                faults.add(FlightFault.dryTank(holdDt));
             }
             return new AscentOutcome(
-                    state, dt, hold.elapsedSeconds(),
+                    state, dt, holdDt,
                     atmosphere.dynamicPressurePascals(state.orbit()),
                     state.orbit().altitudeMeters(), padTw, faults);
         }
@@ -575,7 +575,7 @@ public final class VesselDynamics {
         }
         double pressure = atmosphere.pressureAt(orbit);
         double density = atmosphere.densityAt(orbit);
-        Vector3d thrust = state.inertialThrustNewtonsAt(pressure);
+        Vector3d thrust = state.inertialClusterThrustNewtonsAt(pressure);
         if (!(thrust.magnitudeSquared() > 0.0)) {
             faults.add(FlightFault.zeroThrust());
             return new AscentOutcome(state, dt, 0.0, atmosphere.dynamicPressurePascals(orbit),
@@ -597,16 +597,40 @@ public final class VesselDynamics {
                     orbit.altitudeMeters(), padTw, faults);
         }
         Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
-        StageBurnResult burn = state.activeStage().burn(dt);
-        state = replaceActive(state, burn.stage()).withOrbit(new OrbitState(
+        double fuel0 = state.livePropellantKg();
+        state = consumeLiveCluster(state, dt).withOrbit(new OrbitState(
                 orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
-        if (burn.propellantDepleted()) {
-            faults.add(FlightFault.dryTank(burn.elapsedSeconds()));
+        if (fuel0 > 1.0e-9 && !(state.livePropellantKg() > 1.0e-9)) {
+            faults.add(FlightFault.dryTank(dt));
         }
         return new AscentOutcome(
-                state, dt, burn.elapsedSeconds(),
+                state, dt, dt,
                 atmosphere.dynamicPressurePascals(state.orbit()),
                 state.orbit().altitudeMeters(), padTw, faults);
+    }
+
+    /** Burns strap-ons with the core. No extra vacuum impulse — the caller integrates thrust. */
+    private static VesselState consumeLiveCluster(VesselState vessel, double dt) {
+        if (!vessel.hasStrapOns()) {
+            return replaceActive(vessel, vessel.activeStage().burn(dt).stage());
+        }
+        List<StageState> live = vessel.liveCluster();
+        double allowed = dt;
+        for (StageState stage : live) {
+            allowed = Math.min(allowed, stage.burn(dt).elapsedSeconds());
+        }
+        if (!(allowed > 0.0)) {
+            return vessel;
+        }
+        Set<String> liveIds = new HashSet<>();
+        for (StageState stage : live) {
+            liveIds.add(stage.id());
+        }
+        List<StageState> next = new ArrayList<>();
+        for (StageState stage : vessel.stages()) {
+            next.add(liveIds.contains(stage.id()) ? stage.burn(allowed).stage() : stage);
+        }
+        return vessel.withStages(next);
     }
 
     /**

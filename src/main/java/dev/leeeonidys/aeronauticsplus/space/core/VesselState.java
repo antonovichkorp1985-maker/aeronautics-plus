@@ -68,6 +68,22 @@ public record VesselState(
         return liveCluster().stream().mapToDouble(StageState::thrustNewtons).sum();
     }
 
+    public double clusterThrustNewtonsAt(double ambientPascals) {
+        return liveCluster().stream().mapToDouble(stage -> stage.thrustNewtonsAt(ambientPascals)).sum();
+    }
+
+    public Vector3d inertialClusterThrustNewtonsAt(double ambientPascals) {
+        Vector3d sum = Vector3d.ZERO;
+        for (StageState stage : liveCluster()) {
+            sum = sum.add(attitude.toInertial(stage.netThrustNewtonsAt(ambientPascals)));
+        }
+        return sum;
+    }
+
+    public double livePropellantKg() {
+        return liveCluster().stream().mapToDouble(StageState::propellantMassKg).sum();
+    }
+
     public boolean hasStrapOns() {
         return stages.stream().anyMatch(StageState::strapOn);
     }

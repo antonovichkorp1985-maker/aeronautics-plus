@@ -1,6 +1,7 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 import dev.leeeonidys.aeronauticsplus.space.compile.GridSplit;
+import dev.leeeonidys.aeronauticsplus.space.compile.RadialSplit;
 import dev.leeeonidys.aeronauticsplus.space.compile.RecoveryPlan;
 import dev.leeeonidys.aeronauticsplus.space.compile.SpaceBodies;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
@@ -132,6 +133,29 @@ public record FlightLoop(
                 new FlightLoop(presence, stacked, padLeft, split.booster(), stages.booster(), null));
     }
 
+    /**
+     * Fire horizontal pyro rings: sides become their own vehicles, core keeps going.
+     * Does not wait for the 20 km line.
+     */
+    public RadialFlightSplit fireRadial() {
+        if (presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("Radial pyro fires in flight, not on the pad");
+        }
+        RadialSplit split = VesselBlockCompiler.fireRadial(flying);
+        StrapSplit stages = VesselDynamics.dropStrapOns(vessel);
+        if (split.sides().size() != stages.sides().size()) {
+            throw new IllegalStateException("Radial grids and strap-on stages do not match");
+        }
+        List<FlightLoop> sides = new ArrayList<>();
+        for (int i = 0; i < split.sides().size(); i++) {
+            sides.add(new FlightLoop(
+                    presence, stacked, padLeft, split.sides().get(i), stages.sides().get(i), null));
+        }
+        return new RadialFlightSplit(
+                new FlightLoop(presence, stacked, padLeft, split.core(), stages.core(), null),
+                sides);
+    }
+
     public boolean hasPyroRing() {
         for (VesselBlockOccupant occupant : flying.occupants()) {
             if (occupant.spec().kind() == VesselPartKind.SEPARATOR) {
@@ -139,6 +163,27 @@ public record FlightLoop(
             }
         }
         return false;
+    }
+
+    public boolean hasRadialRing() {
+        for (VesselBlockOccupant occupant : flying.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.SEPARATOR && occupant.facing().horizontal()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean strapOnsDry() {
+        if (!vessel.hasStrapOns()) {
+            return false;
+        }
+        for (StageState stage : vessel.stages()) {
+            if (stage.strapOn() && stage.propellantMassKg() > 1.0e-9) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public FlightLoop withOrbit(OrbitState nextOrbit) {

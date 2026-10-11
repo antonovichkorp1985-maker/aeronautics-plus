@@ -10,6 +10,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightSplit;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingOutcome;
+import dev.leeeonidys.aeronauticsplus.space.core.RadialFlightSplit;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselDynamics;
 import net.minecraft.core.BlockPos;
@@ -77,7 +78,19 @@ public final class VesselEntity extends Entity {
             handoffToMap();
             return;
         }
-        if (loop.hasPyroRing()
+        if (loop.hasRadialRing() && loop.vessel().hasStrapOns() && loop.strapOnsDry()) {
+            try {
+                RadialFlightSplit split = loop.fireRadial();
+                for (FlightLoop side : split.sides()) {
+                    releaseCompanion(side);
+                }
+                loop = split.core();
+                entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+            } catch (IllegalStateException ignored) {
+                // rings present but they did not cut sides
+            }
+        } else if (loop.hasPyroRing()
+                && !loop.vessel().hasStrapOns()
                 && loop.vessel().canSeparateActive()
                 && !(loop.vessel().activeStage().propellantMassKg() > 1.0e-9)) {
             try {
@@ -89,8 +102,8 @@ public final class VesselEntity extends Entity {
                 // ring present but it did not cut a stage
             }
         }
-        boolean thrusting = loop.vessel().activeStage().propellantMassKg() > 1.0e-9
-                && loop.vessel().activeStage().thrustNewtons() > 0.0;
+        boolean thrusting = loop.vessel().livePropellantKg() > 1.0e-9
+                && loop.vessel().clusterThrustNewtons() > 0.0;
         if (thrusting) {
             AscentOutcome outcome = VesselDynamics.advanceAscent(
                     loop.vessel(), Atmosphere.earth(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
