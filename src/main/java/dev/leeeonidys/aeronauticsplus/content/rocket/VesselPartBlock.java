@@ -86,7 +86,7 @@ public final class VesselPartBlock extends Block {
         if (spec.kind() == VesselPartKind.ENGINE || spec.kind() == VesselPartKind.RCS) {
             return defaultBlockState().setValue(FACING, context.getClickedFace().getOpposite());
         }
-        if (spec.kind() == VesselPartKind.SEPARATOR) {
+        if (spec.kind() == VesselPartKind.SEPARATOR || spec.kind() == VesselPartKind.DOCKING) {
             Direction clicked = context.getClickedFace();
             if (clicked.getAxis().isHorizontal()) {
                 return defaultBlockState().setValue(FACING, clicked);
@@ -96,7 +96,8 @@ public final class VesselPartBlock extends Block {
         if (spec.kind() == VesselPartKind.MOUNT
                 || spec.kind() == VesselPartKind.FAIRING
                 || spec.kind() == VesselPartKind.PAYLOAD
-                || spec.kind() == VesselPartKind.HABITAT) {
+                || spec.kind() == VesselPartKind.HABITAT
+                || spec.kind() == VesselPartKind.RADIATOR) {
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
         return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
