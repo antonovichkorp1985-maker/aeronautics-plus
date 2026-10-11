@@ -7,7 +7,10 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 public final class Aerodynamics {
     public static final double ROCKET_CD = 0.5;
 
-    /** Fairing drop after leaving dense air: ~80–110 km historically, q already small. */
+    /**
+     * Earliest commanded jettison until ChemMod q exists.
+     * Not an automatic drop. Real shrouds usually go ~80–110 km, still on demand.
+     */
     public static final double FAIRING_MIN_ALTITUDE_METERS = 50_000.0;
     public static final double FAIRING_MAX_DYNAMIC_PRESSURE_PASCALS = 250.0;
 

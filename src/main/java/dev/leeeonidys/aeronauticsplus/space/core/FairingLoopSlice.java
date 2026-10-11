@@ -11,7 +11,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
  * Fairing covers the apparatus (habitat). Payload is a property, not a block.
- * Shroud drops at 50 km by altitude. 20 km is the map line. ChemMod q is not this gate.
+ * Drop is commanded: illegal in dense air, legal on parking orbit (satellites).
+ * 20 km is the map line. Coast does not peel the shroud.
  */
 public final class FairingLoopSlice {
     private FairingLoopSlice() {
@@ -20,10 +21,12 @@ public final class FairingLoopSlice {
     public record Result(
             boolean compilerShroud,
             boolean heldAtHandoff,
-            boolean droppedAtFifty,
+            boolean heldAtFifty,
+            boolean droppedOnCommand,
+            boolean droppedOnOrbit,
             boolean payloadStayed,
             boolean recoveredWithoutFairing,
-            boolean mapDropsFairing) {
+            boolean mapKeepsFairing) {
     }
 
     public static Result execute() {
@@ -60,16 +63,30 @@ public final class FairingLoopSlice {
             }
         }
 
-        FlightLoop dropped = FlightLoop.sit(shrouded()).liftoff()
-                .withOrbit(atAltitude(Aerodynamics.FAIRING_MIN_ALTITUDE_METERS))
-                .dropFairing();
+        FlightLoop atFifty = FlightLoop.sit(shrouded()).liftoff()
+                .withOrbit(atAltitude(Aerodynamics.FAIRING_MIN_ALTITUDE_METERS));
+        if (!atFifty.hasFairing()) {
+            throw new IllegalStateException("Crossing 50 km must not peel the shroud by itself");
+        }
+
+        FlightLoop dropped = atFifty.dropFairing();
         if (dropped.hasFairing() || !dropped.vessel().activeStage().hasPayload()) {
-            throw new IllegalStateException("50 km drop must lose the shroud and keep the apparatus");
+            throw new IllegalStateException("Commanded drop must lose the shroud and keep the apparatus");
         }
         for (var occupant : dropped.flying().occupants()) {
             if (occupant.spec().kind() == VesselPartKind.FAIRING) {
                 throw new IllegalStateException("Flying grid must not keep the fairing block");
             }
+        }
+
+        FlightLoop orbital = FlightLoop.sit(shrouded()).liftoff()
+                .withOrbit(SpaceBodies.parkingOrbit());
+        if (!orbital.hasFairing()) {
+            throw new IllegalStateException("Parking orbit may still wear the fairing");
+        }
+        FlightLoop deployed = orbital.dropFairing();
+        if (deployed.hasFairing() || !deployed.vessel().activeStage().hasPayload()) {
+            throw new IllegalStateException("Satellite deploy on orbit must drop the shroud and keep the apparatus");
         }
 
         FlightLoop recovered = dropped.withOrbit(atAltitude(2_000.0)).recover();
@@ -82,11 +99,11 @@ public final class FairingLoopSlice {
         OrbitMap map = new OrbitMap();
         map.enter(FlightLoop.sit(shrouded()).liftoff().withOrbit(atAltitude(80_000.0)));
         map.advance(1.0);
-        if (map.size() != 1 || map.snapshot().get(0).hasFairing()) {
-            throw new IllegalStateException("Map coast at 80 km must drop the fairing");
+        if (map.size() != 1 || !map.snapshot().get(0).hasFairing()) {
+            throw new IllegalStateException("Map coast must keep the fairing until commanded");
         }
 
-        return new Result(true, true, true, true, true, true);
+        return new Result(true, true, true, true, true, true, true, true);
     }
 
     private static OrbitState atAltitude(double altitudeMeters) {

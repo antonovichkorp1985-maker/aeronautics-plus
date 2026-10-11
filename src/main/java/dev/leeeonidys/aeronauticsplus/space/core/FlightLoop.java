@@ -196,8 +196,8 @@ public record FlightLoop(
     }
 
     /**
-     * Drop the shroud at 50 km geometric altitude. Payload stays. ChemMod q is not this gate.
-     * Recovered blocks no longer include the fairing.
+     * Commanded shroud drop. Illegal below 50 km until ChemMod q exists.
+     * Payload stays. Parking orbit is a legal drop.
      */
     public FlightLoop dropFairing() {
         if (presence == FlightPresence.BLOCKS_ON_PAD) {

@@ -296,7 +296,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.65: parked orbit can be walkable station blocks.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.66: fairing drops on command, not at 50 km.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -597,13 +597,15 @@ public final class AeronauticsPlus {
             try {
                 FairingLoopSlice.Result fairing = FairingLoopSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus fairing-loop slice OK: compiler={}, held={}, dropped={}, payload={}, recovered={}, map={}",
+                        "Aeronautics Plus fairing-loop slice OK: compiler={}, handoff={}, held50={}, cmd={}, orbit={}, payload={}, recovered={}, mapKeeps={}",
                         fairing.compilerShroud(),
                         fairing.heldAtHandoff(),
-                        fairing.droppedAtFifty(),
+                        fairing.heldAtFifty(),
+                        fairing.droppedOnCommand(),
+                        fairing.droppedOnOrbit(),
                         fairing.payloadStayed(),
                         fairing.recoveredWithoutFairing(),
-                        fairing.mapDropsFairing());
+                        fairing.mapKeepsFairing());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus fairing-loop slice failed", exception);
             }

@@ -1069,8 +1069,8 @@ public final class VesselDynamics {
     }
 
     /**
-     * In-flight drop once geometric altitude is 50 km. ChemMod q is not this gate.
-     * 20 km is the world/map line, not fairing jettison.
+     * Commanded drop. 50 km is the floor until ChemMod q exists, not a timer.
+     * 20 km is the world/map line. Parking orbit is a legal drop (satellites).
      */
     public static VesselState jettisonFairingAboveDenseAir(VesselState vessel) {
         if (vessel == null) {
@@ -1080,9 +1080,9 @@ public final class VesselDynamics {
         if (vessel.orbit().altitudeMeters() < Aerodynamics.FAIRING_MIN_ALTITUDE_METERS) {
             throw new IllegalStateException(
                     FlightFault.FAIRING_ATMOSPHERE
-                            + ": обтекатель держится до 50 км (h="
+                            + ": обтекатель не сбрасывают ниже 50 км (h="
                             + vessel.orbit().altitudeMeters()
-                            + " м). ChemMod q — не этот порог");
+                            + " м). Сброс по команде, ChemMod q — не этот порог");
         }
         return dropFairings(vessel);
     }
