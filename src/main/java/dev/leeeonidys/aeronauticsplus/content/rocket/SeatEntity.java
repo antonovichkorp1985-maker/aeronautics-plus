@@ -11,8 +11,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Invisible mount for the control seat. The player sits here; the rocket does
- * not launch them. Ad Astra still owns player spaceflight.
+ * Invisible mount for the control seat on the pad. Ignition transfers the
+ * player onto {@link dev.leeeonidys.aeronauticsplus.space.world.VesselEntity}.
  */
 public final class SeatEntity extends Entity {
     public SeatEntity(EntityType<? extends SeatEntity> type, Level level) {

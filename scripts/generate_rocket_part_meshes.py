@@ -284,35 +284,41 @@ def structure_mesh() -> Mesh:
 
 
 def separator_mesh() -> Mesh:
+    """1 m pyro clamp-band segment. Tile a ring around the stack you built."""
     mesh = Mesh()
-    n = 16
+    n = 24
     mesh.add(
-        "clamp",
-        frustum(0.42, 0.40, 0.58, 0.40, n, 0.05, 0.40)
-        + frustum(0.42, 0.32, 0.58, 0.32, n, 0.05, 0.40, invert=True),
+        "band",
+        frustum(0.38, 0.47, 0.62, 0.47, n, 0.05, 0.40)
+        + frustum(0.38, 0.38, 0.62, 0.38, n, 0.05, 0.40, invert=True),
     )
-    petals = []
-    for i in range(8):
-        ang = 2 * math.pi * i / 8
-        c, s = math.cos(ang), math.sin(ang)
-        x, z = 0.5 + 0.30 * c, 0.5 + 0.30 * s
-        petals.extend(box(x - 0.04, 0.58, z - 0.04, x + 0.04, 0.92, z + 0.04, 0.70, 0.10, 0.90, 0.45))
-        petals.extend(box(x - 0.04, 0.08, z - 0.04, x + 0.04, 0.42, z + 0.04, 0.70, 0.10, 0.90, 0.45))
-    mesh.add("petals", petals)
-    mesh.add("bolts", box(0.46, 0.36, 0.46, 0.54, 0.64, 0.54, 0.20, 0.70, 0.40, 0.90))
+    mesh.add(
+        "lip_lo",
+        frustum(0.34, 0.48, 0.38, 0.47, n, 0.40, 0.55) + disk(0.34, 0.48, n, False, (0.22, 0.22)),
+    )
+    mesh.add(
+        "lip_hi",
+        frustum(0.62, 0.47, 0.66, 0.48, n, 0.40, 0.55) + disk(0.66, 0.48, n, True, (0.22, 0.78)),
+    )
+    bolts = []
+    for i in range(12):
+        ang = 2 * math.pi * i / 12
+        x, z = 0.5 + 0.44 * math.cos(ang), 0.5 + 0.44 * math.sin(ang)
+        bolts.extend(box(x - 0.03, 0.36, z - 0.03, x + 0.03, 0.64, z + 0.03, 0.70, 0.10, 0.90, 0.45))
+    mesh.add("bolts", bolts)
     return mesh
 
 
 def fairing_mesh() -> Mesh:
-    """Ogive shroud: closed nose, open clamp ring, inner skin. Not a copied NASA fairing."""
+    """1 m shroud section: barrel petals you stack. Nose tapers in the same cell."""
     mesh = Mesh()
     n = 24
     mesh.add(
         "ogive",
-        frustum(0.08, 0.42, 0.55, 0.34, n, 0.02, 0.40)
-        + frustum(0.55, 0.34, 0.88, 0.14, n, 0.40, 0.70)
-        + frustum(0.88, 0.14, 0.98, 0.03, n, 0.70, 0.86)
-        + disk(0.98, 0.03, n, True, (0.22, 0.78)),
+        frustum(0.06, 0.46, 0.62, 0.42, n, 0.02, 0.40)
+        + frustum(0.62, 0.42, 0.88, 0.18, n, 0.40, 0.70)
+        + frustum(0.88, 0.18, 0.98, 0.04, n, 0.70, 0.86)
+        + disk(0.98, 0.04, n, True, (0.22, 0.78)),
     )
     mesh.add(
         "inner",
@@ -630,24 +636,21 @@ def mount_mesh() -> Mesh:
 
 
 def pad_mesh() -> Mesh:
-    """Launch table: concrete deck, flame well, hold-down arms. Stays on the ground."""
+    """1 m pad tile: deck, trench through ±Z, one hold-down on +X. Tile a table to the rocket."""
     mesh = Mesh()
-    n = 16
     deck = []
-    deck.extend(box(0.00, 0.00, 0.00, 1.00, 0.10, 0.32, 0.05, 0.05, 0.45, 0.40))
-    deck.extend(box(0.00, 0.00, 0.68, 1.00, 0.10, 1.00, 0.05, 0.05, 0.45, 0.40))
-    deck.extend(box(0.00, 0.00, 0.32, 0.32, 0.10, 0.68, 0.05, 0.05, 0.45, 0.40))
-    deck.extend(box(0.68, 0.00, 0.32, 1.00, 0.10, 0.68, 0.05, 0.05, 0.45, 0.40))
+    deck.extend(box(0.00, 0.00, 0.00, 1.00, 0.08, 0.28, 0.05, 0.05, 0.45, 0.40))
+    deck.extend(box(0.00, 0.00, 0.72, 1.00, 0.08, 1.00, 0.05, 0.05, 0.45, 0.40))
+    deck.extend(box(0.00, 0.00, 0.28, 0.28, 0.08, 0.72, 0.05, 0.05, 0.45, 0.40))
+    deck.extend(box(0.72, 0.00, 0.28, 1.00, 0.08, 0.72, 0.05, 0.05, 0.45, 0.40))
     mesh.add("deck", deck)
-    mesh.add(
-        "well",
-        frustum(0.00, 0.22, 0.10, 0.18, n, 0.50, 0.72, invert=True),
-    )
-    arms = []
-    for dx, dz in ((0.14, 0.14), (0.86, 0.14), (0.14, 0.86), (0.86, 0.86)):
-        arms.extend(box(dx - 0.05, 0.10, dz - 0.05, dx + 0.05, 0.40, dz + 0.05, 0.70, 0.10, 0.95, 0.55))
-        arms.extend(box(dx - 0.08, 0.36, dz - 0.08, dx + 0.08, 0.48, dz + 0.08, 0.70, 0.55, 0.95, 0.80))
-    mesh.add("clamps", arms)
+    trench = []
+    trench.extend(box(0.28, 0.00, 0.28, 0.72, 0.03, 0.72, 0.50, 0.50, 0.70, 0.70))
+    mesh.add("trench", trench)
+    clamp = []
+    clamp.extend(box(0.82, 0.08, 0.38, 0.94, 0.42, 0.62, 0.70, 0.10, 0.95, 0.55))
+    clamp.extend(box(0.70, 0.34, 0.42, 0.84, 0.46, 0.58, 0.70, 0.55, 0.95, 0.80))
+    mesh.add("clamp", clamp)
     return mesh
 
 
@@ -676,32 +679,28 @@ def controller_mesh() -> Mesh:
 
 
 def legs_mesh() -> Mesh:
-    """Falcon-class landing legs: four struts and footpads. Not a cube, not grid fins."""
+    """One 1 m landing-leg piece: hinge, strut, foot. Place four around the booster."""
     mesh = Mesh()
-    mesh.add("hinge", box(0.40, 0.82, 0.40, 0.60, 0.96, 0.60, 0.20, 0.70, 0.40, 0.90))
+    mesh.add("hinge", box(0.38, 0.78, 0.38, 0.62, 0.96, 0.62, 0.20, 0.70, 0.40, 0.90))
     struts = []
-    pads = []
-    hinges = ((0.44, 0.44), (0.56, 0.44), (0.44, 0.56), (0.56, 0.56))
-    feet = ((0.08, 0.08), (0.92, 0.08), (0.08, 0.92), (0.92, 0.92))
-    for (hx, hz), (fx, fz) in zip(hinges, feet):
-        for t in range(4):
-            t0 = t / 4
-            t1 = (t + 1) / 4
-            x0 = hx + (fx - hx) * t0
-            z0 = hz + (fz - hz) * t0
-            y0 = 0.88 + (0.10 - 0.88) * t0
-            x1 = hx + (fx - hx) * t1
-            z1 = hz + (fz - hz) * t1
-            y1 = 0.88 + (0.10 - 0.88) * t1
-            r = 0.035
-            struts.extend(box(
-                min(x0, x1) - r, min(y0, y1) - 0.02, min(z0, z1) - r,
-                max(x0, x1) + r, max(y0, y1) + 0.02, max(z0, z1) + r,
-                0.08, 0.08, 0.45, 0.55))
-        pads.extend(box(fx - 0.09, 0.00, fz - 0.09, fx + 0.09, 0.05, fz + 0.09, 0.70, 0.10, 0.95, 0.40))
-        pads.extend(box(fx - 0.025, 0.05, fz - 0.025, fx + 0.025, 0.16, fz + 0.025, 0.70, 0.40, 0.95, 0.70))
-    mesh.add("struts", struts)
-    mesh.add("pads", pads)
+    hx, hz, fx, fz = 0.50, 0.50, 0.12, 0.12
+    for t in range(5):
+        t0 = t / 5
+        t1 = (t + 1) / 5
+        x0 = hx + (fx - hx) * t0
+        z0 = hz + (fz - hz) * t0
+        y0 = 0.86 + (0.08 - 0.86) * t0
+        x1 = hx + (fx - hx) * t1
+        z1 = hz + (fz - hz) * t1
+        y1 = 0.86 + (0.08 - 0.86) * t1
+        r = 0.045
+        struts.extend(box(
+            min(x0, x1) - r, min(y0, y1) - 0.02, min(z0, z1) - r,
+            max(x0, x1) + r, max(y0, y1) + 0.02, max(z0, z1) + r,
+            0.08, 0.08, 0.45, 0.55))
+    mesh.add("strut", struts)
+    mesh.add("foot", box(0.02, 0.00, 0.02, 0.24, 0.06, 0.24, 0.70, 0.10, 0.95, 0.40)
+              + box(0.08, 0.06, 0.08, 0.16, 0.14, 0.16, 0.70, 0.40, 0.95, 0.70))
     return mesh
 
 
@@ -1088,11 +1087,11 @@ def main() -> None:
     write_part_models("rcs_thruster")
     write_part_models("docking_port")
     write_blockstate("rocket_mount", MOUNT_STATES)
-    write_blockstate("launch_pad", UP_STATES)
+    write_blockstate("launch_pad", MOUNT_STATES)
     write_blockstate("rocket_engine", ENGINE_STATES)
     write_blockstate("rocket_controller", UP_STATES)
     write_blockstate("stage_separator", UP_STATES)
-    write_blockstate("landing_legs", UP_STATES)
+    write_blockstate("landing_legs", MOUNT_STATES)
     write_blockstate("rocket_fairing", UP_STATES)
     write_blockstate("rcs_thruster", ENGINE_STATES)
     write_blockstate("docking_port", ENGINE_STATES)

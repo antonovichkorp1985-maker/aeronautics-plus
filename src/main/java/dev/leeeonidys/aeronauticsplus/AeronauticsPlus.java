@@ -117,7 +117,7 @@ public final class AeronauticsPlus {
     public static final DeferredHolder<EntityType<?>, EntityType<VesselEntity>> VESSEL =
             ENTITIES.register("vessel", () -> EntityType.Builder.<VesselEntity>of(VesselEntity::new, MobCategory.MISC)
                     .sized(1.5f, 6.0f)
-                    .clientTrackingRange(80)
+                    .clientTrackingRange(256)
                     .updateInterval(1)
                     .fireImmune()
                     .build("aeronauticsplus:vessel"));
@@ -301,7 +301,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.69: seat is sittable, habitat SKU is gone, mount is a bay slice.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.70: sit in the seat and the stack launches you.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -543,14 +543,14 @@ public final class AeronauticsPlus {
             try {
                 EntitySlice.Result entity = EntitySlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus entity slice OK: afterLiftoff={}, climbed={}, alt={}, map={}, reentry={}, recovered={}, playerOff={}",
+                        "Aeronautics Plus entity slice OK: afterLiftoff={}, climbed={}, alt={}, map={}, reentry={}, recovered={}, unmannedMaps={}",
                         entity.entityAfterLiftoff(),
                         entity.heldThenClimbed(),
                         String.format(java.util.Locale.ROOT, "%.1f", entity.climbAltitude()),
                         entity.mapAtTwentyKm(),
                         entity.reentryEntity(),
                         entity.recoveredOnPad(),
-                        entity.playerNotOnBoard());
+                        entity.unmannedMapsAtTwenty());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus entity slice failed", exception);
             }

@@ -15,6 +15,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialFlightSplit;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselDynamics;
+import dev.leeeonidys.aeronauticsplus.space.core.WorldHandoff;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -22,12 +23,16 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Flying pile after {@link WorldLiftoff}. Renders existing vessel-part models.
- * The player is not on board — Ad Astra still holds player space.
+ * Players who sat in the control seat ride this entity. Unmanned stacks still
+ * leave for the Kepler map at 20 km.
  */
 public final class VesselEntity extends Entity {
     private static final EntityDataAccessor<String> PARTS =
@@ -42,6 +47,7 @@ public final class VesselEntity extends Entity {
     private static final double STEP_SECONDS = 0.05;
 
     private FlightLoop loop;
+    private Player pendingRemount;
 
     public VesselEntity(EntityType<? extends VesselEntity> type, Level level) {
         super(type, level);
@@ -80,7 +86,15 @@ public final class VesselEntity extends Entity {
         if (level().isClientSide || loop == null) {
             return;
         }
-        if (loop.presence() == FlightPresence.ORBIT_MAP) {
+        if (pendingRemount != null && pendingRemount.isAlive() && !pendingRemount.isPassenger()) {
+            pendingRemount.startRiding(this, true);
+            pendingRemount.displayClientMessage(
+                    net.minecraft.network.chat.Component.literal(
+                            "Выше 20 км слезть нельзя. Карта M. Карман N на круговой стоянке."),
+                    false);
+        }
+        pendingRemount = null;
+        if (loop.presence() == FlightPresence.ORBIT_MAP && getPassengers().isEmpty()) {
             handoffToMap();
             return;
         }
@@ -152,12 +166,14 @@ public final class VesselEntity extends Entity {
             }
         }
         syncPosition();
-        if (loop.presence() == FlightPresence.ORBIT_MAP) {
+        if (loop.presence() == FlightPresence.ORBIT_MAP && getPassengers().isEmpty()) {
             handoffToMap();
         }
     }
 
     private void landAndDiscard() {
+        pendingRemount = null;
+        ejectPassengers();
         WorldLiftoff.land(level(), padPos(), loop);
         discard();
     }
@@ -174,6 +190,9 @@ public final class VesselEntity extends Entity {
     }
 
     private void handoffToMap() {
+        if (!getPassengers().isEmpty()) {
+            return;
+        }
         if (level() instanceof ServerLevel server) {
             OrbitMapData.get(server).enter(loop);
         }
@@ -260,6 +279,45 @@ public final class VesselEntity extends Entity {
                     orbit);
         } catch (RuntimeException ignored) {
             loop = null;
+        }
+    }
+
+    @Override
+    protected boolean canAddPassenger(Entity passenger) {
+        return getPassengers().size() < 4;
+    }
+
+    @Override
+    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scale) {
+        double y = 0.42;
+        for (PartView part : decodeParts(partsPayload())) {
+            if ("rocket_controller".equals(part.specId())) {
+                y = Math.max(y, part.y() + 0.42);
+            }
+        }
+        return new Vec3(0.0, y, 0.0);
+    }
+
+    @Override
+    protected void removePassenger(Entity passenger) {
+        super.removePassenger(passenger);
+        if (!level().isClientSide
+                && loop != null
+                && WorldHandoff.onMap(loop.vessel().orbit())
+                && passenger instanceof Player player
+                && player.isAlive()) {
+            pendingRemount = player;
+        }
+    }
+
+    @Override
+    protected void addPassenger(Entity passenger) {
+        super.addPassenger(passenger);
+        if (!level().isClientSide && passenger instanceof Player player) {
+            player.displayClientMessage(
+                    net.minecraft.network.chat.Component.literal(
+                            "На борту. Слезь до 20 км — упадёшь. На линии стек уходит на карту M, если никого нет."),
+                    false);
         }
     }
 

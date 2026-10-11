@@ -12,6 +12,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnter;
 import dev.leeeonidys.aeronauticsplus.space.world.StationPocket;
+import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselLaunch;
 import dev.leeeonidys.aeronauticsplus.space.world.WorldVesselScanner;
 import net.minecraft.core.BlockPos;
@@ -48,7 +49,10 @@ public final class VesselPartBlock extends Block {
         this.spec = spec;
         Direction facing = spec.kind() == VesselPartKind.ENGINE
                 ? Direction.DOWN
-                : spec.kind() == VesselPartKind.MOUNT ? Direction.NORTH : Direction.UP;
+                : spec.kind() == VesselPartKind.MOUNT || spec.kind() == VesselPartKind.PAD
+                        || spec.kind() == VesselPartKind.LEGS
+                ? Direction.NORTH
+                : Direction.UP;
         registerDefaultState(stateDefinition.any().setValue(FACING, facing));
     }
 
@@ -99,7 +103,9 @@ public final class VesselPartBlock extends Block {
             }
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
-        if (spec.kind() == VesselPartKind.MOUNT) {
+        if (spec.kind() == VesselPartKind.MOUNT
+                || spec.kind() == VesselPartKind.PAD
+                || spec.kind() == VesselPartKind.LEGS) {
             return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
         }
         if (spec.kind() == VesselPartKind.FAIRING) {
@@ -130,20 +136,28 @@ public final class VesselPartBlock extends Block {
                 StationEnter.tell(serverPlayer, StationEnter.leave(serverPlayer));
                 return InteractionResult.CONSUME;
             }
-            if (player.isShiftKeyDown()) {
+            boolean sittingHere = player.getVehicle() instanceof SeatEntity
+                    && player.getVehicle().blockPosition().equals(pos);
+            if (sittingHere || player.isShiftKeyDown()) {
                 VesselBlockGrid padGrid = WorldVesselScanner.scan(level, pos);
                 VesselCompilation padCompilation = VesselBlockCompiler.analyze(padGrid);
                 if (padCompilation.isLaunchable() && padCompilation.diagnosticText().contains("ON_PAD")) {
                     String fail = VesselLaunch.ignite(level, pos);
                     if (fail.isBlank()) {
-                        player.displayClientMessage(
-                                Component.literal("Старт. Игрок остаётся на земле. Карта: клавиша M."), false);
+                        if (player.getVehicle() instanceof VesselEntity) {
+                            player.displayClientMessage(
+                                    Component.literal("Старт. Ты на борту. Карта M с 20 км, если слезешь."), false);
+                        } else {
+                            player.displayClientMessage(
+                                    Component.literal("Старт. Беспилотник. Карта: клавиша M."), false);
+                        }
                     } else {
                         player.displayClientMessage(Component.literal(fail), false);
                     }
                     return InteractionResult.CONSUME;
                 }
-            } else {
+            }
+            if (!sittingHere) {
                 sit(level, pos, player);
                 return InteractionResult.CONSUME;
             }

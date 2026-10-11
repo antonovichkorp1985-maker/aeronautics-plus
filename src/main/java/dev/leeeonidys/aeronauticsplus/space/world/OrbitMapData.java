@@ -93,7 +93,7 @@ public final class OrbitMapData extends SavedData {
         waiting.addAll(reentered);
         pendingSpawn.clear();
         for (FlightLoop loop : waiting) {
-            if (!VesselLaunch.spawn(level, loop)) {
+            if (VesselLaunch.spawn(level, loop) == null) {
                 pendingSpawn.add(loop);
             }
         }

@@ -10,8 +10,9 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 import java.util.List;
 
 /**
- * After liftoff the pile is a world entity that climbs; 20 km swaps to the map;
- * falling back under 20 km is the world entity again. Player is not on board.
+ * After liftoff the pile is a world entity that climbs; 20 km swaps to the map
+ * when nobody is riding. Falling back under 20 km is the world entity again.
+ * Boarding is a world concern; this slice stays Minecraft-free.
  */
 public final class EntitySlice {
     private EntitySlice() {
@@ -24,7 +25,7 @@ public final class EntitySlice {
             boolean mapAtTwentyKm,
             boolean reentryEntity,
             boolean recoveredOnPad,
-            boolean playerNotOnBoard) {
+            boolean unmannedMapsAtTwenty) {
     }
 
     public static Result execute() {
