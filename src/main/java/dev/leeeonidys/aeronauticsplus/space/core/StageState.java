@@ -298,6 +298,13 @@ public record StageState(
         return withEngines(engines.stream().map(engine -> engine.withEnabled(false)).toList());
     }
 
+    /** Main engines only. RCS is not the stick. */
+    public StageState withMainThrottle(double throttle) {
+        return withEngines(engines.stream()
+                .map(engine -> engine.rcs() ? engine : engine.withThrottle(throttle))
+                .toList());
+    }
+
     /** Deflect main nozzles toward a body-frame command. RCS stays put. */
     public StageState gimbalMainToward(Vector3d bodyDesired) {
         if (bodyDesired == null || !(bodyDesired.magnitudeSquared() > 0.0)) {

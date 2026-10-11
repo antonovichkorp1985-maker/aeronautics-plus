@@ -28,6 +28,16 @@ public final class OrbitMapClient {
             InputConstants.Type.KEYSYM,
             InputConstants.KEY_F,
             "key.categories.aeronauticsplus");
+    public static final KeyMapping THROTTLE_CUT = new KeyMapping(
+            "key.aeronauticsplus.throttle_cut",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_X,
+            "key.categories.aeronauticsplus");
+    public static final KeyMapping THROTTLE_FULL = new KeyMapping(
+            "key.aeronauticsplus.throttle_full",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_Z,
+            "key.categories.aeronauticsplus");
 
     private OrbitMapClient() {
     }
@@ -55,6 +65,12 @@ public final class OrbitMapClient {
         }
         if (DROP_FAIRING.consumeClick() && minecraft.screen == null) {
             PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.DROP_FAIRING));
+        }
+        if (THROTTLE_CUT.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.THROTTLE_CUT));
+        }
+        if (THROTTLE_FULL.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.THROTTLE_FULL));
         }
         if (!OPEN_MAP.consumeClick()) {
             return;

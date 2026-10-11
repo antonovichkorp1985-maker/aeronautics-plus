@@ -47,6 +47,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LatitudeSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.ThrottleSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoopSlice;
@@ -304,7 +305,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.72: TFC latitude is the pad; equator is the cheap launch.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.73: X cuts the cluster, Z is full throttle.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -430,6 +431,18 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.1f", latitude.equatorDegrees()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus latitude slice failed", exception);
+            }
+            try {
+                ThrottleSlice.Result throttle = ThrottleSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus throttle slice OK: risenAlt={}, cutProp={}, fullProp={}, cutAlt={}, fullAlt={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", throttle.risenAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.1f", throttle.cutPropellantKg()),
+                        String.format(java.util.Locale.ROOT, "%.1f", throttle.fullPropellantKg()),
+                        String.format(java.util.Locale.ROOT, "%.1f", throttle.cutAltitude()),
+                        String.format(java.util.Locale.ROOT, "%.1f", throttle.fullAltitude()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus throttle slice failed", exception);
             }
             try {
                 StagingSlice.Result staging = StagingSlice.execute();

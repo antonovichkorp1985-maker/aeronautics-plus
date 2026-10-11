@@ -1,7 +1,9 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /** Logical flight state of a multi-stage vessel. Stages are ordered bottom to top. */
 public record VesselState(
@@ -160,6 +162,30 @@ public record VesselState(
             throw new IllegalArgumentException("Attitude must not be null");
         }
         return new VesselState(id, orbit, stages, activeStageIndex, nextAttitude, angularVelocityBody);
+    }
+
+    /**
+     * Throttle the live cluster. Strap-ons and the core together; upper stages wait.
+     * Not a GUI — the seated player sends 0 or 1.
+     */
+    public VesselState withLiveThrottle(double throttle) {
+        Set<String> liveIds = new HashSet<>();
+        for (StageState stage : liveCluster()) {
+            liveIds.add(stage.id());
+        }
+        ArrayList<StageState> next = new ArrayList<>(stages.size());
+        for (StageState stage : stages) {
+            next.add(liveIds.contains(stage.id()) ? stage.withMainThrottle(throttle) : stage);
+        }
+        return withStages(next);
+    }
+
+    public double liveThrottle() {
+        return liveCluster().stream()
+                .flatMap(stage -> stage.mainEngines().stream())
+                .mapToDouble(EngineState::throttle)
+                .average()
+                .orElse(0.0);
     }
 
     public VesselState withAngularVelocity(Vector3d nextOmega) {

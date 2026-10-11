@@ -83,6 +83,15 @@ public final class VesselEntity extends Entity {
         return loop == null ? null : OrbitMapTrack.from(loop);
     }
 
+    public String commandThrottle(double throttle) {
+        if (loop == null) {
+            return "Нет полёта.";
+        }
+        loop = loop.withVessel(loop.vessel().withLiveThrottle(throttle));
+        entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+        return String.format(java.util.Locale.ROOT, "Тяга %.0f%%.", throttle * 100.0);
+    }
+
     public String commandDropFairing() {
         if (loop == null) {
             return "Нет полёта.";

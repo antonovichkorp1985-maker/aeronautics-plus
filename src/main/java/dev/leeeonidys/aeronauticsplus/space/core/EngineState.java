@@ -161,6 +161,13 @@ public record EngineState(
                 rcs, seaLevelSpecificImpulseSeconds);
     }
 
+    public EngineState withThrottle(double nextThrottle) {
+        return new EngineState(
+                id, fuelId, oxidizerId, dryMassKg, thrustNewtons, specificImpulseSeconds,
+                mixtureRatio, nextThrottle, gimbalDegrees, enabled, localPositionMeters, thrustAxis,
+                rcs, seaLevelSpecificImpulseSeconds);
+    }
+
     public EngineState withThrustAxis(Vector3d nextAxis) {
         return new EngineState(
                 id, fuelId, oxidizerId, dryMassKg, thrustNewtons, specificImpulseSeconds,

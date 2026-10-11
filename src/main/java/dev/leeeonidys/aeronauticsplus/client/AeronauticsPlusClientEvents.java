@@ -27,6 +27,8 @@ public final class AeronauticsPlusClientEvents {
         event.register(OrbitMapClient.OPEN_MAP);
         event.register(OrbitMapClient.ENTER_STATION);
         event.register(OrbitMapClient.DROP_FAIRING);
+        event.register(OrbitMapClient.THROTTLE_CUT);
+        event.register(OrbitMapClient.THROTTLE_FULL);
     }
 
     @SubscribeEvent
