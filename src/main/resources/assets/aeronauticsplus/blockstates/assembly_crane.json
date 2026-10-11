@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "aeronauticsplus:block/assembly_crane" },
+    "facing=south": { "model": "aeronauticsplus:block/assembly_crane", "y": 180 },
+    "facing=west": { "model": "aeronauticsplus:block/assembly_crane", "y": 270 },
+    "facing=east": { "model": "aeronauticsplus:block/assembly_crane", "y": 90 }
+  }
+}

@@ -8,9 +8,13 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlo
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
+import dev.leeeonidys.aeronauticsplus.content.rocket.AssemblyCraneBlock;
+import dev.leeeonidys.aeronauticsplus.content.rocket.AssemblyCraneBlockEntity;
+import dev.leeeonidys.aeronauticsplus.content.rocket.CraneLoadEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.SeatEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
+import dev.leeeonidys.aeronauticsplus.space.compile.WorldCraneSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PackingSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.PayloadSlice;
@@ -139,6 +143,14 @@ public final class AeronauticsPlus {
                     .fireImmune()
                     .build("aeronauticsplus:control_seat"));
 
+    public static final DeferredHolder<EntityType<?>, EntityType<CraneLoadEntity>> CRANE_LOAD =
+            ENTITIES.register("crane_load", () -> EntityType.Builder.<CraneLoadEntity>of(CraneLoadEntity::new, MobCategory.MISC)
+                    .sized(1.0f, 1.0f)
+                    .clientTrackingRange(64)
+                    .updateInterval(1)
+                    .fireImmune()
+                    .build("aeronauticsplus:crane_load"));
+
     // Э2: prototype aircraft propeller, built on CA's MIT-licensed propeller classes.
     public static final DeferredBlock<PrototypePropellerBlock> PROTOTYPE_PROPELLER =
             BLOCKS.register("prototype_propeller", () -> new PrototypePropellerBlock(
@@ -255,6 +267,18 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.PAD, MapColor.STONE);
     public static final DeferredItem<BlockItem> LAUNCH_PAD_ITEM =
             ITEMS.registerSimpleBlockItem(LAUNCH_PAD);
+    /** VAB gantry. Ground apparatus. The lift is timed, not a spawn. */
+    public static final DeferredBlock<AssemblyCraneBlock> ASSEMBLY_CRANE =
+            BLOCKS.register("assembly_crane", () -> new AssemblyCraneBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.COLOR_YELLOW)
+                            .strength(3.5f, 6.0f)
+                            .noOcclusion()));
+    public static final DeferredItem<BlockItem> ASSEMBLY_CRANE_ITEM =
+            ITEMS.registerSimpleBlockItem(ASSEMBLY_CRANE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblyCraneBlockEntity>> ASSEMBLY_CRANE_BE =
+            BLOCK_ENTITIES.register("assembly_crane", () -> BlockEntityType.Builder.of(
+                    AssemblyCraneBlockEntity::new, ASSEMBLY_CRANE.get()).build(null));
     /** KSP-class pyro clamp ring. Cuts stages; stays on the booster. */
     public static final DeferredBlock<VesselPartBlock> STAGE_SEPARATOR =
             registerVesselPart(VesselPartCatalog.SEPARATOR, MapColor.METAL);
@@ -291,6 +315,7 @@ public final class AeronauticsPlus {
                         AIRCRAFT_PROPELLERS.forEach(entry -> output.accept(entry.item().get()));
                         output.accept(ROCKET_MOUNT_ITEM.get());
                         output.accept(LAUNCH_PAD_ITEM.get());
+                        output.accept(ASSEMBLY_CRANE_ITEM.get());
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(LANDING_LEGS_ITEM.get());
@@ -309,7 +334,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.77: Create train carries rocket_mount. Crew keys remappable.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.78: world gantry crane. Lift is timed, not a spawn.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -822,6 +847,18 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus assembly slice failed", exception);
             }
             try {
+                WorldCraneSlice.Result worldCrane = WorldCraneSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus world-crane slice OK: liftSeconds={}, midEmpty={}, tooFar={}, busy={}, placed={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", worldCrane.liftSeconds()),
+                        worldCrane.midEmpty(),
+                        worldCrane.tooFar(),
+                        worldCrane.busy(),
+                        worldCrane.placed());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus world-crane slice failed", exception);
+            }
+            try {
                 SpinSlice.Result spin = SpinSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus spin slice OK: burnRate={}, coastRate={}, extraCoastAngle={}, thrustDot={}",
@@ -965,6 +1002,7 @@ public final class AeronauticsPlus {
                     registeredItems.add(BuiltInRegistries.ITEM.getKey(entry.item().get()).toString()));
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_MOUNT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LAUNCH_PAD_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ASSEMBLY_CRANE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_ENGINE_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(STAGE_SEPARATOR_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LANDING_LEGS_ITEM.get()).toString());
@@ -973,7 +1011,7 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 20
+            boolean allRegistered = registeredItems.size() == 21
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(
