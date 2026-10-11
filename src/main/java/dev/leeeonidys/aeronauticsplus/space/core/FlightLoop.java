@@ -199,6 +199,29 @@ public record FlightLoop(
                 nextPresence, stacked, padLeft, stripKind(flying, VesselPartKind.FAIRING), dropped, null);
     }
 
+    public boolean hasRcs() {
+        return !vessel.activeStage().rcsThrusters().isEmpty();
+    }
+
+    public boolean hasHabitat() {
+        return vessel.activeStage().hasHabitat();
+    }
+
+    /**
+     * RCS cluster: ACS, not the main engine. Fires wherever the stack is, including the map.
+     * ChemMod air is not this pulse.
+     */
+    public FlightLoop fireRcs(double seconds) {
+        if (presence == FlightPresence.BLOCKS_ON_PAD) {
+            throw new IllegalStateException("RCS fires in flight, not on the pad");
+        }
+        VesselState next = VesselDynamics.fireRcs(vessel, seconds);
+        FlightPresence nextPresence = WorldHandoff.inWorld(next.orbit())
+                ? FlightPresence.WORLD_ENTITY
+                : FlightPresence.ORBIT_MAP;
+        return new FlightLoop(nextPresence, stacked, padLeft, flying, next, null);
+    }
+
     public boolean strapOnsDry() {
         if (!vessel.hasStrapOns()) {
             return false;

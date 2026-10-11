@@ -6,7 +6,8 @@ import java.util.List;
 
 /**
  * Compiler fixtures. Minecraft items from this catalog are the engine, control
- * seat, train mount, launch pad, pyro ring and landing legs. Tanks stay ChemMod (adapt those). Hull SKUs are not AP items.
+ * seat, train mount, launch pad, pyro ring, landing legs, fairing, payload,
+ * habitat and RCS. Tanks stay ChemMod (adapt those). Solar stays ChemMod. Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";

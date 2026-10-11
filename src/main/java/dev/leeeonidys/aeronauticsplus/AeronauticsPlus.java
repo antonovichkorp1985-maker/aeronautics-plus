@@ -38,6 +38,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.HohmannSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.InclinationSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.FairingLoopSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.ServiceLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
@@ -253,6 +254,16 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.PAYLOAD, MapColor.COLOR_CYAN);
     public static final DeferredItem<BlockItem> ROCKET_PAYLOAD_ITEM =
             ITEMS.registerSimpleBlockItem(ROCKET_PAYLOAD);
+    /** Soyuz-class pressurized cabin. Not a ChemMod tank. */
+    public static final DeferredBlock<VesselPartBlock> CREW_HABITAT =
+            registerVesselPart(VesselPartCatalog.HABITAT, MapColor.COLOR_LIGHT_BLUE);
+    public static final DeferredItem<BlockItem> CREW_HABITAT_ITEM =
+            ITEMS.registerSimpleBlockItem(CREW_HABITAT);
+    /** RCS cluster. ACS, not the main engine. */
+    public static final DeferredBlock<VesselPartBlock> RCS_THRUSTER =
+            registerVesselPart(VesselPartCatalog.RCS, MapColor.COLOR_RED);
+    public static final DeferredItem<BlockItem> RCS_THRUSTER_ITEM =
+            ITEMS.registerSimpleBlockItem(RCS_THRUSTER);
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
@@ -269,6 +280,8 @@ public final class AeronauticsPlus {
                         output.accept(LANDING_LEGS_ITEM.get());
                         output.accept(ROCKET_FAIRING_ITEM.get());
                         output.accept(ROCKET_PAYLOAD_ITEM.get());
+                        output.accept(CREW_HABITAT_ITEM.get());
+                        output.accept(RCS_THRUSTER_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                     })
                     .build());
@@ -281,7 +294,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.60: fairing and payload blocks; shroud drops at 50 km.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.61: habitat and RCS blocks; ACS is not the main engine.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -593,6 +606,18 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus fairing-loop slice failed", exception);
             }
             try {
+                ServiceLoopSlice.Result service = ServiceLoopSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus service-loop slice OK: compiler={}, rcs={}, refused={}, habitat={}, recovered={}",
+                        service.compilerBus(),
+                        service.rcsFired(),
+                        service.noRcsRefused(),
+                        service.habitatStayed(),
+                        service.recoveredBus());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus service-loop slice failed", exception);
+            }
+            try {
                 MapViewSlice.Result mapView = MapViewSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus map-view slice OK: padR={}, hopperR={}, handoffR={}, parkingR={}, hopperWorld={}, parkingMap={}",
@@ -814,9 +839,11 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(LANDING_LEGS_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_FAIRING_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_PAYLOAD_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(CREW_HABITAT_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 19
+            boolean allRegistered = registeredItems.size() == 21
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(
