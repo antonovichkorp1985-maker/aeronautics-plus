@@ -54,9 +54,4 @@ public final class VesselEntityRenderer extends EntityRenderer<VesselEntity> {
     public ResourceLocation getTextureLocation(VesselEntity entity) {
         return TextureAtlas.LOCATION_BLOCKS;
     }
-
-    @Override
-    public boolean shouldRenderOffScreen(VesselEntity entity) {
-        return true;
-    }
 }
