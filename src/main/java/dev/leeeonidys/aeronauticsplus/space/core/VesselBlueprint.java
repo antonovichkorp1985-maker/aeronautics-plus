@@ -15,10 +15,18 @@ import java.util.stream.Collectors;
  * Freeform logical vessel graph. It deliberately has no canonical rocket template.
  * Physical Minecraft blocks are converted to this graph by a later adapter.
  */
-public record VesselBlueprint(List<VesselComponent> components, List<VesselConnection> connections) {
+public record VesselBlueprint(
+        List<VesselComponent> components,
+        List<VesselConnection> connections,
+        Set<String> strapOnStageIds) {
     public VesselBlueprint {
         components = List.copyOf(components == null ? List.of() : components);
         connections = List.copyOf(connections == null ? List.of() : connections);
+        strapOnStageIds = Set.copyOf(strapOnStageIds == null ? Set.of() : strapOnStageIds);
+    }
+
+    public VesselBlueprint(List<VesselComponent> components, List<VesselConnection> connections) {
+        this(components, connections, Set.of());
     }
 
     public VesselCompilation analyze() {
@@ -81,7 +89,8 @@ public record VesselBlueprint(List<VesselComponent> components, List<VesselConne
                                 .toList(),
                         tanks.stream().map(VesselComponent::tank).toList(),
                         allEngines,
-                        true);
+                        true,
+                        strapOnStageIds.contains(stageId));
                 addThrustGeometryDiagnostics(stage, diagnostics);
                 stages.add(stage);
             }

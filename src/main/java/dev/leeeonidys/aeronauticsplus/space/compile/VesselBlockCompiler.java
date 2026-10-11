@@ -101,17 +101,7 @@ public final class VesselBlockCompiler {
         }
         Map<GridPos, List<VesselBlockOccupant>> byPos = index(flying);
         Map<GridPos, String> stageByPos = assignStages(flying, byPos);
-        java.util.LinkedHashSet<String> sideStages = new java.util.LinkedHashSet<>();
-        for (VesselBlockOccupant occupant : flying) {
-            if (occupant.spec().kind() != VesselPartKind.SEPARATOR || !occupant.facing().horizontal()) {
-                continue;
-            }
-            String ringStage = stageByPos.get(occupant.pos());
-            String sideStage = stageByPos.get(occupant.pos().offset(occupant.facing()));
-            if (sideStage != null && ringStage != null && !sideStage.equals(ringStage)) {
-                sideStages.add(sideStage);
-            }
-        }
+        Set<String> sideStages = radialSideStages(flying, stageByPos);
         if (sideStages.isEmpty()) {
             throw new IllegalStateException("Radial pyro did not cut a side booster");
         }
@@ -203,7 +193,24 @@ public final class VesselBlockCompiler {
                     stageByPos.get(occupant.pos()),
                     occupant.pos().occupancyCentroidMeters(origin, occupant.spec().occupancy())));
         }
-        return new VesselBlueprint(components, buildConnections(byPos));
+        return new VesselBlueprint(components, buildConnections(byPos), radialSideStages(grid.occupants(), stageByPos));
+    }
+
+    /** Islands hanging off a horizontal pyro ring become strap-on stages. */
+    private static Set<String> radialSideStages(
+            List<VesselBlockOccupant> flying, Map<GridPos, String> stageByPos) {
+        LinkedHashSet<String> sideStages = new LinkedHashSet<>();
+        for (VesselBlockOccupant occupant : flying) {
+            if (occupant.spec().kind() != VesselPartKind.SEPARATOR || !occupant.facing().horizontal()) {
+                continue;
+            }
+            String ringStage = stageByPos.get(occupant.pos());
+            String sideStage = stageByPos.get(occupant.pos().offset(occupant.facing()));
+            if (sideStage != null && ringStage != null && !sideStage.equals(ringStage)) {
+                sideStages.add(sideStage);
+            }
+        }
+        return sideStages;
     }
 
     private static Map<GridPos, List<VesselBlockOccupant>> index(List<VesselBlockOccupant> occupants) {

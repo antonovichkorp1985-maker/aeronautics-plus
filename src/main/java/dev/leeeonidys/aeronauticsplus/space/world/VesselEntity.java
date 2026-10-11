@@ -2,22 +2,23 @@ package dev.leeeonidys.aeronauticsplus.space.world;
 
 import dev.leeeonidys.aeronauticsplus.space.compile.BlockFace;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
-import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
 import dev.leeeonidys.aeronauticsplus.space.core.Aerodynamics;
 import dev.leeeonidys.aeronauticsplus.space.core.AscentOutcome;
 import dev.leeeonidys.aeronauticsplus.space.core.Atmosphere;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightFault;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
+import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselDynamics;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraft.core.BlockPos;
 
 /**
  * Flying pile after {@link WorldLiftoff}. Renders existing vessel-part models.
@@ -52,7 +53,7 @@ public final class VesselEntity extends Entity {
         entityData.set(PAD_X, pad.x());
         entityData.set(PAD_Y, pad.y());
         entityData.set(PAD_Z, pad.z());
-        entityData.set(PARTS, encodeParts(loop));
+        entityData.set(PARTS, FlightCodec.encodeFlying(loop));
         syncPosition();
     }
 
@@ -70,6 +71,10 @@ public final class VesselEntity extends Entity {
         if (level().isClientSide || loop == null) {
             return;
         }
+        if (loop.presence() == FlightPresence.ORBIT_MAP) {
+            handoffToMap();
+            return;
+        }
         AscentOutcome outcome = VesselDynamics.advanceAscent(
                 loop.vessel(), Atmosphere.earth(), STEP_SECONDS, Aerodynamics.ROCKET_CD, 1.0);
         if (outcome.has(FlightFault.HOLD_DOWN)) {
@@ -80,34 +85,21 @@ public final class VesselEntity extends Entity {
         loop = loop.withVessel(outcome.vessel());
         syncPosition();
         if (loop.presence() == FlightPresence.ORBIT_MAP) {
-            discard();
+            handoffToMap();
         }
+    }
+
+    private void handoffToMap() {
+        if (level() instanceof ServerLevel server) {
+            OrbitMapData.get(server).enter(loop);
+        }
+        discard();
     }
 
     private void syncPosition() {
         BlockPos pad = padPos();
         double alt = loop == null ? 0.0 : Math.max(0.0, loop.vessel().orbit().altitudeMeters());
         setPos(pad.getX() + 0.5, pad.getY() + alt, pad.getZ() + 0.5);
-    }
-
-    private static String encodeParts(FlightLoop loop) {
-        StringBuilder builder = new StringBuilder();
-        GridPos pad = loop.padLeft().origin();
-        for (VesselBlockOccupant occupant : loop.flying().occupants()) {
-            if (!builder.isEmpty()) {
-                builder.append(';');
-            }
-            builder.append(occupant.spec().id())
-                    .append(',')
-                    .append(occupant.pos().x() - pad.x())
-                    .append(',')
-                    .append(occupant.pos().y() - pad.y())
-                    .append(',')
-                    .append(occupant.pos().z() - pad.z())
-                    .append(',')
-                    .append(occupant.facing().name());
-        }
-        return builder.toString();
     }
 
     public static PartView[] decodeParts(String payload) {
@@ -158,6 +150,7 @@ public final class VesselEntity extends Entity {
         entityData.set(PAD_X, tag.getInt("PadX"));
         entityData.set(PAD_Y, tag.getInt("PadY"));
         entityData.set(PAD_Z, tag.getInt("PadZ"));
+        restoreLoop(tag);
     }
 
     @Override
@@ -166,6 +159,24 @@ public final class VesselEntity extends Entity {
         tag.putInt("PadX", entityData.get(PAD_X));
         tag.putInt("PadY", entityData.get(PAD_Y));
         tag.putInt("PadZ", entityData.get(PAD_Z));
+        if (loop != null) {
+            FlightCodec.putOrbit(tag, loop.vessel().orbit());
+        }
+    }
+
+    private void restoreLoop(CompoundTag tag) {
+        OrbitState orbit = FlightCodec.readOrbit(tag);
+        if (orbit == null) {
+            return;
+        }
+        try {
+            loop = FlightCodec.restore(
+                    entityData.get(PARTS),
+                    new GridPos(entityData.get(PAD_X), entityData.get(PAD_Y), entityData.get(PAD_Z)),
+                    orbit);
+        } catch (RuntimeException ignored) {
+            loop = null;
+        }
     }
 
     @Override

@@ -13,7 +13,8 @@ public final class RadialSlice {
             boolean coreKeepsController,
             boolean sidesHaveEngines,
             boolean axialStillCuts,
-            boolean axialNotRadial) {
+            boolean axialNotRadial,
+            boolean compilerMarksStrapOns) {
     }
 
     public static Result execute() {
@@ -48,12 +49,22 @@ public final class RadialSlice {
             throw new IllegalStateException("Axial pyro must still cut a stacked booster");
         }
 
+        VesselCompilation compiled = VesselBlockCompiler.analyze(heavy());
+        long straps = compiled.stages().stream().filter(StageState::strapOn).count();
+        if (straps != 2) {
+            throw new IllegalStateException("Compiler must mark two strap-ons, straps=" + straps);
+        }
+        if (compiled.stages().stream().filter(stage -> !stage.strapOn()).findAny().isEmpty()) {
+            throw new IllegalStateException("Core must stay a non-strap stage");
+        }
+
         return new Result(
                 split.sides().size(),
                 hasKind(split.core(), VesselPartKind.CONTROLLER),
                 split.sides().stream().allMatch(side -> hasKind(side, VesselPartKind.ENGINE)),
                 !axial.booster().isEmpty(),
-                true);
+                true,
+                straps == 2);
     }
 
     private static VesselBlockGrid heavy() {

@@ -252,7 +252,7 @@ public final class AeronauticsPlus {
         TABS.register(modEventBus);
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.53: flying vessel entity from part models; player stays on the ground.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.54: map reentry entity, orbit persist, compiler strapOn; player stays on the ground.");
     }
 
     private static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -478,11 +478,12 @@ public final class AeronauticsPlus {
             try {
                 EntitySlice.Result entity = EntitySlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus entity slice OK: afterLiftoff={}, climbed={}, alt={}, map={}, playerOff={}",
+                        "Aeronautics Plus entity slice OK: afterLiftoff={}, climbed={}, alt={}, map={}, reentry={}, playerOff={}",
                         entity.entityAfterLiftoff(),
                         entity.heldThenClimbed(),
                         String.format(java.util.Locale.ROOT, "%.1f", entity.climbAltitude()),
                         entity.mapAtTwentyKm(),
+                        entity.reentryEntity(),
                         entity.playerNotOnBoard());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus entity slice failed", exception);
@@ -661,12 +662,13 @@ public final class AeronauticsPlus {
             try {
                 RadialSlice.Result radial = RadialSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus radial slice OK: sides={}, coreSeat={}, sideEngines={}, axial={}, notRadial={}",
+                        "Aeronautics Plus radial slice OK: sides={}, coreSeat={}, sideEngines={}, axial={}, notRadial={}, strapOn={}",
                         radial.sideCount(),
                         radial.coreKeepsController(),
                         radial.sidesHaveEngines(),
                         radial.axialStillCuts(),
-                        radial.axialNotRadial());
+                        radial.axialNotRadial(),
+                        radial.compilerMarksStrapOns());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus radial slice failed", exception);
             }

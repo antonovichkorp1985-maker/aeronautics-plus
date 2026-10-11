@@ -7,10 +7,11 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
+import java.util.List;
 
 /**
- * After liftoff the pile is a world entity that climbs; 20 km still swaps to the map.
- * Minecraft spawn/render is {@code VesselEntity} using existing part models.
+ * After liftoff the pile is a world entity that climbs; 20 km swaps to the map;
+ * falling back under 20 km is the world entity again. Player is not on board.
  */
 public final class EntitySlice {
     private EntitySlice() {
@@ -21,6 +22,7 @@ public final class EntitySlice {
             boolean heldThenClimbed,
             double climbAltitude,
             boolean mapAtTwentyKm,
+            boolean reentryEntity,
             boolean playerNotOnBoard) {
     }
 
@@ -60,7 +62,27 @@ public final class EntitySlice {
         if (mapped.presence() != FlightPresence.ORBIT_MAP) {
             throw new IllegalStateException("20 km discards the world entity for the map");
         }
-        return new Result(true, true, alt, true, true);
+
+        OrbitMap map = new OrbitMap();
+        map.enter(mapped);
+        if (map.size() != 1) {
+            throw new IllegalStateException("Map must hold the vehicle");
+        }
+        FlightLoop back = null;
+        for (int i = 0; i < 400; i++) {
+            List<FlightLoop> reentered = map.advance(0.1);
+            if (!reentered.isEmpty()) {
+                back = reentered.get(0);
+                break;
+            }
+        }
+        if (back == null || back.presence() != FlightPresence.WORLD_ENTITY) {
+            throw new IllegalStateException("Falling through 20 km must spawn the world entity again");
+        }
+        if (WorldHandoff.onMap(back.vessel().orbit()) || map.size() != 0) {
+            throw new IllegalStateException("Reentry must leave the map");
+        }
+        return new Result(true, true, alt, true, true, true);
     }
 
     private static OrbitState atAltitude(double altitudeMeters) {
