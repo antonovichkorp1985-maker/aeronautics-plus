@@ -5,7 +5,9 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
 /** Client-only registrations for animated propeller block entities. */
@@ -30,6 +32,16 @@ public final class AeronauticsPlusClientEvents {
         event.register(OrbitMapClient.THROTTLE_CUT);
         event.register(OrbitMapClient.THROTTLE_FULL);
         event.register(OrbitMapClient.STAGE);
+        event.register(OrbitMapClient.THROTTLE_DOWN);
+        event.register(OrbitMapClient.THROTTLE_UP);
+        event.register(OrbitMapClient.RCS);
+    }
+
+    @SubscribeEvent
+    public static void registerGuiLayers(RegisterGuiLayersEvent event) {
+        event.registerAboveAll(
+                ResourceLocation.fromNamespaceAndPath(AeronauticsPlus.MODID, "flight"),
+                FlightHud::render);
     }
 
     @SubscribeEvent

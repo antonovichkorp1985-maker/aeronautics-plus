@@ -46,6 +46,14 @@ public final class VesselEntity extends Entity {
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> PAD_Z =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> HUD_ALTITUDE =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HUD_HORIZ =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HUD_RADIAL =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> HUD_THROTTLE =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
 
     private static final double STEP_SECONDS = 0.05;
 
@@ -68,6 +76,7 @@ public final class VesselEntity extends Entity {
         entityData.set(PAD_Y, pad.y());
         entityData.set(PAD_Z, pad.z());
         entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+        syncHud();
         syncPosition();
     }
 
@@ -83,13 +92,55 @@ public final class VesselEntity extends Entity {
         return loop == null ? null : OrbitMapTrack.from(loop);
     }
 
+    public float hudAltitudeMeters() {
+        return entityData.get(HUD_ALTITUDE);
+    }
+
+    public float hudHorizontalMetersPerSecond() {
+        return entityData.get(HUD_HORIZ);
+    }
+
+    public float hudRadialMetersPerSecond() {
+        return entityData.get(HUD_RADIAL);
+    }
+
+    public float hudThrottle() {
+        return entityData.get(HUD_THROTTLE);
+    }
+
     public String commandThrottle(double throttle) {
         if (loop == null) {
             return "Нет полёта.";
         }
         loop = loop.withVessel(loop.vessel().withLiveThrottle(throttle));
         entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+        syncHud();
         return String.format(java.util.Locale.ROOT, "Тяга %.0f%%.", throttle * 100.0);
+    }
+
+    public String commandNudgeThrottle(double delta) {
+        if (loop == null) {
+            return "Нет полёта.";
+        }
+        loop = loop.withVessel(loop.vessel().nudgeLiveThrottle(delta));
+        entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+        syncHud();
+        return String.format(java.util.Locale.ROOT, "Тяга %.0f%%.", loop.vessel().liveThrottle() * 100.0);
+    }
+
+    public String commandRcs() {
+        if (loop == null) {
+            return "Нет полёта.";
+        }
+        try {
+            loop = loop.fireRcs(0.2);
+            entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+            syncHud();
+            return "РСУ.";
+        } catch (RuntimeException exception) {
+            String message = exception.getMessage();
+            return message == null || message.isBlank() ? "РСУ не сработало." : message;
+        }
     }
 
     public String commandStage() {
@@ -119,6 +170,7 @@ public final class VesselEntity extends Entity {
         try {
             loop = loop.dropFairing();
             entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+            syncHud();
             return "";
         } catch (RuntimeException exception) {
             String message = exception.getMessage();
@@ -240,6 +292,7 @@ public final class VesselEntity extends Entity {
                 return;
             }
         }
+        syncHud();
         syncPosition();
         if (loop.presence() == FlightPresence.ORBIT_MAP && getPassengers().isEmpty()) {
             handoffToMap();
@@ -265,6 +318,7 @@ public final class VesselEntity extends Entity {
         releaseCompanion(split.booster());
         loop = split.continuing();
         entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+        syncHud();
     }
 
     private void releaseCompanion(FlightLoop companion) {
@@ -286,6 +340,17 @@ public final class VesselEntity extends Entity {
             OrbitMapData.get(server).enter(loop);
         }
         discard();
+    }
+
+    private void syncHud() {
+        if (loop == null) {
+            return;
+        }
+        OrbitState orbit = loop.vessel().orbit();
+        entityData.set(HUD_ALTITUDE, (float) orbit.altitudeMeters());
+        entityData.set(HUD_HORIZ, (float) orbit.horizontalSpeedMetersPerSecond());
+        entityData.set(HUD_RADIAL, (float) orbit.radialSpeedMetersPerSecond());
+        entityData.set(HUD_THROTTLE, (float) loop.vessel().liveThrottle());
     }
 
     private void syncPosition() {
@@ -334,6 +399,10 @@ public final class VesselEntity extends Entity {
         builder.define(PAD_X, 0);
         builder.define(PAD_Y, 0);
         builder.define(PAD_Z, 0);
+        builder.define(HUD_ALTITUDE, 0.0f);
+        builder.define(HUD_HORIZ, 0.0f);
+        builder.define(HUD_RADIAL, 0.0f);
+        builder.define(HUD_THROTTLE, 1.0f);
     }
 
     @Override

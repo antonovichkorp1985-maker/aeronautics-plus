@@ -43,6 +43,21 @@ public final class OrbitMapClient {
             InputConstants.Type.KEYSYM,
             InputConstants.KEY_G,
             "key.categories.aeronauticsplus");
+    public static final KeyMapping THROTTLE_DOWN = new KeyMapping(
+            "key.aeronauticsplus.throttle_down",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_C,
+            "key.categories.aeronauticsplus");
+    public static final KeyMapping THROTTLE_UP = new KeyMapping(
+            "key.aeronauticsplus.throttle_up",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_V,
+            "key.categories.aeronauticsplus");
+    public static final KeyMapping RCS = new KeyMapping(
+            "key.aeronauticsplus.rcs",
+            InputConstants.Type.KEYSYM,
+            InputConstants.KEY_R,
+            "key.categories.aeronauticsplus");
 
     private OrbitMapClient() {
     }
@@ -79,6 +94,15 @@ public final class OrbitMapClient {
         }
         if (STAGE.consumeClick() && minecraft.screen == null) {
             PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.STAGE));
+        }
+        if (THROTTLE_DOWN.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.THROTTLE_DOWN));
+        }
+        if (THROTTLE_UP.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.THROTTLE_UP));
+        }
+        if (RCS.consumeClick() && minecraft.screen == null) {
+            PacketDistributor.sendToServer(new CrewCommandPayload(CrewCommandPayload.RCS));
         }
         if (!OPEN_MAP.consumeClick()) {
             return;

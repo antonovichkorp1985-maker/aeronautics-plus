@@ -48,6 +48,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LatitudeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.ThrottleSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.FlightReadoutSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.CrewStageSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.HandoffSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.EntitySlice;
@@ -306,7 +307,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.74: G fires the pyro ring with fuel still in the booster.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.75: seated HUD, C/V throttle detents, R is RCS.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -454,6 +455,15 @@ public final class AeronauticsPlus {
                         crewStage.upperStages());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus crew-stage slice failed", exception);
+            }
+            try {
+                FlightReadoutSlice.Result readout = FlightReadoutSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus flight-readout slice OK: altitude={}, throttle={}",
+                        readout.altitude(),
+                        readout.throttle());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus flight-readout slice failed", exception);
             }
             try {
                 StagingSlice.Result staging = StagingSlice.execute();

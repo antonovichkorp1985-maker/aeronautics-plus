@@ -166,7 +166,7 @@ public record VesselState(
 
     /**
      * Throttle the live cluster. Strap-ons and the core together; upper stages wait.
-     * Not a GUI — the seated player sends 0 or 1.
+     * Not a GUI — the seated player sends a fraction in [0, 1].
      */
     public VesselState withLiveThrottle(double throttle) {
         Set<String> liveIds = new HashSet<>();
@@ -186,6 +186,21 @@ public record VesselState(
                 .mapToDouble(EngineState::throttle)
                 .average()
                 .orElse(0.0);
+    }
+
+    /** One detent is 10%. Clamped to [0, 1]. */
+    public VesselState nudgeLiveThrottle(double delta) {
+        if (!Double.isFinite(delta)) {
+            throw new IllegalArgumentException("Throttle step must be finite");
+        }
+        double next = Math.round((liveThrottle() + delta) * 10.0) / 10.0;
+        if (next < 0.0) {
+            next = 0.0;
+        }
+        if (next > 1.0) {
+            next = 1.0;
+        }
+        return withLiveThrottle(next);
     }
 
     public VesselState withAngularVelocity(Vector3d nextOmega) {
