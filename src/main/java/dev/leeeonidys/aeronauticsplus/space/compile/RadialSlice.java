@@ -1,5 +1,8 @@
 package dev.leeeonidys.aeronauticsplus.space.compile;
 
+import dev.leeeonidys.aeronauticsplus.space.core.StageState;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
+
 /**
  * Soyuz / Falcon Heavy sides: the same pyro ring facing out drops strap-ons.
  * Axial firePyro is unchanged. Not ChemMod air.
