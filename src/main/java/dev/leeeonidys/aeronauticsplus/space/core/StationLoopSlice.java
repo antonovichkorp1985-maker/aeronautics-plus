@@ -11,9 +11,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
- * Parked circular orbit with a habitat becomes walkable blocks.
- * Kepler map stays for transfers. Pad recovery stays below 20 km.
- * No dimension, no suit, no shuttle cargo doors.
+ * Enter-station is a command. Parking with a habitat stays on the Kepler map
+ * until that command. Unmanned sats cannot enter. No dimension yet.
  */
 public final class StationLoopSlice {
     private StationLoopSlice() {
@@ -21,6 +20,7 @@ public final class StationLoopSlice {
 
     public record Result(
             boolean compilerBus,
+            boolean parkedStaysOnMap,
             boolean parkedOccupies,
             boolean transferRefused,
             boolean hopperRefused,
@@ -37,13 +37,17 @@ public final class StationLoopSlice {
                     + compiled.diagnosticText());
         }
 
-        FlightLoop parked = FlightLoop.sit(bus()).liftoff()
+        FlightLoop coasting = FlightLoop.sit(bus()).liftoff()
                 .withOrbit(atAltitude(Aerodynamics.FAIRING_MIN_ALTITUDE_METERS))
                 .dropFairing()
-                .withOrbit(SpaceBodies.parkingOrbit())
-                .occupyStation();
+                .withOrbit(SpaceBodies.parkingOrbit());
+        if (coasting.presence() != FlightPresence.ORBIT_MAP || !coasting.hasHabitat()) {
+            throw new IllegalStateException("A burn/coast with a habitat stays on the Kepler map");
+        }
+
+        FlightLoop parked = coasting.occupyStation();
         if (parked.presence() != FlightPresence.STATION_BLOCKS) {
-            throw new IllegalStateException("Circular parking with a habitat must become station blocks");
+            throw new IllegalStateException("The enter-station command must open the walkable grid");
         }
         StationPlan plan = parked.station();
         if (plan == null
@@ -95,7 +99,7 @@ public final class StationLoopSlice {
             throw new IllegalStateException("Leaving the station returns to the Kepler map");
         }
 
-        return new Result(true, true, true, true, true, true, true, true);
+        return new Result(true, true, true, true, true, true, true, true, true);
     }
 
     private static OrbitState atAltitude(double altitudeMeters) {

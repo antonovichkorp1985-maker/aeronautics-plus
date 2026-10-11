@@ -1,8 +1,9 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
- * Parked circular orbit can become walkable blocks (ISS / Aftermath station).
- * Kepler map stays for transfers. Not Minecraft Y, not the pad, not ChemMod air.
+ * Parked circular orbit MAY become walkable blocks — only on a player command,
+ * and only if there is a habitat. Unmanned satellites never. A burn stays on
+ * the Kepler map. Not Minecraft Y, not the pad, not ChemMod air.
  */
 public final class StationHandoff {
     /** Apoapsis−periapsis must stay inside this band to count as parked. */

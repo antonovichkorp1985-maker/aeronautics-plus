@@ -296,7 +296,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.66: fairing drops on command, not at 50 km.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.67: enter-station is a command, parking stays on the map.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -635,8 +635,9 @@ public final class AeronauticsPlus {
             try {
                 StationLoopSlice.Result station = StationLoopSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus station-loop slice OK: compiler={}, parked={}, transfer={}, hopper={}, booster={}, left={}, noPad={}, habitat={}",
+                        "Aeronautics Plus station-loop slice OK: compiler={}, staysMap={}, occupy={}, transfer={}, hopper={}, booster={}, left={}, noPad={}, habitat={}",
                         station.compilerBus(),
+                        station.parkedStaysOnMap(),
                         station.parkedOccupies(),
                         station.transferRefused(),
                         station.hopperRefused(),

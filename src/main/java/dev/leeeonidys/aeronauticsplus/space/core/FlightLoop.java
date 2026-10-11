@@ -253,8 +253,8 @@ public record FlightLoop(
     }
 
     /**
-     * Parked circular orbit with a habitat becomes walkable blocks.
-     * Transfers stay on the Kepler map. Not the pad, not Overworld Y.
+     * Player command, not circularization. Burns and unmanned sats stay on the map.
+     * Habitat is required, not sufficient. Stations, crew modules, lunar EVA — this button.
      */
     public FlightLoop occupyStation() {
         if (presence != FlightPresence.ORBIT_MAP) {

@@ -9,6 +9,6 @@ public enum FlightPresence {
     BLOCKS_ON_PAD,
     WORLD_ENTITY,
     ORBIT_MAP,
-    /** Circular parking with a habitat. ISS / Aftermath. Not the pad. */
+    /** Walkable pocket after the enter-station command. Not a parking side effect. */
     STATION_BLOCKS
 }
