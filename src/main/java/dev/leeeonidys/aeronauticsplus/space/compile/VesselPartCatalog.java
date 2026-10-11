@@ -7,7 +7,8 @@ import java.util.List;
 /**
  * Compiler fixtures. Minecraft items from this catalog are the engine, control
  * seat, train mount, launch pad, pyro ring, landing legs, fairing, payload,
- * habitat, RCS and docking. Tanks, solar and radiator stay ChemMod. Hull SKUs are not AP items.
+ * habitat, RCS and docking. Payload is a property of the stack, not an item.
+ * Tanks, solar and radiator stay ChemMod. Hull SKUs are not AP items.
  */
 public final class VesselPartCatalog {
     public static final String FUEL_ID = "rp1";
@@ -56,6 +57,7 @@ public final class VesselPartCatalog {
     /** Ground table. Not ChemMod, not a flying SKU. */
     public static final VesselPartSpec PAD = VesselPartSpec.pad("launch_pad", 420.0);
     public static final VesselPartSpec FAIRING = VesselPartSpec.fairing("rocket_fairing", 45.0);
+    /** Compiler satellite fixture. Not an AP item; payload is a property. */
     public static final VesselPartSpec PAYLOAD = VesselPartSpec.payload("rocket_payload", 180.0);
     public static final VesselPartSpec HABITAT = VesselPartSpec.habitat("crew_habitat", 250.0);
     public static final VesselPartSpec SOLAR = VesselPartSpec.solar("solar_panel", 25.0);

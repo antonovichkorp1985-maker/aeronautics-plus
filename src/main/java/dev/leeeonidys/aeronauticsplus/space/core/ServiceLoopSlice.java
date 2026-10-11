@@ -65,9 +65,8 @@ public final class ServiceLoopSlice {
         if (recovered.recovery() == null
                 || !recovered.recovery().includesKind(VesselPartKind.HABITAT)
                 || !recovered.recovery().includesKind(VesselPartKind.RCS)
-                || !recovered.recovery().includesKind(VesselPartKind.PAYLOAD)
                 || recovered.recovery().includesKind(VesselPartKind.FAIRING)) {
-            throw new IllegalStateException("Recovered blocks keep habitat, RCS and payload, not the fairing");
+            throw new IllegalStateException("Recovered blocks keep habitat and RCS, not the fairing");
         }
 
         return new Result(true, true, true, true, true);
@@ -87,8 +86,7 @@ public final class ServiceLoopSlice {
                 new VesselBlockOccupant(new GridPos(1, 2, 0), VesselPartCatalog.RCS, BlockFace.EAST),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.PAYLOAD, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 6, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 
     private static VesselBlockGrid busWithoutRcs() {
@@ -98,7 +96,6 @@ public final class ServiceLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.PAYLOAD, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 6, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 }

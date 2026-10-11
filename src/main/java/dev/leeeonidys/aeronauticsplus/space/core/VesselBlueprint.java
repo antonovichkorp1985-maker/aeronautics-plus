@@ -100,8 +100,10 @@ public record VesselBlueprint(
     }
 
     private void addPayloadDiagnostics(List<VesselDiagnostic> diagnostics) {
-        boolean hasPayload = components.stream()
-                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.PAYLOAD);
+        boolean hasPayload = hasKind(VesselComponent.ComponentKind.PAYLOAD)
+                || hasKind(VesselComponent.ComponentKind.HABITAT)
+                || hasKind(VesselComponent.ComponentKind.LAB)
+                || hasKind(VesselComponent.ComponentKind.TELESCOPE);
         boolean hasFairing = components.stream()
                 .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.FAIRING);
         if (!hasPayload) {

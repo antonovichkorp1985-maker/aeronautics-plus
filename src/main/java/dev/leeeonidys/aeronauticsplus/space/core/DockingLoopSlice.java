@@ -83,7 +83,6 @@ public final class DockingLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 4, -1), VesselPartCatalog.DOCKING, BlockFace.NORTH),
-                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.PAYLOAD, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 6, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
+                new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 }

@@ -1060,7 +1060,7 @@ def assert_outward() -> None:
 
 
 def main() -> None:
-    """AP world blocks: mount, pad, engine, seat, pyro, legs, fairing, payload, habitat, RCS, docking. Tanks and radiator stay ChemMod."""
+    """AP world blocks: mount, pad, engine, seat, pyro, legs, fairing, habitat, RCS, docking. Payload is a property. Tanks and radiator stay ChemMod."""
     assert_outward()
     mount_mesh().write(GEO / "rocket_mount.obj")
     pad_mesh().write(GEO / "launch_pad.obj")
@@ -1069,7 +1069,6 @@ def main() -> None:
     separator_mesh().write(GEO / "stage_separator.obj")
     legs_mesh().write(GEO / "landing_legs.obj")
     fairing_mesh().write(GEO / "rocket_fairing.obj")
-    payload_mesh().write(GEO / "rocket_payload.obj")
     habitat_mesh().write(GEO / "crew_habitat.obj")
     rcs_mesh().write(GEO / "rcs_thruster.obj")
     docking_mesh().write(GEO / "docking_port.obj")
@@ -1080,7 +1079,6 @@ def main() -> None:
     write_png(TEX / "stage_separator.png", paint(64, separator_tex))
     write_png(TEX / "landing_legs.png", paint(64, legs_tex))
     write_png(TEX / "rocket_fairing.png", paint(64, fairing_tex))
-    write_png(TEX / "rocket_payload.png", paint(64, payload_tex))
     write_png(TEX / "crew_habitat.png", paint(64, habitat_tex))
     write_png(TEX / "rcs_thruster.png", paint(64, rcs_tex))
     write_png(TEX / "docking_port.png", paint(64, docking_tex))
@@ -1091,7 +1089,6 @@ def main() -> None:
     write_part_models("stage_separator")
     write_part_models("landing_legs")
     write_part_models("rocket_fairing")
-    write_part_models("rocket_payload")
     write_part_models("crew_habitat")
     write_part_models("rcs_thruster")
     write_part_models("docking_port")
@@ -1102,7 +1099,6 @@ def main() -> None:
     write_blockstate("stage_separator", UP_STATES)
     write_blockstate("landing_legs", UP_STATES)
     write_blockstate("rocket_fairing", UP_STATES)
-    write_blockstate("rocket_payload", UP_STATES)
     write_blockstate("crew_habitat", UP_STATES)
     write_blockstate("rcs_thruster", ENGINE_STATES)
     write_blockstate("docking_port", ENGINE_STATES)

@@ -95,7 +95,6 @@ public final class VesselPartBlock extends Block {
         }
         if (spec.kind() == VesselPartKind.MOUNT
                 || spec.kind() == VesselPartKind.FAIRING
-                || spec.kind() == VesselPartKind.PAYLOAD
                 || spec.kind() == VesselPartKind.HABITAT) {
             return defaultBlockState().setValue(FACING, Direction.UP);
         }

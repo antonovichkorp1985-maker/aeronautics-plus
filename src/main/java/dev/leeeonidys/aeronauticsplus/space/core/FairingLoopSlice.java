@@ -10,8 +10,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
 
 /**
- * Registered fairing and payload fly; the shroud drops at 50 km by altitude.
- * 20 km is the map line, not jettison. ChemMod q is not this gate.
+ * Fairing covers the apparatus (habitat). Payload is a property, not a block.
+ * Shroud drops at 50 km by altitude. 20 km is the map line. ChemMod q is not this gate.
  */
 public final class FairingLoopSlice {
     private FairingLoopSlice() {
@@ -31,7 +31,7 @@ public final class FairingLoopSlice {
         if (!compiled.isLaunchable()
                 || !compiled.stages().get(0).hasFairing()
                 || !compiled.stages().get(0).hasPayload()) {
-            throw new IllegalStateException("Pad stack with payload and fairing must compile:\\n"
+            throw new IllegalStateException("Pad stack with habitat under the fairing must compile:\n"
                     + compiled.diagnosticText());
         }
 
@@ -64,7 +64,7 @@ public final class FairingLoopSlice {
                 .withOrbit(atAltitude(Aerodynamics.FAIRING_MIN_ALTITUDE_METERS))
                 .dropFairing();
         if (dropped.hasFairing() || !dropped.vessel().activeStage().hasPayload()) {
-            throw new IllegalStateException("50 km drop must lose the shroud and keep the payload");
+            throw new IllegalStateException("50 km drop must lose the shroud and keep the apparatus");
         }
         for (var occupant : dropped.flying().occupants()) {
             if (occupant.spec().kind() == VesselPartKind.FAIRING) {
@@ -75,8 +75,8 @@ public final class FairingLoopSlice {
         FlightLoop recovered = dropped.withOrbit(atAltitude(2_000.0)).recover();
         if (recovered.recovery() == null
                 || recovered.recovery().includesKind(VesselPartKind.FAIRING)
-                || !recovered.recovery().includesKind(VesselPartKind.PAYLOAD)) {
-            throw new IllegalStateException("Recovered blocks keep the payload and not the fairing");
+                || !recovered.recovery().includesKind(VesselPartKind.HABITAT)) {
+            throw new IllegalStateException("Recovered blocks keep the habitat and not the fairing");
         }
 
         OrbitMap map = new OrbitMap();
@@ -101,7 +101,7 @@ public final class FairingLoopSlice {
                 new VesselBlockOccupant(new GridPos(0, 1, 0), VesselPartCatalog.ENGINE, BlockFace.DOWN),
                 new VesselBlockOccupant(new GridPos(0, 2, 0), VesselPartCatalog.TANK, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 3, 0), VesselPartCatalog.CONTROLLER, BlockFace.UP),
-                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.PAYLOAD, BlockFace.UP),
+                new VesselBlockOccupant(new GridPos(0, 4, 0), VesselPartCatalog.HABITAT, BlockFace.UP),
                 new VesselBlockOccupant(new GridPos(0, 5, 0), VesselPartCatalog.FAIRING, BlockFace.UP));
     }
 }
