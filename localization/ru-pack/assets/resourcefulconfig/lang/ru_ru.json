@@ -1,0 +1,38 @@
+{
+    "rconfig.server.title": "Выделенный сервер",
+    "rconfig.server.desc": "Свойства, которые можно обновлять в реальном времени.",
+    "rconfig.server.wiki": "Вики",
+
+    "rconfig.server.properties.white-list": "Белый список",
+    "rconfig.server.properties.white-list.desc": "Если включено, на сервер могут заходить только пользователи из белого списка.",
+
+    "rconfig.server.properties.max-players": "Макс. игроков",
+    "rconfig.server.properties.max-players.desc": "Максимальное количество игроков, которые могут одновременно играть на сервере.",
+
+    "rconfig.server.properties.motd": "Сообщение дня (MOTD)",
+    "rconfig.server.properties.motd.desc": "Сообщение, отображаемое в списке серверов.",
+
+    "rconfig.server.properties.allow-flight": "Разрешить полёт",
+    "rconfig.server.properties.allow-flight.desc": "Если включено, игрокам разрешено летать на сервере; обычно нужно на серверах с модами.",
+
+    "rconfig.server.properties.pvp": "Игрок против игрока",
+    "rconfig.server.properties.pvp.desc": "Если включено, игроки могут атаковать друг друга.",
+
+    "rconfig.server.properties.enforce-whitelist": "Строгий белый список",
+    "rconfig.server.properties.enforce-whitelist.desc": "Если включено, на сервер могут заходить только пользователи из белого списка; уже находящиеся на сервере игроки вне списка будут отключены.",
+
+    "rconfig.ui.constant.close": "Закрыть",
+    "rconfig.ui.constant.reset": "Сбросить",
+    "rconfig.ui.constant.edit": "Изменить",
+    "rconfig.ui.constant.edit.string": "Изменить строку",
+    "rconfig.ui.constant.edit.list": "Изменить список",
+    "rconfig.ui.constant.edit.object": "Изменить объект",
+    "rconfig.ui.constant.choose_item": "Выбор предмета: ",
+    "rconfig.ui.constant.add_item": "Добавить: ",
+    "rconfig.ui.constant.mod_configs": "Настройки модов",
+    "rconfig.ui.constant.mod_configs.description": "Выберите конфиг для просмотра или изменения.",
+
+    "rconfig.color.preset.defaults": "По умолчанию",
+    "rconfig.color.preset.recents": "Недавние",
+    "rconfig.color.preset.mc_colors": "Цвета текста"
+}

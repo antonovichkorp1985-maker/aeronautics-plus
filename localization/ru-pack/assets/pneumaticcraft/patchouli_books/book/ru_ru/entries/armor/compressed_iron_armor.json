@@ -1,0 +1,22 @@
+{
+  "name": "Сжатая железная броня",
+  "icon": "pneumaticcraft:compressed_iron_helmet",
+  "category": "pneumaticcraft:armor",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)Compressed Iron Armor/$ - это набор брони для ранней игры, который немного лучше, чем эквивалент.$(item)Железная броня / $; немного более высокая прочность и долговечность, а также частичное сопротивление удару. Его можно отремонтировать в$(item)Наковальня/$ с$(item)Сжатые железные слитки/$."
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:compressed_iron_helmet",
+      "recipe2": "pneumaticcraft:compressed_iron_chestplate"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:compressed_iron_leggings",
+      "recipe2": "pneumaticcraft:compressed_iron_boots"
+    }
+  ]
+}

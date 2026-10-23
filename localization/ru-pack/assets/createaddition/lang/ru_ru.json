@@ -1,0 +1,6 @@
+{
+  "createaddition.ponder.cc_electric_motor.header": "Управление электромотором через ComputerCraft",
+  "createaddition.ponder.cc_electric_motor.text_1": "Электромотором можно управлять через ComputerCraft",
+  "createaddition.ponder.cc_electric_motor.text_3": "Чтобы открыть документацию API, введите в чате команду /cca_api",
+  "createaddition.ponder.tesla_coil.text_2": "Катушка заряжает любые предметы, использующие энергию Forge, и не только!"
+}

@@ -1,0 +1,37 @@
+{
+  "name": "Коллекционный дрон",
+  "icon": "pneumaticcraft:collector_drone[pneumaticcraft:air=120000]",
+  "category": "pneumaticcraft:tools",
+  "advancement": "pneumaticcraft:pressure_chamber",
+  "pages": [
+    {
+      "type": "text",
+      "text": "A $(item)Collector Drone/$ — специализированный непрограммируемый тип дрона.$(l:tools/drone)Дрон / $, который должен быть развернут против или рядом с любым блоком инвентаря. Он будет собирать близлежащие предметы и помещать их в этот инвентарь."
+    },
+    {
+      "type": "spotlight",
+      "title": "Автоматическая зарядка",
+      "item": "pneumaticcraft:charging_station",
+      "text": "Как и для всех типов дронов, эти дроны требуют$(l:base_concepts/pressure)давление/$ для работы и будет автоматически искать$(l:tools/drone#charging)Зарядная станция с дозатором обновления / $, если низкий на воздухе."
+    },
+    {
+      "type": "text",
+      "title": "Фильтрация элементов",
+      "text": "The$(thing)Collector Drone/$ имеет некоторые основные функции фильтрации элементов. Если развернуть$(italic)против / $ блок инвентаризации, он будет фильтровать любые предметы, уже находящиеся в этом инвентаре. Если они развернуты на земле$(italic)рядом с / $ инвентарь (или на пустом блоке инвентаризации), это$(italic)Не будет/$ фильтровать.$(p)Если вы хотите изменить фильтр дрона, вам нужно вырвать его и переместить."
+    },
+    {
+      "type": "text",
+      "text": "The$(thing)Collector Drone/$ имеет диапазон по умолчанию куба 17x17x17, сосредоточенный на блоке, в котором он был размещен. Этот диапазон может быть увеличен до 16.$(l:base_concepts/upgrades#range)Обновление диапазона/$."
+    },
+    {
+      "type": "entity",
+      "entity": "pneumaticcraft:collector_drone",
+      "offset": -0.3
+    },
+    {
+      "type": "crafting",
+      "text": "Создание коллекционера Дрон",
+      "recipe": "pneumaticcraft:collector_drone"
+    }
+  ]
+}

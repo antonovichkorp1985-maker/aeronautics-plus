@@ -1,0 +1,6 @@
+{
+  "name": "Логистика",
+  "description": "Логистическая система является мощным способом перемещения предметов и жидкостей и хранения запасов и резервуаров.",
+  "icon": "pneumaticcraft:logistics_drone[pneumaticcraft:air=120000]",
+  "sortnum": 8
+}

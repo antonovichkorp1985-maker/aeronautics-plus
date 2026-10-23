@@ -1,0 +1,17 @@
+{
+  "name": "Пушка Баррель",
+  "icon": "pneumaticcraft:cannon_barrel",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это крафтовый компонент для других устройств. Само по себе это бесполезно."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремонт пушечного барреля",
+      "recipe": "pneumaticcraft:cannon_barrel"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Оригинальное название: Light Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_light_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: виджет Light/$ позволяет (дистанционно) проверять уровень освещенности блока (блоков) в подключенном устройстве.$(l:programming/area)Виджет Area/$ соответствует настроенному порогу освещенности."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_light_piece.png"
+      ],
+      "text": "$(italic)Состояние: Light Widget/$"
+    }
+  ]
+}

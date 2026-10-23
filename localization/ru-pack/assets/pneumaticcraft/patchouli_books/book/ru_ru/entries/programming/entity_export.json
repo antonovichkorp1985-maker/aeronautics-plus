@@ -1,0 +1,19 @@
+{
+  "name": "Виджет экспортной компании",
+  "icon": "pneumaticcraft:textures/progwidgets/entity_export_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(l:tools/drone)Дрон/$ перейдет к указанному$(l:programming/area)Площадь/$, и отказаться от организации, которую он несет, при условии, что это разрешено (факультативно)$(l:base_concepts/entity_filter)Фильтр сущности/$, указанный в подключенном$(l:programming/text)Текст/$ виджет.$(p)Смотрите также:$(l:programming/entity_import)Виджет Entity Import/$."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/entity_export_piece.png"
+      ],
+      "text": "$(italic)Виджет компании/$"
+    }
+  ]
+}

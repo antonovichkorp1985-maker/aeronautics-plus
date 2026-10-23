@@ -1,0 +1,21 @@
+{
+  "name": "Обновление Smart Chest Kit",
+  "icon": "pneumaticcraft:smart_chest_kit",
+  "category": "pneumaticcraft:tools",
+  "advancement": "pneumaticcraft:printed_circuit_board",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Smart Chest Upgrade Kit / $ - это удобство, которое позволяет вам обновить любой деревянный сундук.$(l:machines/reinforced_chest)Усиленная сундук/$ до a$(l:machines/smart_chest)Умная грудь / $ на месте, сохраняя предметы грудной клетки. Просто$(thing)Sneak-Right-click/$ комплект обновления против любой действительной груди, чтобы обновить его."
+    },
+    {
+      "type": "text",
+      "text": "$(p)Примечание: если используется в$(item)Усиленная грудная клетка / $, вы получите обратно усиленную грудную клетку в виде падения товара. Если используется в$(item)Деревянный сундук / $, вы получите этот сундук обратно, как падение предмета."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание Smart Chest Upgrade Kit.$(p)Обратите внимание, что Smart Chest должен быть полностью пустым и неконфигурированным.",
+      "recipe": "pneumaticcraft:smart_chest_kit"
+    }
+  ]
+}

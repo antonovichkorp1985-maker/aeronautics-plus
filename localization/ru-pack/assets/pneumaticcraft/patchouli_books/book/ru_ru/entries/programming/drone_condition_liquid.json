@@ -1,0 +1,19 @@
+{
+  "name": "Состояние дрона: Жидкий виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_drone_liquid_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Состояние дрона: виджет Fluid/$ позволяет проверить бак этого устройства.$(l:tools/drone)Дрон/$ за определенное количество жидкости. Он будет считать только жидкость, разрешенную подключенным$(l:programming/liquid_filter)Fluid Filter/$ (или без фильтра для подсчета жидкости)."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_drone_liquid_piece.png"
+      ],
+      "text": "$(italic)Состояние дрона: Fluid Widget/$"
+    }
+  ]
+}

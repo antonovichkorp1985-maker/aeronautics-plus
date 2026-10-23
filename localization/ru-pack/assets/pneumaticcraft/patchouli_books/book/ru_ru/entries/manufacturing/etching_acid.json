@@ -1,0 +1,16 @@
+{
+  "name": "Вымывание кислоты",
+  "icon": "pneumaticcraft:etching_acid_bucket",
+  "category": "pneumaticcraft:manufacturing",
+  "advancement": "pneumaticcraft:pressure_chamber",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Кислота используется для химического развития$(l:components/pcb)ПХБ/$. Кислота производится в$(l:manufacturing/pressure_chamber)Камера давления/$ и используется в$(l:manufacturing/etching_tank)Зарядка танка/$.$(p)Видишь?$(l:components/pcb)Ввод ПХБ/$ для получения дополнительной информации о производстве ПХБ."
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "recipe": "pneumaticcraft:pressure_chamber/etching_acid"
+    }
+  ]
+}

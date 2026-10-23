@@ -1,0 +1,33 @@
+{
+  "name": "Всенаправленный Хоппер",
+  "icon": "pneumaticcraft:omnidirectional_hopper",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Всенаправленный Хоппер/$ ведет себя как ваниль$(item)Хоппер/$. Однако этот хоппер может быть ориентирован на$(italic)Любое направление, а не только вверх. Кроме того, он принимает$(l:base_concepts/upgrades)Обновления / $, которые могут быть использованы для значительного ускорения Хоппера. Он не использует$(l:base_concepts/pressure)Воздух/$, так что это очень полезное раннее игровое устройство."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:omnidirectional_hopper",
+      "text": "Когда ты помещаешь Хоппера, его$(9)Вклад/$ будет обращен к вам, и его$(6)Выход/$ будет обращен к блоку, против которого он был размещен.$(p)$(thing)Оригинальное название: The Hopper with a$(l:tools/pneumatic_wrench)Пневматический ключ / $ (другие ключи также могут работать) для переориентации ввода.$(thing)Sneak+right-click/$, чтобы переориентировать свой выход."
+    },
+    {
+      "type": "text",
+      "title": "Обновление диспенсера",
+      "flag": "pneumaticcraft:omniHopperDispenser",
+      "text": "Если$(l:base_concepts/upgrades#dispenser)Устанавливается обновление диспенсера / $, бункер автоматически выбрасывает предметы в мир.$(6)сторона вывода/$ (если там нет запасов).$(p)Его можно использовать как значительно улучшенный$(item)Dropper/$: быстрее, точнее и лучше$(#f00)Redstone Control/$."
+    },
+    {
+      "type": "text",
+      "title": "Обновление Entity Tracker",
+      "text": "Если$(l:base_concepts/upgrades#entity_tracker)Entity Tracker Устанавливается апгрейд/$, бункер сможет извлекать предметы из объектов перед его$(9)Входная/$ сторона. Субъекты могут быть внесены в черный список из такого извлечения путем добавления их в список.$(thing)pneumaticcraft:omnihopper_blacklisted/$ тег типа объекта; Жители деревень попадают в черный список по умолчанию, так как они могут стать бесконечным источником предметов."
+    },
+    {
+      "type": "crafting",
+      "text": "Оригинальное название: Omnidirectional Hopper",
+      "recipe": "pneumaticcraft:omnidirectional_hopper"
+    }
+  ]
+}

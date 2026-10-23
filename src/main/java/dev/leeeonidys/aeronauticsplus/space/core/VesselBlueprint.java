@@ -1,0 +1,354 @@
+package dev.leeeonidys.aeronauticsplus.space.core;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ * Freeform logical vessel graph. It deliberately has no canonical rocket template.
+ * Physical Minecraft blocks are converted to this graph by a later adapter.
+ */
+public record VesselBlueprint(
+        List<VesselComponent> components,
+        List<VesselConnection> connections,
+        Set<String> strapOnStageIds) {
+    public VesselBlueprint {
+        components = List.copyOf(components == null ? List.of() : components);
+        connections = List.copyOf(connections == null ? List.of() : connections);
+        strapOnStageIds = Set.copyOf(strapOnStageIds == null ? Set.of() : strapOnStageIds);
+    }
+
+    public VesselBlueprint(List<VesselComponent> components, List<VesselConnection> connections) {
+        this(components, connections, Set.of());
+    }
+
+    public VesselCompilation analyze() {
+        List<VesselDiagnostic> diagnostics = new ArrayList<>();
+        Map<String, VesselComponent> byId = new HashMap<>();
+        for (VesselComponent component : components) {
+            if (byId.put(component.id(), component) != null) {
+                diagnostics.add(error("DUPLICATE_COMPONENT", "Повторяется компонент " + component.id()));
+            }
+        }
+
+        for (VesselConnection connection : connections) {
+            if (!byId.containsKey(connection.fromId()) || !byId.containsKey(connection.toId())) {
+                diagnostics.add(error("BROKEN_CONNECTION", "Связь " + connection.fromId() + " → "
+                        + connection.toId() + " ссылается на отсутствующий компонент"));
+            }
+        }
+
+        List<StageState> stages = new ArrayList<>();
+        Map<String, List<VesselComponent>> byStage = new LinkedHashMap<>();
+        for (VesselComponent component : components) {
+            byStage.computeIfAbsent(component.stageId(), ignored -> new ArrayList<>()).add(component);
+        }
+        for (Map.Entry<String, List<VesselComponent>> entry : byStage.entrySet()) {
+            String stageId = entry.getKey();
+            List<VesselComponent> stageComponents = entry.getValue();
+            List<VesselComponent> tanks = stageComponents.stream()
+                    .filter(component -> component.kind() == VesselComponent.ComponentKind.TANK).toList();
+            List<VesselComponent> engines = stageComponents.stream()
+                    .filter(component -> component.kind() == VesselComponent.ComponentKind.ENGINE).toList();
+            List<VesselComponent> rcs = stageComponents.stream()
+                    .filter(component -> component.kind() == VesselComponent.ComponentKind.RCS).toList();
+            if (tanks.isEmpty()) {
+                diagnostics.add(error("NO_TANK", "Ступень " + stageId + " не содержит баков"));
+            }
+            if (engines.isEmpty()) {
+                diagnostics.add(error("NO_ENGINE", "Ступень " + stageId + " не содержит двигателей"));
+            }
+            List<VesselComponent> burners = new ArrayList<>();
+            burners.addAll(engines);
+            burners.addAll(rcs);
+            validateFuelConnections(stageId, burners, tanks, diagnostics);
+            validateStructuralConnectivity(stageId, stageComponents, diagnostics);
+            if (!tanks.isEmpty() && !engines.isEmpty()) {
+                List<EngineState> allEngines = new ArrayList<>();
+                engines.stream().map(VesselComponent::engine).forEach(allEngines::add);
+                rcs.stream().map(VesselComponent::engine).forEach(allEngines::add);
+                StageState stage = new StageState(
+                        stageId,
+                        stageComponents.stream()
+                                .filter(component -> component.kind() != VesselComponent.ComponentKind.TANK
+                                        && component.kind() != VesselComponent.ComponentKind.ENGINE
+                                        && component.kind() != VesselComponent.ComponentKind.RCS)
+                                .filter(component -> component.structuralMassKg() > 0.0)
+                                .map(component -> new MassElement(
+                                        component.id(),
+                                        component.structuralMassKg(),
+                                        component.localPositionMeters(),
+                                        roleOf(component.kind())))
+                                .toList(),
+                        tanks.stream().map(VesselComponent::tank).toList(),
+                        allEngines,
+                        true,
+                        strapOnStageIds.contains(stageId));
+                addThrustGeometryDiagnostics(stage, diagnostics);
+                stages.add(stage);
+            }
+        }
+        addPayloadDiagnostics(diagnostics);
+        return new VesselCompilation(diagnostics, stages);
+    }
+
+    private void addPayloadDiagnostics(List<VesselDiagnostic> diagnostics) {
+        boolean hasPayload = hasKind(VesselComponent.ComponentKind.PAYLOAD)
+                || hasKind(VesselComponent.ComponentKind.HABITAT)
+                || hasKind(VesselComponent.ComponentKind.LAB)
+                || hasKind(VesselComponent.ComponentKind.TELESCOPE);
+        boolean hasFairing = components.stream()
+                .anyMatch(component -> component.kind() == VesselComponent.ComponentKind.FAIRING);
+        if (!hasPayload) {
+            diagnostics.add(warning("NO_PAYLOAD",
+                    "Нет полезной нагрузки: орбитальный запуск без аппарата"));
+        }
+        if (hasPayload && !hasFairing) {
+            diagnostics.add(warning("PAYLOAD_WITHOUT_FAIRING",
+                    "Полезная нагрузка без обтекателя: нет защиты на участке атмосферы"));
+        }
+        if (hasFairing && !hasPayload) {
+            diagnostics.add(warning("FAIRING_WITHOUT_PAYLOAD",
+                    "Обтекатель без аппарата: сбрасывать нечего"));
+        }
+        boolean hasRcs = hasKind(VesselComponent.ComponentKind.RCS);
+        boolean hasGyro = hasKind(VesselComponent.ComponentKind.GYRO);
+        boolean hasSolar = hasKind(VesselComponent.ComponentKind.SOLAR);
+        boolean hasBattery = hasKind(VesselComponent.ComponentKind.BATTERY);
+        boolean hasRadiator = hasKind(VesselComponent.ComponentKind.RADIATOR);
+        boolean hasHabitat = hasKind(VesselComponent.ComponentKind.HABITAT);
+        boolean hasDocking = hasKind(VesselComponent.ComponentKind.DOCKING);
+        if (hasPayload && !hasRcs) {
+            diagnostics.add(warning("NO_RCS",
+                    "Аппарат без РСУ: нет ориентации и малых манёвров"));
+        }
+        if (hasGyro && !hasSolar) {
+            diagnostics.add(warning("GYRO_WITHOUT_SOLAR",
+                    "Гиродину нужна солнечная панель"));
+        }
+        if (hasGyro && (hasSolar || hasBattery) && !hasPath(
+                idsOf(VesselComponent.ComponentKind.SOLAR, VesselComponent.ComponentKind.BATTERY),
+                idsOf(VesselComponent.ComponentKind.GYRO),
+                VesselConnection.ConnectionKind.ELECTRIC)) {
+            diagnostics.add(warning("NO_POWER_PATH",
+                    "Гиродин не соединён электрически с солнечной панелью или батареей"));
+        }
+        if (hasSolar && !hasBattery) {
+            diagnostics.add(warning("NO_BATTERY",
+                    "Солнечная панель без батареи: в тени нет питания"));
+        }
+        if (hasBattery && !hasSolar) {
+            diagnostics.add(warning("BATTERY_WITHOUT_SOLAR",
+                    "Батарея без панели: заряд не восполняется"));
+        }
+        boolean hasAntenna = hasKind(VesselComponent.ComponentKind.ANTENNA);
+        boolean hasLab = hasKind(VesselComponent.ComponentKind.LAB);
+        if ((hasHabitat || hasGyro || hasLab) && !hasRadiator) {
+            diagnostics.add(warning("NO_RADIATOR",
+                    "В вакууме нет конвекции: нужен радиатор"));
+        }
+        if ((hasHabitat || hasGyro || hasBattery || hasLab) && hasRadiator) {
+            Set<String> heat = idsOf(
+                    VesselComponent.ComponentKind.HABITAT,
+                    VesselComponent.ComponentKind.GYRO,
+                    VesselComponent.ComponentKind.BATTERY,
+                    VesselComponent.ComponentKind.LAB);
+            Set<String> radiators = idsOf(VesselComponent.ComponentKind.RADIATOR);
+            for (String source : heat) {
+                if (!hasPath(Set.of(source), radiators, VesselConnection.ConnectionKind.THERMAL)) {
+                    diagnostics.add(warning("NO_THERMAL_PATH",
+                            "Тепло от " + source + " не доходит до радиатора"));
+                    break;
+                }
+            }
+        }
+        if (hasHabitat && !hasDocking) {
+            diagnostics.add(warning("NO_DOCKING",
+                    "Жилой модуль без стыковочного узла: нет перехода на другой аппарат"));
+        }
+        if ((hasHabitat || hasPayload) && !hasAntenna) {
+            diagnostics.add(warning("NO_ANTENNA",
+                    "Нет антенны: нет канала на Землю"));
+        }
+        if (hasLab && !hasHabitat) {
+            diagnostics.add(warning("LAB_WITHOUT_HABITAT",
+                    "Лаборатория без жилого модуля: станция не обитаема"));
+        }
+        boolean hasOxygen = hasKind(VesselComponent.ComponentKind.OXYGEN);
+        boolean hasTransponder = hasKind(VesselComponent.ComponentKind.TRANSPONDER);
+        boolean hasTelescope = hasKind(VesselComponent.ComponentKind.TELESCOPE);
+        boolean hasEngine = hasKind(VesselComponent.ComponentKind.ENGINE);
+        boolean hasController = hasKind(VesselComponent.ComponentKind.CONTROLLER);
+        if (hasEngine && !hasController) {
+            diagnostics.add(warning("NO_CONTROLLER",
+                    "Нет блока управления: куча материалов ещё не ракета"));
+        }
+        if (hasHabitat && !hasOxygen) {
+            diagnostics.add(warning("NO_OXYGEN",
+                    "Жилой модуль без бака кислорода: это не LOX и не окислитель двигателя"));
+        }
+        if (hasAntenna && !hasTransponder) {
+            diagnostics.add(warning("ANTENNA_WITHOUT_TRANSPONDER",
+                    "Антенна без ретранслятора: нет радиоэлектроники"));
+        }
+        if (hasTransponder && !hasAntenna) {
+            diagnostics.add(warning("TRANSPONDER_WITHOUT_ANTENNA",
+                    "Ретранслятор без антенны: некуда излучать"));
+        }
+        if (hasTelescope && !hasGyro) {
+            diagnostics.add(warning("TELESCOPE_WITHOUT_GYRO",
+                    "Телескоп без гиродина: нет наведения"));
+        }
+        if (hasTelescope && !hasAntenna) {
+            diagnostics.add(warning("TELESCOPE_WITHOUT_ANTENNA",
+                    "Телескоп без антенны: некуда сбрасывать кадр"));
+        }
+    }
+
+    private boolean hasKind(VesselComponent.ComponentKind kind) {
+        return components.stream().anyMatch(component -> component.kind() == kind);
+    }
+
+    private Set<String> idsOf(VesselComponent.ComponentKind... kinds) {
+        Set<VesselComponent.ComponentKind> wanted = Set.of(kinds);
+        return components.stream()
+                .filter(component -> wanted.contains(component.kind()))
+                .map(VesselComponent::id)
+                .collect(Collectors.toSet());
+    }
+
+    private boolean hasPath(Set<String> sources, Set<String> sinks, VesselConnection.ConnectionKind kind) {
+        if (sources.isEmpty() || sinks.isEmpty()) {
+            return false;
+        }
+        ArrayDeque<String> pending = new ArrayDeque<>(sources);
+        Set<String> visited = new HashSet<>();
+        while (!pending.isEmpty()) {
+            String current = pending.remove();
+            if (!visited.add(current)) {
+                continue;
+            }
+            if (sinks.contains(current)) {
+                return true;
+            }
+            connections.stream()
+                    .filter(connection -> connection.kind() == kind)
+                    .filter(connection -> connection.fromId().equals(current) || connection.toId().equals(current))
+                    .map(connection -> connection.fromId().equals(current) ? connection.toId() : connection.fromId())
+                    .forEach(pending::add);
+        }
+        return false;
+    }
+
+    private static MassElement.Role roleOf(VesselComponent.ComponentKind kind) {
+        return switch (kind) {
+            case FAIRING -> MassElement.Role.FAIRING;
+            case PAYLOAD -> MassElement.Role.PAYLOAD;
+            case HABITAT -> MassElement.Role.HABITAT;
+            case SOLAR -> MassElement.Role.SOLAR;
+            case GYRO -> MassElement.Role.GYRO;
+            case DOCKING -> MassElement.Role.DOCKING;
+            case BATTERY -> MassElement.Role.BATTERY;
+            case RADIATOR -> MassElement.Role.RADIATOR;
+            case ANTENNA -> MassElement.Role.ANTENNA;
+            case LAB -> MassElement.Role.LAB;
+            case OXYGEN -> MassElement.Role.OXYGEN;
+            case TRANSPONDER -> MassElement.Role.TRANSPONDER;
+            case TELESCOPE -> MassElement.Role.TELESCOPE;
+            case CONTROLLER -> MassElement.Role.CONTROLLER;
+            case LEGS -> MassElement.Role.LEGS;
+            default -> MassElement.Role.STRUCTURE;
+        };
+    }
+
+    private static void addThrustGeometryDiagnostics(StageState stage, List<VesselDiagnostic> diagnostics) {
+        ThrustGeometry geometry = stage.thrustGeometry();
+        if (!geometry.hasNetThrust()) {
+            diagnostics.add(error("ZERO_NET_THRUST",
+                    "Ступень " + stage.id()
+                            + " имеет нулевой суммарный вектор тяги — двигатели выключены или взаимно компенсируются"));
+            return;
+        }
+        if (geometry.hasMaterialOffset()) {
+            diagnostics.add(warning("THRUST_OFFSET",
+                    "Ступень " + stage.id() + ": центр тяги смещён относительно центра масс на "
+                            + String.format(Locale.ROOT, "%.3f", geometry.perpendicularOffsetMeters())
+                            + " м; появится вращательный момент"));
+        }
+    }
+
+    private void validateFuelConnections(String stageId, List<VesselComponent> engines,
+                                         List<VesselComponent> tanks, List<VesselDiagnostic> diagnostics) {
+        for (VesselComponent engine : engines) {
+            EngineState engineState = engine.engine();
+            boolean fuelConnected = hasCompatibleConnection(engine.id(), engineState.fuelId(),
+                    VesselConnection.ConnectionKind.FUEL, tanks);
+            boolean oxidizerConnected = hasCompatibleConnection(engine.id(), engineState.oxidizerId(),
+                    VesselConnection.ConnectionKind.OXIDIZER, tanks);
+            if (!fuelConnected) {
+                diagnostics.add(error("NO_FUEL_PATH", "Двигатель " + engine.id()
+                        + " ступени " + stageId + " не подключён к топливу " + engineState.fuelId()));
+            }
+            if (!oxidizerConnected) {
+                diagnostics.add(error("NO_OXIDIZER_PATH", "Двигатель " + engine.id()
+                        + " ступени " + stageId + " не подключён к окислителю " + engineState.oxidizerId()));
+            }
+        }
+    }
+
+    private boolean hasCompatibleConnection(String engineId, String resourceId,
+                                             VesselConnection.ConnectionKind kind,
+                                             List<VesselComponent> tanks) {
+        Set<String> tankIds = tanks.stream()
+                .filter(tank -> kind == VesselConnection.ConnectionKind.FUEL
+                        ? tank.tank().contents().fuelId().equals(resourceId)
+                                && tank.tank().contents().fuelMassKg() > 0.0
+                        : tank.tank().contents().oxidizerId().equals(resourceId)
+                                && tank.tank().contents().oxidizerMassKg() > 0.0)
+                .map(VesselComponent::id).collect(Collectors.toSet());
+        return connections.stream().anyMatch(connection -> connection.kind() == kind
+                && ((connection.fromId().equals(engineId) && tankIds.contains(connection.toId()))
+                || (connection.toId().equals(engineId) && tankIds.contains(connection.fromId()))));
+    }
+
+    private void validateStructuralConnectivity(String stageId, List<VesselComponent> components,
+                                                List<VesselDiagnostic> diagnostics) {
+        if (components.size() < 2) {
+            return;
+        }
+        Set<String> ids = components.stream().map(VesselComponent::id).collect(Collectors.toSet());
+        Set<String> visited = new HashSet<>();
+        ArrayDeque<String> pending = new ArrayDeque<>();
+        pending.add(components.get(0).id());
+        while (!pending.isEmpty()) {
+            String current = pending.remove();
+            if (!visited.add(current)) {
+                continue;
+            }
+            connections.stream()
+                    .filter(connection -> connection.kind() == VesselConnection.ConnectionKind.STRUCTURAL)
+                    .filter(connection -> connection.fromId().equals(current) || connection.toId().equals(current))
+                    .map(connection -> connection.fromId().equals(current) ? connection.toId() : connection.fromId())
+                    .filter(ids::contains).forEach(pending::add);
+        }
+        if (visited.size() != ids.size()) {
+            diagnostics.add(error("STRUCTURAL_DISCONNECT", "В ступени " + stageId
+                    + " есть компоненты без силового соединения"));
+        }
+    }
+
+    private static VesselDiagnostic error(String code, String message) {
+        return new VesselDiagnostic(VesselDiagnostic.Severity.ERROR, code, message);
+    }
+
+    private static VesselDiagnostic warning(String code, String message) {
+        return new VesselDiagnostic(VesselDiagnostic.Severity.WARNING, code, message);
+    }
+}

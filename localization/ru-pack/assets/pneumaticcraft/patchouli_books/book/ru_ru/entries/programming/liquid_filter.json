@@ -1,0 +1,19 @@
+{
+  "name": "Жидкий фильтр Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/liquid_filter_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(thing)Fluid Filter/$ - виджет, используемый исключительно для$(thing)параметр/$ для других виджетов. Вы можете использовать его для указания определенной жидкости.$(thing)правый щелчок / $ виджет и поиск / выбор жидкостей в результирующей поисковой системе."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/liquid_filter_piece.png"
+      ],
+      "text": "$(italic)Жидкий фильтр Виджет/$"
+    }
+  ]
+}

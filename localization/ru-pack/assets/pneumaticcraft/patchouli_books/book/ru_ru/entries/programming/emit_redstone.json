@@ -1,0 +1,19 @@
+{
+  "name": "Эмит Редстоун Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/emit_redstone_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "С помощью этого виджета вы можете сделать$(l:tools/drone)Дрон/$ излучает$(#f00)Сигнал красного камня/$. Вы можете указать стороны, из которых он исходит.$(thing)правый щелчок / $ виджет и настройка в графическом интерфейсе настройки. Уровень сигнала красного камня для излучения определяется путем присоединения$(l:programming/text)Текст/$ виджет с номером в нем (от 0 до 15)."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/emit_redstone_piece.png"
+      ],
+      "text": "$(italic)Эмит Редстоун Виджет / $"
+    }
+  ]
+}

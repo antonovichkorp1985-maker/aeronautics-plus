@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    "ASA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:propeller_shaft_adapter"
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "name": "Строительные материалы",
+  "icon": "pneumaticcraft:reinforced_bricks",
+  "category": "pneumaticcraft:base_concepts",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(pncr)Добавлена коллекция$(thing)Усиленный камень / блоки $, которые сделаны с некоторыми$(item)Камень/$ и немного$(item)Сжатое железо / $. Многие рецепты крафта требуют какой-то формы армированного камня.$(p)Каменные блоки также очень подходят для строительства, и все типы имеют высокую взрывостойкость."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:compressed_stone",
+      "text": "Кроме того,$(thing)Сжатый камень и его различные продукты могут быть полезны для эстетических целей. Как будто$(thing)Усиленный камень/$, он обладает отличной взрывостойкостью."
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:reinforced_stone",
+      "recipe2": "pneumaticcraft:reinforced_stone_slab"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:reinforced_bricks",
+      "recipe2": "pneumaticcraft:reinforced_bricks_from_tile"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:reinforced_brick_tile",
+      "recipe2": "pneumaticcraft:reinforced_brick_stairs"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:reinforced_brick_slab",
+      "recipe2": "pneumaticcraft:reinforced_brick_wall"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:reinforced_brick_pillar"
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "recipe": "pneumaticcraft:pressure_chamber/compressed_stone"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:compressed_stone_slab",
+      "recipe2": "pneumaticcraft:compressed_brick_pillar"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:compressed_bricks",
+      "recipe2": "pneumaticcraft:compressed_bricks_from_tile"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:compressed_brick_tile",
+      "recipe2": "pneumaticcraft:compressed_brick_stairs"
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:compressed_brick_slab",
+      "recipe2": "pneumaticcraft:compressed_brick_wall"
+    }
+  ]
+}

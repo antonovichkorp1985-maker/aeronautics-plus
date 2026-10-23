@@ -1,0 +1,23 @@
+{
+  "name": "Оригинальное название: Block Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_block_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: виджет Block/$ позволяет проверить$(l:programming/area)Цена за определенные блоки. С помощью этого вы можете проверить, содержит ли область полностью выращенный урожай. Вы можете отфильтровать, какие блоки действительны, прикрепив$(l:programming/item_filter)Фильтр товара/$."
+    },
+    {
+      "type": "text",
+      "text": "Дрон проверит блок, можно ли потрогать шелк, если это так, он проверит, соответствует ли фильтр элемента блоку шелка. Если его нельзя потрогать шелком, капли блока будут использоваться для фильтрации.$(p)Например, вы можете установить фильтр на Пшеницу, и он будет соответствовать фильтру, как только урожай упадет пшеницы."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_block_piece.png"
+      ],
+      "text": "$(italic)Состояние: Block Widget/$"
+    }
+  ]
+}

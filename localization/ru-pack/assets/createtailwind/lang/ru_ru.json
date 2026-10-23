@@ -1,0 +1,54 @@
+{
+  "block.createtailwind.jetpack": "Реактивный ранец",
+  "createtailwind.jetpack.low": "Давление в ранце на исходе",
+  "createtailwind.jetpack.depleted": "Давление в ранце исчерпано",
+
+  "createtailwind.subtitle.jetpack_engine": "Ранец гудит",
+  "createtailwind.subtitle.jetpack_hiss": "Ранец шипит",
+
+  "config.createtailwind.title": "Create: Tailwind",
+  "config.createtailwind.client": "Клиент",
+  "config.createtailwind.server": "Сервер",
+
+  "config.createtailwind.effects": "Эффекты выхлопа",
+  "config.createtailwind.effects.flame": "Показывать пламя",
+  "config.createtailwind.effects.flame.description": "Показывают ли летающие реактивные ранцы струю воздуха из сопел.",
+  "config.createtailwind.effects.sparks": "Показывать искры",
+  "config.createtailwind.effects.sparks.description": "Выбрасывают ли летающие реактивные ранцы искры из сопел.",
+
+  "config.createtailwind.particles": "Дымовой след",
+  "config.createtailwind.particles.enabled": "Показывать дым",
+  "config.createtailwind.particles.enabled.description": "Оставляют ли реактивные ранцы за собой дымовой след.",
+  "config.createtailwind.particles.lifetime": "Время жизни частиц",
+  "config.createtailwind.particles.lifetime.description": "Максимальное время жизни каждого клуба дыма. Каждый живёт от трёх четвертей этого значения до полного, поэтому след распадается неравномерно.",
+  "config.createtailwind.particles.density": "Плотность частиц",
+  "config.createtailwind.particles.density.description": "Сколько клубов дыма показывать. Уменьшите, чтобы след был реже.",
+
+  "config.createtailwind.sound": "Звук двигателя",
+  "config.createtailwind.sound.enabled": "Проигрывать звук",
+  "config.createtailwind.sound.enabled.description": "Издают ли реактивные ранцы звук двигателя во время полёта.",
+  "config.createtailwind.sound.volume": "Громкость",
+  "config.createtailwind.sound.volume.description": "Насколько громкий двигатель ранца. Накладывается поверх ползунка «Игрок» в настройках громкости.",
+
+  "config.createtailwind.jetpack": "Реактивный ранец",
+  "config.createtailwind.jetpack.air_consumption": "Расход воздуха за тик",
+  "config.createtailwind.jetpack.air_consumption.description": "Средний расход воздуха из ранца за каждый тик полёта или разгона с элитрами. Дробная часть расходуется как шанс каждый тик.",
+  "config.createtailwind.jetpack.immune_to_fall_damage": "Иммунитет к урону от падения",
+  "config.createtailwind.jetpack.immune_to_fall_damage.description": "Защищает ли надетый ранец от урона от падения, как полёт в креативе.",
+  "config.createtailwind.jetpack.remove_invisibility": "Снимать невидимость",
+  "config.createtailwind.jetpack.remove_invisibility.description": "Снимает ли полёт на ранце «Невидимость», ведь выхлоп выдаёт игрока.",
+  "config.createtailwind.boost": "Разгон с элитрами",
+  "config.createtailwind.boost.acceleration": "Ускорение",
+  "config.createtailwind.boost.acceleration.description": "Насколько сильно ранец с элитрами разгоняет глиссирование при удержании «вперёд», в блоках за тик, прибавляемых каждый тик с места. Толчок затухает при приближении к максимальной скорости.",
+  "config.createtailwind.boost.max_speed": "Максимальная скорость",
+  "config.createtailwind.boost.max_speed.description": "Скорость глиссирования в блоках за тик, при которой ранец перестаёт разгонять. В пике можно лететь быстрее.",
+  "config.createtailwind.server.unavailable": "Серверные настройки принадлежат миру. Измените их здесь из одиночного мира, не открытого по сети, или на сервере в serverconfig/createtailwind-server.toml внутри папки мира.",
+
+  "config.createtailwind.format.ticks": "%s тиков (%s с)",
+  "config.createtailwind.format.percent": "%s%%",
+
+  "config.createtailwind.yacl.missing": "Yet Another Config Lib не установлена",
+  "config.createtailwind.yacl.missing.message": "Для изменения настроек в игре требуется YACL 3. Установить YACL 3?",
+  "config.createtailwind.yacl.outdated": "Yet Another Config Lib устарела",
+  "config.createtailwind.yacl.outdated.message": "Для изменения настроек в игре требуется последняя версия YACL 3. Обновить YACL 3?"
+}

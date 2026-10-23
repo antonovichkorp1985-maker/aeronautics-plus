@@ -1,0 +1,17 @@
+{
+  "name": "Воздушная канистра",
+  "icon": "pneumaticcraft:air_canister",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Air Canister/$ - это крафтовый компонент для любого$(l:base_concepts/pressure)Нажимаемый/$ элемент или инструмент. Его также можно заряжать и разряжать в$(l:machines/charging_station)Зарядная станция/$. The$(item)Air Canister / $ имеет объем 3000 мл и может быть заряжен до 10 бар (он не взорвется).$(p)Любые пневматические предметы, созданные с помощью$(item)Воздушная канистра / $ сохранит воздух канистра."
+    },
+    {
+      "type": "crafting",
+      "text": "Ремонт воздушного контейнера",
+      "recipe": "pneumaticcraft:air_canister"
+    }
+  ]
+}

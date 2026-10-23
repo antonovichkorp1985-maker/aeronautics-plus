@@ -1,0 +1,19 @@
+{
+  "name": "Системные требования Drone: Entity Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_drone_entity_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие дрона: виджет Entity/$ позволяет вам проверить сущность$(l:tools/drone)Дрон/$ в настоящее время. Вы можете добавить дополнительный$(l:programming/text)Текст/$ виджет с$(l:base_concepts/entity_filter)Entity Filter/$, чтобы отфильтровать объект для проверки. без$(thing)Текст/$ виджет, условие будет верным, если$(italic)Любое/$ предприятие."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_drone_entity_piece.png"
+      ],
+      "text": "$(italic)Состояние дрона: Entity Widget/$"
+    }
+  ]
+}

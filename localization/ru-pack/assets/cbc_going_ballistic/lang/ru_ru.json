@@ -1,0 +1,9 @@
+{
+  "modmenu.nameTranslation.cbc_going_ballistic": "Create Big Пушки: Going Ballistic",
+  "tooltip.cbc_going_ballistic.chemical_energy": "Propellant Chemical Energy: %s",
+  "tooltip.cbc_going_ballistic.hold_shift_for_summary": "Удерживайте [Shift] for Summary",
+  "tooltip.cbc_going_ballistic.powder_mass": "Black Powder Equivalent: %s",
+  "tooltip.cbc_going_ballistic.projectile_mass": "Снаряд масса: %s",
+  "tooltip.cbc_going_ballistic.safe_charge_equivalents": "Powder Charge Лимит: up to %s powder charges",
+  "tooltip.cbc_going_ballistic.summary_header": "Going Ballistic:"
+}

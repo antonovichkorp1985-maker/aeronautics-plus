@@ -1,0 +1,6 @@
+{
+  "name": "компрессоры",
+  "description": "Компрессоры - это машины, которые сжимают воздух для генерации$(l:base_concepts/pressure)давление/$. Это генераторы энергии для$(pncr).",
+  "icon": "pneumaticcraft:air_compressor",
+  "sortnum": 1
+}

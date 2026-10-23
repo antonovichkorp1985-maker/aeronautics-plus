@@ -1,0 +1,29 @@
+{
+  "name": "Виджет Entity Import",
+  "icon": "pneumaticcraft:textures/progwidgets/entity_import_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(l:tools/drone)Дрон/$ перейдет к ближайшему объекту в указанном$(l:programming/area)Площадь/$, которая соответствует (необязательно) прилагаемому$(l:base_concepts/entity_filter)Фильтр организации/$ в подключенном$(l:programming/text)Текст/$ виджет, и забрать его для транспортировки.$(p)Это включает в себя игроков, хотя игроки могут легко избежать проблем.$(item)Дрон / $$(thing)Sneaking/$ скачать Сказав, что, будучи перевозимым летающей сущностью, которую вы можете контролировать, имеет свои преимущества."
+    },
+    {
+      "type": "text",
+      "title": "Опыт работы Orbs",
+      "text": "Дроны могут импортировать$(thing)Опыт Orbs/$ с использованием этого виджета;$(item)Фильтр сущности @orb/$ будет соответствовать XP-орбам. Импортные шары преобразуются в$(l:base_concepts/memory_essence)Память Essence/$ и хранится во внутреннем баке дрона; затем вы можете использовать$(l:programming/liquid_export)Виджет Liquid Export/$ для переноса в резервуар с жидкостью."
+    },
+    {
+      "type": "text",
+      "title": "Ограничения по районам",
+      "text": "Помните, что любой$(l:programming/area)Виджеты Area/$, подключенные к этому виджету, должны иметь тип области$(thing)Коробка/$; это единственная поддерживаемая форма. Тем не менее, можно создавать различные формы, используя белый список / черный список областей."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/entity_import_piece.png"
+      ],
+      "text": "$(italic)Похищение инопланетян / $"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Стоп! червь",
+  "icon": "pneumaticcraft:stop_worm",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это специальный компонент, используемый только при попытке взлома.$(l:machines/security_station)Станции безопасности/$. Он не является ремесленным и может быть найден только в подземелье или (редко) в качестве сельской торговли."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:stop_worm",
+      "text": "Применять а$(thing)Стоп! Червь/$ во время взлома временно заморозит станцию$(l:components/network_components#diagnostic)Диагностическая подпрограмма / $ от отслеживания вас."
+    }
+  ]
+}

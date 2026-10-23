@@ -1,0 +1,32 @@
+{
+  "name": "Универсальный сенсор",
+  "icon": "pneumaticcraft:universal_sensor",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:plastic",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(thing)Универсальный датчик / $ - это, как следует из названия, датчик, который может использоваться во многих приложениях; он измеряет условия в мире и выводит данные.$(#f00)сигнал/$ на основе этих условий.$(p)Быть универсальным не бесплатно: датчик требует$(l:base_concepts/pressure)air/$ to run (1 мл/тик)$(ttcolor)$(t:The Constant Redstone Emitter is free to use)Почти все случаи / $, и датчики нуждаются в определенных$(l:base_concepts/upgrades)Обновление/$ для запуска."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:universal_sensor",
+      "text": "В настоящее время существует более 15 различных условий, которые датчик может измерить, от возможности проверить, есть ли блок в определенной координате или есть ли потоковая передача Twitcher. Откройте GUI этого$(thing)Универсальный датчик / $, чтобы увидеть, что доступно, плюс описания."
+    },
+    {
+      "type": "text",
+      "title": "модернизация",
+      "text": "Вам нужно будет вставить$(l:base_concepts/upgrades#entity_tracker)Entity Tracker/$,$(l:base_concepts/upgrades#dispenser)Диспенсер/$, или$(l:base_concepts/upgrades#block_tracker)Блок-трекер / $ плюс$(l:tools/gps_tool)GPS Tool/$ позволяет выбрать соответствующую категорию датчиков. Например, подсчет количества объектов в пределах диапазона требует$(item)Entity Tracker Upgrade/$ для установки."
+    },
+    {
+      "type": "text",
+      "title": "Пример: Подсчет сущности",
+      "text": "Скажем, у вас есть ручка, полная животных, и вы хотите убить некоторых, но только если их достаточно.$(p)Добавить$(l:base_concepts/upgrades#entity_tracker)Обновление/$ и достаточно$(l:base_concepts/upgrades#range)Обновление диапазона / $, чтобы покрыть размер ручки.$(p)Теперь в GUI выберите$(thing)Кнопка Entity/$, сопровождаемая$(thing)В пределах диапазона / $ и, наконец, введите$(l:base_concepts/entity_filter)Фильтр объекта/$, соответствующий вашему типу животного (например, «корова»)."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание универсального датчика",
+      "recipe": "pneumaticcraft:universal_sensor"
+    }
+  ]
+}

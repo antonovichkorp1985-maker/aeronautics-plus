@@ -1,0 +1,16 @@
+{
+  "name": "Модернизация матрицы",
+  "icon": "pneumaticcraft:upgrade_matrix",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:tp_plant",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Обновление матрицы/$ можно использовать вместо$(item)Lapis Lazuli/$ за изготовление любого$(l:base_concepts/upgrades)Модернизация/$. Преимущество использования матриц обновления заключается в значительном уменьшении использования Lapis, что может быть благом, если у вас есть ограниченный Lapis и много обновлений для ремесла."
+    },
+    {
+      "type": "pneumaticcraft:thermo_plant",
+      "recipe": "pneumaticcraft:thermo_plant/upgrade_matrix"
+    }
+  ]
+}

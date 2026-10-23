@@ -1,0 +1,19 @@
+{
+  "name": "Состояние: Fluid Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_liquid_inventory_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: виджет Fluid/$ позволяет (дистанционно) проверять бак(ы) или блок(ы) жидкости в подключенном$(l:programming/area)Виджет Area/$ для определенного количества жидкости. Он будет считать только жидкость, разрешенную подключенным$(l:programming/liquid_filter)Виджет Fluid Filter/$ (опустить фильтр, чтобы разрешить любую жидкость)."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_liquid_inventory_piece.png"
+      ],
+      "text": "$(italic)Состояние: Fluid Widget/$"
+    }
+  ]
+}

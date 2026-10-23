@@ -1,0 +1,24 @@
+{
+  "name": "Редактировать Sign Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/edit_sign_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это будет редактировать все$(item)Знаки/$ и/или$(l:machines/aphorism_tile)Афоризм Tiles/$ в соединенном$(l:programming/area)Площадь/$ к тексту, указанному подключенным$(l:programming/text)Текст/$ виджет(ы).$(p)Каждый подключенный$(thing)Текст/$ виджет представляет собой одну линию;$(thing)Текст/$ виджеты, можно задать многострочное сообщение."
+    },
+    {
+      "type": "text",
+      "title": "Переменные",
+      "text": "Вы также можете указать значение a$(l:programming/variables)переменная/$, включая$(thing)${<var_name>}/$ в тексте, например.$(p)  $(formula)Счетчик: ${counter}/$$(p)будет расширяться на$(thing)Счетчик: 1, 2, 3/$, если$(thing)Переменная счетчик/$ устанавливается$(thing)x=1,y=2,z=3/$. $(l:programming/variables#special)Специальный/$ и$(l:programming/variables#global)Здесь также можно использовать глобальные переменные/$."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/edit_sign_piece.png"
+      ],
+      "text": "$(italic)Редактировать Sign Widget/$"
+    }
+  ]
+}

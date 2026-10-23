@@ -1,0 +1,37 @@
+{
+  "name": "Пневматические ножки",
+  "icon": "pneumaticcraft:pneumatic_leggings",
+  "category": "pneumaticcraft:armor",
+  "advancement": "pneumaticcraft:printed_circuit_board",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Pneumatic Leggings/$ является одним из четырех$(thing)Пневматическая броня/$ штук."
+    },
+    {
+      "type": "crafting",
+      "recipe": "pneumaticcraft:pneumatic_leggings",
+      "text": "Создание пневматического ножки"
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:speed_upgrade",
+      "text": "Помимо сокращения времени инициализации брони,$(l:base_concepts/upgrades#speed)Обновления скорости / $ в леггинсах имеют более важный эффект: они увеличивают вашу скорость.$(thing)Скорость бега/$, при очень незначительной скорости$(l:base_concepts/pressure)Стоимость воздуха/$. Можно установить до 4 скоростных апгрейдов."
+    },
+    {
+      "type": "text",
+      "title": "Ускорение (cont.)",
+      "text": "Броня GUI позволяет уменьшить ускорение на лету, если вы хотите изменить скорость без необходимости находить$(l:machines/charging_station)Зарядка станции / $ для замены обновлений."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:jumping_upgrade_1",
+      "text": "A $(l:base_concepts/upgrades#jumping_1)Jumping Upgrade / $ обеспечивает повышенную способность к прыжкам при незначительной стоимости воздуха. Существует 4 уровня Jumping Upgrade.$(p)Холдинг$(thing)$(k:key.sneak)/$ во время прыжка уменьшит высоту прыжка до эквивалента одного обновления."
+    },
+    {
+      "type": "text",
+      "title": "Jumping Upgrade (альбом)",
+      "text": "Броня GUI позволяет уменьшить ускорение прыжка на лету, если вы хотите изменить высоту прыжка без необходимости находить прыжок.$(l:machines/charging_station)Зарядка станции / $ для замены обновлений."
+    }
+  ]
+}

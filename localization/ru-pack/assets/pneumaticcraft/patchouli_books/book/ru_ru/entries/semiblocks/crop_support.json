@@ -1,0 +1,17 @@
+{
+  "name": "Поддержка урожая",
+  "icon": "pneumaticcraft:crop_support",
+  "category": "pneumaticcraft:semiblocks",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "При размещении на сельскохозяйственных угодьях с$(thing)Сельскохозяйственные культуры / $, это улучшит скорость роста этой культуры.$(thing)Зеленые частицы/$ испускаются, чтобы показать, когда$(item)Crop Support/$ ускоряет рост.$(p)Чтобы удалить a$(item)Crop Support/$, либо разбить блок под ним, либо$(thing)sneak-right-click/$ блок$(l:tools/logistics_configurator)Конфигуратор логистики/$ или другой$(item)Поддержка урожая/$."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание поддержки урожая",
+      "recipe": "pneumaticcraft:crop_support"
+    }
+  ]
+}

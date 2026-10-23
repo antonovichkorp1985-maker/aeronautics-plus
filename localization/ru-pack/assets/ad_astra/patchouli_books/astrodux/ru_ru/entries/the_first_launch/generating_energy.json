@@ -1,0 +1,18 @@
+{
+  "name": "Генерация энергии",
+  "icon": "ad_astra:coal_generator",
+  "sortnum": 0,
+  "category": "ad_astra:the_first_launch",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "title": "Генератор угля",
+      "item": "ad_astra:coal_generator",
+      "text": "Энергия является основным ресурсом Ad Astra. Он используется во всех машинах и необходим для всего. Существует несколько способов получения энергии, самым основным из которых является угольный генератор. Он использует горючие ресурсы, такие как древесина или уголь, для производства энергии."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "ad_astra:coal_generator"
+    }
+  ]
+}

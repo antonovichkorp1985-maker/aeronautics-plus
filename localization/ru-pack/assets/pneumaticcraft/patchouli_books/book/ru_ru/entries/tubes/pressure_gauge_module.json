@@ -1,0 +1,30 @@
+{
+  "name": "Модуль давления",
+  "icon": "pneumaticcraft:pressure_gauge_module",
+  "category": "pneumaticcraft:tubes",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Этот модуль показывает$(l:base_concepts/pressure)давление/$ в трубке, к которой он прикреплен. Он также излучает (направленный)$(#f00)сигнал/$, сила которого равна:$(p)$(formula)сила = 2 x давление / $$(p)Например, давление 3,5 бар приводит к уровню сигнала красного камня 7."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:module_expansion_card",
+      "text": "Применять а$(l:tubes/module_expansion_card)Module Expansion Card/$ to the Pressure Gauge Module разблокирует графический интерфейс (с правой кнопкой мыши), чтобы обеспечить гораздо больший контроль над$(#f00)Сигнал красного камня/$ эмиссия. По умолчанию можно обеспечить пороговый уровень: сигнал будет выключен ниже этого уровня и полностью над ним (или наоборот). Если вы выберете$(bold)Расширенный переключатель Config/$ в графическом интерфейсе, вы получаете еще больший контроль (см. выше)."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/patchouli/pressure_gauge_gui.png"
+      ],
+      "text": "$(italic)<10 bar = 0 redstone, >20 бар = 15 красных камней, 10-20 бар = интерполат (например, 12 бар = 3 красных камня)/$",
+      "anchor": "img"
+    },
+    {
+      "type": "crafting",
+      "text": "Создавая давление Модуль Gauge",
+      "recipe": "pneumaticcraft:pressure_gauge_module"
+    }
+  ]
+}

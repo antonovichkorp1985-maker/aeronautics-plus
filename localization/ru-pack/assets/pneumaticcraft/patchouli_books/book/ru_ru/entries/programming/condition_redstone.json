@@ -1,0 +1,19 @@
+{
+  "name": "Оригинальное название: Redstone Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_redstone_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: виджет Redstone/$ позволяет (дистанционно) проверить уровень блока (блоков) Redstone в подключенном устройстве.$(l:programming/area)Виджет Area/$ соответствует настроенному порогу Redstone."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_redstone_piece.png"
+      ],
+      "text": "$(italic)Состояние: Redstone Widget/$"
+    }
+  ]
+}

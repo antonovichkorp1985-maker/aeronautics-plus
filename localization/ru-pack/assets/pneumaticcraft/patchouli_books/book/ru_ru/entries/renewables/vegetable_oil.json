@@ -1,0 +1,20 @@
+{
+  "name": "Растительное масло",
+  "icon": "pneumaticcraft:vegetable_oil_bucket",
+  "category": "pneumaticcraft:renewables",
+  "advancement": "pneumaticcraft:tp_plant",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)Овощное масло может быть получено в$(l:manufacturing/thermopneumatic_processing_plant)Термопневматическая перерабатывающая установка/$ от различных$(thing)Семена/$ и$(thing)Урожай/$. Семена, как правило, являются лучшим источником масла, чем выращенные культуры. овощной Нефть необходима для производства$(l:renewables/biodiesel)Биодизель/$."
+    },
+    {
+      "type": "pneumaticcraft:thermo_plant",
+      "recipe": "pneumaticcraft:thermo_plant/vegetable_oil_from_seeds"
+    },
+    {
+      "type": "pneumaticcraft:thermo_plant",
+      "recipe": "pneumaticcraft:thermo_plant/vegetable_oil_from_crops"
+    }
+  ]
+}

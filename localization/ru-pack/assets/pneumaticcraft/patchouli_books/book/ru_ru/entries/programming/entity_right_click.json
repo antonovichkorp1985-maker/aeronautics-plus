@@ -1,0 +1,19 @@
+{
+  "name": "Правильный клик Entity Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/entity_right_click_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(l:tools/drone)Дрон/$ будет$(thing)правый клик / $ элемент в своем первом слоте инвентаризации для каждой организации в указанном$(l:programming/area)Зона/$, один раз. Это может быть использовано для стрижки овец, молочных коров, разведения животных и многого другого!$(p)Помните, что любой$(l:programming/area)Виджеты Area/$, подключенные к этому виджету, должны иметь тип области$(thing)Коробка/$; это единственная поддерживаемая форма. Тем не менее, можно создавать различные формы, используя белый список / черный список областей."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/entity_right_click_piece.png"
+      ],
+      "text": "$(italic)Поке/$"
+    }
+  ]
+}

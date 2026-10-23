@@ -1,0 +1,55 @@
+{
+  "name": "Логистические рамки",
+  "icon": "pneumaticcraft:logistics_frame_passive_provider",
+  "category": "pneumaticcraft:logistics",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)Логистические рамки / $ - это прикрепляемые гаджеты, которые размещаются на инвентарях или цистернах, чтобы отметить их как часть$(thing)Логистическая система/$.$(p)Размещенные кадры могут быть сконфигурированы$(thing)Правое щелчок / $ с$(l:tools/logistics_configurator)Logistics Configurator/$ и удаляется$(thing)sneak+right-clicking/$ с конфигуратором. Фреймы также можно настроить в руке, щелкнув правой кнопкой мыши форму элемента."
+    },
+    {
+      "type": "text",
+      "text": "Можно сконфигурировать следующие свойства кадра:$(li)Поддержка всех фреймов$(thing)фильтрация/$ для контроля того, какие элементы/жидкости они будут предоставлять или принимать. Смотрите также$(l:tools/tag_filter)Фильтры тегов/$.$(li)The$(thing)Filter/$ боковая вкладка позволяет настроить, соответствуют ли фильтры$(thing)пункт NBT/$ или$(thing)Мод ID/$, а также следует ли использовать фильтр в качестве белого списка (по умолчанию) или черного списка."
+    },
+    {
+      "type": "text",
+      "text": "$(li)Для$(l:logistics/frames#requester)Requester Frames/$, где$(thing)Закладка Минимальный размер заказа / $ позволяет настроить минимальное количество предметов или жидкости, которые будут перемещаться одновременно; полезна для предотвращения постоянных поездок дронов с крошечными полезными нагрузками.$(li)Наконец, все кадры могут быть сконфигурированы для$(thing)Невидимые / $ для игроков, если они не держат элемент логистики (кадр или конфигуратор). Примечание: невидимые рамки передают любые левые щелчки игрока на блок ниже."
+    },
+    {
+      "type": "crafting",
+      "anchor": "active_provider",
+      "title": "Active Provider Frame",
+      "recipe": "pneumaticcraft:logistics_frame_active_provider",
+      "text": "The$(item)Active Provider Frame/$ предоставляет элементы/флюиды$(l:logistics/frames#requester)Фреймы запроса/$,$(l:logistics/frames#storage)Карты хранения/$ и$(l:logistics/frames#default_storage)Карты хранения по умолчанию/$."
+    },
+    {
+      "type": "crafting",
+      "anchor": "passive_provider",
+      "title": "Пассивный поставщик каркас",
+      "recipe": "pneumaticcraft:logistics_frame_passive_provider",
+      "text": "The$(item)Пассивный поставщик Frame/$ предоставляет элементы/флюиды$(l:logistics/frames#requester)Только запрашиваемые кадры/$."
+    },
+    {
+      "type": "crafting",
+      "anchor": "storage",
+      "title": "Каркас хранения",
+      "recipe": "pneumaticcraft:logistics_frame_storage",
+      "text": "$(item)Карты хранения / $ могут получать элементы / жидкости из$(l:logistics/frames#active_provider)Active Provider Frames/$ и поставки товаров для$(l:logistics/frames#requester)Фреймы запроса/$."
+    },
+    {
+      "type": "crafting",
+      "anchor": "default_storage",
+      "title": "Рамка хранения по умолчанию",
+      "recipe": "pneumaticcraft:logistics_frame_default_storage",
+      "text": "$(item)Карты хранения по умолчанию / $ могут получать элементы / жидкости из$(l:logistics/frames#active_provider)Active Provider Frames/$ и предоставление ресурсов$(l:logistics/frames#requester)Фреймы запроса/$ и$(l:logistics/frames#storage)Хранение кадров/$. Они имеют меньший приоритет, чем фреймы хранения, которые всегда будут использоваться в первую очередь, если это возможно."
+    },
+    {
+      "type": "crafting",
+      "anchor": "requester",
+      "title": "Оборудование запроса",
+      "recipe": "pneumaticcraft:logistics_frame_requester",
+      "text": "$(item)Requester Frames/$ может запросить элементы/флюиды из любого другого обрамленного инвентаря. Для этих кадров используйте графический интерфейс конфигурации, чтобы сказать кадру, сколько каждого элемента или жидкости нужно сохранить.$(thing)Запасной/$."
+    }
+  ]
+}

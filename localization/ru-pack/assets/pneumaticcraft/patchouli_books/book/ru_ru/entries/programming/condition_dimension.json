@@ -1,0 +1,23 @@
+{
+  "name": "Обсуждение Dimension Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_dimension_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: виджет Dimension/$ позволяет проверить текущее измерение дрона. Наличие этого виджета в вашей программе дронов$(o)Требуется /$, чтобы позволить программируемым дронам изменять размеры, например, проходя через портал Nether."
+    },
+    {
+      "type": "text",
+      "text": "Вы можете отфильтровать размер, чтобы проверить его с помощью$(l:programming/text)Текст/$ виджет, содержащий идентификатор размерности для проверки, например.$(thing)minecraft:overworld/$ или$(thing)minecraft:the_nether/$. Текстовые виджеты справа действуют как белый список, текстовые виджеты слева действуют как черный список."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_dimension_piece.png"
+      ],
+      "text": "$(italic)Это целый новый мир / $"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Ярлык Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/label_piece.png",
+  "category": "pneumaticcraft:widget_flow",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Этот виджет ориентирован исключительно на$(l:programming/flow_control)Поток программы/$. Этикетка определяет точку в программе, которая$(l:programming/jump)Прыжок/$ и$(l:programming/conditions)Условие / $ виджеты могут прыгать. Вы должны прикрепить$(l:programming/text)Текст/$ виджет, чтобы назвать его. Любые прыжки/условия с использованием$(thing)Текстовый/$ виджет этого имени затем перейдет на этот ярлык."
+    },
+    {
+      "type": "text",
+      "text": "A $(thing)Виджет Label/$ может быть использован для создания$(italic)ветка/$ в потоке программы (при использовании)$(l:programming/conditions)Условия/$ или просто организовать разделы вашей программы для ясности, поместив их рядом друг с другом. Полезный совет - проверить$(bold)Show Flow/$ checkbox в левом нижнем углу$(l:programming/programmer)Программист / $ GUI; он покажет линии, связывающие$(thing)Jump/Condition/Label/$ виджеты с таким же названием."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/label_piece.png"
+      ],
+      "text": "$(italic)Метка Виджет/$"
+    }
+  ]
+}

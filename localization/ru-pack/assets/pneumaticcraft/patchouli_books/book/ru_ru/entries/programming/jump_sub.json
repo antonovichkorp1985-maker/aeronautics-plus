@@ -1,0 +1,19 @@
+{
+  "name": "Подпрограммный виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/jump_sub_piece.png",
+  "category": "pneumaticcraft:widget_flow",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Этот виджет ведет себя как$(thing)Jump/$, за исключением случаев, когда подпрограмма завершена, выполнение будет продолжаться в виджете, подключенном к нижней части подпрограммы.$(thing)Jump Subroutine/$ виджет. А.$(thing)Виджет Jump Subroutine/$ полезен для повторного использования общего кода и вызова подпрограмм с произвольными аргументами путем назначения переменных перед переходом в подпрограмму."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/jump_sub_piece.png"
+      ],
+      "text": "$(italic)Подпрограммный виджет / $"
+    }
+  ]
+}

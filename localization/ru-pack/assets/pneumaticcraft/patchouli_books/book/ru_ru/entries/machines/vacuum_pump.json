@@ -1,0 +1,38 @@
+{
+  "name": "Вакуумный насос",
+  "icon": "pneumaticcraft:vacuum_pump",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:pressure_chamber",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(thing)Vacuum Pump/$ — это машина, используемая для создания вакуума. Для этого машина потребляет$(l:base_concepts/pressure)Воздух под давлением/$.$(p)Позитивное давление должно оказываться на$(#0c0)«+» сторона/$; при достижении минимального рабочего давления$(item)Вакуумный насос / $ начинает перекачивать и давление на$(#c00)'-' боковые/$ капли, до минимума -1,0 бар, что является вакуумом."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/patchouli/vacuum_pump.png"
+      ]
+    },
+    {
+      "type": "text",
+      "title": "Приложения",
+      "text": "Для отрицательного (вакуумного) давления существуют следующие применения:$(li)Оригинальное название: Place an$(item)заколдованный предмет/$ или$(item)Зачарованная книга / $ с более чем одним очарованием и ванилью$(item)Книга/$ в одном$(l:manufacturing/pressure_chamber)Давление камеры/$ и придать камере достаточное отрицательное давление. Случайное очарование перейдет от предмета к книге.$(li)The$(l:tubes/air_grate_module)Модуль Air Grate/$ при отрицательном давлении привлечет к себе объекты."
+    },
+    {
+      "type": "text",
+      "title": "Приложения (cont.)",
+      "text": "$(li)Оба$(l:spawning/vacuum_trap)Вакуумная ловушка/$$(l:spawning/spawner_extractor)Spawner Extractor / $, устройства, необходимые для изготовления и использования$(l:spawning/pressurized_spawner)Под давлением Spawners/$, необходимо отрицательное давление для работы."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание вакуумного насоса",
+      "recipe": "pneumaticcraft:vacuum_pump"
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "header": "Vacuum Disenchanting",
+      "recipe": "pneumaticcraft:pressure_chamber/pressure_chamber_disenchanting"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Исполнитель: Agitator",
+  "icon": "pneumaticcraft:spawner_agitator",
+  "category": "pneumaticcraft:spawning",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Когда помещают на ваниль$(item)Спаунер/$, этот пункт$(thing)Agitates/$ The Spawner:$(li)Нерест будет продолжать нерест, пока рядом нет игрока$(li)Это предотвращает нерестовые образования, когда игроки покидают область.$(p)Кто-нибудь из мафиозной фермы?$(p)$(thing)Sneak-right-click/$$(l:logistics/logistics_configurator)Конфигуратор логистики / $ или другой агитатор, чтобы удалить его."
+    },
+    {
+      "type": "text",
+      "flag": "mod:apotheosis",
+      "title": "Апофеоз",
+      "text": "$(thing)Apotheosis / $ - это мод, который добавляет (среди прочего) мощную настройку ванильных Spawners. Это изменяет внутренние органы Spawner настолько, что Spawner Agitators не может полностью взаимодействовать с ними. Поскольку у вас установлен Апофеоз, функциональность Spawner Agitator ограничена предотвращением отсева толпы, когда игроки находятся далеко; чтобы позволить толпам нереститься, когда нет игроков рядом, используйте функциональность Apotheosis."
+    },
+    {
+      "type": "crafting",
+      "text": "Оригинальное название: Spawner Agitator",
+      "recipe": "pneumaticcraft:spawner_agitator"
+    }
+  ]
+}

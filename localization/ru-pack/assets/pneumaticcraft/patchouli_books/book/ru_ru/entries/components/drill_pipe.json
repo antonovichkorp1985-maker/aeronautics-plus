@@ -1,0 +1,17 @@
+{
+  "name": "Буровая труба",
+  "icon": "pneumaticcraft:drill_pipe",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)Drill Pipes/$ требуется для$(l:machines/gas_lift)Газовый лифт / $, чтобы сверлить до жидкостей.$(p)Они также подходят для использования в общем здании, если хотите."
+    },
+    {
+      "type": "crafting",
+      "text": "Скачать Drill Pipe",
+      "recipe": "pneumaticcraft:drill_pipe"
+    }
+  ]
+}

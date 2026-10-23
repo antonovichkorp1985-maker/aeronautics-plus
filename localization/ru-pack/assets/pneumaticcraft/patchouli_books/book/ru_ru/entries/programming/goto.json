@@ -1,0 +1,19 @@
+{
+  "name": "Go to Location Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/goto_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(thing)Перейти к местоположению / $ довольно просто:$(l:tools/drone)Дрон/$ будет отправлен в ближайшее доступное место в пределах указанного$(l:programming/area)Площадь/$.$(p)Этот виджет сделан$(ttcolor)$(t:You can configure the widget to be 'done' immediately; right-click for the setup GUI)когда Дрон достиг области/$, или когда эта область недоступна."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/goto_piece.png"
+      ],
+      "text": "$(italic)Go to Location Виджет / $"
+    }
+  ]
+}

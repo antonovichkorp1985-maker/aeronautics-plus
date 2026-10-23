@@ -1,0 +1,22 @@
+{
+  "name": "Конфигуратор логистики",
+  "icon": "pneumaticcraft:logistics_configurator",
+  "category": "pneumaticcraft:logistics",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Основная цель Logistics Configurator - помочь с настройкой$(l:logistics/overview)Логистическая система/$.$(p)By$(thing)Щелчок справа / $ это на любой$(l:logistics/frames)Logistic Frame/$ может настраивать различные фильтры.$(p)$(thing)Проникновение правым щелчком / $ удаляет кадр из инвентаря, к которому он прикреплен."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:logistics_configurator",
+      "text": "The$(item)Логистический конфигуратор / $ также может быть использован для удаления.$(thing)Проникните правым щелчком / $) другие прикрепляемые гаджеты, такие как$(l:semiblocks/transfer_gadget)Трансфер Гаджет/$ и$(l:semiblocks/crop_support)Поддержка урожая/$."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание логистики Конфигуратор",
+      "recipe": "pneumaticcraft:logistics_configurator"
+    }
+  ]
+}

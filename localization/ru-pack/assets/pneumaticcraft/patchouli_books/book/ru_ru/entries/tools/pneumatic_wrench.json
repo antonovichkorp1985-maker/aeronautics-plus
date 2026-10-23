@@ -1,0 +1,21 @@
+{
+  "name": "Пневматический ключ",
+  "icon": "pneumaticcraft:pneumatic_wrench[pneumaticcraft:air=30000]",
+  "category": "pneumaticcraft:tools",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Пневматический ключ является$(thing)гаечный ключ/$ элемент для$(pncr). Вы можете использовать его для различных задач, в том числе:$(p)$(li)$(thing)Правый клик / $ ваниль и модулированные блоки для их вращения$(li)$(thing)Sneak+right-click/$$(pncr)машины сбрасывают их как предметы, сохраняя любые сохраненные обновления и воздух в машине."
+    },
+    {
+      "type": "text",
+      "text": "$(li)$(thing)Правый клик/$$(l:base_concepts/drones)Дроны / $, чтобы демонтировать их, отбрасывая их как предмет.$(li)$(thing)Правый клик/$$(l:tubes/pressure_tubes)Трубы давления / $, чтобы закрыть / повторно открыть секции, чтобы изолировать их друг от друга.$(p)The$(item)Пневматический ключ/$ должен находиться под давлением$(l:machines/charging_station)Зарядка станции/$ перед использованием."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание пневматического гаечный ключ",
+      "recipe": "pneumaticcraft:pneumatic_wrench"
+    }
+  ]
+}

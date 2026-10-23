@@ -1,0 +1,31 @@
+{
+  "name": "Площадь Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/area_piece.png",
+  "category": "pneumaticcraft:widget_other",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(thing)Виджет Area/$ используется исключительно в качестве параметра для других виджетов, чтобы сказать им, к какой области (которая может быть одним блоком) они должны применяться. Чтобы использовать этот виджет, вам понадобится$(l:tools/gps_tool)GPS инструмент / $ и / или$(l:tools/gps_area_tool)Инструмент GPS Area Tool/$$(p)Существует три основных способа создания виджета Area:"
+    },
+    {
+      "type": "text",
+      "text": "1. $(thing)Right-click/$ Виджет Района$(l:programming/programmer)Программист/$ GUI открывает конфигурационный GUI и устанавливает его там. Вы можете установить степень области с двумя$(thing)Кнопки GPS / $ (нажмите, чтобы открыть другой графический интерфейс и выбрать$(l:tools/gps_tool)Инструмент GPS / $ из вашего инвентаря и выберите$(thing)Тип зоны / $ и связанные параметры с радиокнопками ниже."
+    },
+    {
+      "type": "text",
+      "text": "2. Установить$(l:tools/gps_tool)GPS инструмент / $ или$(l:tools/gps_area_tool)GPS Area Tool/$ в мире. В этом$(l:programming/programmer)Программист / $ GUI, вы можете:$(li)$(thing)Левый клик / $$(item)GPS (Area) Tool/$ на существующем$(thing)Виджет Area/$ для копирования настроек инструмента в виджет$(li)$(thing)Левый клик / $ a$(item)GPS Tool/$ в пустой области программирования$(l:programming/coordinate)Координация/$ виджет$(li)$(thing)Shift+left-click/$a$(item)GPS Tool/$ в пустой области программирования$(thing)Площадь/$ виджет$(li)$(thing)Левый клик / $ a$(item)GPS Area Tool/$ на пустой области программирования для создания нового$(thing)Виджет Area/$."
+    },
+    {
+      "type": "text",
+      "text": "3. Продвинутый вариант: вы можете использовать$(thing)переменные/$, созданные$(l:programming/coordinate_operator)Координационный оператор/$ виджет. The$(l:programming/programmer)Программист должен быть в$(thing)Расширенный режим / $ для доступных переменных; рядом с кнопками GPS вы также увидите выпадающие поля выбора. Вы можете выбрать известное имя переменной, и соответствующий угол этой области будет использовать положение этой переменной."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/area_piece.png"
+      ],
+      "text": "$(italic)Площадь Виджет/$"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Машины",
+  "description": "Машины и другие устройства, обеспечивающие полезную функциональность, многие из которых требуют$(l:base_concepts/pressure)Заставить/$ сделать это.",
+  "icon": "pneumaticcraft:vortex_tube",
+  "sortnum": 5
+}

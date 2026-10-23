@@ -1,0 +1,17 @@
+{
+  "name": "ПХД чертеж",
+  "icon": "pneumaticcraft:pcb_blueprint",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)ПХД Blueprint/$ - это специальный компонент, необходимый для создания$(l:manufacturing/uv_light_box)УФ лайтбокс/$.$(p)Он не может быть изготовлен нормально, но должен быть продан, как правило, через$(l:tools/amadron_tablet)Amadron Tablet/$, но, возможно, также через$(l:base_concepts/villagers)Механические жители/$."
+    },
+    {
+      "type": "pneumaticcraft:amadron_trade",
+      "recipe": "pneumaticcraft:amadron/pcb_blueprint",
+      "text": "Торговля для The$(item)PCB Blueprint/$."
+    }
+  ]
+}

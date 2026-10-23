@@ -1,0 +1,22 @@
+{
+  "name": "Воздушная пушка",
+  "icon": "pneumaticcraft:air_cannon",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Air Cannon - это устройство, которое можно использовать для транспортировки предметов на определенное расстояние по воздуху. Он использует$(l:base_concepts/pressure)Сжатый воздух/$ в качестве топлива.$(p)Вам также понадобится$(l:tools/gps_tool)GPS Tool/$ для прицеливания$(item)Air Cannon/$ (хотя GPS Tool может быть удален и повторно использован после прицеливания).$(p)A $(#f00)пульс красного камня/$ запустит пушку."
+    },
+    {
+      "type": "text",
+      "title": "модернизация",
+      "text": "С ним$(l:base_concepts/upgrades#dispenser)Обновление диспенсера / $ установлен,$(item)Air Cannon/$ ведет себя как ваниль$(item)Диспенсер / $ для определенных предметов, например, TNT или Fire Charges.$(p)С одним$(l:base_concepts/upgrades#entity_tracker)Entity Tracker Upgrade/$$(item)Air Cannon/$ не будет запускать предметы из своего инвентаря, а вместо этого запустит ближайший объект (включая вас!) при запуске."
+    },
+    {
+      "type": "crafting",
+      "text": "Создать воздушную пушку",
+      "recipe": "pneumaticcraft:air_cannon"
+    }
+  ]
+}

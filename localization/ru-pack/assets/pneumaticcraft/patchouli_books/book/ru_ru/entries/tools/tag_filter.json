@@ -1,0 +1,12 @@
+{
+  "name": "Фильтр Tag",
+  "icon": "pneumaticcraft:tag_filter",
+  "category": "pneumaticcraft:tools",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Видишь?$(l:machines/tag_workbench)Тег Workbench/$"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Ядерный вирус",
+  "icon": "pneumaticcraft:nuke_virus",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это специальный компонент, используемый только при попытке взлома.$(l:machines/security_station)Станции безопасности/$. Он не является ремесленным и может быть найден только в подземелье или (редко) в качестве сельской торговли."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:nuke_virus",
+      "text": "Применять а$(thing)Nuke Virus/$ к узлу, в то время как взлом приведет к ядерному взрыву узла, мгновенному взлому его. Обратите внимание, что Nuke Virus имеет 3-секундное охлаждение между повторными применениями."
+    }
+  ]
+}

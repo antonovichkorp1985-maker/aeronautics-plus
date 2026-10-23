@@ -1,0 +1,29 @@
+{
+  "name": "Ремесло Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/craft_piece.png",
+  "category": "pneumaticcraft:widget_interact",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(l:tools/drone)Дрон / $ будет создавать предметы, используя предметы, которые он имеет в своем инвентаре. Чтобы указать рецепт крафта, место$(l:programming/item_filter)Фильтры / $ на правой стороне виджета Crafting, в шаблоне рецепта крафта.$(p)Вам не нужно использовать 9$(thing)Фильтры / $: пока вы можете создать шаблон рецепта, он будет работать."
+    },
+    {
+      "type": "text",
+      "text": "По умолчанию виджет Crafting постарается создать как можно больше предметов; вы можете ограничить это в графическом интерфейсе виджета с помощью$(thing)Используйте настройку Count/$.$(p)Вы, вероятно, захотите установить некоторые$(l:base_concepts/upgrades#dispenser)Обновление запасов/$ в$(item)Дрон / $, чтобы дать ему больший инвентарь."
+    },
+    {
+      "type": "text",
+      "flag": "mod:jei",
+      "title": "Интеграция JEI",
+      "text": "Можно быстро и легко настроить фильтры элементов для виджета Crafting с помощью JEI; см.$(l:programming/programmer#jei)Эта страница/$ для получения дополнительной информации."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/craft_piece.png"
+      ],
+      "text": "$(italic)Ремесло Виджет/$"
+    }
+  ]
+}

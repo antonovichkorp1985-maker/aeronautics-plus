@@ -1,0 +1,23 @@
+{
+  "name": "Оригинальное название: Entity Widget",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_entity_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: виджет Entity/$ позволяет подсчитывать объекты в подключенном$(l:programming/area)Виджет Area/$. Их можно отфильтровать, подключив факультативный$(l:programming/text)Текст/$ виджет используется как$(l:base_concepts/entity_filter)Фильтр организации/$."
+    },
+    {
+      "type": "text",
+      "text": "Помните, что любой$(l:programming/area)Виджеты Area/$, подключенные к этому виджету, должны иметь тип области$(thing)Коробка/$; это единственная поддерживаемая форма. Тем не менее, можно создавать различные формы, используя белый список / черный список областей."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_entity_piece.png"
+      ],
+      "text": "$(italic)Состояние: Entity Widget/$"
+    }
+  ]
+}

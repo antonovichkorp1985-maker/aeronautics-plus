@@ -1,0 +1,471 @@
+package dev.leeeonidys.aeronauticsplus.space.compile;
+
+import dev.leeeonidys.aeronauticsplus.space.core.EngineState;
+import dev.leeeonidys.aeronauticsplus.space.core.PropellantIds;
+import dev.leeeonidys.aeronauticsplus.space.core.PropellantState;
+import dev.leeeonidys.aeronauticsplus.space.core.TankState;
+import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselBlueprint;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselComponent;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselConnection;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselDiagnostic;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Converts a freeform block grid into a {@link VesselBlueprint}.
+ * Stage islands are flood-filled through structural ports; separators cut that graph.
+ */
+public final class VesselBlockCompiler {
+    private VesselBlockCompiler() {
+    }
+
+    public static VesselCompilation analyze(VesselBlockGrid grid) {
+        List<VesselDiagnostic> extra = new ArrayList<>(CellPacking.diagnostics(grid));
+        extra.addAll(transporterDiagnostics(grid));
+        extra.addAll(padDiagnostics(grid));
+        extra.addAll(integralFeedDiagnostics(grid));
+        return compile(grid).analyze().withDiagnostics(extra);
+    }
+
+    /**
+     * Fire the pyro ring: structural islands become two piles. Pad stays behind.
+     * The ring stays on the booster (KSP decoupler). Upper flies on.
+     */
+    public static GridSplit firePyro(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            throw new IllegalArgumentException("Stack is required");
+        }
+        List<VesselBlockOccupant> flying = new ArrayList<>();
+        boolean hasRing = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.PAD) {
+                continue;
+            }
+            if (occupant.spec().kind() == VesselPartKind.SEPARATOR) {
+                hasRing = true;
+            }
+            flying.add(occupant);
+        }
+        if (!hasRing) {
+            throw new IllegalStateException("No pyro ring");
+        }
+        if (flying.isEmpty()) {
+            throw new IllegalStateException("Nothing to separate");
+        }
+        Map<GridPos, List<VesselBlockOccupant>> byPos = index(flying);
+        Map<GridPos, String> stageByPos = assignStages(flying, byPos);
+        List<VesselBlockOccupant> booster = new ArrayList<>();
+        List<VesselBlockOccupant> continuing = new ArrayList<>();
+        for (VesselBlockOccupant occupant : flying) {
+            if ("stage-0".equals(stageByPos.get(occupant.pos()))) {
+                booster.add(occupant);
+            } else {
+                continuing.add(occupant);
+            }
+        }
+        if (booster.isEmpty() || continuing.isEmpty()) {
+            throw new IllegalStateException("Pyro ring did not cut a stage");
+        }
+        return new GridSplit(new VesselBlockGrid(continuing), new VesselBlockGrid(booster));
+    }
+
+    /**
+     * Fire horizontal pyro rings (Soyuz / Falcon Heavy sides).
+     * The ring stays on the core; each island on the SEPARATION face becomes a booster.
+     */
+    public static RadialSplit fireRadial(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            throw new IllegalArgumentException("Stack is required");
+        }
+        List<VesselBlockOccupant> flying = new ArrayList<>();
+        boolean hasRadial = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.PAD) {
+                continue;
+            }
+            if (occupant.spec().kind() == VesselPartKind.SEPARATOR && occupant.facing().horizontal()) {
+                hasRadial = true;
+            }
+            flying.add(occupant);
+        }
+        if (!hasRadial) {
+            throw new IllegalStateException("No radial pyro");
+        }
+        Map<GridPos, List<VesselBlockOccupant>> byPos = index(flying);
+        Map<GridPos, String> stageByPos = assignStages(flying, byPos);
+        Set<String> sideStages = radialSideStages(flying, stageByPos);
+        if (sideStages.isEmpty()) {
+            throw new IllegalStateException("Radial pyro did not cut a side booster");
+        }
+        Map<String, List<VesselBlockOccupant>> sideOccupants = new LinkedHashMap<>();
+        List<VesselBlockOccupant> core = new ArrayList<>();
+        for (VesselBlockOccupant occupant : flying) {
+            String stage = stageByPos.get(occupant.pos());
+            if (sideStages.contains(stage)) {
+                sideOccupants.computeIfAbsent(stage, ignored -> new ArrayList<>()).add(occupant);
+            } else {
+                core.add(occupant);
+            }
+        }
+        if (core.isEmpty()) {
+            throw new IllegalStateException("Radial pyro left no core");
+        }
+        List<VesselBlockGrid> sides = new ArrayList<>();
+        for (List<VesselBlockOccupant> occupants : sideOccupants.values()) {
+            sides.add(new VesselBlockGrid(occupants));
+        }
+        return new RadialSplit(new VesselBlockGrid(core), sides);
+    }
+
+    private static List<VesselDiagnostic> padDiagnostics(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            return List.of();
+        }
+        boolean pad = false;
+        boolean engine = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.PAD) {
+                pad = true;
+            }
+            if (occupant.spec().kind() == VesselPartKind.ENGINE) {
+                engine = true;
+            }
+        }
+        if (pad) {
+            return List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.INFO,
+                    "ON_PAD",
+                    "Стол с зажимами: земля остаётся, ракета уходит только при T/W > 1"));
+        }
+        if (engine) {
+            return List.of(new VesselDiagnostic(
+                    VesselDiagnostic.Severity.WARNING,
+                    "NOT_ON_PAD",
+                    "Нет стартового стола AP: зажимы и огневой колодец — не ChemMod"));
+        }
+        return List.of();
+    }
+
+    private static List<VesselDiagnostic> transporterDiagnostics(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            return List.of();
+        }
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.MOUNT) {
+                return List.of(new VesselDiagnostic(
+                        VesselDiagnostic.Severity.ERROR,
+                        "ON_TRANSPORTER",
+                        "Пакет на креплении поезда: старт запрещён, пока крепление не снято"));
+            }
+        }
+        return List.of();
+    }
+
+    public static VesselBlueprint compile(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            return new VesselBlueprint(List.of(), List.of());
+        }
+        List<VesselBlockOccupant> flying = new ArrayList<>();
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() != VesselPartKind.PAD) {
+                flying.add(occupant);
+            }
+        }
+        if (flying.isEmpty()) {
+            return new VesselBlueprint(List.of(), List.of());
+        }
+        grid = new VesselBlockGrid(flying);
+        GridPos origin = grid.origin();
+        Map<GridPos, List<VesselBlockOccupant>> byPos = index(grid.occupants());
+        Map<GridPos, String> stageByPos = assignStages(grid.occupants(), byPos);
+        List<VesselComponent> components = new ArrayList<>();
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            components.add(toComponent(
+                    occupant,
+                    stageByPos.get(occupant.pos()),
+                    occupant.pos().occupancyCentroidMeters(origin, occupant.spec().occupancy())));
+        }
+        List<VesselConnection> connections = new ArrayList<>(buildConnections(byPos));
+        attachIntegralFeed(components, connections);
+        return new VesselBlueprint(components, connections, radialSideStages(grid.occupants(), stageByPos));
+    }
+
+    /**
+     * 1 m engine segment carries its own common-bulkhead load until ChemMod publishes
+     * tank feed (v1.0.0 ADR-0004). Not an AP tank block. A real tank on the stage wins.
+     */
+    private static void attachIntegralFeed(
+            List<VesselComponent> components, List<VesselConnection> connections) {
+        Map<String, List<VesselComponent>> byStage = new LinkedHashMap<>();
+        for (VesselComponent component : components) {
+            byStage.computeIfAbsent(component.stageId(), ignored -> new ArrayList<>()).add(component);
+        }
+        List<VesselComponent> extra = new ArrayList<>();
+        for (Map.Entry<String, List<VesselComponent>> entry : byStage.entrySet()) {
+            List<VesselComponent> stage = entry.getValue();
+            boolean hasTank = false;
+            List<VesselComponent> burners = new ArrayList<>();
+            for (VesselComponent component : stage) {
+                if (component.kind() == VesselComponent.ComponentKind.TANK) {
+                    hasTank = true;
+                }
+                if (component.kind() == VesselComponent.ComponentKind.ENGINE
+                        || component.kind() == VesselComponent.ComponentKind.RCS) {
+                    burners.add(component);
+                }
+            }
+            if (hasTank || burners.isEmpty()) {
+                continue;
+            }
+            VesselComponent sample = burners.get(0);
+            String tankId = "integral-feed@" + entry.getKey();
+            extra.add(VesselComponent.tank(tankId, entry.getKey(), integralTank(tankId, sample.engine())));
+            for (VesselComponent burner : burners) {
+                connections.add(new VesselConnection(
+                        burner.id(), tankId, VesselConnection.ConnectionKind.FUEL));
+                connections.add(new VesselConnection(
+                        burner.id(), tankId, VesselConnection.ConnectionKind.OXIDIZER));
+            }
+        }
+        components.addAll(extra);
+    }
+
+    private static TankState integralTank(String id, EngineState engine) {
+        Vector3d at = engine.localPositionMeters();
+        if (PropellantIds.hydrogenFuel(engine.fuelId())) {
+            double fuelKg = 55.0;
+            double oxKg = fuelKg * VesselPartCatalog.HYDROLOX_MIXTURE;
+            return new TankState(
+                    id, 45.0, 500.0,
+                    new PropellantState(engine.fuelId(), engine.oxidizerId(), fuelKg, oxKg),
+                    at);
+        }
+        double fuelKg = 200.0;
+        double oxKg = fuelKg * VesselPartCatalog.KEROLX_MIXTURE;
+        return new TankState(
+                id, 80.0, 1_000.0,
+                new PropellantState(engine.fuelId(), engine.oxidizerId(), fuelKg, oxKg),
+                at);
+    }
+
+    private static List<VesselDiagnostic> integralFeedDiagnostics(VesselBlockGrid grid) {
+        if (grid == null || grid.isEmpty()) {
+            return List.of();
+        }
+        boolean tank = false;
+        boolean burner = false;
+        for (VesselBlockOccupant occupant : grid.occupants()) {
+            if (occupant.spec().kind() == VesselPartKind.TANK) {
+                tank = true;
+            }
+            if (occupant.spec().kind() == VesselPartKind.ENGINE
+                    || occupant.spec().kind() == VesselPartKind.RCS) {
+                burner = true;
+            }
+        }
+        if (!burner || tank) {
+            return List.of();
+        }
+        return List.of(new VesselDiagnostic(
+                VesselDiagnostic.Severity.INFO,
+                "INTEGRAL_FEED",
+                "1 м двигатель несёт свою заправку, пока ChemMod не отдаёт содержимое бака"));
+    }
+
+    /** Islands hanging off a horizontal pyro ring become strap-on stages. */
+    private static Set<String> radialSideStages(
+            List<VesselBlockOccupant> flying, Map<GridPos, String> stageByPos) {
+        LinkedHashSet<String> sideStages = new LinkedHashSet<>();
+        for (VesselBlockOccupant occupant : flying) {
+            if (occupant.spec().kind() != VesselPartKind.SEPARATOR || !occupant.facing().horizontal()) {
+                continue;
+            }
+            String ringStage = stageByPos.get(occupant.pos());
+            String sideStage = stageByPos.get(occupant.pos().offset(occupant.facing()));
+            if (sideStage != null && ringStage != null && !sideStage.equals(ringStage)) {
+                sideStages.add(sideStage);
+            }
+        }
+        return sideStages;
+    }
+
+    private static Map<GridPos, List<VesselBlockOccupant>> index(List<VesselBlockOccupant> occupants) {
+        Map<GridPos, List<VesselBlockOccupant>> byPos = new LinkedHashMap<>();
+        for (VesselBlockOccupant occupant : occupants) {
+            byPos.computeIfAbsent(occupant.pos(), ignored -> new ArrayList<>()).add(occupant);
+        }
+        return byPos;
+    }
+
+    private static Map<GridPos, String> assignStages(
+            List<VesselBlockOccupant> occupants, Map<GridPos, List<VesselBlockOccupant>> byPos) {
+        Set<GridPos> visited = new HashSet<>();
+        List<List<GridPos>> islands = new ArrayList<>();
+        for (VesselBlockOccupant occupant : occupants) {
+            if (!visited.add(occupant.pos())) {
+                continue;
+            }
+            List<GridPos> island = new ArrayList<>();
+            ArrayDeque<GridPos> pending = new ArrayDeque<>();
+            pending.add(occupant.pos());
+            while (!pending.isEmpty()) {
+                GridPos current = pending.remove();
+                island.add(current);
+                List<VesselBlockOccupant> here = byPos.get(current);
+                for (BlockFace face : BlockFace.values()) {
+                    GridPos neighbourPos = current.offset(face);
+                    List<VesselBlockOccupant> neighbours = byPos.get(neighbourPos);
+                    if (neighbours == null || visited.contains(neighbourPos)) {
+                        continue;
+                    }
+                    if (structurallyLinked(here, neighbours, face)) {
+                        visited.add(neighbourPos);
+                        pending.add(neighbourPos);
+                    }
+                }
+            }
+            island.sort(Comparator.naturalOrder());
+            islands.add(island);
+        }
+        islands.sort(Comparator.comparing(island -> island.get(0)));
+        Map<GridPos, String> stageByPos = new HashMap<>();
+        for (int index = 0; index < islands.size(); index++) {
+            String stageId = "stage-" + index;
+            for (GridPos pos : islands.get(index)) {
+                stageByPos.put(pos, stageId);
+            }
+        }
+        return stageByPos;
+    }
+
+    private static List<VesselConnection> buildConnections(Map<GridPos, List<VesselBlockOccupant>> byPos) {
+        List<VesselConnection> connections = new ArrayList<>();
+        for (Map.Entry<GridPos, List<VesselBlockOccupant>> entry : byPos.entrySet()) {
+            List<VesselBlockOccupant> cell = entry.getValue();
+            for (int i = 0; i < cell.size(); i++) {
+                for (int j = i + 1; j < cell.size(); j++) {
+                    if (!cell.get(i).spec().occupancy().intersects(cell.get(j).spec().occupancy())) {
+                        connections.add(new VesselConnection(
+                                cell.get(i).componentId(),
+                                cell.get(j).componentId(),
+                                VesselConnection.ConnectionKind.STRUCTURAL));
+                    }
+                }
+            }
+            for (VesselBlockOccupant occupant : cell) {
+                for (BlockFace face : BlockFace.values()) {
+                    GridPos neighbourPos = occupant.pos().offset(face);
+                    if (occupant.pos().compareTo(neighbourPos) >= 0) {
+                        continue;
+                    }
+                    List<VesselBlockOccupant> neighbours = byPos.get(neighbourPos);
+                    if (neighbours == null) {
+                        continue;
+                    }
+                    for (VesselBlockOccupant neighbour : neighbours) {
+                        for (VesselConnection.ConnectionKind kind : sharedKinds(occupant, neighbour, face)) {
+                            connections.add(new VesselConnection(
+                                    occupant.componentId(), neighbour.componentId(), kind));
+                        }
+                    }
+                }
+            }
+        }
+        return connections;
+    }
+
+    private static boolean structurallyLinked(
+            List<VesselBlockOccupant> here, List<VesselBlockOccupant> neighbours, BlockFace face) {
+        for (VesselBlockOccupant from : here) {
+            for (VesselBlockOccupant to : neighbours) {
+                if (shares(from, to, face, VesselConnection.ConnectionKind.STRUCTURAL)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static Set<VesselConnection.ConnectionKind> sharedKinds(
+            VesselBlockOccupant from, VesselBlockOccupant to, BlockFace face) {
+        Set<VesselConnection.ConnectionKind> shared = EnumSet.noneOf(VesselConnection.ConnectionKind.class);
+        Set<VesselConnection.ConnectionKind> outgoing = from.spec().ports(face, from.facing());
+        Set<VesselConnection.ConnectionKind> incoming = to.spec().ports(face.opposite(), to.facing());
+        for (VesselConnection.ConnectionKind kind : outgoing) {
+            if (incoming.contains(kind)) {
+                shared.add(kind);
+            }
+        }
+        return shared;
+    }
+
+    private static boolean shares(
+            VesselBlockOccupant from, VesselBlockOccupant to, BlockFace face,
+            VesselConnection.ConnectionKind kind) {
+        return from.spec().ports(face, from.facing()).contains(kind)
+                && to.spec().ports(face.opposite(), to.facing()).contains(kind);
+    }
+
+    private static VesselComponent toComponent(VesselBlockOccupant occupant, String stageId, Vector3d position) {
+        String id = occupant.componentId();
+        VesselPartSpec spec = occupant.spec();
+        return switch (spec.kind()) {
+            case PAD -> throw new IllegalArgumentException("Launch pad is ground infrastructure, not a flying part");
+            case STRUCTURE, SEPARATOR, MOUNT -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.STRUCTURE, spec.massKg(), position);
+            case FAIRING -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.FAIRING, spec.massKg(), position);
+            case PAYLOAD -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.PAYLOAD, spec.massKg(), position);
+            case HABITAT -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.HABITAT, spec.massKg(), position);
+            case SOLAR -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.SOLAR, spec.massKg(), position);
+            case GYRO -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.GYRO, spec.massKg(), position);
+            case DOCKING -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.DOCKING, spec.massKg(), position);
+            case BATTERY -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.BATTERY, spec.massKg(), position);
+            case RADIATOR -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.RADIATOR, spec.massKg(), position);
+            case ANTENNA -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.ANTENNA, spec.massKg(), position);
+            case LAB -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.LAB, spec.massKg(), position);
+            case OXYGEN -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.OXYGEN, spec.massKg(), position);
+            case TRANSPONDER -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.TRANSPONDER, spec.massKg(), position);
+            case TELESCOPE -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.TELESCOPE, spec.massKg(), position);
+            case CONTROLLER -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.CONTROLLER, spec.massKg(), position);
+            case LEGS -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.LEGS, spec.massKg(), position);
+            case TANK -> VesselComponent.tank(id, stageId, new TankState(
+                    id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
+            case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(
+                    id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 8.0, true, position,
+                    occupant.facing().opposite().vector(), false,
+                    EngineState.defaultSeaLevelIsp(spec.fuelId(), spec.specificImpulseSeconds())));
+            case RCS -> VesselComponent.rcs(id, stageId, new EngineState(
+                    id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 0.0, true, position,
+                    occupant.facing().opposite().vector(), true,
+                    EngineState.defaultSeaLevelIsp(spec.fuelId(), spec.specificImpulseSeconds())));
+        };
+    }
+}

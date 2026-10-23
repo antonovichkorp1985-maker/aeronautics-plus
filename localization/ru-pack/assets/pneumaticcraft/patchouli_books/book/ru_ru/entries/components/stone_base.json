@@ -1,0 +1,17 @@
+{
+  "name": "Каменная база",
+  "icon": "pneumaticcraft:stone_base",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это крафтовый компонент для других устройств. Само по себе это бесполезно."
+    },
+    {
+      "type": "crafting",
+      "text": "Создание каменной базы",
+      "recipe": "pneumaticcraft:stone_base"
+    }
+  ]
+}

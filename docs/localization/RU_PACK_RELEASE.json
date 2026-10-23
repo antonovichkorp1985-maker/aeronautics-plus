@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "product": "Aeronautics Plus RU Pack",
+  "channel": "test",
+  "version": "0.27-test",
+  "file_name": "AeronauticsPlus-RU-Pack-v0.27-test.zip",
+  "drive_file_id": "1KDRludBemvY_OaqazCqjueF03wQ3_sJC",
+  "download_url": "https://drive.google.com/uc?export=download&id=1KDRludBemvY_OaqazCqjueF03wQ3_sJC",
+  "web_view_url": "https://drive.google.com/file/d/1KDRludBemvY_OaqazCqjueF03wQ3_sJC/view?usp=drivesdk",
+  "sha256": "179fd76f6c4600cbb577e6919c396f74cf44d8317142857eb520e12cab9e2d46",
+  "size_bytes": 1412521,
+  "built_files": 681,
+  "ru_ru_entries": 42772,
+  "exact_audit": {
+    "create_addon_batch_keys": 1755,
+    "create_addon_batch_missing": 0,
+    "create_addon_batch_placeholder_mismatches": 0
+  },
+  "storage_policy": "The ZIP is stored on Google Drive; this repository contains metadata only.",
+  "updated_at": "2026-10-06"
+}

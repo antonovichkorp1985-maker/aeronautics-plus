@@ -1,0 +1,17 @@
+{
+  "name": "Показать полку",
+  "icon": "pneumaticcraft:display_shelf",
+  "category": "pneumaticcraft:machines",
+  "advancement": "pneumaticcraft:root",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Дисплей Shelf/$ функционирует точно так же, как и его старший брат.$(l:machines/display_table)Дисплейный стол/$, но имеет половину высоты. Кроме того, он не будет отдавать свои ноги, если блок под ним не имеет твердого верхнего лица."
+    },
+    {
+      "type": "crafting",
+      "text": "Создавая дисплей полка",
+      "recipe": "pneumaticcraft:display_shelf"
+    }
+  ]
+}

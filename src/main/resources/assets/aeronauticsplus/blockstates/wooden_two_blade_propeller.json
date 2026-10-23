@@ -1,49 +1,49 @@
 {
   "variants": {
     "facing=north,reversed=true": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller"
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static"
     },
     "facing=north,reversed=false": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller"
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static"
     },
     "facing=south,reversed=true": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "y": 180
     },
     "facing=south,reversed=false": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "y": 180
     },
     "facing=west,reversed=true": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "y": 270
     },
     "facing=west,reversed=false": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "y": 270
     },
     "facing=east,reversed=true": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "y": 90
     },
     "facing=east,reversed=false": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "y": 90
     },
     "facing=down,reversed=true": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "x": 90
     },
     "facing=down,reversed=false": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "x": 90
     },
     "facing=up,reversed=true": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "x": -90
     },
     "facing=up,reversed=false": {
-      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller",
+      "model": "aeronauticsplus:block/propellers/wooden_two_blade_propeller_static",
       "x": -90
     }
   }

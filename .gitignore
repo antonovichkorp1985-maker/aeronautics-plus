@@ -6,3 +6,9 @@ out/
 *.iml
 .vscode/
 libs/
+__pycache__/
+*.py[cod]
+google_drive/
+localization/releases/*.zip
+
+.audit/

@@ -1,0 +1,30 @@
+{
+  "name": "Модуль Thermostat",
+  "icon": "pneumaticcraft:thermostat_module",
+  "category": "pneumaticcraft:tubes",
+  "advancement": "pneumaticcraft:pressure_tube",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Этот модуль трубки измеряет температуру блока, с которым он сталкивается, и обеспечивает сигнал красного камня на сконфигурированном канале (использовать$(l:tubes/redstone_module)Модуль Redstone/$ в выходном режиме для испускания сигнала), если температура выше заданного порога."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:module_expansion_card",
+      "text": "Применять а$(l:tubes/module_expansion_card)Модуль расширения / $ в Thermostat Module разблокирует расширенный графический интерфейс, чтобы обеспечить гораздо больший контроль над$(#f00)Сигнал красного камня/$ эмиссия. По умолчанию можно обеспечить пороговый уровень: сигнал будет выключен ниже этого уровня и полностью над ним (или наоборот). Если вы выберете$(bold)Расширенный переключатель Config/$ в графическом интерфейсе, вы получаете еще больший контроль (см. выше)."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/patchouli/thermostat_gui.png"
+      ],
+      "text": "$(italic)<0°C = 0 redstone, >1000°C = 15 красных камней, 0-1000°C = интерполат (например, 200°C = 3 красных камня)/$",
+      "anchor": "img"
+    },
+    {
+      "type": "crafting",
+      "text": "Создание термостата модуль",
+      "recipe": "pneumaticcraft:thermostat_module"
+    }
+  ]
+}

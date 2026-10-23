@@ -1,0 +1,19 @@
+{
+  "name": "Условие: Элементы Виджет",
+  "icon": "pneumaticcraft:textures/progwidgets/condition_item_inventory_piece.png",
+  "category": "pneumaticcraft:widget_cond",
+  "advancement": "pneumaticcraft:programmer",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Это а$(l:programming/conditions)Состояние/$ виджет.$(p)The$(thing)Условие: виджет / $ проверяет инвентарь для определенного количества предметов. Он будет подсчитывать все соответствующие элементы (указанные подключенным устройством).$(l:programming/item_filter)Filter/$; опустить фильтр для подсчета каждого элемента."
+    },
+    {
+      "type": "image",
+      "images": [
+        "pneumaticcraft:textures/progwidgets/condition_item_inventory_piece.png"
+      ],
+      "text": "$(italic)Условие: Предметы Виджет/$"
+    }
+  ]
+}

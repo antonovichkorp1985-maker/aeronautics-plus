@@ -1,0 +1,16 @@
+{
+  "name": "Сущность памяти",
+  "icon": "pneumaticcraft:memory_essence_bucket",
+  "category": "pneumaticcraft:base_concepts",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(item)Memory Essence/$ - это жидкость, которая представляет воспоминания и переживания игрока в жидкой форме. Он может быть извлечен и сохранен для последующего использования, либо для ванильного очаровывания, либо для определенных целей.$(pncr)Процессы крафта.$(p)Есть два способа получить$(item)Эссенция памяти/$:$(li)1. С ним$(l:tools/memory_stick)Стойка памяти / $$(li)2. С одним$(l:machines/aerial_interface)Воздушный интерфейс/$."
+    },
+    {
+      "type": "spotlight",
+      "item": "pneumaticcraft:memory_essence_bucket",
+      "text": "$(italic)Вы опытный/$"
+    }
+  ]
+}

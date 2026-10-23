@@ -1,0 +1,17 @@
+{
+  "name": "Механические сельские жители",
+  "icon": "minecraft:emerald",
+  "category": "pneumaticcraft:base_concepts",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Вы слышали сообщения о$(thing)Деревенский / $, который имеет некоторые интересные$(pncr)компонентов. Судя по всему, он попал в аварию с$(l:manufacturing/pressure_chamber)Камера давления/$? Как бы то ни было, в эти дни он предпочитает тусоваться в собственном доме, который можно найти в деревнях. Если этого не сделать, а$(l:machines/charging_station)Зарядная станция / $ может оказаться заманчивой для безработных сельских жителей."
+    },
+    {
+      "type": "entity",
+      "name": "механический",
+      "entity": "minecraft:villager{VillagerData:{profession:'pneumaticcraft:mechanic'}}",
+      "text": "$(italic)Не поклонник$(l:tools/amadron_tablet)Amadron/$."
+    }
+  ]
+}

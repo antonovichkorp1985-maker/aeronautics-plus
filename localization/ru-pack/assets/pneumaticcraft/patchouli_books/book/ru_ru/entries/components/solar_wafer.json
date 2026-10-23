@@ -1,0 +1,16 @@
+{
+  "name": "Солнечная волна",
+  "icon": "pneumaticcraft:solar_wafer",
+  "category": "pneumaticcraft:components",
+  "advancement": "pneumaticcraft:assembly_controller",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The$(item)Solar Wafer/$ является промежуточным крафтовым компонентом$(l:components/solar_cell)Солнечная батарея/$."
+    },
+    {
+      "type": "pneumaticcraft:pressure_chamber",
+      "recipe": "pneumaticcraft:pressure_chamber/solar_wafer"
+    }
+  ]
+}
