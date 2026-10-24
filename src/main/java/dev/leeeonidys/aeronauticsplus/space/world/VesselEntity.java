@@ -4,8 +4,16 @@ import dev.leeeonidys.aeronauticsplus.compat.ChemAtmosphereHooks;
 import dev.leeeonidys.aeronauticsplus.space.compile.BlockFace;
 import dev.leeeonidys.aeronauticsplus.space.compile.DockCapture;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockCompiler;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockGrid;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
+import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartKind;
+import dev.leeeonidys.aeronauticsplus.space.core.PartImpact;
+import dev.leeeonidys.aeronauticsplus.space.core.VesselState;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.AABB;
 import dev.leeeonidys.aeronauticsplus.space.core.Aerodynamics;
@@ -77,11 +85,20 @@ public final class VesselEntity extends Entity {
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<String> DAMAGED_PARTS =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.STRING);
+    /** Surviving pile no longer compiles as a ship: it drifts, it cannot thrust or steer. */
+    private static final EntityDataAccessor<Boolean> WRECK =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.BOOLEAN);
 
     private static final double STEP_SECONDS = 0.05;
+    /** One rock contact per 0.2 s, so a graze does not grind the ship to dust in one tick. */
+    private static final int IMPACT_COOLDOWN_TICKS = 4;
 
     private FlightLoop loop;
     private Player pendingRemount;
+    private int impactCooldown;
+    private Vec3 lastWorldPosition = Vec3.ZERO;
+    /** World-space velocity against a static rock, metres per second. */
+    private Vec3 worldVelocity = Vec3.ZERO;
 
     public VesselEntity(EntityType<? extends VesselEntity> type, Level level) {
         super(type, level);
@@ -109,8 +126,38 @@ public final class VesselEntity extends Entity {
         entityData.set(PARTS, FlightCodec.encodeFlying(loop));
         entityData.set(HULL_INTEGRITY, 1.0f);
         entityData.set(DAMAGED_PARTS, "");
+        entityData.set(WRECK, false);
+        impactCooldown = 0;
+        lastWorldPosition = new Vec3(getX(), getY(), getZ());
+        worldVelocity = Vec3.ZERO;
         syncHud();
         syncPosition();
+        lastWorldPosition = new Vec3(getX(), getY(), getZ());
+    }
+
+    /** True when the previous contact has cooled down enough to take another. */
+    public boolean asteroidImpactReady() {
+        return impactCooldown <= 0;
+    }
+
+    /**
+     * Velocity of the ship relative to a stationary rock, in metres per second.
+     * The vessel moves by teleporting with its altitude, so {@code getDeltaMovement()}
+     * stays zero — the position delta across a tick is the real relative motion.
+     */
+    public Vec3 worldVelocityMetersPerSecond() {
+        return worldVelocity;
+    }
+
+    private void sampleWorldVelocity() {
+        Vec3 now = new Vec3(getX(), getY(), getZ());
+        Vec3 delta = now.subtract(lastWorldPosition).scale(20.0);
+        lastWorldPosition = now;
+        // Teleports are not impacts: clamp a single-tick jump to 200 m/s.
+        worldVelocity = new Vec3(
+                Math.max(-200.0, Math.min(200.0, delta.x)),
+                Math.max(-200.0, Math.min(200.0, delta.y)),
+                Math.max(-200.0, Math.min(200.0, delta.z)));
     }
 
     public String partsPayload() {
@@ -179,6 +226,9 @@ public final class VesselEntity extends Entity {
         if (loop == null) {
             return "Нет полёта.";
         }
+        if (isWreck()) {
+            return "Судно неуправляемо: тяги нет.";
+        }
         loop = loop.withVessel(loop.vessel().withLiveThrottle(throttle));
         entityData.set(PARTS, FlightCodec.encodeFlying(loop));
         syncHud();
@@ -189,6 +239,9 @@ public final class VesselEntity extends Entity {
         if (loop == null) {
             return "Нет полёта.";
         }
+        if (isWreck()) {
+            return "Судно неуправляемо: тяги нет.";
+        }
         loop = loop.withVessel(loop.vessel().nudgeLiveThrottle(delta));
         entityData.set(PARTS, FlightCodec.encodeFlying(loop));
         syncHud();
@@ -198,6 +251,9 @@ public final class VesselEntity extends Entity {
     public String commandRcs() {
         if (loop == null) {
             return "Нет полёта.";
+        }
+        if (isWreck()) {
+            return "Судно неуправляемо: РКО мертвы.";
         }
         try {
             loop = loop.fireRcs(0.2);
@@ -334,6 +390,10 @@ public final class VesselEntity extends Entity {
     @Override
     public void tick() {
         super.tick();
+        if (impactCooldown > 0) {
+            impactCooldown--;
+        }
+        sampleWorldVelocity();
         if (level().isClientSide || loop == null) {
             return;
         }
@@ -546,78 +606,254 @@ public final class VesselEntity extends Entity {
     }
 
     /**
-     * Asteroid-hull damage: not instant death. Parts fail in order — solar, battery,
-     * antenna, habitat (depressurisation placeholder), tank, engine, controller.
-     * When integrity reaches 0 or the controller breaks, the vessel is discarded.
-     * No ChemMod gas import yet; depressurisation is text until ChemMod publishes gas.
+     * Local asteroid damage. The cell that touched the rock takes the hit, scaled by the
+     * closing speed along that face and by the part's own toughness: a wing edge shears
+     * at walking pace, a structural cell only dents. Hull integrity is the fraction of the
+     * ship's mass still attached, so losing the seat or the last engine ends the vessel
+     * the same way it would in reality — it stops being a ship.
+     *
+     * <p>No ChemMod gas import: a pressure breach is reported as a stub until ChemMod
+     * publishes tank contents.
      */
-    public void applyAsteroidDamage(double impactSpeedMetersPerSecond) {
-        if (loop == null || level() == null || level().isClientSide) {
+    public void applyAsteroidImpact(ImpactContact contact) {
+        if (loop == null || level() == null || level().isClientSide || impactCooldown > 0) {
             return;
         }
-        double damage = Math.min(1.0, impactSpeedMetersPerSecond / 500.0);
-        if (!(damage > 0.0)) {
+        // Above 20 km the world entity is a placeholder for the map: there is no rock to hit.
+        if (!WorldHandoff.inWorld(loop.vessel().orbit())) {
             return;
         }
-        float integrity = entityData.get(HULL_INTEGRITY) - (float) damage;
-        if (integrity < 0.0f) {
-            integrity = 0.0f;
+        impactCooldown = IMPACT_COOLDOWN_TICKS;
+        double load = contact.load();
+        if (!(load > 0.0)) {
+            return;
         }
+        Map<String, Double> ledger = decodeDamage(entityData.get(DAMAGED_PARTS));
+        String key = contact.cellKey();
+        double total = ledger.getOrDefault(key, 0.0) + load;
+        if (total < 1.0) {
+            ledger.put(key, Math.min(total, 0.999));
+            entityData.set(DAMAGED_PARTS, encodeDamage(ledger));
+            if (PartImpact.penetration(load)) {
+                tellPilot("Удар: " + partName(contact.kind()) + " — трещина "
+                        + percent(total) + ", целостность " + percent(entityData.get(HULL_INTEGRITY)) + ".");
+            }
+            return;
+        }
+        destroyCell(contact, ledger);
+    }
+
+    private void destroyCell(ImpactContact contact, Map<String, Double> ledger) {
+        double shipMass = 0.0;
+        for (VesselBlockOccupant occupant : loop.flying().occupants()) {
+            shipMass += occupant.spec().massKg();
+        }
+        double cellMass;
+        try {
+            cellMass = VesselPartCatalog.byId(contact.partId()).massKg();
+        } catch (RuntimeException unknownPart) {
+            cellMass = 0.0;
+        }
+        String payload = dropCell(entityData.get(PARTS), contact);
+        ledger.remove(contact.cellKey());
+        entityData.set(DAMAGED_PARTS, encodeDamage(ledger));
+        if (payload.isBlank() || !rebuildFromPayload(payload)) {
+            totalLoss(contact);
+            return;
+        }
+        double share = shipMass > 0.0 ? Math.min(1.0, cellMass / shipMass) : 0.05;
+        float integrity = (float) Math.max(0.0f, entityData.get(HULL_INTEGRITY) * (1.0 - share));
         entityData.set(HULL_INTEGRITY, integrity);
-
-        String current = entityData.get(DAMAGED_PARTS);
-        String next = pickPartToDamage(current);
-        if (!next.isBlank()) {
-            String updated = current.isBlank() ? next : current + "," + next;
-            entityData.set(DAMAGED_PARTS, updated);
+        tellPilot("Разрушено: " + partName(contact.kind()) + " — " + consequenceText(contact.consequence())
+                + ". Целостность " + percent(integrity) + ".");
+        if (contact.consequence() == PartImpact.Consequence.PRESSURE) {
+            Player seated = pilot();
+            if (seated != null) {
+                seated.hurt(level().damageSources().generic(), 2.0f);
+            }
         }
+        if (integrity <= 0.0f) {
+            totalLoss(contact);
+        }
+    }
 
+    /**
+     * Rebuild the ship from the surviving payload. If what is left no longer compiles as a
+     * vessel (no seat, no engine, no fuel path) it does not disappear — it becomes a hulk
+     * that drifts with zero thrust, and the crew can still be recovered. Only an empty
+     * payload is a total loss.
+     */
+    private boolean rebuildFromPayload(String payload) {
+        GridPos pad = new GridPos(padPos().getX(), padPos().getY(), padPos().getZ());
+        VesselBlockGrid flying = FlightCodec.flyingGrid(payload, pad);
+        if (flying.isEmpty()) {
+            return false;
+        }
+        VesselState state;
+        boolean flyable;
+        try {
+            state = VesselBlockCompiler.analyze(flying)
+                    .toVesselState("flight", loop.vessel().orbit())
+                    .withAttitude(loop.vessel().attitude())
+                    .withLiveThrottle(loop.vessel().liveThrottle());
+            flyable = true;
+        } catch (RuntimeException noLongerAShip) {
+            state = loop.vessel().withLiveThrottle(0.0);
+            flyable = false;
+        }
+        List<VesselBlockOccupant> stacked = new ArrayList<>();
+        stacked.add(new VesselBlockOccupant(pad, VesselPartCatalog.PAD, BlockFace.UP));
+        stacked.addAll(flying.occupants());
+        loop = new FlightLoop(
+                loop.presence(),
+                new VesselBlockGrid(stacked),
+                loop.padLeft(),
+                flying,
+                state,
+                loop.recovery());
+        entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+        entityData.set(WRECK, !flyable);
+        if (!flyable) {
+            tellPilot("Остатки корпуса больше не корабль: тяги и управления нет. Экипаж можно снять.");
+        }
+        syncHud();
+        return true;
+    }
+
+    /** True when the surviving pile can no longer thrust or steer. */
+    public boolean isWreck() {
+        return entityData.get(WRECK);
+    }
+
+    private void totalLoss(ImpactContact contact) {
+        entityData.set(HULL_INTEGRITY, 0.0f);
+        tellPilot("Судно разрушено: " + partName(contact.kind()) + " — "
+                + consequenceText(contact.consequence()) + ".");
+        for (Entity passenger : new ArrayList<>(getPassengers())) {
+            if (passenger instanceof Player player) {
+                player.hurt(level().damageSources().generic(), 1_000.0f);
+            }
+        }
+        ejectPassengers();
+        discard();
+    }
+
+    private static String dropCell(String payload, ImpactContact contact) {
+        if (payload == null || payload.isBlank()) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (String token : payload.split(";")) {
+            String[] bits = token.split(",");
+            if (bits.length != 5) {
+                continue;
+            }
+            try {
+                boolean same = Integer.parseInt(bits[1]) == contact.cellX()
+                        && Integer.parseInt(bits[2]) == contact.cellY()
+                        && Integer.parseInt(bits[3]) == contact.cellZ();
+                if (same) {
+                    continue;
+                }
+            } catch (NumberFormatException corruptCell) {
+                // keep an unreadable token rather than silently deleting a part
+            }
+            if (!builder.isEmpty()) {
+                builder.append(';');
+            }
+            builder.append(token);
+        }
+        return builder.toString();
+    }
+
+    private static Map<String, Double> decodeDamage(String payload) {
+        Map<String, Double> ledger = new java.util.HashMap<>();
+        if (payload == null || payload.isBlank()) {
+            return ledger;
+        }
+        for (String token : payload.split(";")) {
+            int equals = token.indexOf('=');
+            if (equals <= 0) {
+                continue;
+            }
+            try {
+                ledger.put(token.substring(0, equals), Double.parseDouble(token.substring(equals + 1)));
+            } catch (NumberFormatException ignored) {
+                // drop a corrupt ledger entry
+            }
+        }
+        return ledger;
+    }
+
+    private static String encodeDamage(Map<String, Double> ledger) {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, Double> entry : ledger.entrySet()) {
+            if (builder.length() > 900) {
+                break;
+            }
+            if (!builder.isEmpty()) {
+                builder.append(';');
+            }
+            builder.append(entry.getKey()).append('=')
+                    .append(String.format(java.util.Locale.ROOT, "%.3f", entry.getValue()));
+        }
+        return builder.toString();
+    }
+
+    private void tellPilot(String text) {
         Player seated = pilot();
         if (seated != null) {
-            seated.displayClientMessage(
-                    net.minecraft.network.chat.Component.literal(
-                            "Пробой корпуса. Целостность " + String.format(java.util.Locale.ROOT, "%.0f%%", integrity * 100.0)
-                                    + (next.isBlank() ? "" : ". Поражение: " + partDamageLabel(next))),
-                    false);
-        }
-
-        if (integrity <= 0.0f || "controller".equals(next)) {
-            discard();
+            seated.displayClientMessage(Component.literal(text), false);
         }
     }
 
-    private String pickPartToDamage(String alreadyDamaged) {
-        java.util.Set<String> done = new java.util.HashSet<>();
-        if (!alreadyDamaged.isBlank()) {
-            for (String id : alreadyDamaged.split(",")) {
-                done.add(id.trim());
-            }
-        }
-        String[] priority = {
-                "solar_panel", "battery_pack", "omni_antenna", "high_gain_antenna",
-                "crew_habitat", "cabin_oxygen", "rocket_fuel_tank", "rocket_oxidizer_tank",
-                "lh2_tank", "rocket_engine", "hydrolox_engine", "rocket_controller"};
-        java.util.Random rnd = new java.util.Random();
-        for (int attempt = 0; attempt < priority.length * 3; attempt++) {
-            String id = priority[rnd.nextInt(priority.length)];
-            if (!done.contains(id)) {
-                return id;
-            }
-        }
-        return "";
+    private static String percent(double fraction) {
+        return String.format(java.util.Locale.ROOT, "%.0f%%", Math.max(0.0, Math.min(1.0, fraction)) * 100.0);
     }
 
-    private String partDamageLabel(String partId) {
-        return switch (partId) {
-            case "solar_panel" -> "солнечные панели сломаны";
-            case "battery_pack" -> "аккумуляторный отсек повреждён";
-            case "omni_antenna", "high_gain_antenna" -> "антенна неисправна";
-            case "crew_habitat" -> "разгерметизация бытового отсека — воздух уходит (заглушка, без ChemMod)";
-            case "cabin_oxygen" -> "кислородный отсек вскрыт — разгерметизация";
-            case "rocket_fuel_tank", "rocket_oxidizer_tank", "lh2_tank" -> "разрыв топливного бака";
-            case "rocket_engine", "hydrolox_engine" -> "двигатель выведен из строя";
-            case "rocket_controller" -> "кресло управления разбито";
-            default -> "повреждение корпуса";
+    private static String partName(VesselPartKind kind) {
+        return switch (kind) {
+            case STRUCTURE -> "силовая клетка";
+            case TANK -> "топливный бак";
+            case ENGINE -> "двигатель";
+            case SEPARATOR -> "пиро-кольцо";
+            case MOUNT -> "транспортное крепление";
+            case PAD -> "стартовый стол";
+            case FAIRING -> "обтекатель";
+            case PAYLOAD -> "полезная нагрузка";
+            case HABITAT -> "бытовой отсек";
+            case SOLAR -> "солнечная панель";
+            case GYRO -> "гиродин";
+            case RCS -> "РКО";
+            case DOCKING -> "стыковочный узел";
+            case BATTERY -> "аккумуляторный отсек";
+            case RADIATOR -> "радиатор";
+            case ANTENNA -> "антенна";
+            case LAB -> "лаборатория";
+            case OXYGEN -> "кислородный отсек";
+            case TRANSPONDER -> "транспондер";
+            case TELESCOPE -> "телескоп";
+            case CONTROLLER -> "кресло управления";
+            case LEGS -> "опоры";
+        };
+    }
+
+    private static String consequenceText(PartImpact.Consequence consequence) {
+        return switch (consequence) {
+            case STRUCTURE -> "пробита силовая клетка, корпус держит хуже";
+            case POWER -> "солнечная панель сорвана, выработки энергии нет";
+            case STORAGE -> "аккумуляторы разбиты, запас на затмение потерян";
+            case COMMS -> "антенна смята, связи нет";
+            case PRESSURE -> "разгерметизация, воздух уходит (заглушка: газ ChemMod ещё не опубликован)";
+            case PROPELLANT -> "бак разорван, топливо этого отсека потеряно";
+            case THRUST -> "двигатель выбит, тяги нет";
+            case CONTROL -> "кресло управления разрушено, управлять некому";
+            case ATTITUDE -> "контур ориентации выбит, угловая управляемость упала";
+            case THERMAL -> "радиатор пробит, тепло не сбрасывается";
+            case AERO -> "панель обтекателя сорвана, нагрузка под потоком";
+            case SENSOR -> "телескоп разбит";
+            case DOCKING -> "стыковочное кольцо деформировано";
+            case CARGO -> "полезная нагрузка повреждена";
         };
     }
 
@@ -679,6 +915,7 @@ public final class VesselEntity extends Entity {
         builder.define(HUD_BODY, "earth");
         builder.define(HULL_INTEGRITY, 1.0f);
         builder.define(DAMAGED_PARTS, "");
+        builder.define(WRECK, false);
     }
 
     @Override
@@ -695,7 +932,11 @@ public final class VesselEntity extends Entity {
         entityData.set(HUD_HOLD, hold);
         entityData.set(HULL_INTEGRITY, tag.getFloat("HullIntegrity"));
         entityData.set(DAMAGED_PARTS, tag.getString("DamagedParts"));
+        entityData.set(WRECK, tag.getBoolean("Wreck"));
         restoreLoop(tag);
+        impactCooldown = 0;
+        lastWorldPosition = new Vec3(getX(), getY(), getZ());
+        worldVelocity = Vec3.ZERO;
     }
 
     @Override
@@ -708,6 +949,7 @@ public final class VesselEntity extends Entity {
         tag.putInt("HoldMode", entityData.get(HUD_HOLD));
         tag.putFloat("HullIntegrity", entityData.get(HULL_INTEGRITY));
         tag.putString("DamagedParts", entityData.get(DAMAGED_PARTS));
+        tag.putBoolean("Wreck", entityData.get(WRECK));
         if (loop != null) {
             FlightCodec.putOrbit(tag, loop.vessel().orbit());
         }
