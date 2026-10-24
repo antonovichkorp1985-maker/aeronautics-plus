@@ -9,8 +9,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 /**
- * Asteroid belt hazard: a vessel that runs into rock is destroyed, crew takes
- * the hit. Not ChemMod, not n-body.
+ * Asteroid belt hazard: a vessel that runs into rock takes damage.
+ * Parts fail in order — solar, battery, antenna, habitat (depressurisation placeholder),
+ * tank, engine, controller. Hull integrity reaching 0 destroys the vessel.
+ * No ChemMod gas import yet; depressurisation is text until ChemMod publishes gas.
  */
 @EventBusSubscriber(modid = AeronauticsPlus.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class AsteroidCollisionEvents {
@@ -40,7 +42,9 @@ public final class AsteroidCollisionEvents {
             for (int y = minY; y <= maxY; y++) {
                 for (int z = minZ; z <= maxZ; z++) {
                     if (level.getBlockState(new BlockPos(x, y, z)).is(AeronauticsPlus.ASTEROID_ROCK)) {
-                        destroyVessel(server, entity);
+                        double impactSpeed = entity.getDeltaMovement().length();
+                        VesselEntity vessel = (VesselEntity) entity;
+                        vessel.applyAsteroidDamage(impactSpeed);
                         return;
                     }
                 }
@@ -50,9 +54,5 @@ public final class AsteroidCollisionEvents {
 
     private static boolean isVessel(Entity entity) {
         return entity.getType() == AeronauticsPlus.VESSEL.get();
-    }
-
-    private static void destroyVessel(net.minecraft.server.level.ServerLevel server, Entity vessel) {
-        vessel.discard();
     }
 }

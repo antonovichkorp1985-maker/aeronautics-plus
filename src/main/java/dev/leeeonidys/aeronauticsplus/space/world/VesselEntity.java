@@ -73,6 +73,10 @@ public final class VesselEntity extends Entity {
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<String> HUD_BODY =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Float> HULL_INTEGRITY =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<String> DAMAGED_PARTS =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.STRING);
 
     private static final double STEP_SECONDS = 0.05;
 
@@ -103,6 +107,8 @@ public final class VesselEntity extends Entity {
         entityData.set(PAD_Y, pad.y());
         entityData.set(PAD_Z, pad.z());
         entityData.set(PARTS, FlightCodec.encodeFlying(loop));
+        entityData.set(HULL_INTEGRITY, 1.0f);
+        entityData.set(DAMAGED_PARTS, "");
         syncHud();
         syncPosition();
     }
@@ -539,6 +545,82 @@ public final class VesselEntity extends Entity {
         entityData.set(HUD_BODY, orbit.centralBody().id());
     }
 
+    /**
+     * Asteroid-hull damage: not instant death. Parts fail in order — solar, battery,
+     * antenna, habitat (depressurisation placeholder), tank, engine, controller.
+     * When integrity reaches 0 or the controller breaks, the vessel is discarded.
+     * No ChemMod gas import yet; depressurisation is text until ChemMod publishes gas.
+     */
+    public void applyAsteroidDamage(double impactSpeedMetersPerSecond) {
+        if (loop == null || level() == null || level().isClientSide) {
+            return;
+        }
+        double damage = Math.min(1.0, impactSpeedMetersPerSecond / 500.0);
+        if (!(damage > 0.0)) {
+            return;
+        }
+        float integrity = entityData.get(HULL_INTEGRITY) - (float) damage;
+        if (integrity < 0.0f) {
+            integrity = 0.0f;
+        }
+        entityData.set(HULL_INTEGRITY, integrity);
+
+        String current = entityData.get(DAMAGED_PARTS);
+        String next = pickPartToDamage(current);
+        if (!next.isBlank()) {
+            String updated = current.isBlank() ? next : current + "," + next;
+            entityData.set(DAMAGED_PARTS, updated);
+        }
+
+        Player seated = pilot();
+        if (seated != null) {
+            seated.displayClientMessage(
+                    net.minecraft.network.chat.Component.literal(
+                            "Пробой корпуса. Целостность " + String.format(java.util.Locale.ROOT, "%.0f%%", integrity * 100.0)
+                                    + (next.isBlank() ? "" : ". Поражение: " + partDamageLabel(next))),
+                    false);
+        }
+
+        if (integrity <= 0.0f || "controller".equals(next)) {
+            discard();
+        }
+    }
+
+    private String pickPartToDamage(String alreadyDamaged) {
+        java.util.Set<String> done = new java.util.HashSet<>();
+        if (!alreadyDamaged.isBlank()) {
+            for (String id : alreadyDamaged.split(",")) {
+                done.add(id.trim());
+            }
+        }
+        String[] priority = {
+                "solar_panel", "battery_pack", "omni_antenna", "high_gain_antenna",
+                "crew_habitat", "cabin_oxygen", "rocket_fuel_tank", "rocket_oxidizer_tank",
+                "lh2_tank", "rocket_engine", "hydrolox_engine", "rocket_controller"};
+        java.util.Random rnd = new java.util.Random();
+        for (int attempt = 0; attempt < priority.length * 3; attempt++) {
+            String id = priority[rnd.nextInt(priority.length)];
+            if (!done.contains(id)) {
+                return id;
+            }
+        }
+        return "";
+    }
+
+    private String partDamageLabel(String partId) {
+        return switch (partId) {
+            case "solar_panel" -> "солнечные панели сломаны";
+            case "battery_pack" -> "аккумуляторный отсек повреждён";
+            case "omni_antenna", "high_gain_antenna" -> "антенна неисправна";
+            case "crew_habitat" -> "разгерметизация бытового отсека — воздух уходит (заглушка, без ChemMod)";
+            case "cabin_oxygen" -> "кислородный отсек вскрыт — разгерметизация";
+            case "rocket_fuel_tank", "rocket_oxidizer_tank", "lh2_tank" -> "разрыв топливного бака";
+            case "rocket_engine", "hydrolox_engine" -> "двигатель выведен из строя";
+            case "rocket_controller" -> "кресло управления разбито";
+            default -> "повреждение корпуса";
+        };
+    }
+
     private void syncPosition() {
         BlockPos pad = padPos();
         double alt = loop == null ? 0.0 : Math.max(0.0, loop.vessel().orbit().altitudeMeters());
@@ -595,6 +677,8 @@ public final class VesselEntity extends Entity {
         builder.define(HUD_WARP, 0);
         builder.define(HUD_HOLD, 0);
         builder.define(HUD_BODY, "earth");
+        builder.define(HULL_INTEGRITY, 1.0f);
+        builder.define(DAMAGED_PARTS, "");
     }
 
     @Override
@@ -609,6 +693,8 @@ public final class VesselEntity extends Entity {
             hold = 0;
         }
         entityData.set(HUD_HOLD, hold);
+        entityData.set(HULL_INTEGRITY, tag.getFloat("HullIntegrity"));
+        entityData.set(DAMAGED_PARTS, tag.getString("DamagedParts"));
         restoreLoop(tag);
     }
 
@@ -620,6 +706,8 @@ public final class VesselEntity extends Entity {
         tag.putInt("PadZ", entityData.get(PAD_Z));
         tag.putInt("WarpIndex", entityData.get(HUD_WARP));
         tag.putInt("HoldMode", entityData.get(HUD_HOLD));
+        tag.putFloat("HullIntegrity", entityData.get(HULL_INTEGRITY));
+        tag.putString("DamagedParts", entityData.get(DAMAGED_PARTS));
         if (loop != null) {
             FlightCodec.putOrbit(tag, loop.vessel().orbit());
         }

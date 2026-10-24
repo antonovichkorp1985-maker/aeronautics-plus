@@ -356,7 +356,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.94: asteroid belt, /ap world ceres|vesta|pallas|hygiea.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.95: asteroid damage, /ap world asteroids, hull integrity.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
