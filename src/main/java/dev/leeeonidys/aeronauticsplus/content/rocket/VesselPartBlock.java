@@ -114,6 +114,11 @@ public final class VesselPartBlock extends Block {
         if (spec.kind() == VesselPartKind.FAIRING) {
             return defaultBlockState().setValue(FACING, Direction.UP);
         }
+        if (spec.kind() == VesselPartKind.CONTROLLER) {
+            // A seat faces where the builder looked, so sitting down keeps that heading.
+            // getNearestLookingDirection().getOpposite() would turn the chair to face the player.
+            return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+        }
         return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
 
@@ -161,7 +166,7 @@ public final class VesselPartBlock extends Block {
                 }
             }
             if (!sittingHere) {
-                sit(level, pos, player);
+                sit(level, state, pos, player);
                 return InteractionResult.CONSUME;
             }
         }
@@ -234,13 +239,23 @@ public final class VesselPartBlock extends Block {
         return removed == 0 ? "Нечего снимать с крепления." : "";
     }
 
-    private static void sit(Level level, BlockPos pos, Player player) {
+    /**
+     * Put the player in the bucket seat. The seat entity sits at the cell base and
+     * {@link SeatEntity#getPassengerAttachmentPoint} drops the rider so that the hips land on the
+     * pan at y = 0.40 in the model. Mounting also sets the heading to the chair's own facing,
+     * because sitting sideways in a seat that was placed facing north looks broken.
+     */
+    private static void sit(Level level, BlockState state, BlockPos pos, Player player) {
         if (player.isPassenger()) {
             return;
         }
+        Direction facing = state.getValue(FACING);
+        float yaw = facing.getAxis().isHorizontal() ? facing.toYRot() : 180.0f;
         SeatEntity seat = new SeatEntity(AeronauticsPlus.SEAT.get(), level);
-        seat.moveTo(pos.getX() + 0.5, pos.getY() + 0.28, pos.getZ() + 0.5, player.getYRot(), 0.0f);
+        seat.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, yaw, 0.0f);
         level.addFreshEntity(seat);
         player.startRiding(seat);
+        player.setYRot(yaw);
+        player.setYHeadRot(yaw);
     }
 }

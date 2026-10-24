@@ -356,7 +356,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.98: fractal lunar terrain, small asteroids, no belt floor.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.99: seat sits on the pan, chair faces the builder.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
