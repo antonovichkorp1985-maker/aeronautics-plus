@@ -48,6 +48,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.DockingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.SolarSystemSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
@@ -312,7 +314,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.87: warp caps in the dense column.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.88: Cd(M), ISA-1976, solar-system catalogue.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -761,6 +763,29 @@ public final class AeronauticsPlus {
                         mapAir.fuelHeld());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus map-air slice failed", exception);
+            }
+            try {
+                AeroSlice.Result aero = AeroSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus aero slice OK: Cd0={}, Cdtrans={}, Cdhyp={}, T11={}, T25={}",
+                        String.format(java.util.Locale.ROOT, "%.2f", aero.subsonicCd()),
+                        String.format(java.util.Locale.ROOT, "%.2f", aero.transonicCd()),
+                        String.format(java.util.Locale.ROOT, "%.2f", aero.hypersonicCd()),
+                        String.format(java.util.Locale.ROOT, "%.1f", aero.t11()),
+                        String.format(java.util.Locale.ROOT, "%.1f", aero.t25()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus aero slice failed", exception);
+            }
+            try {
+                SolarSystemSlice.Result system = SolarSystemSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus solar-system slice OK: planets={}, moonP={}h, marsQ={}, venusRetro={}",
+                        system.planets(),
+                        String.format(java.util.Locale.ROOT, "%.2f", system.moonPeriodHours()),
+                        String.format(java.util.Locale.ROOT, "%.1f", system.marsQ()),
+                        system.venusRetro());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus solar-system slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

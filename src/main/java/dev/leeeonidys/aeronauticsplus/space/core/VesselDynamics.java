@@ -477,14 +477,13 @@ public final class VesselDynamics {
                 break;
             }
             double pressure = atmosphere.pressureAt(orbit);
-            double density = atmosphere.densityAt(orbit);
             Vector3d thrust = state.inertialThrustNewtonsAt(pressure);
             if (!(thrust.magnitudeSquared() > 0.0)) {
                 faults.add(FlightFault.zeroThrust());
                 break;
             }
-            Vector3d drag = Aerodynamics.dragForceNewtons(
-                    density, orbit.velocityMetersPerSecond(), dragCoefficient, referenceAreaM2);
+            Vector3d drag = Aerodynamics.columnDragNewtons(
+                    atmosphere, orbit, dragCoefficient, referenceAreaM2);
             Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
                     orbit.centralBody(), orbit.positionMeters());
             Vector3d acceleration = gravity
@@ -574,10 +573,9 @@ public final class VesselDynamics {
             return new AscentOutcome(state, dt, 0.0, 0.0, orbit.altitudeMeters(), padTw, faults);
         }
         double pressure = atmosphere.pressureAt(orbit);
-        double density = atmosphere.densityAt(orbit);
         Vector3d thrust = state.inertialClusterThrustNewtonsAt(pressure);
-        Vector3d drag = Aerodynamics.dragForceNewtons(
-                density, orbit.velocityMetersPerSecond(), dragCoefficient, referenceAreaM2);
+        Vector3d drag = Aerodynamics.columnDragNewtons(
+                atmosphere, orbit, dragCoefficient, referenceAreaM2);
         Vector3d gravity = OrbitalSimulator.gravitationalAcceleration(
                 orbit.centralBody(), orbit.positionMeters());
         Vector3d acceleration = gravity.add(drag.multiply(1.0 / mass));

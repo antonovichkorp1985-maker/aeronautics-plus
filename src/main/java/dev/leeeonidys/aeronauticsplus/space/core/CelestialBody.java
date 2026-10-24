@@ -19,9 +19,8 @@ public record CelestialBody(
         if (!(radiusMeters > 0.0) || !Double.isFinite(radiusMeters)) {
             throw new IllegalArgumentException("Radius must be finite and positive");
         }
-        if (siderealAngularVelocityRadiansPerSecond < 0.0
-                || !Double.isFinite(siderealAngularVelocityRadiansPerSecond)) {
-            throw new IllegalArgumentException("Sidereal spin must be finite and non-negative");
+        if (!Double.isFinite(siderealAngularVelocityRadiansPerSecond)) {
+            throw new IllegalArgumentException("Sidereal spin must be finite");
         }
     }
 

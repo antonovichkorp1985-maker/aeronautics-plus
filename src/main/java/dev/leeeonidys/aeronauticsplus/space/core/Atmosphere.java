@@ -62,6 +62,9 @@ public record Atmosphere(
 
     public double temperatureKelvin(double geometricAltitudeMetres) {
         double geopotential = geopotentialMetres(geometricAltitudeMetres);
+        if ("earth".equals(id)) {
+            return Isa1976.temperatureKelvin(geopotential);
+        }
         if (geopotential <= tropopauseGeopotentialMetres) {
             return surfaceTemperatureKelvin - lapseRateKelvinPerMetre * geopotential;
         }
@@ -70,6 +73,9 @@ public record Atmosphere(
 
     public double pressurePascals(double geometricAltitudeMetres) {
         double geopotential = geopotentialMetres(geometricAltitudeMetres);
+        if ("earth".equals(id)) {
+            return Isa1976.pressurePascals(geopotential);
+        }
         double exponent = surfaceGravityMetresPerSecondSquared * molarMassKilogramsPerMole
                 / (GAS_CONSTANT * lapseRateKelvinPerMetre);
         if (geopotential <= tropopauseGeopotentialMetres) {
@@ -82,6 +88,13 @@ public record Atmosphere(
                 -surfaceGravityMetresPerSecondSquared * molarMassKilogramsPerMole
                         * (geopotential - tropopauseGeopotentialMetres)
                         / (GAS_CONSTANT * tropopauseTemperatureKelvin()));
+    }
+
+    /** γ = 1.4 ideal diatomic. a = √(γ R_specific T). */
+    public double speedOfSoundMetresPerSecond(double geometricAltitudeMetres) {
+        double temperature = temperatureKelvin(geometricAltitudeMetres);
+        double specific = GAS_CONSTANT / molarMassKilogramsPerMole;
+        return Math.sqrt(Aerodynamics.AIR_GAMMA * specific * temperature);
     }
 
     public double densityKgPerM3(double geometricAltitudeMetres) {
