@@ -51,6 +51,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystemSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.BodyWorldSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.AsteroidBeltSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.PatchedConicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
@@ -71,6 +72,9 @@ import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.MoonChunkGenerator;
+import dev.leeeonidys.aeronauticsplus.space.world.AsteroidChunkGenerator;
+import dev.leeeonidys.aeronauticsplus.space.world.AsteroidCollisionEvents;
+import dev.leeeonidys.aeronauticsplus.space.world.AsteroidWorld;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
@@ -99,6 +103,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -138,6 +143,8 @@ public final class AeronauticsPlus {
 
     public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<MoonChunkGenerator>> MOON_CHUNK_GENERATOR =
             CHUNK_GENERATORS.register("moon", () -> MoonChunkGenerator.CODEC);
+    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<AsteroidChunkGenerator>> ASTEROID_BELT_CHUNK_GENERATOR =
+            CHUNK_GENERATORS.register("asteroid_belt", () -> AsteroidChunkGenerator.CODEC);
 
     public static final DeferredHolder<EntityType<?>, EntityType<VesselEntity>> VESSEL =
             ENTITIES.register("vessel", () -> EntityType.Builder.<VesselEntity>of(VesselEntity::new, MobCategory.MISC)
@@ -308,6 +315,16 @@ public final class AeronauticsPlus {
     public static final DeferredItem<BlockItem> MOON_REGOLITH_ITEM =
             ITEMS.registerSimpleBlockItem(MOON_REGOLITH);
 
+    /** Mineable asteroid rock. AP id; not ChemMod ore. */
+    public static final DeferredBlock<Block> ASTEROID_ROCK =
+            BLOCKS.register("asteroid_rock", () -> new Block(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.STONE)
+                            .strength(1.5f, 6.0f)
+                            .requiresCorrectToolForDrops()));
+    public static final DeferredItem<BlockItem> ASTEROID_ROCK_ITEM =
+            ITEMS.registerSimpleBlockItem(ASTEROID_ROCK);
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.aeronauticsplus"))
@@ -326,6 +343,7 @@ public final class AeronauticsPlus {
                         output.accept(DOCKING_PORT_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                         output.accept(MOON_REGOLITH_ITEM.get());
+                        output.accept(ASTEROID_ROCK_ITEM.get());
                     })
                     .build());
 
@@ -338,7 +356,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.93: moon dimension, /ap world moon.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.94: asteroid belt, /ap world ceres|vesta|pallas|hygiea.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -825,6 +843,16 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus body-world slice failed", exception);
             }
             try {
+                AsteroidBeltSlice.Result belt = AsteroidBeltSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus asteroid belt slice OK: bodies={}, belt={}, rock={}",
+                        belt.walkableBodies(),
+                        belt.beltAnnulus(),
+                        belt.rockBlock());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus asteroid belt slice failed", exception);
+            }
+            try {
                 PatchedConicsSlice.Result patched = PatchedConicsSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus patched-conics slice OK: soi={}km, captured={}, escaped={}, parked={}",
@@ -1095,8 +1123,9 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(MOON_REGOLITH_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(ASTEROID_ROCK_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 21
+            boolean allRegistered = registeredItems.size() == 22
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

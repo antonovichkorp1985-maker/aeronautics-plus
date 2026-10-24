@@ -1,11 +1,13 @@
 package dev.leeeonidys.aeronauticsplus.space.world;
 
+import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.RelativeMovement;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 
 /**
@@ -39,9 +41,9 @@ public final class BodyWorldEnter {
             y = spawn.getY();
             z = spawn.getZ() + 0.5;
         } else {
-            int surface = dest.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, 0, 0);
+            int surface = findSurface(dest, 0, 0);
             if (surface <= dest.getMinBuildHeight() + 1) {
-                surface = MoonChunkGenerator.surfaceY(0, 0) + 1;
+                surface = dest.getMinBuildHeight() + 8;
             }
             x = 0.5;
             y = surface + 1.0;
@@ -58,6 +60,22 @@ public final class BodyWorldEnter {
         if ("moon".equals(bodyId)) {
             return "Луна. Пыль AP, g лунная. Химия — ChemMod, когда будет. Станция на орбите — N.";
         }
+        if ("ceres".equals(bodyId) || "vesta".equals(bodyId)
+                || "pallas".equals(bodyId) || "hygiea".equals(bodyId)) {
+            return "Астероид " + bodyId.toUpperCase() + ". Порода AP, вакуум. Берегись collisions с кораблём.";
+        }
         return "Поверхность " + bodyId + ".";
+    }
+
+    /** First solid block under (x, z), scanning down from sky limit. */
+    private static int findSurface(ServerLevel level, int x, int z) {
+        int from = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        for (int y = Math.min(from, level.getMaxBuildHeight() - 1); y > level.getMinBuildHeight(); y--) {
+            BlockState state = level.getBlockState(new BlockPos(x, y, z));
+            if (!state.isAir()) {
+                return y;
+            }
+        }
+        return level.getMinBuildHeight() + 1;
     }
 }

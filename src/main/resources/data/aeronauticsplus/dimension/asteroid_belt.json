@@ -1,0 +1,10 @@
+{
+  "type": "aeronauticsplus:asteroid_belt",
+  "generator": {
+    "type": "aeronauticsplus:asteroid_belt",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "aeronauticsplus:asteroid_belt"
+    }
+  }
+}
