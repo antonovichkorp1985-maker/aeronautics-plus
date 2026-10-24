@@ -312,7 +312,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.86: Kepler map shows q, Ap and Pe.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.87: warp caps in the dense column.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

@@ -2,12 +2,15 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 
 /**
  * Physics multiplier on the flying stack. World ticks stay 20 Hz.
- * Not ChemMod air, not a time-skip of the Overworld.
+ * Dense column (below the 50 km fairing floor) caps like thrust.
+ * Not molesAt, not a time-skip of the Overworld.
  */
 public final class Warp {
     public static final int[] FACTORS = {1, 5, 10, 50};
     public static final int THRUST_CAP = 4;
     public static final double LOW_ALTITUDE_METERS = 2_500.0;
+    /** Same floor as {@link Aerodynamics#FAIRING_MIN_ALTITUDE_METERS}. */
+    public static final double DENSE_AIR_METERS = Aerodynamics.FAIRING_MIN_ALTITUDE_METERS;
 
     private Warp() {
     }
@@ -32,6 +35,9 @@ public final class Warp {
         }
         int steps = factor(index);
         if (thrusting) {
+            steps = Math.min(steps, THRUST_CAP);
+        }
+        if (altitudeMeters < DENSE_AIR_METERS) {
             steps = Math.min(steps, THRUST_CAP);
         }
         if (falling && altitudeMeters < LOW_ALTITUDE_METERS) {

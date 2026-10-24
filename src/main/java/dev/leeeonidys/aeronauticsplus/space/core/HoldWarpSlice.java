@@ -30,6 +30,13 @@ public final class HoldWarpSlice {
         if (Warp.steps(true, 3, false, true, 1_000.0) != 1) {
             throw new IllegalStateException("Falling near the ground stays 1×");
         }
+        int dense = Warp.steps(true, 3, false, false, 20_000.0);
+        if (dense != Warp.THRUST_CAP) {
+            throw new IllegalStateException("20 km coast warp must cap like thrust, got " + dense);
+        }
+        if (Warp.steps(true, 3, false, false, 80_000.0) != 50) {
+            throw new IllegalStateException("80 km coast warp must stay 50×");
+        }
         OrbitState pad = SpaceBodies.rotatingPad();
         Vector3d prograde = HoldAim.inertialAim(pad, HoldAim.Mode.PROGRADE);
         Vector3d retro = HoldAim.inertialAim(pad, HoldAim.Mode.RETRO);
