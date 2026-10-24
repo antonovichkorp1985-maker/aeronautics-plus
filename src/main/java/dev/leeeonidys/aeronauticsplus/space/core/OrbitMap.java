@@ -5,6 +5,8 @@ import java.util.List;
 
 /**
  * Kepler-map vehicles. Coast only — burns stay on the world entity.
+ * Coast uses the ISA column (same {@link FlightLoop#coast}), not vacuum Kepler.
+ * 20 km still has air; 200 km parking is Kepler. Not {@code molesAt}.
  * Crossing back under 20 km returns WORLD_ENTITY for spawn.
  * Fairing stays until commanded. Coast does not peel the shroud.
  */
@@ -73,7 +75,10 @@ public final class OrbitMap {
         return null;
     }
 
-    /** Coast every vehicle. Those that fall under 20 km are removed and returned. */
+    /**
+     * Coast every vehicle through the column. Those that fall under 20 km are
+     * removed and returned. Substeps match vacuum propagate (≤ 0.1 s).
+     */
     public List<FlightLoop> advance(double dt) {
         if (!(dt > 0.0) || !Double.isFinite(dt)) {
             throw new IllegalArgumentException("Map step must be finite and positive");
@@ -81,8 +86,7 @@ public final class OrbitMap {
         List<FlightLoop> still = new ArrayList<>();
         List<FlightLoop> reentered = new ArrayList<>();
         for (FlightLoop loop : vessels) {
-            VesselState next = VesselDynamics.propagate(loop.vessel(), dt, Math.min(dt, 0.1));
-            FlightLoop stepped = loop.withVessel(next);
+            FlightLoop stepped = coast(loop, dt);
             if (stepped.presence() == FlightPresence.WORLD_ENTITY) {
                 reentered.add(stepped);
             } else {
@@ -92,5 +96,19 @@ public final class OrbitMap {
         vessels.clear();
         vessels.addAll(still);
         return List.copyOf(reentered);
+    }
+
+    private static FlightLoop coast(FlightLoop loop, double dt) {
+        double remaining = dt;
+        FlightLoop stepped = loop;
+        while (remaining > 1.0e-12) {
+            double step = Math.min(remaining, 0.1);
+            stepped = stepped.coast(step);
+            remaining -= step;
+            if (stepped.presence() == FlightPresence.WORLD_ENTITY) {
+                return stepped;
+            }
+        }
+        return stepped;
     }
 }

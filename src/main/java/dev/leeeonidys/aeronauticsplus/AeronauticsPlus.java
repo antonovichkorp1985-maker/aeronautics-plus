@@ -47,6 +47,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.DockCaptureLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DockingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
@@ -311,7 +312,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.84: ballistic air coast, Ap/Pe on the HUD.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.85: Kepler map coasts through the air column.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -749,6 +750,17 @@ public final class AeronauticsPlus {
                         mapView.parkingOnMap());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus map-view slice failed", exception);
+            }
+            try {
+                MapAirSlice.Result mapAir = MapAirSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus map-air slice OK: air={}, vac={}, parkingdV={}, fuelHeld={}",
+                        String.format(java.util.Locale.ROOT, "%.1f", mapAir.airSpeed()),
+                        String.format(java.util.Locale.ROOT, "%.1f", mapAir.vacuumSpeed()),
+                        String.format(java.util.Locale.ROOT, "%.4f", mapAir.parkingDelta()),
+                        mapAir.fuelHeld());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus map-air slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();
