@@ -315,7 +315,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.91: Kepler map focuses the current body.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.92: moons, asteroid belt, /ap state.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -780,8 +780,11 @@ public final class AeronauticsPlus {
             try {
                 SolarSystemSlice.Result system = SolarSystemSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus solar-system slice OK: planets={}, moonP={}h, marsQ={}, venusRetro={}",
+                        "Aeronautics Plus solar-system slice OK: planets={}, majors={}, minors={}, belt={}, moonP={}h, marsQ={}, venusRetro={}",
                         system.planets(),
+                        system.majorMoons(),
+                        system.minorMoons(),
+                        system.beltNamed(),
                         String.format(java.util.Locale.ROOT, "%.2f", system.moonPeriodHours()),
                         String.format(java.util.Locale.ROOT, "%.1f", system.marsQ()),
                         system.venusRetro());

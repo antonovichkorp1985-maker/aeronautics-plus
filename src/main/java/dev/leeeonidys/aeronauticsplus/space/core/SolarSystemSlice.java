@@ -8,12 +8,41 @@ public final class SolarSystemSlice {
     private SolarSystemSlice() {
     }
 
-    public record Result(int planets, double moonPeriodHours, double marsQ, boolean venusRetro) {
+    public record Result(
+            int planets,
+            int majorMoons,
+            int minorMoons,
+            int beltNamed,
+            double moonPeriodHours,
+            double marsQ,
+            boolean venusRetro,
+            boolean belt) {
     }
 
     public static Result execute() {
         if (SolarSystem.planets().size() != 8) {
             throw new IllegalStateException("Catalogue must list 8 planets");
+        }
+        if (SolarSystem.majorMoons().size() < 14) {
+            throw new IllegalStateException("Need Galilean + Saturn majors + Triton, n="
+                    + SolarSystem.majorMoons().size());
+        }
+        if (SolarSystem.minorMoons().stream().noneMatch(moon -> "deimos".equals(moon.body().id()) && moon.mapOnly())) {
+            throw new IllegalStateException("Deimos is a map dot, not a world");
+        }
+        AsteroidBelt belt = SolarSystem.asteroidBelt();
+        if (belt.named().size() < 4) {
+            throw new IllegalStateException("Belt must name Ceres/Vesta/Pallas/Hygiea");
+        }
+        OrbitState ceres = SolarSystem.circular(SolarSystem.body("ceres"), 200_000.0);
+        OrbitState inBelt = SolarSystem.circular(SolarSystem.sun(), 2.7 * SolarSystem.AU_METERS);
+        if (!SolarSystem.inAsteroidBelt(inBelt) || SolarSystem.inAsteroidBelt(ceres)) {
+            throw new IllegalStateException("Belt is sun-centred; Ceres parking is not the annulus");
+        }
+        FlightLoop ganymede = CreativeOrbit.parkedAround(SolarSystem.body("ganymede"));
+        if (!"ganymede".equals(ganymede.vessel().orbit().centralBody().id())
+                || ganymede.occupyStation().presence() != FlightPresence.STATION_BLOCKS) {
+            throw new IllegalStateException("Creative Ganymede park must open the station pocket");
         }
         if (SolarSystem.sun().gravitationalParameter() <= SolarSystem.earth().gravitationalParameter()) {
             throw new IllegalStateException("Sun μ must exceed Earth");
@@ -47,6 +76,14 @@ public final class SolarSystemSlice {
         if (Math.abs(moonG - 1.62) > 0.05) {
             throw new IllegalStateException("Moon g ~1.62, g=" + moonG);
         }
-        return new Result(SolarSystem.planets().size(), hours, q, true);
+        return new Result(
+                SolarSystem.planets().size(),
+                SolarSystem.majorMoons().size(),
+                SolarSystem.minorMoons().size(),
+                belt.named().size(),
+                hours,
+                q,
+                true,
+                true);
     }
 }
