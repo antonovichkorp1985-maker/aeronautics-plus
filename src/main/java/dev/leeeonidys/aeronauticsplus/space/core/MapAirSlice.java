@@ -30,6 +30,14 @@ public final class MapAirSlice {
         if (mapped.presence() != FlightPresence.ORBIT_MAP) {
             throw new IllegalStateException("20 km must be the Kepler map");
         }
+        OrbitMapTrack dense = OrbitMapTrack.from(mapped);
+        if (!(dense.dynamicPressurePascals() > 100.0)) {
+            throw new IllegalStateException(
+                    "20 km 800 m/s must show q, q=" + dense.dynamicPressurePascals());
+        }
+        if (!Double.isFinite(dense.periapsisAltitudeMeters())) {
+            throw new IllegalStateException("Map track must carry periapsis");
+        }
         double fuel0 = mapped.vessel().livePropellantKg();
         double epoch0 = mapped.vessel().orbit().epochSeconds();
         OrbitMap map = new OrbitMap();
@@ -66,6 +74,15 @@ public final class MapAirSlice {
         }
         if (high.size() != 1) {
             throw new IllegalStateException("200 km parking must stay on the map");
+        }
+        OrbitMapTrack parkTrack = OrbitMapTrack.from(parked);
+        if (parkTrack.dynamicPressurePascals() > 1.0) {
+            throw new IllegalStateException(
+                    "200 km parking q must be vacuum, q=" + parkTrack.dynamicPressurePascals());
+        }
+        if (Math.abs(parkTrack.apoapsisAltitudeMeters() - 200_000.0) > 5_000.0) {
+            throw new IllegalStateException(
+                    "Parking track Ap must sit near 200 km, Ap=" + parkTrack.apoapsisAltitudeMeters());
         }
         double parkingDelta = Math.abs(
                 high.snapshot().get(0).vessel().orbit().velocityMetersPerSecond().magnitude()

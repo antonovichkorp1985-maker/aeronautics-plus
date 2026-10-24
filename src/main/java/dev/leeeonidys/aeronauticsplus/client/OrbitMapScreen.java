@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * Kepler map: Earth disk, 20 km handoff ring, vehicle dots.
+ * Kepler map: Earth disk, 20 km handoff ring, vehicle dots with q / Ap / Pe.
  * Altitude is linear to 200 km — not Earth scale. Not an orientation GUI.
  */
 public final class OrbitMapScreen extends Screen {
@@ -83,13 +83,19 @@ public final class OrbitMapScreen extends Screen {
             int y = cy - (int) Math.round(plot.y() * radius);
             int color = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT : WORLD_DOT;
             graphics.fill(x - 2, y - 2, x + 3, y + 3, color);
+            String ap = !Double.isFinite(track.apoapsisAltitudeMeters())
+                    ? "Ap esc"
+                    : String.format(Locale.ROOT, "Ap %.0f m", track.apoapsisAltitudeMeters());
             String line = String.format(
                     Locale.ROOT,
-                    "%s  %.1f km  %s  horiz %.0f m/s",
+                    "%s  %.1f km  %s  horiz %.0f m/s  q %.0f Pa  %s  Pe %.0f m",
                     track.id(),
                     track.altitudeMeters() / 1000.0,
                     track.presence() == FlightPresence.ORBIT_MAP ? "MAP" : "WORLD",
-                    track.horizontalSpeedMetersPerSecond());
+                    track.horizontalSpeedMetersPerSecond(),
+                    track.dynamicPressurePascals(),
+                    ap,
+                    track.periapsisAltitudeMeters());
             graphics.drawString(font, line, 12, listY, TEXT, false);
             listY += 12;
         }

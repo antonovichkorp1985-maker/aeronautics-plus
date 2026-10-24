@@ -3,21 +3,29 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 
 /**
- * One vehicle on the Kepler map display. Not ChemMod air, not an orientation GUI.
+ * One vehicle on the Kepler map display. q / Ap / Pe are the ISA column, not the leak field.
+ * Not an orientation GUI.
  */
 public record OrbitMapTrack(
         String id,
         double altitudeMeters,
         double angleRadians,
         FlightPresence presence,
-        double horizontalSpeedMetersPerSecond) {
+        double horizontalSpeedMetersPerSecond,
+        double dynamicPressurePascals,
+        double apoapsisAltitudeMeters,
+        double periapsisAltitudeMeters) {
     public OrbitMapTrack {
         if (id == null || id.isBlank() || presence == null) {
             throw new IllegalArgumentException("Map track identity is required");
         }
         if (!Double.isFinite(altitudeMeters) || !Double.isFinite(angleRadians)
                 || !Double.isFinite(horizontalSpeedMetersPerSecond)
-                || horizontalSpeedMetersPerSecond < 0.0) {
+                || horizontalSpeedMetersPerSecond < 0.0
+                || !Double.isFinite(dynamicPressurePascals)
+                || dynamicPressurePascals < 0.0
+                || !Double.isFinite(periapsisAltitudeMeters)
+                || Double.isNaN(apoapsisAltitudeMeters)) {
             throw new IllegalArgumentException("Map track numbers are invalid");
         }
     }
@@ -34,6 +42,9 @@ public record OrbitMapTrack(
                 orbit.altitudeMeters(),
                 Math.atan2(orbit.positionMeters().z(), orbit.positionMeters().x()),
                 loop.presence(),
-                orbit.horizontalSpeedMetersPerSecond());
+                orbit.horizontalSpeedMetersPerSecond(),
+                Atmosphere.earth().dynamicPressurePascals(orbit),
+                orbit.apoapsisAltitudeMeters(),
+                orbit.periapsisAltitudeMeters());
     }
 }

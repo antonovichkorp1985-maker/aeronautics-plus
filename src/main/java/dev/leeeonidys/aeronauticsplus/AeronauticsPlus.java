@@ -312,11 +312,11 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.85: Kepler map coasts through the air column.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.86: Kepler map shows q, Ap and Pe.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("2");
         registrar.playToServer(
                 OrbitMapRequestPayload.TYPE,
                 OrbitMapRequestPayload.STREAM_CODEC,
