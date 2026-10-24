@@ -62,6 +62,9 @@ public final class BodyWorldEnter {
         if ("moon".equals(bodyId)) {
             return "Луна. Пыль AP, g лунная. Химия — ChemMod, когда будет. Станция на орбите — N.";
         }
+        if ("mars".equals(bodyId)) {
+            return "Марс. Пыль AP, g марсианская (0.38 g0). Воздух тонкий — ChemMod, когда будет.";
+        }
         if ("ceres".equals(bodyId) || "vesta".equals(bodyId)
                 || "pallas".equals(bodyId) || "hygiea".equals(bodyId)) {
             return "Астероид " + bodyId.toUpperCase() + ". Порода AP, вакуум. Берегись collisions с кораблём.";

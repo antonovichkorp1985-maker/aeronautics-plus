@@ -45,5 +45,6 @@
   "screen.aeronauticsplus.orbit_map.hint_moon": "Moon disk. Linear 200 km. No 20 km world ring.",
   "screen.aeronauticsplus.orbit_map.hint_vacuum": "Vacuum body. Linear 200 km. No Overworld ring.",
   "screen.aeronauticsplus.orbit_map.moon": "Moon disk. No Overworld. Outer = 200 km. SOI ~%s km.",
-  "screen.aeronauticsplus.orbit_map.vacuum": "%s disk. No Overworld. Outer = 200 km."
+  "screen.aeronauticsplus.orbit_map.vacuum": "%s disk. No Overworld. Outer = 200 km.",
+  "block.aeronauticsplus.mars_regolith": "Mars Regolith"
 }

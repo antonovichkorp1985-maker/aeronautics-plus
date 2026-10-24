@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "aeronauticsplus:moon_regolith"
+    "aeronauticsplus:moon_regolith",
+    "aeronauticsplus:mars_regolith"
   ]
 }

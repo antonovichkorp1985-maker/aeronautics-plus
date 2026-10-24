@@ -49,6 +49,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.TerrainSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystemSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.BodyWorldSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AsteroidBeltSlice;
@@ -71,6 +72,7 @@ import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
+import dev.leeeonidys.aeronauticsplus.space.world.MarsChunkGenerator;
 import dev.leeeonidys.aeronauticsplus.space.world.MoonChunkGenerator;
 import dev.leeeonidys.aeronauticsplus.space.world.AsteroidChunkGenerator;
 import dev.leeeonidys.aeronauticsplus.space.world.AsteroidCollisionEvents;
@@ -145,6 +147,8 @@ public final class AeronauticsPlus {
             CHUNK_GENERATORS.register("moon", () -> MoonChunkGenerator.CODEC);
     public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<AsteroidChunkGenerator>> ASTEROID_BELT_CHUNK_GENERATOR =
             CHUNK_GENERATORS.register("asteroid_belt", () -> AsteroidChunkGenerator.CODEC);
+    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<MarsChunkGenerator>> MARS_CHUNK_GENERATOR =
+            CHUNK_GENERATORS.register("mars", () -> MarsChunkGenerator.CODEC);
 
     public static final DeferredHolder<EntityType<?>, EntityType<VesselEntity>> VESSEL =
             ENTITIES.register("vessel", () -> EntityType.Builder.<VesselEntity>of(VesselEntity::new, MobCategory.MISC)
@@ -315,6 +319,16 @@ public final class AeronauticsPlus {
     public static final DeferredItem<BlockItem> MOON_REGOLITH_ITEM =
             ITEMS.registerSimpleBlockItem(MOON_REGOLITH);
 
+    /** Walkable Mars dust. AP id; the thin-air column stays {@code SolarSystem.marsAir()}. */
+    public static final DeferredBlock<Block> MARS_REGOLITH =
+            BLOCKS.register("mars_regolith", () -> new Block(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.TERRACOTTA_ORANGE)
+                            .strength(0.5f)
+                            .sound(SoundType.SAND)));
+    public static final DeferredItem<BlockItem> MARS_REGOLITH_ITEM =
+            ITEMS.registerSimpleBlockItem(MARS_REGOLITH);
+
     /** Mineable asteroid rock. AP id; not ChemMod ore. */
     public static final DeferredBlock<Block> ASTEROID_ROCK =
             BLOCKS.register("asteroid_rock", () -> new Block(
@@ -343,6 +357,7 @@ public final class AeronauticsPlus {
                         output.accept(DOCKING_PORT_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                         output.accept(MOON_REGOLITH_ITEM.get());
+                        output.accept(MARS_REGOLITH_ITEM.get());
                         output.accept(ASTEROID_ROCK_ITEM.get());
                     })
                     .build());
@@ -356,7 +371,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.99: seat sits on the pan, chair faces the builder.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.100: walkable Mars, terrain slice, rust regolith.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -835,12 +850,27 @@ public final class AeronauticsPlus {
             try {
                 BodyWorldSlice.Result worlds = BodyWorldSlice.execute();
                 LOGGER.info(
-                        "Aeronautics Plus body-world slice OK: moonWorld={}, deimosMap={}, moonG={}",
+                        "Aeronautics Plus body-world slice OK: moonWorld={}, deimosMap={}, moonG={}, marsWorld={}, marsG={}",
                         worlds.moonWorld(),
                         worlds.deimosMap(),
-                        String.format(java.util.Locale.ROOT, "%.2f", worlds.moonG()));
+                        String.format(java.util.Locale.ROOT, "%.2f", worlds.moonG()),
+                        worlds.marsWorld(),
+                        String.format(java.util.Locale.ROOT, "%.2f", worlds.marsG()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus body-world slice failed", exception);
+            }
+            try {
+                TerrainSlice.Result terrain = TerrainSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus terrain slice OK: samples={}, moonRelief={}, marsRelief={}, repeatRatio={}, canyon={}, volcano={}",
+                        terrain.samples(),
+                        String.format(java.util.Locale.ROOT, "%.1f", terrain.moonRelief()),
+                        String.format(java.util.Locale.ROOT, "%.1f", terrain.marsRelief()),
+                        String.format(java.util.Locale.ROOT, "%.2f", terrain.repeatRatio()),
+                        String.format(java.util.Locale.ROOT, "%.1f", terrain.canyonDepth()),
+                        String.format(java.util.Locale.ROOT, "%.1f", terrain.volcanoRise()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus terrain slice failed", exception);
             }
             try {
                 AsteroidBeltSlice.Result belt = AsteroidBeltSlice.execute();

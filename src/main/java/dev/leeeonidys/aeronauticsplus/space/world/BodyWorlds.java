@@ -14,7 +14,7 @@ public final class BodyWorlds {
     }
 
     public static List<String> ids() {
-        return List.of("earth", "moon", "ceres", "vesta", "pallas", "hygiea");
+        return List.of("earth", "moon", "mars", "ceres", "vesta", "pallas", "hygiea");
     }
 
     public static boolean hasWorld(String bodyId) {
@@ -28,6 +28,7 @@ public final class BodyWorlds {
         return switch (bodyId) {
             case "earth" -> Level.OVERWORLD;
             case "moon" -> MoonWorld.LEVEL;
+            case "mars" -> MarsWorld.LEVEL;
             case "ceres", "vesta", "pallas", "hygiea" -> AsteroidWorld.LEVEL;
             default -> null;
         };

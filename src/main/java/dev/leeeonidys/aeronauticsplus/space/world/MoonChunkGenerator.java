@@ -189,13 +189,13 @@ public final class MoonChunkGenerator extends ChunkGenerator {
         info.add("aeronauticsplus moon g=" + String.format(java.util.Locale.ROOT, "%.2f", MoonWorld.GRAVITY_FACTOR));
     }
 
-    static int surfaceY(long seed, int x, int z) {
+    public static int surfaceY(long seed, int x, int z) {
         int y = (int) Math.round(height(seed, x, z));
         return Math.max(MIN_SURFACE, Math.min(MAX_SURFACE, y));
     }
 
-    /** Relief before clamping, blocks above y = 0. */
-    static double height(long seed, int x, int z) {
+    /** Relief before clamping, blocks above y = 0. Public for {@code TerrainSlice}. */
+    public static double height(long seed, int x, int z) {
         double warpX = TerrainNoise.fbm2(seed ^ 0x51A7L, x * 0.0042, z * 0.0042, 3, 2.0, 0.5) * 46.0;
         double warpZ = TerrainNoise.fbm2(seed ^ 0x77B3L, x * 0.0042, z * 0.0042, 3, 2.0, 0.5) * 46.0;
         double wx = x + warpX;
