@@ -68,6 +68,17 @@ public final class SolarSystem {
                 16_000.0);
     }
 
+    public static Atmosphere atmosphereOf(CelestialBody body) {
+        if (body == null) {
+            throw new IllegalArgumentException("Body is required");
+        }
+        return switch (body.id()) {
+            case "earth" -> Atmosphere.earth();
+            case "mars" -> marsAir();
+            default -> Atmosphere.vacuum();
+        };
+    }
+
     public static OrbitState circular(CelestialBody body, double altitudeMeters) {
         if (body == null) {
             throw new IllegalArgumentException("Body is required");

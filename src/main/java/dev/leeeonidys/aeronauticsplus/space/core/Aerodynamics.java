@@ -63,6 +63,19 @@ public final class Aerodynamics {
     }
 
     /**
+     * Sutton–Graves cold-wall heat index (Rn = 1 m), W/m².
+     * ChemMod still owns ablation and suit damage.
+     */
+    public static double stagnationWattsPerSquareMetre(double densityKgPerM3, double speedMetersPerSecond) {
+        if (densityKgPerM3 < 0.0 || !Double.isFinite(densityKgPerM3)
+                || speedMetersPerSecond < 0.0 || !Double.isFinite(speedMetersPerSecond)) {
+            throw new IllegalArgumentException("Heat inputs must be finite and non-negative");
+        }
+        return 1.83e-4 * Math.sqrt(densityKgPerM3)
+                * speedMetersPerSecond * speedMetersPerSecond * speedMetersPerSecond;
+    }
+
+    /**
      * When {@code dragCoefficient > 0} the force uses {@link #rocketCd(double)}.
      * Zero coefficient is a vacuum fixture (ThrottleSlice).
      */

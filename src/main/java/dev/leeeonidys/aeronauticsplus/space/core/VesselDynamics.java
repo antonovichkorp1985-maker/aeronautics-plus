@@ -25,7 +25,7 @@ public final class VesselDynamics {
 
     public static VesselState propagate(VesselState vessel, double durationSeconds, double stepSeconds) {
         VesselState orbited = vessel.withOrbit(
-                OrbitalSimulator.propagate(vessel.orbit(), durationSeconds, stepSeconds));
+                PatchedConics.retarget(OrbitalSimulator.propagate(vessel.orbit(), durationSeconds, stepSeconds)));
         return orbited.withAttitude(vessel.attitude().integrateBodyRate(
                 vessel.angularVelocityBody(), durationSeconds));
     }
@@ -499,8 +499,8 @@ public final class VesselDynamics {
             }
             Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
             StageBurnResult burn = state.activeStage().burn(dt);
-            state = replaceActive(state, burn.stage()).withOrbit(new OrbitState(
-                    orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
+            state = replaceActive(state, burn.stage()).withOrbit(PatchedConics.retarget(new OrbitState(
+                    orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt)));
             flown += burn.elapsedSeconds();
             remaining -= burn.elapsedSeconds();
             peakQ = Math.max(peakQ, atmosphere.dynamicPressurePascals(state.orbit()));
@@ -592,8 +592,8 @@ public final class VesselDynamics {
                     orbit.altitudeMeters(), padTw, faults);
         }
         Vector3d nextVelocity = orbit.velocityMetersPerSecond().add(acceleration.multiply(dt));
-        OrbitState nextOrbit = new OrbitState(
-                orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt);
+        OrbitState nextOrbit = PatchedConics.retarget(new OrbitState(
+                orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
         if (thrusting) {
             double fuel0 = state.livePropellantKg();
             state = consumeLiveCluster(state, dt).withOrbit(nextOrbit);

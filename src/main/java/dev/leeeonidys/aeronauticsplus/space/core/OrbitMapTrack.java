@@ -3,7 +3,7 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 
 /**
- * One vehicle on the Kepler map display. q / Ap / Pe are the ISA column, not the leak field.
+ * One vehicle on the Kepler map display. q / Ap / Pe are the current body's column, not the leak field.
  * Not an orientation GUI.
  */
 public record OrbitMapTrack(
@@ -43,7 +43,7 @@ public record OrbitMapTrack(
                 Math.atan2(orbit.positionMeters().z(), orbit.positionMeters().x()),
                 loop.presence(),
                 orbit.horizontalSpeedMetersPerSecond(),
-                Atmosphere.earth().dynamicPressurePascals(orbit),
+                SolarSystem.atmosphereOf(orbit.centralBody()).dynamicPressurePascals(orbit),
                 orbit.apoapsisAltitudeMeters(),
                 orbit.periapsisAltitudeMeters());
     }

@@ -40,6 +40,12 @@ public final class AeroSlice {
         if (Math.abs(sound - 340.3) > 2.0) {
             throw new IllegalStateException("Sea-level speed of sound ~340 m/s, a=" + sound);
         }
+        double padHeat = Aerodynamics.stagnationWattsPerSquareMetre(1.225, 200.0);
+        double entryHeat = Aerodynamics.stagnationWattsPerSquareMetre(1.0e-5, 7_800.0);
+        if (!(entryHeat > padHeat * 10.0)) {
+            throw new IllegalStateException(
+                    "Entry heat index must dwarf a pad hop, entry=" + entryHeat + " pad=" + padHeat);
+        }
         return new Result(sub, trans, hyper, t11, t25);
     }
 }

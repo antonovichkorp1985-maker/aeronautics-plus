@@ -50,6 +50,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystemSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.PatchedConicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LookSteerSlice;
@@ -314,7 +315,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.88: Cd(M), ISA-1976, solar-system catalogue.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.89: Earth-Moon SOI, Sutton-Graves heat index.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -786,6 +787,17 @@ public final class AeronauticsPlus {
                         system.venusRetro());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus solar-system slice failed", exception);
+            }
+            try {
+                PatchedConicsSlice.Result patched = PatchedConicsSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus patched-conics slice OK: soi={}km, captured={}, escaped={}, parked={}",
+                        String.format(java.util.Locale.ROOT, "%.0f", patched.soiKm()),
+                        patched.captured(),
+                        patched.escaped(),
+                        patched.parkedStays());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus patched-conics slice failed", exception);
             }
             try {
                 GimbalSlice.Result gimbal = GimbalSlice.execute();

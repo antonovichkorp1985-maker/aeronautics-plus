@@ -41,7 +41,7 @@ public record Atmosphere(
         }
     }
 
-    /** Earth's ISA. Sea level 101325 Pa / 288.15 K / 1.225 kg/m³. */
+    /** Earth's ISA-1976. Sea level 101325 Pa / 288.15 K / 1.225 kg/m³. */
     public static Atmosphere earth() {
         return new Atmosphere(
                 "earth",
@@ -97,7 +97,15 @@ public record Atmosphere(
         return Math.sqrt(Aerodynamics.AIR_GAMMA * specific * temperature);
     }
 
+    /** No column (Moon). Density is identically zero. */
+    public static Atmosphere vacuum() {
+        return new Atmosphere("vacuum", 1.0e-12, 3.0, 0.0065, 0.0289647, 1.0, 1_000_000.0, 1_000.0);
+    }
+
     public double densityKgPerM3(double geometricAltitudeMetres) {
+        if ("vacuum".equals(id)) {
+            return 0.0;
+        }
         double pressure = pressurePascals(geometricAltitudeMetres);
         double temperature = temperatureKelvin(geometricAltitudeMetres);
         return pressure * molarMassKilogramsPerMole / (GAS_CONSTANT * temperature);

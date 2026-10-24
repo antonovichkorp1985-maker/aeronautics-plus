@@ -44,6 +44,11 @@ public final class HandoffSlice {
             throw new IllegalStateException("Parking orbit must be on the map");
         }
 
+        OrbitState lunar = SolarSystem.circular(SolarSystem.moon(), 100_000.0);
+        if (WorldHandoff.inWorld(lunar) || !WorldHandoff.onMap(lunar)) {
+            throw new IllegalStateException("Lunar parking is the map, not the Overworld");
+        }
+
         OrbitState reentry = atAltitude(19_000.0);
         if (!WorldHandoff.inWorld(reentry)) {
             throw new IllegalStateException("Coming back under 20 km must return to the world");

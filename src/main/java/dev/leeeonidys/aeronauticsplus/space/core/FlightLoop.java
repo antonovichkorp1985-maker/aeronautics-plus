@@ -115,7 +115,7 @@ public record FlightLoop(
     /** One physics step while the pile is already the world entity or on the map. */
     public FlightLoop advance(double dt) {
         AscentOutcome outcome = VesselDynamics.advanceAscent(
-                vessel, Atmosphere.earth(), dt, Aerodynamics.ROCKET_CD, 1.0);
+                vessel, SolarSystem.atmosphereOf(vessel.orbit().centralBody()), dt, Aerodynamics.ROCKET_CD, 1.0);
         return withVessel(outcome.vessel());
     }
 
@@ -129,7 +129,9 @@ public record FlightLoop(
         }
         double throttle = vessel.liveThrottle();
         AscentOutcome outcome = VesselDynamics.advanceAscent(
-                vessel.withLiveThrottle(0.0), Atmosphere.earth(), dt, Aerodynamics.ROCKET_CD, 1.0);
+                vessel.withLiveThrottle(0.0),
+                SolarSystem.atmosphereOf(vessel.orbit().centralBody()),
+                dt, Aerodynamics.ROCKET_CD, 1.0);
         return withVessel(outcome.vessel().withLiveThrottle(throttle));
     }
 

@@ -29,6 +29,9 @@ public final class WorldHandoff {
         if (orbit == null) {
             throw new IllegalArgumentException("Orbit is required");
         }
+        if (!"earth".equals(orbit.centralBody().id())) {
+            return false;
+        }
         return inWorld(orbit.altitudeMeters());
     }
 
