@@ -30,7 +30,8 @@ public final class FlightHud {
                 vessel.hudHoldLabel(),
                 vessel.hudDynamicPressurePascals(),
                 vessel.hudApoapsisAltitudeMeters(),
-                vessel.hudPeriapsisAltitudeMeters());
+                vessel.hudPeriapsisAltitudeMeters(),
+                vessel.hudBodyId());
         int y = 8;
         for (String line : lines) {
             graphics.drawString(minecraft.font, line, 8, y, 0xFFEAECEE, true);

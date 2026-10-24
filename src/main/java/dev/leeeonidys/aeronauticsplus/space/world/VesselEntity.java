@@ -71,6 +71,8 @@ public final class VesselEntity extends Entity {
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> HUD_HOLD =
             SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<String> HUD_BODY =
+            SynchedEntityData.defineId(VesselEntity.class, EntityDataSerializers.STRING);
 
     private static final double STEP_SECONDS = 0.05;
 
@@ -151,6 +153,11 @@ public final class VesselEntity extends Entity {
 
     public String hudHoldLabel() {
         return HoldAim.label(holdMode());
+    }
+
+    public String hudBodyId() {
+        String id = entityData.get(HUD_BODY);
+        return id == null || id.isBlank() ? "earth" : id;
     }
 
     private HoldAim.Mode holdMode() {
@@ -529,6 +536,7 @@ public final class VesselEntity extends Entity {
         entityData.set(HUD_Q, (float) ChemAtmosphereHooks.dynamicPressurePascals(orbit));
         entityData.set(HUD_AP, (float) orbit.apoapsisAltitudeMeters());
         entityData.set(HUD_PE, (float) orbit.periapsisAltitudeMeters());
+        entityData.set(HUD_BODY, orbit.centralBody().id());
     }
 
     private void syncPosition() {
@@ -586,6 +594,7 @@ public final class VesselEntity extends Entity {
         builder.define(HUD_PE, 0.0f);
         builder.define(HUD_WARP, 0);
         builder.define(HUD_HOLD, 0);
+        builder.define(HUD_BODY, "earth");
     }
 
     @Override

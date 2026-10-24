@@ -30,10 +30,21 @@ public final class FlightReadout {
                                  double radialMetersPerSecond, double throttle, int warp, String hold,
                                  double dynamicPressurePascals, double apoapsisAltitudeMeters,
                                  double periapsisAltitudeMeters) {
+        return lines(altitudeMeters, horizontalMetersPerSecond, radialMetersPerSecond, throttle, warp, hold,
+                dynamicPressurePascals, apoapsisAltitudeMeters, periapsisAltitudeMeters, "earth");
+    }
+
+    public static String[] lines(double altitudeMeters, double horizontalMetersPerSecond,
+                                 double radialMetersPerSecond, double throttle, int warp, String hold,
+                                 double dynamicPressurePascals, double apoapsisAltitudeMeters,
+                                 double periapsisAltitudeMeters, String bodyId) {
         if (!Double.isFinite(altitudeMeters) || !Double.isFinite(horizontalMetersPerSecond)
                 || !Double.isFinite(radialMetersPerSecond) || !Double.isFinite(throttle)
                 || !Double.isFinite(dynamicPressurePascals) || dynamicPressurePascals < 0.0) {
             throw new IllegalArgumentException("Readout values must be finite");
+        }
+        if (bodyId == null || bodyId.isBlank()) {
+            throw new IllegalArgumentException("Body id is required");
         }
         if (warp < 1) {
             throw new IllegalArgumentException("Warp must be at least 1");
@@ -59,7 +70,8 @@ public final class FlightReadout {
             ap,
             pe,
             String.format(Locale.ROOT, "x%d", warp),
-            holdLabel
+            holdLabel,
+            "body " + bodyId
         };
     }
 }

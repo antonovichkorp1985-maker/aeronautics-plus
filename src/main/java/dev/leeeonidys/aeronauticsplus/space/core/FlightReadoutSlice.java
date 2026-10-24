@@ -24,11 +24,16 @@ public final class FlightReadoutSlice {
         }
         String[] lines = FlightReadout.lines(
                 12_345.0, 320.4, -12.2, 0.7, 50, "prograde", 12_000.0, 80_000.0, -4_000.0);
-        if (lines.length != 9 || !lines[0].contains("12345") || !lines[3].contains("70")
+        if (lines.length != 10 || !lines[0].contains("12345") || !lines[3].contains("70")
                 || !lines[4].contains("12000") || !lines[5].contains("80000")
                 || !lines[6].contains("-4000") || !lines[7].contains("50")
-                || !lines[8].contains("prograde")) {
+                || !lines[8].contains("prograde") || !lines[9].contains("earth")) {
             throw new IllegalStateException("Readout lost the numbers: " + String.join(" | ", lines));
+        }
+        String[] lunar = FlightReadout.lines(
+                100_000.0, 1_600.0, 0.0, 0.0, 1, "off", 0.0, 100_000.0, 100_000.0, "moon");
+        if (!lunar[9].contains("moon")) {
+            throw new IllegalStateException("Lunar parking must read body moon, got " + lunar[9]);
         }
         String[] escaping = FlightReadout.lines(
                 200_000.0, 11_000.0, 100.0, 0.0, 1, "off", 0.0, Double.POSITIVE_INFINITY, 80_000.0);

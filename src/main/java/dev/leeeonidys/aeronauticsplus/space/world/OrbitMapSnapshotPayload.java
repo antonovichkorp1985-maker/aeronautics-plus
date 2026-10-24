@@ -42,6 +42,7 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
             buf.writeDouble(track.dynamicPressurePascals());
             buf.writeDouble(track.apoapsisAltitudeMeters());
             buf.writeDouble(track.periapsisAltitudeMeters());
+            buf.writeUtf(track.bodyId());
         }
     }
 
@@ -60,7 +61,8 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
                     buf.readDouble(),
                     buf.readDouble(),
                     buf.readDouble(),
-                    buf.readDouble()));
+                    buf.readDouble(),
+                    buf.readUtf()));
         }
         return new OrbitMapSnapshotPayload(tracks);
     }

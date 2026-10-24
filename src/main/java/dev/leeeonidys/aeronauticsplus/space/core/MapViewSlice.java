@@ -51,6 +51,9 @@ public final class MapViewSlice {
         if (world.presence() != FlightPresence.WORLD_ENTITY || world.altitudeMeters() >= 20_000.0) {
             throw new IllegalStateException("Just after liftoff the track is the world entity");
         }
+        if (!"earth".equals(world.bodyId())) {
+            throw new IllegalStateException("Pad hopper is Earth, body=" + world.bodyId());
+        }
         FlightLoop mapped = flown.withOrbit(atAltitude(WorldHandoff.MAP_ALTITUDE_METERS));
         OrbitMapTrack map = OrbitMapTrack.from(mapped);
         if (map.presence() != FlightPresence.ORBIT_MAP) {
@@ -58,6 +61,11 @@ public final class MapViewSlice {
         }
         if (!(OrbitMapView.plot(map).radius() > OrbitMapView.plot(world).radius())) {
             throw new IllegalStateException("Map track must plot outside the world hopper");
+        }
+        FlightLoop lunar = flown.withOrbit(SolarSystem.circular(SolarSystem.moon(), 100_000.0));
+        OrbitMapTrack moon = OrbitMapTrack.from(lunar);
+        if (!"moon".equals(moon.bodyId()) || moon.presence() != FlightPresence.ORBIT_MAP) {
+            throw new IllegalStateException("Lunar parking must list body moon on the map");
         }
 
         return new Result(padR, hopperR, handoffR, parkingR, true, true);

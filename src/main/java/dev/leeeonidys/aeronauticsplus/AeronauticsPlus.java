@@ -315,11 +315,11 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.89: Earth-Moon SOI, Sutton-Graves heat index.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.90: map and HUD name the central body.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("2");
+        PayloadRegistrar registrar = event.registrar("3");
         registrar.playToServer(
                 OrbitMapRequestPayload.TYPE,
                 OrbitMapRequestPayload.STREAM_CODEC,

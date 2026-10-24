@@ -88,8 +88,9 @@ public final class OrbitMapScreen extends Screen {
                     : String.format(Locale.ROOT, "Ap %.0f m", track.apoapsisAltitudeMeters());
             String line = String.format(
                     Locale.ROOT,
-                    "%s  %.1f km  %s  horiz %.0f m/s  q %.0f Pa  %s  Pe %.0f m",
+                    "%s  %s  %.1f km  %s  horiz %.0f m/s  q %.0f Pa  %s  Pe %.0f m",
                     track.id(),
+                    track.bodyId(),
                     track.altitudeMeters() / 1000.0,
                     track.presence() == FlightPresence.ORBIT_MAP ? "MAP" : "WORLD",
                     track.horizontalSpeedMetersPerSecond(),

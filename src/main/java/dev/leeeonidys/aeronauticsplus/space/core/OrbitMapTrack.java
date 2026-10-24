@@ -14,9 +14,11 @@ public record OrbitMapTrack(
         double horizontalSpeedMetersPerSecond,
         double dynamicPressurePascals,
         double apoapsisAltitudeMeters,
-        double periapsisAltitudeMeters) {
+        double periapsisAltitudeMeters,
+        String bodyId) {
     public OrbitMapTrack {
-        if (id == null || id.isBlank() || presence == null) {
+        if (id == null || id.isBlank() || presence == null
+                || bodyId == null || bodyId.isBlank()) {
             throw new IllegalArgumentException("Map track identity is required");
         }
         if (!Double.isFinite(altitudeMeters) || !Double.isFinite(angleRadians)
@@ -45,6 +47,7 @@ public record OrbitMapTrack(
                 orbit.horizontalSpeedMetersPerSecond(),
                 SolarSystem.atmosphereOf(orbit.centralBody()).dynamicPressurePascals(orbit),
                 orbit.apoapsisAltitudeMeters(),
-                orbit.periapsisAltitudeMeters());
+                orbit.periapsisAltitudeMeters(),
+                orbit.centralBody().id());
     }
 }
