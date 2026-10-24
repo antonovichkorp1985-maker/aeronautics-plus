@@ -19,8 +19,9 @@
 
 Проверено этим способом (исходники мода на GitHub, `MaxCreateMC/Create-Deep-Seas`):
 
-- `create_submarine` — **521** английский ключ. В JAR есть свой `ru_ru` на 188,
-  в паке 87, эффективно 222 → **302 ключа без перевода (42 % покрытия)**.
+- `create_submarine` — **521** английский ключ. В JAR свой `ru_ru` на 188,
+  в паке было 87, эффективно 222 → **302 ключа без перевода (42 %)**. Это и было
+  главной дыркой; теперь закрыто (см. ниже).
 - `create_abyss` (идёт внутри Deep Seas) — 34 ключа; было эффективно 16
   (**18 без перевода**). Теперь в паке 34/34.
 - `create_high_seas` (тоже внутри Deep Seas) — 175 ключей; было **0 %**. Теперь
@@ -37,10 +38,10 @@
 
 ## Что сейчас в паке
 
-- 682 файла, **106 неймспейсов**, **42 979** ключей `ru_ru`;
-- `pack.mcmeta` = `Aeronautics Plus RU Pack v0.28-test`;
-- собран `AeronauticsPlus-RU-Pack-v0.28-test.zip`, 1 420 615 Б,
-  SHA-256 `6504ca82dc25a6968c57921c8e78afe4c55830c00e8dc023822b1e302bb2b6e4`.
+- 682 файла, **106 неймспейсов**, **43 281** ключ `ru_ru`;
+- `pack.mcmeta` = `Aeronautics Plus RU Pack v0.29-test`;
+- собран `AeronauticsPlus-RU-Pack-v0.29-test.zip`, 1 429 828 Б,
+  SHA-256 `20c73336bb30aade78aeafec289a17d71530a22a3bf6277e28ed38f12bacb7a5`.
 
 До этого в корне репозитория и в Drive лежал ZIP **v0.26**, внутри которого
 `pack.mcmeta` всё ещё говорил `v0.17-test — Mekanism config batch 1`: контент
@@ -55,7 +56,7 @@
 
 | JAR | Неймспейс | Комментарий |
 |---|---|---|
-| `create_submarine-3.3.0.jar` | `create_submarine`, `create_abyss`, `create_high_seas` | 302 осталось; abyss и high seas закрыты |
+| `create_submarine-3.3.0.jar` | `create_submarine`, `create_abyss`, `create_high_seas` | **730/730**, закрыт |
 | `create_the_air_wars-5.00.jar` | `create_the_air_wars` | новый мод, в паке нет вообще |
 | `fluxnautics-1.0.0.jar` | `fluxnautics` | нет |
 | `railways-0.3.0-beta.2` | `railways` | нет |
@@ -109,15 +110,15 @@
 ```bash
 python3 scripts/audit_ru_localization.py \
   --mods /path/to/instance/mods \
-  --resource-pack AeronauticsPlus-RU-Pack-v0.28-test.zip \
+  --resource-pack AeronauticsPlus-RU-Pack-v0.29-test.zip \
   --output docs/localization-audit
 ```
 
 ## Приоритет следующего прохода
 
-1. `create_submarine` — 302 оставшихся ключа из 521 (водолазный костюм, сонар,
-   декомпрессия, балласт, электролизёр, насосы, Ponder). `create_abyss` (34/34)
-   и `create_high_seas` (175/175) закрыты в v0.28-test.
+1. `create_submarine-3.3.0.jar` закрыт полностью: **730/730** ключей по трём
+   неймспейсам (`create_submarine` 521, `create_high_seas` 175, `create_abyss`
+   34), 0 пропусков, 0 расхождений плейсхолдеров.
 2. `create_the_air_wars`, `fluxnautics`, `railways`, `createdeco` — новые моды,
    которых в паке нет вовсе.
 3. Библиотеки из группы B — после контентных.
