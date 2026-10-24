@@ -315,7 +315,7 @@ public final class AeronauticsPlus {
         ENTITIES.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.90: map and HUD name the central body.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.91: Kepler map focuses the current body.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

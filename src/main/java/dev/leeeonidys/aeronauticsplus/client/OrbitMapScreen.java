@@ -13,12 +13,16 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * Kepler map: Earth disk, 20 km handoff ring, vehicle dots with q / Ap / Pe.
- * Altitude is linear to 200 km — not Earth scale. Not an orientation GUI.
+ * Kepler map: disk of the focused body, 20 km handoff only around Earth.
+ * Altitude is linear to 200 km — not geometric scale. Not an orientation GUI.
  */
 public final class OrbitMapScreen extends Screen {
     private static final int EARTH = 0xFF1B4F72;
     private static final int LAND = 0xFF1E8449;
+    private static final int MOON = 0xFFB0B7C3;
+    private static final int MOON_LAND = 0xFF7F8C8D;
+    private static final int MARS = 0xFFA04000;
+    private static final int MARS_LAND = 0xFF6E2C00;
     private static final int RING = 0xFFFFC107;
     private static final int PARKING = 0xFF5D6D7E;
     private static final int MAP_DOT = 0xFF5DADE2;
@@ -55,17 +59,20 @@ public final class OrbitMapScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
+        OrbitMapView.Frame frame = OrbitMapView.frame(tracks);
+        int[] disk = diskColors(frame.bodyId());
         int cx = width / 2;
         int cy = height / 2 + 8;
         int radius = Math.max(40, Math.min(width, height) / 3);
         fillCircle(graphics, cx, cy, radius, 0xFF0B1A24);
-        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION), EARTH);
-        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION * 0.55), LAND);
-        ring(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.handoffRadius()), RING);
+        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION), disk[0]);
+        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION * 0.55), disk[1]);
+        if (frame.handoff()) {
+            ring(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.handoffRadius()), RING);
+        }
         ring(graphics, cx, cy, radius, PARKING);
         graphics.drawCenteredString(font, title, cx, 12, TEXT);
-        graphics.drawCenteredString(
-                font, Component.translatable("screen.aeronauticsplus.orbit_map.hint"), cx, 24, 0xFFABB2B9);
+        graphics.drawCenteredString(font, hint(frame), cx, 24, 0xFFABB2B9);
         int listY = 40;
         if (tracks.isEmpty()) {
             graphics.drawString(
@@ -78,11 +85,13 @@ public final class OrbitMapScreen extends Screen {
         }
         List<OrbitMapTrack> drawn = new ArrayList<>(tracks);
         for (OrbitMapTrack track : drawn) {
-            OrbitMapView.Plot plot = OrbitMapView.plot(track);
-            int x = cx + (int) Math.round(plot.x() * radius);
-            int y = cy - (int) Math.round(plot.y() * radius);
-            int color = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT : WORLD_DOT;
-            graphics.fill(x - 2, y - 2, x + 3, y + 3, color);
+            if (OrbitMapView.inFrame(track, frame.bodyId())) {
+                OrbitMapView.Plot plot = OrbitMapView.plot(track);
+                int x = cx + (int) Math.round(plot.x() * radius);
+                int y = cy - (int) Math.round(plot.y() * radius);
+                int color = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT : WORLD_DOT;
+                graphics.fill(x - 2, y - 2, x + 3, y + 3, color);
+            }
             String ap = !Double.isFinite(track.apoapsisAltitudeMeters())
                     ? "Ap esc"
                     : String.format(Locale.ROOT, "Ap %.0f m", track.apoapsisAltitudeMeters());
@@ -100,13 +109,37 @@ public final class OrbitMapScreen extends Screen {
             graphics.drawString(font, line, 12, listY, TEXT, false);
             listY += 12;
         }
-        graphics.drawString(
-                font,
-                Component.translatable("screen.aeronauticsplus.orbit_map.handoff"),
-                12,
-                height - 18,
-                RING,
-                false);
+        graphics.drawString(font, footer(frame), 12, height - 18, frame.handoff() ? RING : PARKING, false);
+    }
+
+    private static int[] diskColors(String bodyId) {
+        return switch (bodyId) {
+            case "moon" -> new int[] {MOON, MOON_LAND};
+            case "mars" -> new int[] {MARS, MARS_LAND};
+            default -> new int[] {EARTH, LAND};
+        };
+    }
+
+    private static Component hint(OrbitMapView.Frame frame) {
+        if ("moon".equals(frame.bodyId())) {
+            return Component.translatable("screen.aeronauticsplus.orbit_map.hint_moon");
+        }
+        if (!frame.handoff()) {
+            return Component.translatable("screen.aeronauticsplus.orbit_map.hint_vacuum");
+        }
+        return Component.translatable("screen.aeronauticsplus.orbit_map.hint");
+    }
+
+    private static Component footer(OrbitMapView.Frame frame) {
+        if ("moon".equals(frame.bodyId())) {
+            return Component.translatable(
+                    "screen.aeronauticsplus.orbit_map.moon",
+                    String.format(Locale.ROOT, "%.0f", OrbitMapView.moonSoiAltitudeKm()));
+        }
+        if (!frame.handoff()) {
+            return Component.translatable("screen.aeronauticsplus.orbit_map.vacuum", frame.bodyId());
+        }
+        return Component.translatable("screen.aeronauticsplus.orbit_map.handoff");
     }
 
     private static void fillCircle(GuiGraphics graphics, int cx, int cy, int r, int color) {

@@ -39,5 +39,9 @@
   "screen.aeronauticsplus.orbit_map": "Карта Kepler",
   "screen.aeronauticsplus.orbit_map.hint": "Высота линейная до 200 км — не масштаб Земли. Жёлтое кольцо — 20 км.",
   "screen.aeronauticsplus.orbit_map.empty": "На карте нет аппаратов.",
-  "screen.aeronauticsplus.orbit_map.handoff": "Жёлтое кольцо: 20 км. Ниже — сущность мира. На линии и выше — карта."
+  "screen.aeronauticsplus.orbit_map.handoff": "Жёлтое кольцо: 20 км. Ниже — сущность мира. На линии и выше — карта.",
+  "screen.aeronauticsplus.orbit_map.hint_moon": "Диск Луны. Линейно 200 км. Нет кольца 20 км мира.",
+  "screen.aeronauticsplus.orbit_map.hint_vacuum": "Вакуумное тело. Линейно 200 км. Нет кольца Оверворлда.",
+  "screen.aeronauticsplus.orbit_map.moon": "Диск Луны. Нет Оверворлда. Край — 200 км. SOI ~%s км.",
+  "screen.aeronauticsplus.orbit_map.vacuum": "Диск %s. Нет Оверворлда. Край — 200 км."
 }

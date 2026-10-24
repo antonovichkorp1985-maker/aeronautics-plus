@@ -67,6 +67,24 @@ public final class MapViewSlice {
         if (!"moon".equals(moon.bodyId()) || moon.presence() != FlightPresence.ORBIT_MAP) {
             throw new IllegalStateException("Lunar parking must list body moon on the map");
         }
+        OrbitMapView.Frame earthFrame = OrbitMapView.frame(java.util.List.of(world));
+        if (!earthFrame.handoff() || !"earth".equals(earthFrame.bodyId())) {
+            throw new IllegalStateException("Earth tracks keep the 20 km ring");
+        }
+        OrbitMapView.Frame moonFrame = OrbitMapView.frame(java.util.List.of(moon));
+        if (moonFrame.handoff() || !"moon".equals(moonFrame.bodyId())) {
+            throw new IllegalStateException("Moon disk has no Overworld ring");
+        }
+        if (OrbitMapView.inFrame(world, moonFrame.bodyId())) {
+            throw new IllegalStateException("An Earth hopper must not sit on the Moon disk");
+        }
+        if (!OrbitMapView.inFrame(moon, moonFrame.bodyId())) {
+            throw new IllegalStateException("Lunar parking must sit on the Moon disk");
+        }
+        if (!(OrbitMapView.moonSoiAltitudeKm() > 50_000.0)
+                || !(OrbitMapView.moonSoiAltitudeKm() < 80_000.0)) {
+            throw new IllegalStateException("Moon SOI altitude should be ~66 000 km");
+        }
 
         return new Result(padR, hopperR, handoffR, parkingR, true, true);
     }

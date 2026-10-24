@@ -1,11 +1,14 @@
 package dev.leeeonidys.aeronauticsplus.space.core;
 
+import java.util.List;
+
 /**
- * Plot of the Kepler map. Earth is a disk; altitude is linear out to parking (200 km)
- * so the 20 km handoff ring is visible. Not geometric Earth scale. Not ChemMod air.
+ * Plot of the Kepler map. The disk is the focused body, not always Earth.
+ * Altitude is linear out to parking (200 km) so nearby orbits are visible.
+ * Not geometric scale, not a Moon dimension, not ChemMod air.
  */
 public final class OrbitMapView {
-    /** Fraction of the plot radius that is the Earth disk. */
+    /** Fraction of the plot radius that is the central-body disk. */
     public static final double EARTH_FRACTION = 0.72;
     /** Outer ring of the plot: parking-orbit altitude. */
     public static final double VIEW_ALTITUDE_METERS = 200_000.0;
@@ -23,6 +26,37 @@ public final class OrbitMapView {
         public double radius() {
             return Math.hypot(x, y);
         }
+    }
+
+    /** Which body's disk the map is drawing. Handoff ring is Earth-only. */
+    public record Frame(String bodyId, boolean handoff) {
+        public Frame {
+            if (bodyId == null || bodyId.isBlank()) {
+                throw new IllegalArgumentException("Frame body is required");
+            }
+        }
+    }
+
+    public static Frame frame(List<OrbitMapTrack> tracks) {
+        if (tracks != null) {
+            for (OrbitMapTrack track : tracks) {
+                if (track != null && track.bodyId() != null && !track.bodyId().isBlank()) {
+                    return new Frame(track.bodyId(), handoffVisible(track.bodyId()));
+                }
+            }
+        }
+        return new Frame("earth", true);
+    }
+
+    public static boolean handoffVisible(String bodyId) {
+        return "earth".equals(bodyId);
+    }
+
+    public static boolean inFrame(OrbitMapTrack track, String bodyId) {
+        if (track == null || bodyId == null || bodyId.isBlank()) {
+            throw new IllegalArgumentException("Track and body are required");
+        }
+        return bodyId.equals(track.bodyId());
     }
 
     public static Plot plot(double altitudeMeters, double angleRadians) {
@@ -44,9 +78,14 @@ public final class OrbitMapView {
         return plot(track.altitudeMeters(), track.angleRadians());
     }
 
-    /** Radius of the 20 km handoff ring in plot units (0..1). */
+    /** Radius of the 20 km handoff ring in plot units (0..1). Earth only. */
     public static double handoffRadius() {
         return EARTH_FRACTION
                 + (1.0 - EARTH_FRACTION) * (WorldHandoff.MAP_ALTITUDE_METERS / VIEW_ALTITUDE_METERS);
+    }
+
+    /** Geometric altitude of the Moon SOI above the lunar surface, km. */
+    public static double moonSoiAltitudeKm() {
+        return (PatchedConics.moonSphereOfInfluenceMeters() - SolarSystem.moon().radiusMeters()) / 1000.0;
     }
 }
