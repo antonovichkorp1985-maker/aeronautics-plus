@@ -34,6 +34,7 @@ public final class SpaceCommands {
                 .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("station").executes(context -> station(context.getSource())))
                 .then(Commands.literal("bodies").executes(context -> bodies(context.getSource())))
+                .then(Commands.literal("clock").executes(context -> clock(context.getSource())))
                 .then(Commands.literal("world")
                         .then(Commands.argument("body", StringArgumentType.word())
                                 .suggests((context, builder) -> SharedSuggestionProvider.suggest(
@@ -67,6 +68,26 @@ public final class SpaceCommands {
                         + ". Миры: " + String.join(", ", BodyWorlds.ids())),
                 false);
         return SolarSystem.ids().size();
+    }
+
+    /**
+     * Lunar clock. The Moon runs a synodic day ({@link dev.leeeonidys.aeronauticsplus.space.core.LunarTime}),
+     * so {@code /time query daytime} answers in vanilla ticks and {@code /time set} does not stick
+     * there. This prints the real answer for wherever the caller stands.
+     */
+    private static int clock(CommandSourceStack source) {
+        ServerPlayer player = source.getPlayer();
+        if (player == null) {
+            source.sendFailure(Component.literal("Нужен игрок."));
+            return 0;
+        }
+        long dayTime = player.serverLevel().getDayTime();
+        boolean moon = MoonWorld.isMoon(player.level());
+        String text = (moon ? "Луна: " : "Мир: ")
+                + dev.leeeonidys.aeronauticsplus.space.core.LunarTime.describe(dayTime)
+                + (moon ? "" : " (обычные ванильные сутки)");
+        source.sendSuccess(() -> Component.literal(text), false);
+        return 1;
     }
 
     private static int world(CommandSourceStack source, String bodyId) {

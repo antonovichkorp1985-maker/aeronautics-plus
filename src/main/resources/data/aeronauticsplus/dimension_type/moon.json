@@ -10,7 +10,7 @@
   "coordinate_scale": 1.0,
   "ambient_light": 0.04,
   "logical_height": 384,
-  "effects": "minecraft:the_end",
+  "effects": "aeronauticsplus:moon",
   "infiniburn": "#minecraft:infiniburn_end",
   "min_y": 0,
   "height": 384,

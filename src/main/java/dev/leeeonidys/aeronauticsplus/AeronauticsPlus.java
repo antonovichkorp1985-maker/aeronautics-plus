@@ -49,6 +49,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.LunarTimeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.TerrainSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystemSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.BodyWorldSlice;
@@ -371,7 +372,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.100: walkable Mars, terrain slice, rust regolith.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.101: the Moon runs a synodic day, /ap clock reads it.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -858,6 +859,18 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.2f", worlds.marsG()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus body-world slice failed", exception);
+            }
+            try {
+                LunarTimeSlice.Result lunar = LunarTimeSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus lunar clock slice OK: day={} ticks ({} h, {} vanilla days), compression={}, dayAtNoon={}",
+                        lunar.lunarDayTicks(),
+                        String.format(java.util.Locale.ROOT, "%.2f", lunar.hours()),
+                        String.format(java.util.Locale.ROOT, "%.0f", lunar.days()),
+                        String.format(java.util.Locale.ROOT, "%.2f", lunar.compression()),
+                        lunar.dayAtNoon());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus lunar clock slice failed", exception);
             }
             try {
                 TerrainSlice.Result terrain = TerrainSlice.execute();
