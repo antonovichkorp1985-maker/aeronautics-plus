@@ -356,7 +356,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.97: topology-aware damage, wing cell profile, detached parts.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.98: fractal lunar terrain, small asteroids, no belt floor.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

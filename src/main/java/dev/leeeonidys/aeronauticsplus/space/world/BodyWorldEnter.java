@@ -43,7 +43,9 @@ public final class BodyWorldEnter {
         } else {
             int surface = findSurface(dest, 0, 0);
             if (surface <= dest.getMinBuildHeight() + 1) {
-                surface = dest.getMinBuildHeight() + 8;
+                // The belt is void all the way down now, so an empty arrival column means a fall
+                // into the void. Rock under the arrival point is cheaper than a death screen.
+                surface = landingRock(dest, 0, 0);
             }
             x = 0.5;
             y = surface + 1.0;
@@ -77,5 +79,21 @@ public final class BodyWorldEnter {
             }
         }
         return level.getMinBuildHeight() + 1;
+    }
+
+    /**
+     * The asteroid belt has no bedrock floor any more: below the belt band it is open space.
+     * When the arrival column is empty all the way down, put a 5×5 rock under the player and
+     * stand them on it instead of letting the void eat them.
+     */
+    private static int landingRock(ServerLevel level, int x, int z) {
+        int y = AsteroidChunkGenerator.BELT_MIN_Y + 32;
+        BlockState rock = AeronauticsPlus.ASTEROID_ROCK.get().defaultBlockState();
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                level.setBlockAndUpdate(new BlockPos(x + dx, y, z + dz), rock);
+            }
+        }
+        return y;
     }
 }
