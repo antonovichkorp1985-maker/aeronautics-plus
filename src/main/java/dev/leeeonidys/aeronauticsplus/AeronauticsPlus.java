@@ -50,6 +50,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystemSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.BodyWorldSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.PatchedConicsSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingPadSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LandingSlice;
@@ -69,6 +70,7 @@ import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
+import dev.leeeonidys.aeronauticsplus.space.world.MoonChunkGenerator;
 import dev.leeeonidys.aeronauticsplus.space.world.VesselEntity;
 import dev.leeeonidys.aeronauticsplus.space.core.GravityTurnSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StagingSlice;
@@ -78,6 +80,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.MixtureSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpaceCoreSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.SpinSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.TorqueSlice;
+import com.mojang.serialization.MapCodec;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -89,9 +92,12 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -127,6 +133,11 @@ public final class AeronauticsPlus {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
     public static final DeferredRegister<EntityType<?>> ENTITIES =
             DeferredRegister.create(Registries.ENTITY_TYPE, MODID);
+    public static final DeferredRegister<MapCodec<? extends ChunkGenerator>> CHUNK_GENERATORS =
+            DeferredRegister.create(Registries.CHUNK_GENERATOR, MODID);
+
+    public static final DeferredHolder<MapCodec<? extends ChunkGenerator>, MapCodec<MoonChunkGenerator>> MOON_CHUNK_GENERATOR =
+            CHUNK_GENERATORS.register("moon", () -> MoonChunkGenerator.CODEC);
 
     public static final DeferredHolder<EntityType<?>, EntityType<VesselEntity>> VESSEL =
             ENTITIES.register("vessel", () -> EntityType.Builder.<VesselEntity>of(VesselEntity::new, MobCategory.MISC)
@@ -287,6 +298,16 @@ public final class AeronauticsPlus {
     public static final DeferredItem<BlockItem> DOCKING_PORT_ITEM =
             ITEMS.registerSimpleBlockItem(DOCKING_PORT);
 
+    /** Walkable Moon dust. AP id; composition waits on ChemMod. Not a ChemMod class. */
+    public static final DeferredBlock<Block> MOON_REGOLITH =
+            BLOCKS.register("moon_regolith", () -> new Block(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.SNOW)
+                            .strength(0.5f)
+                            .sound(SoundType.SAND)));
+    public static final DeferredItem<BlockItem> MOON_REGOLITH_ITEM =
+            ITEMS.registerSimpleBlockItem(MOON_REGOLITH);
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
             TABS.register("main", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.aeronauticsplus"))
@@ -304,6 +325,7 @@ public final class AeronauticsPlus {
                         output.accept(RCS_THRUSTER_ITEM.get());
                         output.accept(DOCKING_PORT_ITEM.get());
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
+                        output.accept(MOON_REGOLITH_ITEM.get());
                     })
                     .build());
 
@@ -313,9 +335,10 @@ public final class AeronauticsPlus {
         BLOCK_ENTITIES.register(modEventBus);
         TABS.register(modEventBus);
         ENTITIES.register(modEventBus);
+        CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.92: moons, asteroid belt, /ap state.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.93: moon dimension, /ap world moon.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -792,6 +815,16 @@ public final class AeronauticsPlus {
                 LOGGER.error("Aeronautics Plus solar-system slice failed", exception);
             }
             try {
+                BodyWorldSlice.Result worlds = BodyWorldSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus body-world slice OK: moonWorld={}, deimosMap={}, moonG={}",
+                        worlds.moonWorld(),
+                        worlds.deimosMap(),
+                        String.format(java.util.Locale.ROOT, "%.2f", worlds.moonG()));
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus body-world slice failed", exception);
+            }
+            try {
                 PatchedConicsSlice.Result patched = PatchedConicsSlice.execute();
                 LOGGER.info(
                         "Aeronautics Plus patched-conics slice OK: soi={}km, captured={}, escaped={}, parked={}",
@@ -1061,8 +1094,9 @@ public final class AeronauticsPlus {
             registeredItems.add(BuiltInRegistries.ITEM.getKey(RCS_THRUSTER_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(DOCKING_PORT_ITEM.get()).toString());
             registeredItems.add(BuiltInRegistries.ITEM.getKey(ROCKET_CONTROLLER_ITEM.get()).toString());
+            registeredItems.add(BuiltInRegistries.ITEM.getKey(MOON_REGOLITH_ITEM.get()).toString());
 
-            boolean allRegistered = registeredItems.size() == 20
+            boolean allRegistered = registeredItems.size() == 21
                     && registeredItems.stream().allMatch(id -> id.startsWith(MODID + ":"));
             if (allRegistered) {
                 LOGGER.info(

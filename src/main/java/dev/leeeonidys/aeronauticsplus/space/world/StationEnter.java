@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Player command: crawl the parked habitat stack. Burns stay on the Kepler map.
- * CM↔LM in lunar orbit is this, not the Moon-as-planet world.
+ * Lunar-orbit CM↔LM is this pocket. The dusty Moon is {@link MoonWorld}.
  */
 public final class StationEnter {
     private StationEnter() {

@@ -1,0 +1,33 @@
+package dev.leeeonidys.aeronauticsplus.space.world;
+
+import java.util.List;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+
+/**
+ * Which catalogue bodies have a walkable dimension. Tiny moons stay map dots.
+ * Earth is the Overworld. Station pocket is orbit, not this list.
+ */
+public final class BodyWorlds {
+    private BodyWorlds() {
+    }
+
+    public static List<String> ids() {
+        return List.of("earth", "moon");
+    }
+
+    public static boolean hasWorld(String bodyId) {
+        return ids().contains(bodyId);
+    }
+
+    public static ResourceKey<Level> worldOf(String bodyId) {
+        if (bodyId == null || bodyId.isBlank()) {
+            throw new IllegalArgumentException("Body id is required");
+        }
+        return switch (bodyId) {
+            case "earth" -> Level.OVERWORLD;
+            case "moon" -> MoonWorld.LEVEL;
+            default -> null;
+        };
+    }
+}

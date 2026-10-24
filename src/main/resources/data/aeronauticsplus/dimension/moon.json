@@ -1,0 +1,10 @@
+{
+  "type": "aeronauticsplus:moon",
+  "generator": {
+    "type": "aeronauticsplus:moon",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "aeronauticsplus:moon"
+    }
+  }
+}

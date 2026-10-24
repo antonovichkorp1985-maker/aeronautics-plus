@@ -19,7 +19,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 /**
- * Creative cheats for Kepler/station states. Not flight keys. Not a planet world.
+ * Creative cheats. {@code /ap station} is the orbit pocket.
+ * {@code /ap world moon} is the walkable Moon. {@code /ap state} is Kepler parking.
  */
 @EventBusSubscriber(modid = AeronauticsPlus.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class SpaceCommands {
@@ -33,6 +34,13 @@ public final class SpaceCommands {
                 .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("station").executes(context -> station(context.getSource())))
                 .then(Commands.literal("bodies").executes(context -> bodies(context.getSource())))
+                .then(Commands.literal("world")
+                        .then(Commands.argument("body", StringArgumentType.word())
+                                .suggests((context, builder) -> SharedSuggestionProvider.suggest(
+                                        BodyWorlds.ids(), builder))
+                                .executes(context -> world(
+                                        context.getSource(),
+                                        StringArgumentType.getString(context, "body")))))
                 .then(Commands.literal("state")
                         .then(Commands.argument("body", StringArgumentType.word())
                                 .suggests((context, builder) -> SharedSuggestionProvider.suggest(
@@ -55,9 +63,25 @@ public final class SpaceCommands {
 
     private static int bodies(CommandSourceStack source) {
         source.sendSuccess(
-                () -> Component.literal("Тела: " + String.join(", ", SolarSystem.ids())),
+                () -> Component.literal("Тела: " + String.join(", ", SolarSystem.ids())
+                        + ". Миры: " + String.join(", ", BodyWorlds.ids())),
                 false);
         return SolarSystem.ids().size();
+    }
+
+    private static int world(CommandSourceStack source, String bodyId) {
+        ServerPlayer player = source.getPlayer();
+        if (player == null) {
+            source.sendFailure(Component.literal("Нужен игрок."));
+            return 0;
+        }
+        String message = BodyWorldEnter.go(player, bodyId);
+        if (message.startsWith("Нет поверхности") || message.startsWith("Измерение")) {
+            source.sendFailure(Component.literal(message));
+            return 0;
+        }
+        source.sendSuccess(() -> Component.literal(message), false);
+        return 1;
     }
 
     private static int state(CommandSourceStack source, String bodyId) {
