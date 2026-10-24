@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "aeronauticsplus:block/cryo_capsule_top",
+    "front": "aeronauticsplus:block/cryo_capsule_front",
+    "side": "aeronauticsplus:block/cryo_capsule_side"
+  }
+}

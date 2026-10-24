@@ -25,8 +25,35 @@ public final class LunarTimeSlice {
         }
         double hours = LunarTime.LUNAR_DAY_HOURS;
         double seconds = ticks / (double) LunarTime.TICKS_PER_SECOND;
-        if (Math.abs(seconds - 9_600.0) > 0.5) {
-            throw new IllegalStateException("8x slowdown must be 9600 s, got " + seconds);
+        // 30x is the current default: ten hours a lunar day, five hours of night.
+        double expectedSeconds = 36_000.0;
+        if (Math.abs(seconds - expectedSeconds) > 0.5) {
+            throw new IllegalStateException("Lunar day must be " + expectedSeconds
+                    + " s at SLOWDOWN=" + LunarTime.SLOWDOWN + ", got " + seconds);
+        }
+        if (Math.abs(LunarTime.LUNAR_NIGHT_HOURS - 5.0) > 0.01) {
+            throw new IllegalStateException(
+                    "Lunar night must be 5 h at SLOWDOWN=30, got " + LunarTime.LUNAR_NIGHT_HOURS);
+        }
+        // Insolation: zero at night, one at noon, symmetric around noon.
+        if (LunarTime.insolation(0) > 1.0e-9 || LunarTime.insolation(12_000) > 1.0e-9) {
+            throw new IllegalStateException("No insolation at sunrise or sunset");
+        }
+        if (Math.abs(LunarTime.insolation(6_000) - 1.0) > 1.0e-9) {
+            throw new IllegalStateException("Full insolation at noon, got " + LunarTime.insolation(6_000));
+        }
+        if (Math.abs(LunarTime.insolation(3_000) - LunarTime.insolation(9_000)) > 1.0e-9) {
+            throw new IllegalStateException("Insolation must be symmetric around noon");
+        }
+        // Offset arithmetic: the cryo capsule must land exactly on the next sunrise.
+        long offset = LunarTime.offsetForNextDawn(123_456L, 0L);
+        if (!LunarTime.isDay(LunarTime.dayTimeFor(123_456L, offset))
+                || LunarTime.vanillaFraction(LunarTime.dayTimeFor(123_456L, offset)) > 1.0e-9) {
+            throw new IllegalStateException("Cryo offset must land on sunrise");
+        }
+        long second = LunarTime.offsetForNextDawn(123_456L, offset);
+        if (LunarTime.dayTimeFor(123_456L, second) - LunarTime.dayTimeFor(123_456L, offset) != 24_000L) {
+            throw new IllegalStateException("A second capsule use must skip exactly one lunar day");
         }
         // The clock must be monotonic and advance exactly one tick per SLOWDOWN game ticks.
         long previous = Long.MIN_VALUE;

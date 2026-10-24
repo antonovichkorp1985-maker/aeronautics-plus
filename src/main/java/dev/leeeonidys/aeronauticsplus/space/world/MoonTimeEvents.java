@@ -13,6 +13,9 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  * Gives the Moon its own clock: {@code dayTime = gameTime / LunarTime.SLOWDOWN}, rewritten every
  * tick so vanilla's one-tick-per-tick advance is overwritten rather than fought.
  *
+ * <p>The offset from {@link BodyClockData} is added before the division, which is how a cryo
+ * capsule can skip a lunar night without fighting this tick hook.</p>
+ *
  * <p>Two consequences worth knowing:</p>
  * <ul>
  *   <li>{@code /time set} does not stick on the Moon: the next tick recomputes the value from
@@ -40,7 +43,7 @@ public final class MoonTimeEvents {
         if (!moon.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
             return;
         }
-        long target = LunarTime.dayTimeFor(moon.getGameTime());
+        long target = LunarTime.dayTimeFor(moon.getGameTime(), BodyClockData.get(moon).offsetTicks());
         if (moon.getDayTime() != target) {
             moon.setDayTime(target);
         }

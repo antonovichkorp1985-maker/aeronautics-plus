@@ -46,5 +46,7 @@
   "screen.aeronauticsplus.orbit_map.hint_vacuum": "Вакуумное тело. Линейно 200 км. Нет кольца Оверворлда.",
   "screen.aeronauticsplus.orbit_map.moon": "Диск Луны. Нет Оверворлда. Край — 200 км. SOI ~%s км.",
   "screen.aeronauticsplus.orbit_map.vacuum": "Диск %s. Нет Оверворлда. Край — 200 км.",
-  "block.aeronauticsplus.mars_regolith": "Марсианский реголит"
+  "block.aeronauticsplus.mars_regolith": "Марсианский реголит",
+  "block.aeronauticsplus.cryo_capsule": "Криокапсула",
+  "block.aeronauticsplus.cryo_capsule.tooltip": "Пережидает лунную ночь и задаёт точку возрождения. Жизнеобеспечение — ChemMod."
 }

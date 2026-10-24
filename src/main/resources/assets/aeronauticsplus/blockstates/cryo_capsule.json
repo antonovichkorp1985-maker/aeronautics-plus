@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "aeronauticsplus:block/cryo_capsule"
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/cryo_capsule",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/cryo_capsule",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/cryo_capsule",
+      "y": 270
+    }
+  }
+}

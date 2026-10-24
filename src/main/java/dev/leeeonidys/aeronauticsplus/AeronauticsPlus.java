@@ -10,6 +10,7 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.SeatEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
+import dev.leeeonidys.aeronauticsplus.content.space.CryoCapsuleBlock;
 import dev.leeeonidys.aeronauticsplus.space.compile.AssemblySlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.DockCaptureSlice;
 import dev.leeeonidys.aeronauticsplus.space.compile.OccupancySlice;
@@ -330,6 +331,17 @@ public final class AeronauticsPlus {
     public static final DeferredItem<BlockItem> MARS_REGOLITH_ITEM =
             ITEMS.registerSimpleBlockItem(MARS_REGOLITH);
 
+    /** Cryo capsule: skips a lunar night and anchors respawn. No life support, that is ChemMod. */
+    public static final DeferredBlock<CryoCapsuleBlock> CRYO_CAPSULE =
+            BLOCKS.register("cryo_capsule", () -> new CryoCapsuleBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(2.5f, 6.0f)
+                            .requiresCorrectToolForDrops()
+                            .noOcclusion()));
+    public static final DeferredItem<BlockItem> CRYO_CAPSULE_ITEM =
+            ITEMS.registerSimpleBlockItem(CRYO_CAPSULE);
+
     /** Mineable asteroid rock. AP id; not ChemMod ore. */
     public static final DeferredBlock<Block> ASTEROID_ROCK =
             BLOCKS.register("asteroid_rock", () -> new Block(
@@ -359,6 +371,7 @@ public final class AeronauticsPlus {
                         output.accept(ROCKET_CONTROLLER_ITEM.get());
                         output.accept(MOON_REGOLITH_ITEM.get());
                         output.accept(MARS_REGOLITH_ITEM.get());
+                        output.accept(CRYO_CAPSULE_ITEM.get());
                         output.accept(ASTEROID_ROCK_ITEM.get());
                     })
                     .build());
@@ -372,7 +385,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.101: the Moon runs a synodic day, /ap clock reads it.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.102: ten-hour lunar day, Earth phases in the sky, cryo capsule.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

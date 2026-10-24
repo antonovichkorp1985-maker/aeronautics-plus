@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "aeronauticsplus:asteroid_rock"
+    "aeronauticsplus:asteroid_rock",
+    "aeronauticsplus:cryo_capsule"
   ]
 }
