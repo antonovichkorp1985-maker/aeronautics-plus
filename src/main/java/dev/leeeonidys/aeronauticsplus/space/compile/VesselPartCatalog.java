@@ -90,6 +90,11 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec CONTROLLER = VesselPartSpec.controller("rocket_controller", 35.0);
     /** Falcon landing legs. Soft contact without them is NO_LEGS. */
     public static final VesselPartSpec LEGS = VesselPartSpec.legs("landing_legs", 25.0);
+    /**
+     * Wing / fin cell fixture. AP's own wing family — not a Create Propulsion sail block.
+     * No block is registered yet: a wing without a lift model would only add mass.
+     */
+    public static final VesselPartSpec WING = VesselPartSpec.wing("rocket_wing", 30.0);
 
     private VesselPartCatalog() {
     }
@@ -100,7 +105,7 @@ public final class VesselPartCatalog {
                 OXIDIZER_TANK, OXIDIZER_TANK_SMALL, OXIDIZER_TANK_LARGE, LH2_TANK,
                 ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, PAD, FAIRING, PAYLOAD,
                 HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR,
-                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS);
+                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS, WING);
     }
 
     public static VesselPartSpec byId(String id) {

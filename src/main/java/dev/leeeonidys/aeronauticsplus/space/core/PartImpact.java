@@ -46,6 +46,8 @@ public final class PartImpact {
         SENSOR,
         /** Capture ring deformed: this port no longer docks. */
         DOCKING,
+        /** Aerodynamic surface (wing or fin cell) torn off its root. */
+        SURFACE,
         /** Payload bus hit. */
         CARGO
     }
@@ -74,6 +76,8 @@ public final class PartImpact {
             case ANTENNA -> 5.0;
             case BATTERY, GYRO -> 13.0;
             case CONTROLLER -> 15.0;
+            /** Wing / fin cell: a plate on a root, not a barrel. */
+            case WING -> 8.0;
             case DOCKING -> 20.0;
             case LEGS -> 18.0;
             case TELESCOPE -> 11.0;
@@ -98,6 +102,7 @@ public final class PartImpact {
             case CONTROLLER -> Consequence.CONTROL;
             case DOCKING -> Consequence.DOCKING;
             case TELESCOPE -> Consequence.SENSOR;
+            case WING -> Consequence.SURFACE;
         };
     }
 
@@ -109,7 +114,7 @@ public final class PartImpact {
      */
     public static double orientationFactor(VesselPartKind kind, double normalDotFacing) {
         return switch (kind) {
-            case SOLAR, RADIATOR, FAIRING -> normalDotFacing >= 0.7 ? 0.45 : 1.25;
+            case SOLAR, RADIATOR, FAIRING, WING -> normalDotFacing >= 0.7 ? 0.45 : 1.25;
             default -> 1.0;
         };
     }

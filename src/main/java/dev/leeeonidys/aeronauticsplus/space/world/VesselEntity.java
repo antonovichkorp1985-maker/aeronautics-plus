@@ -644,25 +644,18 @@ public final class VesselEntity extends Entity {
     }
 
     private void destroyCell(ImpactContact contact, Map<String, Double> ledger) {
-        double shipMass = 0.0;
-        for (VesselBlockOccupant occupant : loop.flying().occupants()) {
-            shipMass += occupant.spec().massKg();
-        }
-        double cellMass;
-        try {
-            cellMass = VesselPartCatalog.byId(contact.partId()).massKg();
-        } catch (RuntimeException unknownPart) {
-            cellMass = 0.0;
-        }
-        String payload = dropCell(entityData.get(PARTS), contact);
+        double shipMass = massOf(loop.flying().occupants());
+        String payload = pruneDisconnected(dropCell(entityData.get(PARTS), contact));
         ledger.remove(contact.cellKey());
         entityData.set(DAMAGED_PARTS, encodeDamage(ledger));
         if (payload.isBlank() || !rebuildFromPayload(payload)) {
             totalLoss(contact);
             return;
         }
-        double share = shipMass > 0.0 ? Math.min(1.0, cellMass / shipMass) : 0.05;
-        float integrity = (float) Math.max(0.0f, entityData.get(HULL_INTEGRITY) * (1.0 - share));
+        // Integrity is the mass still attached, so a torn-off wing panel counts as well.
+        double leftMass = massOf(loop.flying().occupants());
+        double remaining = shipMass > 0.0 ? Math.min(1.0, leftMass / shipMass) : 0.0;
+        float integrity = (float) Math.max(0.0f, entityData.get(HULL_INTEGRITY) * remaining);
         entityData.set(HULL_INTEGRITY, integrity);
         tellPilot("Разрушено: " + partName(contact.kind()) + " — " + consequenceText(contact.consequence())
                 + ". Целостность " + percent(integrity) + ".");
@@ -675,6 +668,114 @@ public final class VesselEntity extends Entity {
         if (integrity <= 0.0f) {
             totalLoss(contact);
         }
+    }
+
+    /**
+     * A cut cell can leave pieces that are no longer attached: shear the wing root and the
+     * outer panel is not part of the ship any more. Keep the component that holds the seat
+     * (or the heaviest one when the seat itself was hit) and drop the rest.
+     * Detached pieces are lost; they do not become debris blocks yet.
+     */
+    private String pruneDisconnected(String payload) {
+        GridPos pad = new GridPos(padPos().getX(), padPos().getY(), padPos().getZ());
+        VesselBlockGrid grid = FlightCodec.flyingGrid(payload, pad);
+        if (grid.isEmpty()) {
+            return "";
+        }
+        List<VesselBlockOccupant> occupants = grid.occupants();
+        Map<GridPos, VesselBlockOccupant> byPos = new java.util.HashMap<>();
+        for (VesselBlockOccupant occupant : occupants) {
+            byPos.put(occupant.pos(), occupant);
+        }
+        List<List<VesselBlockOccupant>> components = new ArrayList<>();
+        java.util.Set<GridPos> seen = new java.util.HashSet<>();
+        for (VesselBlockOccupant start : occupants) {
+            if (!seen.add(start.pos())) {
+                continue;
+            }
+            List<VesselBlockOccupant> component = new ArrayList<>();
+            java.util.ArrayDeque<GridPos> queue = new java.util.ArrayDeque<>();
+            queue.add(start.pos());
+            while (!queue.isEmpty()) {
+                GridPos pos = queue.remove();
+                VesselBlockOccupant cell = byPos.get(pos);
+                if (cell == null) {
+                    continue;
+                }
+                component.add(cell);
+                for (BlockFace face : BlockFace.values()) {
+                    GridPos next = pos.translate(face.dx(), face.dy(), face.dz());
+                    if (byPos.containsKey(next) && seen.add(next)) {
+                        queue.add(next);
+                    }
+                }
+            }
+            components.add(component);
+        }
+        if (components.size() <= 1) {
+            return payload;
+        }
+        List<VesselBlockOccupant> keep = null;
+        for (List<VesselBlockOccupant> component : components) {
+            if (hasController(component)) {
+                keep = component;
+                break;
+            }
+        }
+        if (keep == null) {
+            double heaviest = -1.0;
+            for (List<VesselBlockOccupant> component : components) {
+                double mass = 0.0;
+                for (VesselBlockOccupant cell : component) {
+                    mass += cell.spec().massKg();
+                }
+                if (mass > heaviest) {
+                    heaviest = mass;
+                    keep = component;
+                }
+            }
+        }
+        int lost = occupants.size() - (keep == null ? 0 : keep.size());
+        if (lost > 0) {
+            tellPilot("Оторвано от корпуса: " + lost + " кл. — эти детали больше не часть корабля.");
+        }
+        return encodeCells(keep == null ? List.of() : keep, pad);
+    }
+
+    private static double massOf(List<VesselBlockOccupant> cells) {
+        double mass = 0.0;
+        for (VesselBlockOccupant cell : cells) {
+            mass += cell.spec().massKg();
+        }
+        return mass;
+    }
+
+    private static boolean hasController(List<VesselBlockOccupant> cells) {
+        for (VesselBlockOccupant cell : cells) {
+            if (cell.spec().kind() == VesselPartKind.CONTROLLER) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String encodeCells(List<VesselBlockOccupant> cells, GridPos pad) {
+        StringBuilder builder = new StringBuilder();
+        for (VesselBlockOccupant cell : cells) {
+            if (!builder.isEmpty()) {
+                builder.append(';');
+            }
+            builder.append(cell.spec().id())
+                    .append(',')
+                    .append(cell.pos().x() - pad.x())
+                    .append(',')
+                    .append(cell.pos().y() - pad.y())
+                    .append(',')
+                    .append(cell.pos().z() - pad.z())
+                    .append(',')
+                    .append(cell.facing().name());
+        }
+        return builder.toString();
     }
 
     /**
@@ -835,6 +936,7 @@ public final class VesselEntity extends Entity {
             case TELESCOPE -> "телескоп";
             case CONTROLLER -> "кресло управления";
             case LEGS -> "опоры";
+            case WING -> "крыло";
         };
     }
 
@@ -854,6 +956,7 @@ public final class VesselEntity extends Entity {
             case SENSOR -> "телескоп разбит";
             case DOCKING -> "стыковочное кольцо деформировано";
             case CARGO -> "полезная нагрузка повреждена";
+            case SURFACE -> "крыло сорвано с корня, несущей поверхности нет";
         };
     }
 

@@ -180,6 +180,15 @@ public record VesselPartSpec(
     }
 
     /**
+     * One spanwise cell of a thin wing or fin. The plate is held by its root, so it is
+     * the first thing to shear off and the last thing to carry load.
+     */
+    public static VesselPartSpec wing(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.WING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING);
+    }
+
+    /**
      * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
      * tanks expose only that species — oxidizer does not travel through the fuel hull.
      */
@@ -248,7 +257,7 @@ public record VesselPartSpec(
             case SEPARATOR -> face == facing
                     ? EnumSet.of(VesselConnection.ConnectionKind.SEPARATION)
                     : EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
-            case MOUNT, PAD, LEGS -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
+            case MOUNT, PAD, LEGS, WING -> EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             case RCS -> {
                 if (face == facing) {
                     yield EnumSet.of(VesselConnection.ConnectionKind.SEPARATION);

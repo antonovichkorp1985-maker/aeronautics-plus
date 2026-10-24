@@ -42,5 +42,12 @@ public enum VesselPartKind {
     /** Seat / console that marks the pile as a rocket. */
     CONTROLLER,
     /** Falcon-class landing legs. Soft contact without them is NO_LEGS. */
-    LEGS
+    LEGS,
+    /**
+     * Thin aerodynamic panel: wing or fin cell. One cell of span, not a whole wing.
+     * Create Propulsion wings are their own blocks and never enter an AP pile; AP wings
+     * are its own SKUs. Lift arrives with the aero rework — until then this cell is a
+     * hull surface with a plate impact profile, not a magic lift source.
+     */
+    WING
 }
