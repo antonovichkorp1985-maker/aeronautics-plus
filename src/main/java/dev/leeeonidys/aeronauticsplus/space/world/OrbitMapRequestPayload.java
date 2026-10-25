@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Client asks the server for the current Kepler-map snapshot. */
+/** Client asks for the global Kepler-map snapshot, regardless of the player's current body-world. */
 public record OrbitMapRequestPayload() implements CustomPacketPayload {
     public static final Type<OrbitMapRequestPayload> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(AeronauticsPlus.MODID, "orbit_map_request"));
@@ -31,12 +31,14 @@ public record OrbitMapRequestPayload() implements CustomPacketPayload {
             if (!(player instanceof ServerPlayer serverPlayer)) {
                 return;
             }
-            if (!(serverPlayer.level() instanceof ServerLevel level) || level.dimension() != Level.OVERWORLD) {
+            ServerLevel overworld = serverPlayer.server.getLevel(Level.OVERWORLD);
+            if (overworld == null) {
                 PacketDistributor.sendToPlayer(serverPlayer, new OrbitMapSnapshotPayload(java.util.List.of()));
                 return;
             }
-            PacketDistributor.sendToPlayer(
-                    serverPlayer, new OrbitMapSnapshotPayload(OrbitMapData.get(level).tracks(level)));
+            // The system view is global: expose the Overworld's Kepler map from body-world dimensions too.
+            PacketDistributor.sendToPlayer(serverPlayer,
+                    new OrbitMapSnapshotPayload(OrbitMapData.get(overworld).tracks(overworld)));
         });
     }
 }

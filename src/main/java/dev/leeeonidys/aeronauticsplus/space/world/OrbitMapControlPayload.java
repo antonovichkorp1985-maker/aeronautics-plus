@@ -52,12 +52,14 @@ public record OrbitMapControlPayload(String trackId, int action) implements Cust
     public static void handle(OrbitMapControlPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Player player = context.player();
-            if (!(player instanceof ServerPlayer serverPlayer)
-                    || !(serverPlayer.level() instanceof ServerLevel level)
-                    || level.dimension() != Level.OVERWORLD) {
+            if (!(player instanceof ServerPlayer serverPlayer)) {
                 return;
             }
-            String result = OrbitMapData.get(level).command(payload.trackId(), payload.action());
+            ServerLevel overworld = serverPlayer.server.getLevel(Level.OVERWORLD);
+            if (overworld == null) {
+                return;
+            }
+            String result = OrbitMapData.get(overworld).command(payload.trackId(), payload.action());
             serverPlayer.displayClientMessage(Component.literal(result), true);
         });
     }
