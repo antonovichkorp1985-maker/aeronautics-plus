@@ -116,7 +116,7 @@ public final class SolarSystemMap {
         double xPeri = Math.cos(argument) * xOrbital - Math.sin(argument) * zOrbital;
         double zPeri = Math.sin(argument) * xOrbital + Math.cos(argument) * zOrbital;
         double xInclined = Math.cos(node) * xPeri - Math.sin(node) * Math.cos(inclination) * zPeri;
-        double yInclined = Math.sin(node) * Math.sin(inclination) * zPeri;
+        double yInclined = Math.sin(inclination) * zPeri;
         double zInclined = Math.sin(node) * xPeri + Math.cos(node) * Math.cos(inclination) * zPeri;
         return new Vector3d(xInclined, yInclined, zInclined);
     }
