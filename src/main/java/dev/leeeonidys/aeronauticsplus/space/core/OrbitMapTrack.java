@@ -17,6 +17,7 @@ public record OrbitMapTrack(
         double throttle,
         double availableThrustNewtons,
         double propellantMassKg,
+        Vector3d angularVelocityBodyRadiansPerSecond,
         double dynamicPressurePascals,
         double apoapsisAltitudeMeters,
         double periapsisAltitudeMeters,
@@ -24,7 +25,7 @@ public record OrbitMapTrack(
         String bodyId) {
     public OrbitMapTrack {
         if (id == null || id.isBlank() || presence == null
-                || bodyId == null || bodyId.isBlank()) {
+                || bodyId == null || bodyId.isBlank() || angularVelocityBodyRadiansPerSecond == null) {
             throw new IllegalArgumentException("Map track identity is required");
         }
         if (!Double.isFinite(altitudeMeters) || !Double.isFinite(angleRadians)
@@ -64,6 +65,7 @@ public record OrbitMapTrack(
                         SolarSystem.atmosphereOf(orbit.centralBody()).pressurePascals(Math.max(0.0, orbit.altitudeMeters())))
                         .magnitude(),
                 loop.vessel().livePropellantKg(),
+                loop.vessel().angularVelocityBody(),
                 SolarSystem.atmosphereOf(orbit.centralBody()).dynamicPressurePascals(orbit),
                 orbit.apoapsisAltitudeMeters(),
                 orbit.periapsisAltitudeMeters(),

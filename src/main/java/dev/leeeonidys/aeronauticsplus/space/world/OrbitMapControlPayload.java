@@ -18,10 +18,14 @@ public record OrbitMapControlPayload(String trackId, int action) implements Cust
     public static final int THROTTLE_UP = 1;
     public static final int THROTTLE_CUT = 2;
     public static final int THROTTLE_FULL = 3;
-    public static final int AIM_PROGRADE = 4;
-    public static final int AIM_RETROGRADE = 5;
-    public static final int AIM_RADIAL = 6;
-    public static final int RCS_PULSE = 7;
+    public static final int PITCH_DOWN = 4;
+    public static final int PITCH_UP = 5;
+    public static final int YAW_LEFT = 6;
+    public static final int YAW_RIGHT = 7;
+    public static final int ROLL_LEFT = 8;
+    public static final int ROLL_RIGHT = 9;
+    public static final int ZERO_ROTATION = 10;
+    public static final int RCS_PULSE = 11;
 
     public static final Type<OrbitMapControlPayload> TYPE = new Type<>(
             ResourceLocation.fromNamespaceAndPath(AeronauticsPlus.MODID, "orbit_map_control"));

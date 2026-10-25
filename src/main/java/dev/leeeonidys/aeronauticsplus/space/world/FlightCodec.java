@@ -9,6 +9,8 @@ import dev.leeeonidys.aeronauticsplus.space.compile.VesselBlockOccupant;
 import dev.leeeonidys.aeronauticsplus.space.compile.VesselPartCatalog;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
+import dev.leeeonidys.aeronauticsplus.space.core.Attitude;
+import dev.leeeonidys.aeronauticsplus.space.core.Quaternion;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.core.VesselCompilation;
@@ -60,7 +62,12 @@ public final class FlightCodec {
     }
 
     public static FlightLoop restore(String parts, GridPos pad, OrbitState orbit) {
-        if (pad == null || orbit == null) {
+        return restore(parts, pad, orbit, Attitude.IDENTITY, Vector3d.ZERO);
+    }
+
+    public static FlightLoop restore(String parts, GridPos pad, OrbitState orbit,
+                                     Attitude attitude, Vector3d angularVelocityBody) {
+        if (pad == null || orbit == null || attitude == null || angularVelocityBody == null) {
             throw new IllegalArgumentException("Pad and orbit are required");
         }
         VesselBlockGrid flying = flyingGrid(parts, pad);
@@ -73,7 +80,9 @@ public final class FlightCodec {
         stacked.add(padOccupant);
         stacked.addAll(flying.occupants());
         VesselCompilation compiled = VesselBlockCompiler.analyze(flying);
-        VesselState vessel = compiled.toVesselState("flight", orbit);
+        VesselState vessel = compiled.toVesselState("flight", orbit)
+                .withAttitude(attitude)
+                .withAngularVelocity(angularVelocityBody);
         FlightPresence presence = WorldHandoff.inWorld(orbit)
                 ? FlightPresence.WORLD_ENTITY
                 : FlightPresence.ORBIT_MAP;
@@ -90,6 +99,33 @@ public final class FlightCodec {
         tag.putDouble("Vy", velocity.y());
         tag.putDouble("Vz", velocity.z());
         tag.putDouble("Epoch", orbit.epochSeconds());
+    }
+
+    public static void putAttitude(CompoundTag tag, VesselState vessel) {
+        Quaternion q = vessel.attitude().bodyToInertial();
+        tag.putDouble("Qw", q.w());
+        tag.putDouble("Qx", q.x());
+        tag.putDouble("Qy", q.y());
+        tag.putDouble("Qz", q.z());
+        Vector3d omega = vessel.angularVelocityBody();
+        tag.putDouble("OmegaX", omega.x());
+        tag.putDouble("OmegaY", omega.y());
+        tag.putDouble("OmegaZ", omega.z());
+    }
+
+    public static Attitude readAttitude(CompoundTag tag) {
+        if (tag == null || !tag.contains("Qw")) {
+            return Attitude.IDENTITY;
+        }
+        return new Attitude(new Quaternion(tag.getDouble("Qw"), tag.getDouble("Qx"),
+                tag.getDouble("Qy"), tag.getDouble("Qz")));
+    }
+
+    public static Vector3d readAngularVelocity(CompoundTag tag) {
+        if (tag == null || !tag.contains("OmegaX")) {
+            return Vector3d.ZERO;
+        }
+        return new Vector3d(tag.getDouble("OmegaX"), tag.getDouble("OmegaY"), tag.getDouble("OmegaZ"));
     }
 
     public static OrbitState readOrbit(CompoundTag tag) {

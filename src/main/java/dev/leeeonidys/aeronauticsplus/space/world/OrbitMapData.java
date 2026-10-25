@@ -4,9 +4,9 @@ import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMap;
-import dev.leeeonidys.aeronauticsplus.space.core.HoldAim;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
+import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import net.minecraft.world.entity.Entity;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,8 @@ public final class OrbitMapData extends SavedData {
                 if (orbit == null) {
                     continue;
                 }
-                FlightLoop loop = FlightCodec.restore(entry.getString("Parts"), pad, orbit);
+                FlightLoop loop = FlightCodec.restore(entry.getString("Parts"), pad, orbit,
+                        FlightCodec.readAttitude(entry), FlightCodec.readAngularVelocity(entry));
                 if (loop.presence() == FlightPresence.ORBIT_MAP) {
                     data.map.enter(loop);
                 } else {
@@ -99,9 +100,13 @@ public final class OrbitMapData extends SavedData {
                 case OrbitMapControlPayload.THROTTLE_DOWN, OrbitMapControlPayload.THROTTLE_UP -> "Тяга изменена на 10%.";
                 case OrbitMapControlPayload.THROTTLE_CUT -> "Двигатель выключен.";
                 case OrbitMapControlPayload.THROTTLE_FULL -> "Тяга установлена 100%.";
-                case OrbitMapControlPayload.AIM_PROGRADE -> "Ориентация: по скорости.";
-                case OrbitMapControlPayload.AIM_RETROGRADE -> "Ориентация: против скорости.";
-                case OrbitMapControlPayload.AIM_RADIAL -> "Ориентация: радиально наружу.";
+                case OrbitMapControlPayload.PITCH_DOWN -> "Угловая скорость: тангаж −0.1 рад/с.";
+                case OrbitMapControlPayload.PITCH_UP -> "Угловая скорость: тангаж +0.1 рад/с.";
+                case OrbitMapControlPayload.YAW_LEFT -> "Угловая скорость: рыскание −0.1 рад/с.";
+                case OrbitMapControlPayload.YAW_RIGHT -> "Угловая скорость: рыскание +0.1 рад/с.";
+                case OrbitMapControlPayload.ROLL_LEFT -> "Угловая скорость: крен −0.1 рад/с.";
+                case OrbitMapControlPayload.ROLL_RIGHT -> "Угловая скорость: крен +0.1 рад/с.";
+                case OrbitMapControlPayload.ZERO_ROTATION -> "Вращение остановлено.";
                 case OrbitMapControlPayload.RCS_PULSE -> "Импульс РСУ.";
                 default -> "Команда карты выполнена.";
             };
@@ -120,16 +125,29 @@ public final class OrbitMapData extends SavedData {
             case OrbitMapControlPayload.THROTTLE_UP -> loop.withVessel(loop.vessel().nudgeLiveThrottle(0.1));
             case OrbitMapControlPayload.THROTTLE_CUT -> loop.withVessel(loop.vessel().withLiveThrottle(0.0));
             case OrbitMapControlPayload.THROTTLE_FULL -> loop.withVessel(loop.vessel().withLiveThrottle(1.0));
-            case OrbitMapControlPayload.AIM_PROGRADE -> aim(loop, HoldAim.Mode.PROGRADE);
-            case OrbitMapControlPayload.AIM_RETROGRADE -> aim(loop, HoldAim.Mode.RETRO);
-            case OrbitMapControlPayload.AIM_RADIAL -> aim(loop, HoldAim.Mode.RADIAL);
+            case OrbitMapControlPayload.PITCH_DOWN -> addBodyRate(loop, new Vector3d(-0.1, 0.0, 0.0));
+            case OrbitMapControlPayload.PITCH_UP -> addBodyRate(loop, new Vector3d(0.1, 0.0, 0.0));
+            case OrbitMapControlPayload.YAW_LEFT -> addBodyRate(loop, new Vector3d(0.0, -0.1, 0.0));
+            case OrbitMapControlPayload.YAW_RIGHT -> addBodyRate(loop, new Vector3d(0.0, 0.1, 0.0));
+            case OrbitMapControlPayload.ROLL_LEFT -> addBodyRate(loop, new Vector3d(0.0, 0.0, -0.1));
+            case OrbitMapControlPayload.ROLL_RIGHT -> addBodyRate(loop, new Vector3d(0.0, 0.0, 0.1));
+            case OrbitMapControlPayload.ZERO_ROTATION -> loop.withVessel(loop.vessel().withAngularVelocity(Vector3d.ZERO));
             case OrbitMapControlPayload.RCS_PULSE -> loop.fireRcs(0.2);
             default -> throw new IllegalArgumentException("Unknown spacecraft control");
         };
     }
 
-    private static FlightLoop aim(FlightLoop loop, HoldAim.Mode mode) {
-        return loop.withVessel(loop.vessel().withAttitude(HoldAim.attitude(loop.vessel().orbit(), mode)));
+    private static FlightLoop addBodyRate(FlightLoop loop, Vector3d delta) {
+        Vector3d current = loop.vessel().angularVelocityBody();
+        Vector3d next = new Vector3d(
+                clamp(current.x() + delta.x()),
+                clamp(current.y() + delta.y()),
+                clamp(current.z() + delta.z()));
+        return loop.withVessel(loop.vessel().withAngularVelocity(next));
+    }
+
+    private static double clamp(double rate) {
+        return Math.max(-1.0, Math.min(1.0, rate));
     }
 
     public void tick(ServerLevel level) {
@@ -172,6 +190,7 @@ public final class OrbitMapData extends SavedData {
         entry.putInt("PadZ", pad.z());
         entry.putString("Parts", FlightCodec.encodeFlying(loop));
         FlightCodec.putOrbit(entry, loop.vessel().orbit());
+        FlightCodec.putAttitude(entry, loop.vessel());
         return entry;
     }
 }

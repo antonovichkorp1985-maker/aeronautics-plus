@@ -1055,6 +1055,7 @@ public final class VesselEntity extends Entity {
         tag.putBoolean("Wreck", entityData.get(WRECK));
         if (loop != null) {
             FlightCodec.putOrbit(tag, loop.vessel().orbit());
+            FlightCodec.putAttitude(tag, loop.vessel());
         }
     }
 
@@ -1067,7 +1068,9 @@ public final class VesselEntity extends Entity {
             loop = FlightCodec.restore(
                     entityData.get(PARTS),
                     new GridPos(entityData.get(PAD_X), entityData.get(PAD_Y), entityData.get(PAD_Z)),
-                    orbit);
+                    orbit,
+                    FlightCodec.readAttitude(tag),
+                    FlightCodec.readAngularVelocity(tag));
         } catch (RuntimeException ignored) {
             loop = null;
         }

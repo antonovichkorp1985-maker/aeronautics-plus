@@ -94,7 +94,9 @@ public final class MapAirSlice {
         }
 
         FlightLoop controlled = FlightLoop.sit(hopper()).liftoff().withOrbit(atAltitude(200_000.0, 7_700.0));
-        controlled = controlled.withVessel(controlled.vessel().withLiveThrottle(1.0));
+        controlled = controlled.withVessel(controlled.vessel().withLiveThrottle(1.0)
+                .withAngularVelocity(new Vector3d(0.5, 0.0, 0.0)));
+        Vector3d attitudeAxisBeforeBurn = controlled.vessel().attitude().bodyY();
         double controlledFuel = controlled.vessel().livePropellantKg();
         OrbitMap poweredMap = new OrbitMap();
         poweredMap.enter(controlled);
@@ -102,6 +104,10 @@ public final class MapAirSlice {
         if (poweredMap.size() != 1
                 || !(poweredMap.snapshot().get(0).vessel().livePropellantKg() < controlledFuel)) {
             throw new IllegalStateException("Nonzero map throttle must consume propellant and advance powered flight");
+        }
+        if (!(poweredMap.snapshot().get(0).vessel().attitude().bodyY()
+                .subtract(attitudeAxisBeforeBurn).magnitude() > 0.1)) {
+            throw new IllegalStateException("Map attitude rate must turn the powered vessel over time");
         }
         OrbitMapTrack controlledTrack = OrbitMapTrack.from(poweredMap.snapshot().get(0));
         if (controlledTrack.throttle() != 1.0 || !(controlledTrack.totalSpeedMetersPerSecond() > 0.0)

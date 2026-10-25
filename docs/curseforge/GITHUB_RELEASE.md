@@ -18,7 +18,7 @@ Aircraft and spacecraft parts for Create Aeronautics (NeoForge 1.21.1).
 
 Alpha / test. No orientation GUI. Player launch still uses Ad Astra. Rotors are not registered.
 
-JAR: `aeronauticsplus-0.2.2-test.27.jar`  
+JAR: `aeronauticsplus-0.2.2-test.27.jar`
 License: MIT. Original assets (no Create Aeronautics / Vanilla Walking meshes).
 
 ## Assets

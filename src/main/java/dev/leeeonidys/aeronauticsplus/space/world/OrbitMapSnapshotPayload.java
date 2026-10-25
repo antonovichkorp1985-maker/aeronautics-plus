@@ -3,6 +3,7 @@ package dev.leeeonidys.aeronauticsplus.space.world;
 import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
+import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -44,6 +45,9 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
             buf.writeDouble(track.throttle());
             buf.writeDouble(track.availableThrustNewtons());
             buf.writeDouble(track.propellantMassKg());
+            buf.writeDouble(track.angularVelocityBodyRadiansPerSecond().x());
+            buf.writeDouble(track.angularVelocityBodyRadiansPerSecond().y());
+            buf.writeDouble(track.angularVelocityBodyRadiansPerSecond().z());
             buf.writeDouble(track.dynamicPressurePascals());
             buf.writeDouble(track.apoapsisAltitudeMeters());
             buf.writeDouble(track.periapsisAltitudeMeters());
@@ -70,6 +74,7 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
                     buf.readDouble(),
                     buf.readDouble(),
                     buf.readDouble(),
+                    new Vector3d(buf.readDouble(), buf.readDouble(), buf.readDouble()),
                     buf.readDouble(),
                     buf.readDouble(),
                     buf.readDouble(),

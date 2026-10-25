@@ -58,7 +58,7 @@
   "screen.aeronauticsplus.orbit_map.tab_plan": "ПЛАН",
   "screen.aeronauticsplus.orbit_map.tab_control": "УПР.",
   "screen.aeronauticsplus.orbit_map.engine_controls": "ТЯГА",
-  "screen.aeronauticsplus.orbit_map.point_controls": "НАВЕДЕНИЕ / РСУ",
-  "screen.aeronauticsplus.orbit_map.rcs_hint": "Импульс РСУ — по выбранному направлению.",
+  "screen.aeronauticsplus.orbit_map.point_controls": "СКОРОСТЬ ВРАЩЕНИЯ",
+  "screen.aeronauticsplus.orbit_map.rcs_hint": "P/Y/R задают вращение; STOP останавливает.",
   "screen.aeronauticsplus.orbit_map.seated_controls": "Ниже 20 км управляйте из кресла пилота."
 }

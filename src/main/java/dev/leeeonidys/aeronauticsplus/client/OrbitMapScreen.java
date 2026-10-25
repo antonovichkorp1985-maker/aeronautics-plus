@@ -5,6 +5,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.ManeuverPreview;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapView;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystem;
+import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapControlPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import java.util.ArrayList;
@@ -183,8 +184,17 @@ public final class OrbitMapScreen extends Screen {
             }
             if (mouseY >= 185 && mouseY < 199 && mouseX >= panelX && mouseX < panelX + 92) {
                 int index = (int) ((mouseX - panelX) / 23.0);
-                int[] actions = {OrbitMapControlPayload.AIM_PROGRADE, OrbitMapControlPayload.AIM_RETROGRADE,
-                        OrbitMapControlPayload.AIM_RADIAL, OrbitMapControlPayload.RCS_PULSE};
+                int[] actions = {OrbitMapControlPayload.PITCH_DOWN, OrbitMapControlPayload.PITCH_UP,
+                        OrbitMapControlPayload.YAW_LEFT, OrbitMapControlPayload.YAW_RIGHT};
+                if (index < actions.length) {
+                    sendControl(selected, actions[index]);
+                    return true;
+                }
+            }
+            if (mouseY >= 203 && mouseY < 217 && mouseX >= panelX && mouseX < panelX + 92) {
+                int index = (int) ((mouseX - panelX) / 23.0);
+                int[] actions = {OrbitMapControlPayload.ROLL_LEFT, OrbitMapControlPayload.ROLL_RIGHT,
+                        OrbitMapControlPayload.ZERO_ROTATION, OrbitMapControlPayload.RCS_PULSE};
                 if (index < actions.length) {
                     sendControl(selected, actions[index]);
                     return true;
@@ -242,6 +252,11 @@ public final class OrbitMapScreen extends Screen {
         y = dataLine(graphics, "THROTTLE", String.format(Locale.ROOT, "%.0f%%", track.throttle() * 100.0), x, y);
         y = dataLine(graphics, "THRUST", String.format(Locale.ROOT, "%.0f N", track.availableThrustNewtons()), x, y);
         y = dataLine(graphics, "FUEL", String.format(Locale.ROOT, "%.1f kg", track.propellantMassKg()), x, y);
+        Vector3d rates = track.angularVelocityBodyRadiansPerSecond();
+        graphics.drawString(font, "P/Y/R", x, y, 0xFF879BA7, false);
+        graphics.drawString(font, String.format(Locale.ROOT, "%+.1f %+.1f %+.1f°/s",
+                Math.toDegrees(rates.x()), Math.toDegrees(rates.y()), Math.toDegrees(rates.z())),
+                x + 35, y, TEXT, false);
         graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.engine_controls"),
                 x, 137, 0xFFFFC857, false);
         String[] engine = {"CUT", "-10%", "+10%", "MAX"};
@@ -250,12 +265,16 @@ public final class OrbitMapScreen extends Screen {
         }
         graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.point_controls"),
                 x, 172, 0xFFFFC857, false);
-        String[] aim = {"PRO", "RET", "RAD", "RCS"};
-        for (int i = 0; i < aim.length; i++) {
-            drawActionButton(graphics, x + i * 23, 185, 21, aim[i]);
+        String[] axes = {"P-", "P+", "Y-", "Y+"};
+        for (int i = 0; i < axes.length; i++) {
+            drawActionButton(graphics, x + i * 23, 185, 21, axes[i]);
+        }
+        String[] roll = {"R-", "R+", "STOP", "RCS"};
+        for (int i = 0; i < roll.length; i++) {
+            drawActionButton(graphics, x + i * 23, 203, 21, roll[i]);
         }
         graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.rcs_hint"),
-                x, 205, 0xFF879BA7, false);
+                x, 220, 0xFF879BA7, false);
     }
 
     private void drawActionButton(GuiGraphics graphics, int x, int y, int buttonWidth, String label) {

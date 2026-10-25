@@ -387,11 +387,11 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.106: live orbital telemetry and map rocket controls.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.107: orbital flight controls with integrated body rotation rates.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("3");
+        PayloadRegistrar registrar = event.registrar("4");
         registrar.playToServer(
                 OrbitMapControlPayload.TYPE,
                 OrbitMapControlPayload.STREAM_CODEC,

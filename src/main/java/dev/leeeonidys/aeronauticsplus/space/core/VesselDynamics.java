@@ -596,7 +596,9 @@ public final class VesselDynamics {
                 orbit.centralBody(), nextPosition, nextVelocity, orbit.epochSeconds() + dt));
         if (thrusting) {
             double fuel0 = state.livePropellantKg();
-            state = consumeLiveCluster(state, dt).withOrbit(nextOrbit);
+            state = consumeLiveCluster(state, dt)
+                    .withOrbit(nextOrbit)
+                    .withAttitude(state.attitude().integrateBodyRate(state.angularVelocityBody(), dt));
             if (fuel0 > 1.0e-9 && !(state.livePropellantKg() > 1.0e-9)) {
                 faults.add(FlightFault.dryTank(dt));
             }
