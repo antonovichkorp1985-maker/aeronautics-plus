@@ -48,6 +48,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.DockCaptureLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.DockingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.SystemMapSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.ManeuverPreviewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
@@ -387,7 +388,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.109: rotatable orthographic 3D orbit map.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.110: global solar-system map with body-local views.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -829,6 +830,17 @@ public final class AeronauticsPlus {
                         mapView.parkingOnMap());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus map-view slice failed", exception);
+            }
+            try {
+                SystemMapSlice.Result systemMap = SystemMapSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus system-map slice OK: Earth={} AU, Neptune={} AU, Moon={} km, outerRadius={}",
+                        String.format(java.util.Locale.ROOT, "%.3f", systemMap.earthDistanceAu()),
+                        String.format(java.util.Locale.ROOT, "%.2f", systemMap.neptuneDistanceAu()),
+                        String.format(java.util.Locale.ROOT, "%.0f", systemMap.moonDistanceKm()),
+                        String.format(java.util.Locale.ROOT, "%.3f", systemMap.outerProjectionRadius());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus system-map slice failed", exception);
             }
             try {
                 MapAirSlice.Result mapAir = MapAirSlice.execute();

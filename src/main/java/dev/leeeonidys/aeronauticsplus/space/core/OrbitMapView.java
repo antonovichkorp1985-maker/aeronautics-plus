@@ -130,7 +130,24 @@ public final class OrbitMapView {
                 .add(transverse.multiply(radius * Math.sin(trueAnomalyRadians)));
     }
 
-    /** Project a live position onto a rotatable orthographic 3D map. */
+    /** Project a heliocentric point with logarithmic AU scaling for the whole-system view. */
+    public static Projected projectSystem(Vector3d heliocentricPositionMeters,
+                                          double yawRadians, double pitchRadians, double zoom) {
+        if (heliocentricPositionMeters == null || !Double.isFinite(yawRadians)
+                || !Double.isFinite(pitchRadians) || !(zoom > 0.0) || !Double.isFinite(zoom)) {
+            throw new IllegalArgumentException("System projection inputs are invalid");
+        }
+        double distance = heliocentricPositionMeters.magnitude();
+        if (!(distance > 1.0e-9)) {
+            return new Projected(0.0, 0.0, 0.0);
+        }
+        Vector3d unit = heliocentricPositionMeters.multiply(1.0 / distance);
+        double radius = Math.log1p(distance / SolarSystem.AU_METERS)
+                / Math.log1p(SolarSystemMap.rangeAu()) * zoom;
+        return rotate(unit, radius, yawRadians, pitchRadians);
+    }
+
+    /** Project a body-centred position on the local map's compressed altitude scale. */
     public static Projected project3d(double altitudeMeters, Vector3d direction,
                                       double yawRadians, double pitchRadians, double zoom) {
         if (!Double.isFinite(altitudeMeters) || direction == null
@@ -139,6 +156,12 @@ public final class OrbitMapView {
             throw new IllegalArgumentException("3D projection inputs are invalid");
         }
         Vector3d unit = direction.normalized();
+        double radius = (EARTH_FRACTION + (1.0 - EARTH_FRACTION)
+                * Math.max(0.0, Math.min(1.0, altitudeMeters / VIEW_ALTITUDE_METERS))) * zoom;
+        return rotate(unit, radius, yawRadians, pitchRadians);
+    }
+
+    private static Projected rotate(Vector3d unit, double radius, double yawRadians, double pitchRadians) {
         double cy = Math.cos(yawRadians);
         double sy = Math.sin(yawRadians);
         double xYaw = cy * unit.x() - sy * unit.z();
@@ -147,8 +170,6 @@ public final class OrbitMapView {
         double sp = Math.sin(pitchRadians);
         double yView = cp * unit.y() - sp * zYaw;
         double depth = sp * unit.y() + cp * zYaw;
-        double radius = (EARTH_FRACTION + (1.0 - EARTH_FRACTION)
-                * Math.max(0.0, Math.min(1.0, altitudeMeters / VIEW_ALTITUDE_METERS))) * zoom;
         return new Projected(radius * xYaw, radius * yView, depth);
     }
 

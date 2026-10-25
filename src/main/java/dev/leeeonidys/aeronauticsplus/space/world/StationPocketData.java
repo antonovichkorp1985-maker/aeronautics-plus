@@ -117,6 +117,11 @@ public final class StationPocketData extends SavedData {
         return island.loop().station();
     }
 
+    /** Parked stations kept as map tracks for the system overview. */
+    public List<FlightLoop> loops() {
+        return islands.stream().map(Island::loop).toList();
+    }
+
     private boolean used(int index) {
         for (Island island : islands) {
             if (island.index() == index) {

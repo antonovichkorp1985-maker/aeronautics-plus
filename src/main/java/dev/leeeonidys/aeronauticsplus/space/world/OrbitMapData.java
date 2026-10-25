@@ -76,6 +76,9 @@ public final class OrbitMapData extends SavedData {
             tracks.add(OrbitMapTrack.from(loop));
         }
         if (level != null) {
+            for (FlightLoop station : StationPocketData.get(level).loops()) {
+                tracks.add(OrbitMapTrack.from(station));
+            }
             for (Entity entity : level.getAllEntities()) {
                 if (entity instanceof VesselEntity vessel) {
                     OrbitMapTrack track = vessel.mapTrack();

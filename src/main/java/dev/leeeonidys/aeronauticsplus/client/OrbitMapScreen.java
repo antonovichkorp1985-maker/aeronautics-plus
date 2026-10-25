@@ -5,12 +5,15 @@ import dev.leeeonidys.aeronauticsplus.space.core.ManeuverPreview;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapView;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystem;
+import dev.leeeonidys.aeronauticsplus.space.core.SolarSystemMap;
 import dev.leeeonidys.aeronauticsplus.space.core.Vector3d;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapControlPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -34,13 +37,15 @@ public final class OrbitMapScreen extends Screen {
     private static final int TEXT = 0xFFEAECEE;
 
     private enum Panel { FLIGHT, PLAN, CONTROL }
-    private enum MapMode { THREE_D, TWO_D }
+    private enum MapMode { SYSTEM, THREE_D, TWO_D }
 
     private List<OrbitMapTrack> tracks;
     private String selectedTrackId;
     private Panel panel = Panel.FLIGHT;
     private double plannedProgradeDeltaV;
-    private MapMode mapMode = MapMode.THREE_D;
+    private MapMode mapMode = MapMode.SYSTEM;
+    private String focusedBodyId;
+    private final Map<String, int[]> systemBodyHits = new HashMap<>();
     private double cameraYaw = 0.45;
     private double cameraPitch = 0.38;
     private double cameraZoom = 1.0;
@@ -83,23 +88,27 @@ public final class OrbitMapScreen extends Screen {
         OrbitMapTrack selected = tracks.stream()
                 .filter(track -> track.id().equals(selectedTrackId))
                 .findFirst().orElse(null);
-        OrbitMapView.Frame frame = selected == null
-                ? OrbitMapView.frame(tracks)
-                : new OrbitMapView.Frame(selected.bodyId(), OrbitMapView.handoffVisible(selected.bodyId()));
+        String localBody = focusedBodyId != null ? focusedBodyId
+                : selected != null ? selected.bodyId() : OrbitMapView.frame(tracks).bodyId();
+        OrbitMapView.Frame frame = new OrbitMapView.Frame(localBody, OrbitMapView.handoffVisible(localBody));
         int[] disk = diskColors(frame.bodyId());
         int cx = width / 2;
         int cy = height / 2 + 8;
         int radius = Math.max(40, Math.min(width, height) / 3);
         graphics.fill(6, 36, Math.min(width / 3, 118), height - 6, 0xCC101820);
         graphics.fill(Math.max(width - 144, width * 2 / 3), 36, width - 6, height - 6, 0xCC101820);
-        if (mapMode == MapMode.THREE_D) {
+        if (mapMode == MapMode.SYSTEM) {
+            drawSystemMap(graphics, cx, cy, radius);
+        } else if (mapMode == MapMode.THREE_D) {
             drawThreeDimensionalMap(graphics, frame, disk, cx, cy, radius);
         } else {
             drawTwoDimensionalMap(graphics, frame, disk, cx, cy, radius);
         }
         drawMapModeToggle(graphics, cx);
         graphics.drawCenteredString(font, title, cx, 12, TEXT);
-        graphics.drawCenteredString(font, hint(frame), cx, 24, 0xFFABB2B9);
+        graphics.drawCenteredString(font, mapMode == MapMode.SYSTEM
+                ? Component.literal("Select a planet to open its local map • drag to rotate • wheel to zoom")
+                : hint(frame), cx, 24, 0xFFABB2B9);
         graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.vessels"),
                 12, 42, 0xFF58C4DD, false);
         int listY = 55;
@@ -110,7 +119,7 @@ public final class OrbitMapScreen extends Screen {
         List<OrbitMapTrack> drawn = new ArrayList<>(tracks);
         int row = 0;
         for (OrbitMapTrack track : drawn) {
-            if (OrbitMapView.inFrame(track, frame.bodyId())) {
+            if (mapMode == MapMode.SYSTEM || OrbitMapView.inFrame(track, frame.bodyId())) {
                 int[] point = mapPoint(track, cx, cy, radius);
                 int x = point[0];
                 int y = point[1];
@@ -123,9 +132,11 @@ public final class OrbitMapScreen extends Screen {
                     active ? 0xFF24546A : 0x00000000);
             String shortId = track.id().length() > 14 ? track.id().substring(0, 14) : track.id();
             graphics.drawString(font, shortId, 12, listY, active ? 0xFFFFFFFF : TEXT, false);
-            graphics.drawString(font,
-                    track.presence() == FlightPresence.ORBIT_MAP ? "● ORBIT" : "● WORLD",
-                    12, listY + 10, track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT : WORLD_DOT, false);
+            String status = track.presence() == FlightPresence.ORBIT_MAP ? "● ORBIT"
+                    : track.presence() == FlightPresence.STATION_BLOCKS ? "● STATION" : "● WORLD";
+            int statusColor = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT
+                    : track.presence() == FlightPresence.STATION_BLOCKS ? 0xFFFFC107 : WORLD_DOT;
+            graphics.drawString(font, status, 12, listY + 10, statusColor, false);
             listY += 25;
             row++;
         }
@@ -140,7 +151,10 @@ public final class OrbitMapScreen extends Screen {
                 drawFlightControls(graphics, selected, panelX);
             }
         }
-        graphics.drawString(font, footer(frame), 12, height - 18, frame.handoff() ? RING : PARKING, false);
+        graphics.drawString(font, mapMode == MapMode.SYSTEM
+                ? "SOLAR SYSTEM • LOG AU • approximate two-body ephemeris"
+                : footer(frame), 12, height - 18, mapMode == MapMode.SYSTEM ? 0xFF91C8E8
+                        : frame.handoff() ? RING : PARKING, false);
     }
 
     @Override
@@ -151,11 +165,29 @@ public final class OrbitMapScreen extends Screen {
         int mapCenterY = height / 2 + 8;
         int mapRadius = Math.max(40, Math.min(width, height) / 3);
         if (button == 0 && mouseY >= 37 && mouseY < 52
-                && mouseX >= mapCenterX - 30 && mouseX < mapCenterX + 30) {
-            mapMode = mapMode == MapMode.THREE_D ? MapMode.TWO_D : MapMode.THREE_D;
+                && mouseX >= mapCenterX - 42 && mouseX < mapCenterX + 42) {
+            if (mapMode == MapMode.SYSTEM) {
+                focusedBodyId = selected != null ? selected.bodyId()
+                        : focusedBodyId != null ? focusedBodyId : "earth";
+                mapMode = MapMode.THREE_D;
+            } else if (mapMode == MapMode.THREE_D) {
+                mapMode = MapMode.TWO_D;
+            } else {
+                mapMode = MapMode.SYSTEM;
+            }
             return true;
         }
-        if (mapMode == MapMode.THREE_D && button == 1
+        if (button == 0 && mapMode == MapMode.SYSTEM) {
+            for (Map.Entry<String, int[]> entry : systemBodyHits.entrySet()) {
+                int[] hit = entry.getValue();
+                if (Math.hypot(mouseX - hit[0], mouseY - hit[1]) <= 7.0) {
+                    focusedBodyId = entry.getKey();
+                    mapMode = MapMode.THREE_D;
+                    return true;
+                }
+            }
+        }
+        if ((mapMode == MapMode.THREE_D || mapMode == MapMode.SYSTEM) && button == 1
                 && Math.hypot(mouseX - mapCenterX, mouseY - mapCenterY) <= mapRadius * cameraZoom) {
             draggingMap = true;
             lastDragX = mouseX;
@@ -221,6 +253,9 @@ public final class OrbitMapScreen extends Screen {
             int index = (int) ((mouseY - 52) / 25.0);
             if (index >= 0 && index < tracks.size()) {
                 selectedTrackId = tracks.get(index).id();
+                if (mapMode != MapMode.SYSTEM) {
+                    focusedBodyId = tracks.get(index).bodyId();
+                }
                 plannedProgradeDeltaV = 0.0;
                 return true;
             }
@@ -254,18 +289,144 @@ public final class OrbitMapScreen extends Screen {
         int cx = width / 2;
         int cy = height / 2 + 8;
         int radius = Math.max(40, Math.min(width, height) / 3);
-        if (mapMode == MapMode.THREE_D && Math.hypot(mouseX - cx, mouseY - cy) <= radius * cameraZoom) {
-            cameraZoom = Math.max(0.72, Math.min(1.65, cameraZoom * (scrollY > 0.0 ? 1.08 : 1.0 / 1.08)));
+        if ((mapMode == MapMode.THREE_D || mapMode == MapMode.SYSTEM)
+                && Math.hypot(mouseX - cx, mouseY - cy) <= radius * cameraZoom) {
+            double minimum = mapMode == MapMode.SYSTEM ? 0.65 : 0.72;
+            double maximum = mapMode == MapMode.SYSTEM ? 2.4 : 1.65;
+            cameraZoom = Math.max(minimum, Math.min(maximum,
+                    cameraZoom * (scrollY > 0.0 ? 1.12 : 1.0 / 1.12)));
             return true;
         }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     private void drawMapModeToggle(GuiGraphics graphics, int cx) {
-        int left = cx - 27;
-        graphics.fill(left, 37, left + 54, 51, 0xDD263746);
-        graphics.drawCenteredString(font, mapMode == MapMode.THREE_D ? "3D" : "2D",
-                cx, 40, 0xFFBDEBFA);
+        int left = cx - 40;
+        graphics.fill(left, 37, left + 80, 51, 0xDD263746);
+        String label = switch (mapMode) {
+            case SYSTEM -> "SYSTEM";
+            case THREE_D -> "LOCAL 3D";
+            case TWO_D -> "LOCAL 2D";
+        };
+        graphics.drawCenteredString(font, label, cx, 40, 0xFFBDEBFA);
+    }
+
+    private void drawSystemMap(GuiGraphics graphics, int cx, int cy, int radius) {
+        systemBodyHits.clear();
+        fillCircle(graphics, cx, cy, radius, 0xFF050D18);
+        drawSystemRing(graphics, cx, cy, radius, 1.0, 0x334A667F);
+        drawSystemRing(graphics, cx, cy, radius, 5.0, 0x334A667F);
+        drawSystemRing(graphics, cx, cy, radius, 10.0, 0x334A667F);
+        drawSystemRing(graphics, cx, cy, radius, 20.0, 0x334A667F);
+        drawSystemRing(graphics, cx, cy, radius, SolarSystemMap.rangeAu(), 0x554A667F);
+        for (String bodyId : SolarSystemMap.planetIds()) {
+            drawSystemOrbit(graphics, bodyId, cx, cy, radius, systemColor(bodyId));
+        }
+        for (String bodyId : SolarSystemMap.dwarfPlanetIds()) {
+            drawSystemOrbit(graphics, bodyId, cx, cy, radius, 0x554C5967);
+        }
+        drawSystemOrbit(graphics, "moon", cx, cy, radius, 0x447E8791);
+        int sunX = cx;
+        int sunY = cy;
+        fillCircle(graphics, sunX, sunY, 5, 0xFFFFD54F);
+        graphics.drawString(font, "SUN", sunX + 7, sunY - 5, 0xFFFFD54F, false);
+        for (String bodyId : SolarSystemMap.planetIds()) {
+            Vector3d position = SolarSystemMap.position(bodyId, mapEpochSeconds());
+            int[] point = projectSystem(position, cx, cy, radius);
+            int dot = bodyId.equals("earth") ? 5 : 4;
+            fillCircle(graphics, point[0], point[1], dot, systemColor(bodyId));
+            graphics.drawString(font, bodyId.toUpperCase(Locale.ROOT), point[0] + 6, point[1] - 4,
+                    systemColor(bodyId), false);
+            systemBodyHits.put(bodyId, point);
+        }
+        Vector3d lunarPosition = SolarSystemMap.position("moon", mapEpochSeconds());
+        int[] moon = projectSystem(lunarPosition, cx, cy, radius);
+        fillCircle(graphics, moon[0], moon[1], 3, MOON);
+        systemBodyHits.put("moon", moon);
+        for (String bodyId : SolarSystemMap.dwarfPlanetIds()) {
+            int[] point = projectSystem(SolarSystemMap.position(bodyId, mapEpochSeconds()), cx, cy, radius);
+            fillCircle(graphics, point[0], point[1], 3, 0xFFB59B78);
+            graphics.drawString(font, bodyId.toUpperCase(Locale.ROOT), point[0] + 5, point[1] - 4,
+                    0xFFB59B78, false);
+            systemBodyHits.put(bodyId, point);
+        }
+        for (OrbitMapTrack track : tracks) {
+            try {
+                Vector3d position = systemPosition(track);
+                int[] point = projectSystem(position, cx, cy, radius);
+                int color = track.presence() == FlightPresence.STATION_BLOCKS ? 0xFFFFC107
+                        : track.id().equals(selectedTrackId) ? 0xFF66D9EF : MAP_DOT;
+                fillCircle(graphics, point[0], point[1], track.presence() == FlightPresence.STATION_BLOCKS ? 4 : 3, color);
+            } catch (IllegalArgumentException unknownBody) {
+                // Keep a stale or future body catalogue entry from taking down the map screen.
+            }
+        }
+        graphics.drawString(font, "AU rings: 1 / 5 / 10 / 20 / 40", cx - radius, cy + radius + 3,
+                0xFF8196A5, false);
+    }
+
+    private void drawSystemOrbit(GuiGraphics graphics, String bodyId, int cx, int cy, int radius, int color) {
+        Integer px = null;
+        Integer py = null;
+        for (int i = 0; i <= 96; i++) {
+            double offset = 2.0 * Math.PI * i / 96.0;
+            Vector3d position = SolarSystemMap.orbitPoint(bodyId, mapEpochSeconds(), offset);
+            int[] point = projectSystem(position, cx, cy, radius);
+            if (px != null) {
+                graphics.fill(Math.min(px, point[0]), Math.min(py, point[1]),
+                        Math.max(px, point[0]) + 1, Math.max(py, point[1]) + 1, color);
+            }
+            px = point[0];
+            py = point[1];
+        }
+    }
+
+    private void drawSystemRing(GuiGraphics graphics, int cx, int cy, int radius, double ringAu, int color) {
+        Integer px = null;
+        Integer py = null;
+        for (int i = 0; i <= 120; i++) {
+            double angle = 2.0 * Math.PI * i / 120.0;
+            Vector3d position = new Vector3d(ringAu * SolarSystem.AU_METERS * Math.cos(angle),
+                    0.0, ringAu * SolarSystem.AU_METERS * Math.sin(angle));
+            int[] point = projectSystem(position, cx, cy, radius);
+            if (px != null) {
+                graphics.fill(Math.min(px, point[0]), Math.min(py, point[1]),
+                        Math.max(px, point[0]) + 1, Math.max(py, point[1]) + 1, color);
+            }
+            px = point[0];
+            py = point[1];
+        }
+    }
+
+    private int[] projectSystem(Vector3d position, int cx, int cy, int radius) {
+        OrbitMapView.Projected point = OrbitMapView.projectSystem(position, cameraYaw, cameraPitch, cameraZoom);
+        return new int[] {cx + (int) Math.round(point.x() * radius), cy - (int) Math.round(point.y() * radius)};
+    }
+
+    private Vector3d systemPosition(OrbitMapTrack track) {
+        Vector3d body = SolarSystemMap.position(track.bodyId(), track.epochSeconds());
+        double localRadius = SolarSystem.body(track.bodyId()).radiusMeters() + track.altitudeMeters();
+        return body.add(track.positionDirection().multiply(localRadius));
+    }
+
+    private double mapEpochSeconds() {
+        return tracks.stream().filter(track -> track.id().equals(selectedTrackId))
+                .mapToDouble(OrbitMapTrack::epochSeconds).findFirst().orElse(0.0);
+    }
+
+    private static int systemColor(String bodyId) {
+        return switch (bodyId) {
+            case "mercury" -> 0xFFAAA49A;
+            case "venus" -> 0xFFE5B36A;
+            case "earth" -> 0xFF58A6E7;
+            case "mars" -> 0xFFE07152;
+            case "jupiter" -> 0xFFD6A66C;
+            case "saturn" -> 0xFFE9D28E;
+            case "uranus" -> 0xFF75D1D4;
+            case "neptune" -> 0xFF5577EE;
+            case "ceres", "vesta", "pallas", "hygiea" -> 0xFFB59B78;
+            default -> 0xFFB0B7C3;
+        };
     }
 
     private void drawTwoDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame frame, int[] disk,
@@ -304,6 +465,9 @@ public final class OrbitMapScreen extends Screen {
     }
 
     private int[] mapPoint(OrbitMapTrack track, int cx, int cy, int radius) {
+        if (mapMode == MapMode.SYSTEM) {
+            return projectSystem(systemPosition(track), cx, cy, radius);
+        }
         if (mapMode == MapMode.THREE_D) {
             OrbitMapView.Projected point = OrbitMapView.project3d(
                     track.altitudeMeters(), track.positionDirection(), cameraYaw, cameraPitch, cameraZoom);
