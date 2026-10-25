@@ -45,7 +45,7 @@ public final class OrbitMapScreen extends Screen {
     private double plannedProgradeDeltaV;
     private MapMode mapMode = MapMode.SYSTEM;
     private String focusedBodyId;
-    private final Map<String, int[]> systemBodyHits = new HashMap<>();
+    private final Map<String, List<int[]>> systemBodyHits = new HashMap<>();
     private double cameraYaw = 0.45;
     private double cameraPitch = 0.38;
     private double cameraZoom = 1.0;
@@ -178,13 +178,23 @@ public final class OrbitMapScreen extends Screen {
             return true;
         }
         if (button == 0 && mapMode == MapMode.SYSTEM) {
-            for (Map.Entry<String, int[]> entry : systemBodyHits.entrySet()) {
-                int[] hit = entry.getValue();
-                if (Math.hypot(mouseX - hit[0], mouseY - hit[1]) <= 7.0) {
-                    focusedBodyId = entry.getKey();
-                    mapMode = MapMode.THREE_D;
-                    return true;
+            String hitBody = null;
+            double nearestHitSquared = 7.0 * 7.0;
+            for (Map.Entry<String, List<int[]>> entry : systemBodyHits.entrySet()) {
+                for (int[] hit : entry.getValue()) {
+                    double dx = mouseX - hit[0];
+                    double dy = mouseY - hit[1];
+                    double distanceSquared = dx * dx + dy * dy;
+                    if (distanceSquared < nearestHitSquared) {
+                        nearestHitSquared = distanceSquared;
+                        hitBody = entry.getKey();
+                    }
                 }
+            }
+            if (hitBody != null) {
+                focusedBodyId = hitBody;
+                mapMode = MapMode.THREE_D;
+                return true;
             }
         }
         if ((mapMode == MapMode.THREE_D || mapMode == MapMode.SYSTEM) && button == 1
@@ -326,29 +336,28 @@ public final class OrbitMapScreen extends Screen {
             drawSystemOrbit(graphics, bodyId, cx, cy, radius, 0x554C5967);
         }
         drawSystemOrbit(graphics, "moon", cx, cy, radius, 0x447E8791);
-        int sunX = cx;
-        int sunY = cy;
-        fillCircle(graphics, sunX, sunY, 5, 0xFFFFD54F);
-        graphics.drawString(font, "SUN", sunX + 7, sunY - 5, 0xFFFFD54F, false);
+        int[] sun = {cx, cy};
+        drawSystemBody(graphics, "sun", "SUN", sun, 7, -5, 5, 0xFFFFD54F);
         for (String bodyId : SolarSystemMap.planetIds()) {
             Vector3d position = SolarSystemMap.position(bodyId, mapEpochSeconds());
             int[] point = projectSystem(position, cx, cy, radius);
-            int dot = bodyId.equals("earth") ? 5 : 4;
-            fillCircle(graphics, point[0], point[1], dot, systemColor(bodyId));
-            graphics.drawString(font, bodyId.toUpperCase(Locale.ROOT), point[0] + 6, point[1] - 4,
-                    systemColor(bodyId), false);
-            systemBodyHits.put(bodyId, point);
+            int[] labelOffset = systemLabelOffset(bodyId);
+            drawSystemBody(graphics, bodyId, bodyId.toUpperCase(Locale.ROOT), point,
+                    labelOffset[0], labelOffset[1], bodyId.equals("earth") ? 5 : 4, systemColor(bodyId));
         }
         Vector3d lunarPosition = SolarSystemMap.position("moon", mapEpochSeconds());
         int[] moon = projectSystem(lunarPosition, cx, cy, radius);
-        fillCircle(graphics, moon[0], moon[1], 3, MOON);
-        systemBodyHits.put("moon", moon);
+        int[] earth = projectSystem(SolarSystemMap.position("earth", mapEpochSeconds()), cx, cy, radius);
+        int[] moonCallout = new int[] {
+                clamp(earth[0] - 18, cx - radius + 7, cx + radius - 7),
+                clamp(earth[1] + 18, cy - radius + 7, cy + radius - 7)};
+        drawSystemLeader(graphics, moon[0], moon[1], moonCallout[0], moonCallout[1], 0xFFCFD6DF);
+        drawSystemBody(graphics, "moon", "MOON (UI OFFSET)", moonCallout, -1, -12, 3, MOON);
         for (String bodyId : SolarSystemMap.dwarfPlanetIds()) {
             int[] point = projectSystem(SolarSystemMap.position(bodyId, mapEpochSeconds()), cx, cy, radius);
-            fillCircle(graphics, point[0], point[1], 3, 0xFFB59B78);
-            graphics.drawString(font, bodyId.toUpperCase(Locale.ROOT), point[0] + 5, point[1] - 4,
-                    0xFFB59B78, false);
-            systemBodyHits.put(bodyId, point);
+            int[] labelOffset = systemLabelOffset(bodyId);
+            drawSystemBody(graphics, bodyId, bodyId.toUpperCase(Locale.ROOT), point,
+                    labelOffset[0], labelOffset[1], 3, 0xFFB59B78);
         }
         for (OrbitMapTrack track : tracks) {
             try {
@@ -363,6 +372,68 @@ public final class OrbitMapScreen extends Screen {
         }
         graphics.drawString(font, "AU rings: 1 / 5 / 10 / 20 / 40", cx - radius, cy + radius + 3,
                 0xFF8196A5, false);
+    }
+
+    private void drawSystemBody(GuiGraphics graphics, String bodyId, String label, int[] point,
+                                int labelOffsetX, int labelOffsetY, int dotRadius, int color) {
+        int labelX = point[0] + labelOffsetX;
+        int labelY = point[1] + labelOffsetY;
+        if (labelOffsetX != 0 || labelOffsetY != 0) {
+            drawSystemLeader(graphics, point[0], point[1], labelX, labelY, 0x668F9BA8);
+        }
+        fillCircle(graphics, point[0], point[1], dotRadius, color);
+        graphics.drawString(font, label, labelX, labelY, color, false);
+        addSystemHit(bodyId, point[0], point[1]);
+        addSystemHit(bodyId, labelX + font.width(label) / 2, labelY + font.lineHeight / 2);
+    }
+
+    private void addSystemHit(String bodyId, int x, int y) {
+        systemBodyHits.computeIfAbsent(bodyId, ignored -> new ArrayList<>()).add(new int[] {x, y});
+    }
+
+    private static int[] systemLabelOffset(String bodyId) {
+        return switch (bodyId) {
+            case "mercury" -> new int[] {-27, -13};
+            case "venus" -> new int[] {-27, 2};
+            case "earth" -> new int[] {8, -13};
+            case "mars" -> new int[] {8, 2};
+            case "jupiter" -> new int[] {9, -10};
+            case "saturn" -> new int[] {9, 3};
+            case "uranus" -> new int[] {-25, -10};
+            case "neptune" -> new int[] {-25, 3};
+            case "ceres" -> new int[] {-28, -12};
+            case "vesta" -> new int[] {8, -12};
+            case "pallas" -> new int[] {-28, 2};
+            case "hygiea" -> new int[] {8, 2};
+            default -> new int[] {6, -4};
+        };
+    }
+
+    private static void drawSystemLeader(GuiGraphics graphics, int x0, int y0, int x1, int y1, int color) {
+        int dx = Math.abs(x1 - x0);
+        int sx = x0 < x1 ? 1 : -1;
+        int dy = -Math.abs(y1 - y0);
+        int sy = y0 < y1 ? 1 : -1;
+        int error = dx + dy;
+        while (true) {
+            graphics.fill(x0, y0, x0 + 1, y0 + 1, color);
+            if (x0 == x1 && y0 == y1) {
+                break;
+            }
+            int twiceError = 2 * error;
+            if (twiceError >= dy) {
+                error += dy;
+                x0 += sx;
+            }
+            if (twiceError <= dx) {
+                error += dx;
+                y0 += sy;
+            }
+        }
+    }
+
+    private static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     private void drawSystemOrbit(GuiGraphics graphics, String bodyId, int cx, int cy, int radius, int color) {

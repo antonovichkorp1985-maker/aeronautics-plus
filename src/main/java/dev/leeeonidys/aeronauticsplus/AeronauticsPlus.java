@@ -388,7 +388,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.111: global solar-system map with body-local views.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.112: global solar-system map with body-local views.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
