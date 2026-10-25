@@ -4,6 +4,7 @@ import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightLoop;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMap;
+import dev.leeeonidys.aeronauticsplus.space.core.HoldAim;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitState;
 import net.minecraft.world.entity.Entity;
@@ -84,6 +85,51 @@ public final class OrbitMapData extends SavedData {
             }
         }
         return tracks;
+    }
+
+    /** Apply one discrete, validated spacecraft control to a vessel present on the map. */
+    public String command(String trackId, int action) {
+        try {
+            boolean updated = map.update(trackId, loop -> applyControl(loop, action));
+            if (!updated) {
+                return "Выбранный аппарат уже не на орбитальной карте.";
+            }
+            setDirty();
+            return switch (action) {
+                case OrbitMapControlPayload.THROTTLE_DOWN, OrbitMapControlPayload.THROTTLE_UP -> "Тяга изменена на 10%.";
+                case OrbitMapControlPayload.THROTTLE_CUT -> "Двигатель выключен.";
+                case OrbitMapControlPayload.THROTTLE_FULL -> "Тяга установлена 100%.";
+                case OrbitMapControlPayload.AIM_PROGRADE -> "Ориентация: по скорости.";
+                case OrbitMapControlPayload.AIM_RETROGRADE -> "Ориентация: против скорости.";
+                case OrbitMapControlPayload.AIM_RADIAL -> "Ориентация: радиально наружу.";
+                case OrbitMapControlPayload.RCS_PULSE -> "Импульс РСУ.";
+                default -> "Команда карты выполнена.";
+            };
+        } catch (RuntimeException failure) {
+            String message = failure.getMessage();
+            return message == null || message.isBlank() ? "Команда аппарата не выполнена." : message;
+        }
+    }
+
+    private static FlightLoop applyControl(FlightLoop loop, int action) {
+        if (!loop.hasController()) {
+            throw new IllegalStateException("Нет бортового контроллера.");
+        }
+        return switch (action) {
+            case OrbitMapControlPayload.THROTTLE_DOWN -> loop.withVessel(loop.vessel().nudgeLiveThrottle(-0.1));
+            case OrbitMapControlPayload.THROTTLE_UP -> loop.withVessel(loop.vessel().nudgeLiveThrottle(0.1));
+            case OrbitMapControlPayload.THROTTLE_CUT -> loop.withVessel(loop.vessel().withLiveThrottle(0.0));
+            case OrbitMapControlPayload.THROTTLE_FULL -> loop.withVessel(loop.vessel().withLiveThrottle(1.0));
+            case OrbitMapControlPayload.AIM_PROGRADE -> aim(loop, HoldAim.Mode.PROGRADE);
+            case OrbitMapControlPayload.AIM_RETROGRADE -> aim(loop, HoldAim.Mode.RETRO);
+            case OrbitMapControlPayload.AIM_RADIAL -> aim(loop, HoldAim.Mode.RADIAL);
+            case OrbitMapControlPayload.RCS_PULSE -> loop.fireRcs(0.2);
+            default -> throw new IllegalArgumentException("Unknown spacecraft control");
+        };
+    }
+
+    private static FlightLoop aim(FlightLoop loop, HoldAim.Mode mode) {
+        return loop.withVessel(loop.vessel().withAttitude(HoldAim.attitude(loop.vessel().orbit(), mode)));
     }
 
     public void tick(ServerLevel level) {

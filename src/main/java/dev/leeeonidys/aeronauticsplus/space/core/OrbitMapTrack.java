@@ -3,8 +3,8 @@ package dev.leeeonidys.aeronauticsplus.space.core;
 import dev.leeeonidys.aeronauticsplus.space.compile.GridPos;
 
 /**
- * One vehicle on the Kepler map display. q / Ap / Pe are the current body's column, not the leak field.
- * Not an orientation GUI.
+ * One vehicle on the Kepler map. q / Ap / Pe come from the current body's flight state;
+ * not a ChemMod leak field. The client uses these values for live telemetry and map planning.
  */
 public record OrbitMapTrack(
         String id,
@@ -13,6 +13,10 @@ public record OrbitMapTrack(
         FlightPresence presence,
         double horizontalSpeedMetersPerSecond,
         double radialSpeedMetersPerSecond,
+        double totalSpeedMetersPerSecond,
+        double throttle,
+        double availableThrustNewtons,
+        double propellantMassKg,
         double dynamicPressurePascals,
         double apoapsisAltitudeMeters,
         double periapsisAltitudeMeters,
@@ -27,6 +31,10 @@ public record OrbitMapTrack(
                 || !Double.isFinite(horizontalSpeedMetersPerSecond)
                 || horizontalSpeedMetersPerSecond < 0.0
                 || !Double.isFinite(radialSpeedMetersPerSecond)
+                || !Double.isFinite(totalSpeedMetersPerSecond) || totalSpeedMetersPerSecond < 0.0
+                || !Double.isFinite(throttle) || throttle < 0.0 || throttle > 1.0
+                || !Double.isFinite(availableThrustNewtons) || availableThrustNewtons < 0.0
+                || !Double.isFinite(propellantMassKg) || propellantMassKg < 0.0
                 || !Double.isFinite(dynamicPressurePascals)
                 || dynamicPressurePascals < 0.0
                 || !Double.isFinite(periapsisAltitudeMeters)
@@ -50,6 +58,12 @@ public record OrbitMapTrack(
                 loop.presence(),
                 orbit.horizontalSpeedMetersPerSecond(),
                 orbit.radialSpeedMetersPerSecond(),
+                orbit.velocityMetersPerSecond().magnitude(),
+                loop.vessel().liveThrottle(),
+                loop.vessel().activeStage().netThrustNewtonsAt(
+                        SolarSystem.atmosphereOf(orbit.centralBody()).pressurePascals(Math.max(0.0, orbit.altitudeMeters())))
+                        .magnitude(),
+                loop.vessel().livePropellantKg(),
                 SolarSystem.atmosphereOf(orbit.centralBody()).dynamicPressurePascals(orbit),
                 orbit.apoapsisAltitudeMeters(),
                 orbit.periapsisAltitudeMeters(),

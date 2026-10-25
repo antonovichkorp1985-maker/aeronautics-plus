@@ -53,5 +53,12 @@
   "screen.aeronauticsplus.orbit_map.flight_data": "FLIGHT DATA",
   "screen.aeronauticsplus.orbit_map.maneuver_preview": "MANEUVER PREVIEW",
   "screen.aeronauticsplus.orbit_map.plan_only": "PREVIEW ONLY — NOT APPLIED",
-  "screen.aeronauticsplus.orbit_map.invalid_impulse": "INVALID IMPULSE"
+  "screen.aeronauticsplus.orbit_map.invalid_impulse": "INVALID IMPULSE",
+  "screen.aeronauticsplus.orbit_map.tab_flight": "FLT",
+  "screen.aeronauticsplus.orbit_map.tab_plan": "PLAN",
+  "screen.aeronauticsplus.orbit_map.tab_control": "CTRL",
+  "screen.aeronauticsplus.orbit_map.engine_controls": "ENGINE",
+  "screen.aeronauticsplus.orbit_map.point_controls": "AIM / RCS",
+  "screen.aeronauticsplus.orbit_map.rcs_hint": "RCS pulse uses selected attitude.",
+  "screen.aeronauticsplus.orbit_map.seated_controls": "Use pilot-seat controls below 20 km."
 }

@@ -5,6 +5,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.ManeuverPreview;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapView;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystem;
+import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapControlPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,11 @@ public final class OrbitMapScreen extends Screen {
     private static final int WORLD_DOT = 0xFFE67E22;
     private static final int TEXT = 0xFFEAECEE;
 
+    private enum Panel { FLIGHT, PLAN, CONTROL }
+
     private List<OrbitMapTrack> tracks;
     private String selectedTrackId;
+    private Panel panel = Panel.FLIGHT;
     private double plannedProgradeDeltaV;
     private int refresh;
 
@@ -123,28 +127,32 @@ public final class OrbitMapScreen extends Screen {
             listY += 25;
             row++;
         }
-        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.flight_data"),
-                Math.max(width - 138, width * 2 / 3) + 8, 42, 0xFF58C4DD, false);
+        int panelX = Math.max(width - 138, width * 2 / 3) + 8;
+        drawPanelTabs(graphics, panelX);
         if (selected != null) {
-            int x = Math.max(width - 138, width * 2 / 3) + 8;
-            int y = 58;
-            y = dataLine(graphics, "BODY", selected.bodyId(), x, y);
-            y = dataLine(graphics, "ALT", String.format(Locale.ROOT, "%.2f km", selected.altitudeMeters() / 1000.0), x, y);
-            y = dataLine(graphics, "H V", String.format(Locale.ROOT, "%.0f m/s", selected.horizontalSpeedMetersPerSecond()), x, y);
-            y = dataLine(graphics, "AP", Double.isFinite(selected.apoapsisAltitudeMeters())
-                    ? String.format(Locale.ROOT, "%.1f km", selected.apoapsisAltitudeMeters() / 1000.0) : "ESCAPE", x, y);
-            y = dataLine(graphics, "PE", String.format(Locale.ROOT, "%.1f km", selected.periapsisAltitudeMeters() / 1000.0), x, y);
-            y = dataLine(graphics, "Q", String.format(Locale.ROOT, "%.1f Pa", selected.dynamicPressurePascals()), x, y);
-            dataLine(graphics, "PRESENCE", selected.presence() == FlightPresence.ORBIT_MAP ? "ORBIT MAP" : "WORLD", x, y);
-            drawManeuverPlanner(graphics, selected, x, height - 83);
+            if (panel == Panel.FLIGHT) {
+                drawFlightData(graphics, selected, panelX);
+            } else if (panel == Panel.PLAN) {
+                drawManeuverPlanner(graphics, selected, panelX, height - 83);
+            } else {
+                drawFlightControls(graphics, selected, panelX);
+            }
         }
         graphics.drawString(font, footer(frame), 12, height - 18, frame.handoff() ? RING : PARKING, false);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            int panelX = Math.max(width - 138, width * 2 / 3) + 8;
+        OrbitMapTrack selected = tracks.stream().filter(track -> track.id().equals(selectedTrackId)).findFirst().orElse(null);
+        int panelX = Math.max(width - 138, width * 2 / 3) + 8;
+        if (button == 0 && mouseX >= panelX && mouseX < panelX + 129 && mouseY >= 40 && mouseY < 54) {
+            int tab = (int) ((mouseX - panelX) / 43.0);
+            if (tab >= 0 && tab < Panel.values().length) {
+                panel = Panel.values()[tab];
+                return true;
+            }
+        }
+        if (button == 0 && selected != null && panel == Panel.PLAN) {
             int plannerTop = height - 83;
             if (mouseX >= panelX && mouseX < panelX + 88 && mouseY >= plannerTop + 24 && mouseY < plannerTop + 37) {
                 int buttonIndex = (int) ((mouseX - panelX) / 22.0);
@@ -163,6 +171,26 @@ public final class OrbitMapScreen extends Screen {
                 return true;
             }
         }
+        if (button == 0 && selected != null && panel == Panel.CONTROL) {
+            if (mouseY >= 150 && mouseY < 164 && mouseX >= panelX && mouseX < panelX + 92) {
+                int index = (int) ((mouseX - panelX) / 23.0);
+                int[] actions = {OrbitMapControlPayload.THROTTLE_CUT, OrbitMapControlPayload.THROTTLE_DOWN,
+                        OrbitMapControlPayload.THROTTLE_UP, OrbitMapControlPayload.THROTTLE_FULL};
+                if (index < actions.length) {
+                    sendControl(selected, actions[index]);
+                    return true;
+                }
+            }
+            if (mouseY >= 185 && mouseY < 199 && mouseX >= panelX && mouseX < panelX + 92) {
+                int index = (int) ((mouseX - panelX) / 23.0);
+                int[] actions = {OrbitMapControlPayload.AIM_PROGRADE, OrbitMapControlPayload.AIM_RETROGRADE,
+                        OrbitMapControlPayload.AIM_RADIAL, OrbitMapControlPayload.RCS_PULSE};
+                if (index < actions.length) {
+                    sendControl(selected, actions[index]);
+                    return true;
+                }
+            }
+        }
         if (button == 0 && mouseX >= 8 && mouseX <= Math.min(width / 3, 118) && mouseY >= 52) {
             int index = (int) ((mouseY - 52) / 25.0);
             if (index >= 0 && index < tracks.size()) {
@@ -172,6 +200,73 @@ public final class OrbitMapScreen extends Screen {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private void drawPanelTabs(GuiGraphics graphics, int x) {
+        String[] keys = {"tab_flight", "tab_plan", "tab_control"};
+        Panel[] panels = Panel.values();
+        for (int i = 0; i < panels.length; i++) {
+            int bx = x + i * 43;
+            boolean active = panel == panels[i];
+            graphics.fill(bx, 40, bx + 40, 53, active ? 0xFF24546A : 0xFF263746);
+            graphics.drawCenteredString(font,
+                    Component.translatable("screen.aeronauticsplus.orbit_map." + keys[i]),
+                    bx + 20, 43, active ? 0xFFFFFFFF : 0xFFBDEBFA);
+        }
+    }
+
+    private void drawFlightData(GuiGraphics graphics, OrbitMapTrack track, int x) {
+        int y = 59;
+        y = dataLine(graphics, "BODY", track.bodyId(), x, y);
+        y = dataLine(graphics, "ALT", String.format(Locale.ROOT, "%.2f km", track.altitudeMeters() / 1000.0), x, y);
+        y = dataLine(graphics, "SPEED", String.format(Locale.ROOT, "%.1f m/s", track.totalSpeedMetersPerSecond()), x, y);
+        y = dataLine(graphics, "RADIAL", String.format(Locale.ROOT, "%+.1f m/s", track.radialSpeedMetersPerSecond()), x, y);
+        y = dataLine(graphics, "HORIZ", String.format(Locale.ROOT, "%.1f m/s", track.horizontalSpeedMetersPerSecond()), x, y);
+        y = dataLine(graphics, "AP", Double.isFinite(track.apoapsisAltitudeMeters())
+                ? String.format(Locale.ROOT, "%.1f km", track.apoapsisAltitudeMeters() / 1000.0) : "ESCAPE", x, y);
+        y = dataLine(graphics, "PE", String.format(Locale.ROOT, "%.1f km", track.periapsisAltitudeMeters() / 1000.0), x, y);
+        y = dataLine(graphics, "THROTTLE", String.format(Locale.ROOT, "%.0f%%", track.throttle() * 100.0), x, y);
+        y = dataLine(graphics, "THRUST", String.format(Locale.ROOT, "%.0f N", track.availableThrustNewtons()), x, y);
+        y = dataLine(graphics, "FUEL", String.format(Locale.ROOT, "%.1f kg", track.propellantMassKg()), x, y);
+        dataLine(graphics, "Q", String.format(Locale.ROOT, "%.1f Pa", track.dynamicPressurePascals()), x, y);
+    }
+
+    private void drawFlightControls(GuiGraphics graphics, OrbitMapTrack track, int x) {
+        if (track.presence() != FlightPresence.ORBIT_MAP) {
+            graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.seated_controls"),
+                    x, 61, TEXT, false);
+            return;
+        }
+        int y = 59;
+        y = dataLine(graphics, "SPEED", String.format(Locale.ROOT, "%.1f m/s", track.totalSpeedMetersPerSecond()), x, y);
+        y = dataLine(graphics, "THROTTLE", String.format(Locale.ROOT, "%.0f%%", track.throttle() * 100.0), x, y);
+        y = dataLine(graphics, "THRUST", String.format(Locale.ROOT, "%.0f N", track.availableThrustNewtons()), x, y);
+        y = dataLine(graphics, "FUEL", String.format(Locale.ROOT, "%.1f kg", track.propellantMassKg()), x, y);
+        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.engine_controls"),
+                x, 137, 0xFFFFC857, false);
+        String[] engine = {"CUT", "-10%", "+10%", "MAX"};
+        for (int i = 0; i < engine.length; i++) {
+            drawActionButton(graphics, x + i * 23, 150, 21, engine[i]);
+        }
+        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.point_controls"),
+                x, 172, 0xFFFFC857, false);
+        String[] aim = {"PRO", "RET", "RAD", "RCS"};
+        for (int i = 0; i < aim.length; i++) {
+            drawActionButton(graphics, x + i * 23, 185, 21, aim[i]);
+        }
+        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.rcs_hint"),
+                x, 205, 0xFF879BA7, false);
+    }
+
+    private void drawActionButton(GuiGraphics graphics, int x, int y, int buttonWidth, String label) {
+        graphics.fill(x, y, x + buttonWidth, y + 13, 0xFF263746);
+        graphics.drawCenteredString(font, label, x + buttonWidth / 2, y + 3, 0xFFBDEBFA);
+    }
+
+    private void sendControl(OrbitMapTrack track, int action) {
+        if (track != null && track.presence() == FlightPresence.ORBIT_MAP) {
+            PacketDistributor.sendToServer(new OrbitMapControlPayload(track.id(), action));
+        }
     }
 
     /** Draw the two-body conic in its XZ projection; this UI pass intentionally omits inclination. */

@@ -72,6 +72,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.PyroLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.RadialLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StrapOnSlice;
 import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
+import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapControlPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapSnapshotPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
@@ -386,11 +387,15 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.105: lunar Earth geography, conic map and prograde maneuver preview.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.106: live orbital telemetry and map rocket controls.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar("3");
+        registrar.playToServer(
+                OrbitMapControlPayload.TYPE,
+                OrbitMapControlPayload.STREAM_CODEC,
+                OrbitMapControlPayload::handle);
         registrar.playToServer(
                 OrbitMapRequestPayload.TYPE,
                 OrbitMapRequestPayload.STREAM_CODEC,

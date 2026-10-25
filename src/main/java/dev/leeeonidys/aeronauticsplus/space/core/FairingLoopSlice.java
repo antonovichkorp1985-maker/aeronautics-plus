@@ -97,7 +97,9 @@ public final class FairingLoopSlice {
         }
 
         OrbitMap map = new OrbitMap();
-        map.enter(FlightLoop.sit(shrouded()).liftoff().withOrbit(atAltitude(80_000.0)));
+        FlightLoop coastMap = FlightLoop.sit(shrouded()).liftoff().withOrbit(atAltitude(80_000.0));
+        coastMap = coastMap.withVessel(coastMap.vessel().withLiveThrottle(0.0));
+        map.enter(coastMap);
         map.advance(1.0);
         if (map.size() != 1 || !map.snapshot().get(0).hasFairing()) {
             throw new IllegalStateException("Map coast must keep the fairing until commanded");

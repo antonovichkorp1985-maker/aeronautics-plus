@@ -7,7 +7,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
-/** Coast map vehicles every Overworld tick and spawn them again under 20 km. */
+/** Advance map vehicles every Overworld tick, burn at live throttle, and spawn under 20 km. */
 @EventBusSubscriber(modid = AeronauticsPlus.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class OrbitMapEvents {
     private OrbitMapEvents() {

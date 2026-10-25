@@ -26,7 +26,7 @@ public final class MapAirSlice {
     public static Result execute() {
         FlightLoop mapped = FlightLoop.sit(hopper()).liftoff()
                 .withOrbit(atAltitude(20_000.0, 800.0));
-        mapped = mapped.withVessel(mapped.vessel().withLiveThrottle(1.0));
+        mapped = mapped.withVessel(mapped.vessel().withLiveThrottle(0.0));
         if (mapped.presence() != FlightPresence.ORBIT_MAP) {
             throw new IllegalStateException("20 km must be the Kepler map");
         }
@@ -65,6 +65,7 @@ public final class MapAirSlice {
         }
 
         FlightLoop parked = FlightLoop.sit(hopper()).liftoff().withOrbit(SpaceBodies.parkingOrbit());
+        parked = parked.withVessel(parked.vessel().withLiveThrottle(0.0));
         VesselState parkingVacuum = parked.vessel();
         OrbitMap high = new OrbitMap();
         high.enter(parked);
@@ -90,6 +91,27 @@ public final class MapAirSlice {
         if (parkingDelta > 0.05) {
             throw new IllegalStateException(
                     "200 km parking must match vacuum Kepler, dV=" + parkingDelta);
+        }
+
+        FlightLoop controlled = FlightLoop.sit(hopper()).liftoff().withOrbit(atAltitude(200_000.0, 7_700.0));
+        controlled = controlled.withVessel(controlled.vessel().withLiveThrottle(1.0));
+        double controlledFuel = controlled.vessel().livePropellantKg();
+        OrbitMap poweredMap = new OrbitMap();
+        poweredMap.enter(controlled);
+        poweredMap.advance(0.5);
+        if (poweredMap.size() != 1
+                || !(poweredMap.snapshot().get(0).vessel().livePropellantKg() < controlledFuel)) {
+            throw new IllegalStateException("Nonzero map throttle must consume propellant and advance powered flight");
+        }
+        OrbitMapTrack controlledTrack = OrbitMapTrack.from(poweredMap.snapshot().get(0));
+        if (controlledTrack.throttle() != 1.0 || !(controlledTrack.totalSpeedMetersPerSecond() > 0.0)
+                || !(controlledTrack.availableThrustNewtons() > 0.0)) {
+            throw new IllegalStateException("Map readout must expose real speed, throttle and thrust");
+        }
+        if (!poweredMap.update(controlledTrack.id(),
+                loop -> loop.withVessel(loop.vessel().withLiveThrottle(0.0)))
+                || OrbitMapTrack.from(poweredMap.snapshot().get(0)).throttle() != 0.0) {
+            throw new IllegalStateException("Server map control must address the selected vessel and cut throttle");
         }
         return new Result(airSpeed, vacuumSpeed, parkingDelta, true);
     }

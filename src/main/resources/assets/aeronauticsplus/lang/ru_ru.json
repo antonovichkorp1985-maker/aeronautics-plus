@@ -53,5 +53,12 @@
   "screen.aeronauticsplus.orbit_map.flight_data": "ПАРАМЕТРЫ ПОЛЁТА",
   "screen.aeronauticsplus.orbit_map.maneuver_preview": "РАСЧЁТ МАНЁВРА",
   "screen.aeronauticsplus.orbit_map.plan_only": "ТОЛЬКО ПРОСЧЁТ — НЕ ВЫПОЛНЕН",
-  "screen.aeronauticsplus.orbit_map.invalid_impulse": "НЕДОПУСТИМЫЙ ИМПУЛЬС"
+  "screen.aeronauticsplus.orbit_map.invalid_impulse": "НЕДОПУСТИМЫЙ ИМПУЛЬС",
+  "screen.aeronauticsplus.orbit_map.tab_flight": "ПОЛЁТ",
+  "screen.aeronauticsplus.orbit_map.tab_plan": "ПЛАН",
+  "screen.aeronauticsplus.orbit_map.tab_control": "УПР.",
+  "screen.aeronauticsplus.orbit_map.engine_controls": "ТЯГА",
+  "screen.aeronauticsplus.orbit_map.point_controls": "НАВЕДЕНИЕ / РСУ",
+  "screen.aeronauticsplus.orbit_map.rcs_hint": "Импульс РСУ — по выбранному направлению.",
+  "screen.aeronauticsplus.orbit_map.seated_controls": "Ниже 20 км управляйте из кресла пилота."
 }

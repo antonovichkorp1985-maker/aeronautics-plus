@@ -61,6 +61,7 @@ public final class EntitySlice {
         }
 
         FlightLoop mapped = climbing.withOrbit(atAltitude(WorldHandoff.MAP_ALTITUDE_METERS));
+        mapped = mapped.withVessel(mapped.vessel().withLiveThrottle(0.0));
         if (mapped.presence() != FlightPresence.ORBIT_MAP) {
             throw new IllegalStateException("20 km discards the world entity for the map");
         }
