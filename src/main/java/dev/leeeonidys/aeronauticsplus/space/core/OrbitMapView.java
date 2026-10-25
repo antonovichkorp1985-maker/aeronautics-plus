@@ -102,7 +102,7 @@ public final class OrbitMapView {
         Vector3d position = periapsis.multiply(radius * Math.cos(trueAnomalyRadians))
                 .add(transverse.multiply(radius * Math.sin(trueAnomalyRadians)));
         double azimuth = Math.atan2(position.z(), position.x());
-        return plot(radius - bodyRadius, azimuth);
+        return plot(radius - bodyRadiusMeters, azimuth);
     }
 
     public static Plot plot(OrbitMapTrack track) {
