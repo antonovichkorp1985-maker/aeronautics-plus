@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
+import dev.leeeonidys.aeronauticsplus.space.core.LunarSurfaceCoordinates;
 import dev.leeeonidys.aeronauticsplus.space.core.LunarTime;
 import dev.leeeonidys.aeronauticsplus.space.world.MoonWorld;
 import net.minecraft.client.Minecraft;
@@ -30,10 +31,10 @@ import org.joml.Quaternionf;
  * Vanilla already rotates its sky by {@code getTimeOfDay}, so at 1/30 speed the Sun and the stars
  * take a lunar month per revolution for free.</p>
  *
- * <p>This renderer therefore does exactly two things: pin one textured quad to a fixed direction,
- * and pick the frame of a 16-step phase strip from the lunar clock. No axial tilt model, no
- * libration, no parallax: the player can walk in any direction on an infinite flat Moon, so
- * "where am I on the near side" has no answer yet.</p>
+ * <p>The flat Moon uses a declared equirectangular convention: X is east/west longitude, Z is
+ * south/north latitude, and Y is altitude. This positions the Earth and hides it below the
+ * geometric horizon on the far side. Terrain remains flat; this is not a spherical terrain map.
+ * Axial tilt and libration are still omitted.</p>
  */
 @EventBusSubscriber(modid = AeronauticsPlus.MODID, value = Dist.CLIENT)
 public final class LunarSkyRenderer {
@@ -43,10 +44,6 @@ public final class LunarSkyRenderer {
     private static final int FRAMES = 16;
     /** Angular radius of the Earth seen from the Moon: 1.9°, about 3.7 times the Sun's. */
     private static final float EARTH_RADIUS_DEGREES = 1.9f;
-    /** Fixed elevation of the sub-Earth point in this model, degrees. */
-    private static final float ELEVATION_DEGREES = 55.0f;
-    /** Fixed azimuth, degrees from north. */
-    private static final float AZIMUTH_DEGREES = 0.0f;
     /** Vanilla draws its sky on a shell of radius 100; stay just inside it. */
     private static final float SHELL = 99.0f;
 
@@ -64,11 +61,20 @@ public final class LunarSkyRenderer {
         }
         // AFTER_SKY is dispatched with a null pose stack, so the camera transform has to be
         // applied by hand. Vanilla's sky has already been drawn and wrote no depth.
+        if (minecraft.player == null) {
+            return;
+        }
+        LunarSurfaceCoordinates.Direction direction = LunarSurfaceCoordinates.earthDirection(
+                minecraft.player.getX(), minecraft.player.getZ());
+        if (!direction.visible()) {
+            return;
+        }
         PoseStack pose = new PoseStack();
         pose.mulPose(new Matrix4f(event.getModelViewMatrix()));
+        // Minecraft's sky forward is north (-Z); positive map longitude is east (+X).
         pose.mulPose(new Quaternionf()
-                .rotateY((float) Math.toRadians(AZIMUTH_DEGREES))
-                .rotateX((float) Math.toRadians(ELEVATION_DEGREES)));
+                .rotateY((float) -direction.azimuthFromNorthRadians())
+                .rotateX((float) direction.elevationRadians()));
         drawEarth(pose, frame(minecraft.level.getDayTime()));
     }
 

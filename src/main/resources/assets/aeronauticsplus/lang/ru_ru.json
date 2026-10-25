@@ -48,5 +48,7 @@
   "screen.aeronauticsplus.orbit_map.vacuum": "Диск %s. Нет Оверворлда. Край — 200 км.",
   "block.aeronauticsplus.mars_regolith": "Марсианский реголит",
   "block.aeronauticsplus.cryo_capsule": "Криокапсула",
-  "block.aeronauticsplus.cryo_capsule.tooltip": "Пережидает лунную ночь и задаёт точку возрождения. Жизнеобеспечение — ChemMod."
+  "block.aeronauticsplus.cryo_capsule.tooltip": "Пережидает лунную ночь и задаёт точку возрождения. Жизнеобеспечение — ChemMod.",
+  "screen.aeronauticsplus.orbit_map.vessels": "АППАРАТЫ",
+  "screen.aeronauticsplus.orbit_map.flight_data": "ПАРАМЕТРЫ ПОЛЁТА"
 }

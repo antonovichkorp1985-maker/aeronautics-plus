@@ -3,6 +3,7 @@ package dev.leeeonidys.aeronauticsplus.client;
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapView;
+import dev.leeeonidys.aeronauticsplus.space.core.SolarSystem;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,8 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * Kepler map: disk of the focused body, 20 km handoff only around Earth.
- * Altitude is linear to 200 km — not geometric scale. Not an orientation GUI.
+ * KSP-inspired orbit-map pass: selectable vessel, conic trace and live flight-data panel.
+ * Altitude is linear to 200 km; the conic is projected into XZ and omits orbital inclination.
  */
 public final class OrbitMapScreen extends Screen {
     private static final int EARTH = 0xFF1B4F72;
@@ -30,15 +31,20 @@ public final class OrbitMapScreen extends Screen {
     private static final int TEXT = 0xFFEAECEE;
 
     private List<OrbitMapTrack> tracks;
+    private String selectedTrackId;
     private int refresh;
 
     public OrbitMapScreen(List<OrbitMapTrack> tracks) {
         super(Component.translatable("screen.aeronauticsplus.orbit_map"));
         this.tracks = List.copyOf(tracks == null ? List.of() : tracks);
+        this.selectedTrackId = this.tracks.isEmpty() ? null : this.tracks.get(0).id();
     }
 
     public void setTracks(List<OrbitMapTrack> next) {
         this.tracks = List.copyOf(next == null ? List.of() : next);
+        if (selectedTrackId == null || this.tracks.stream().noneMatch(t -> t.id().equals(selectedTrackId))) {
+            selectedTrackId = this.tracks.isEmpty() ? null : this.tracks.get(0).id();
+        }
     }
 
     @Override
@@ -59,11 +65,18 @@ public final class OrbitMapScreen extends Screen {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
-        OrbitMapView.Frame frame = OrbitMapView.frame(tracks);
+        OrbitMapTrack selected = tracks.stream()
+                .filter(track -> track.id().equals(selectedTrackId))
+                .findFirst().orElse(null);
+        OrbitMapView.Frame frame = selected == null
+                ? OrbitMapView.frame(tracks)
+                : new OrbitMapView.Frame(selected.bodyId(), OrbitMapView.handoffVisible(selected.bodyId()));
         int[] disk = diskColors(frame.bodyId());
         int cx = width / 2;
         int cy = height / 2 + 8;
         int radius = Math.max(40, Math.min(width, height) / 3);
+        graphics.fill(6, 36, Math.min(width / 3, 118), height - 28, 0xCC101820);
+        graphics.fill(Math.max(width - 144, width * 2 / 3), 36, width - 6, height - 28, 0xCC101820);
         fillCircle(graphics, cx, cy, radius, 0xFF0B1A24);
         fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION), disk[0]);
         fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION * 0.55), disk[1]);
@@ -71,19 +84,23 @@ public final class OrbitMapScreen extends Screen {
             ring(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.handoffRadius()), RING);
         }
         ring(graphics, cx, cy, radius, PARKING);
+        for (OrbitMapTrack track : tracks) {
+            if (OrbitMapView.inFrame(track, frame.bodyId())) {
+                drawOrbit(graphics, track, cx, cy, radius,
+                        track.id().equals(selectedTrackId) ? 0xFF66D9EF : 0x885A9EAA);
+            }
+        }
         graphics.drawCenteredString(font, title, cx, 12, TEXT);
         graphics.drawCenteredString(font, hint(frame), cx, 24, 0xFFABB2B9);
-        int listY = 40;
+        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.vessels"),
+                12, 42, 0xFF58C4DD, false);
+        int listY = 55;
         if (tracks.isEmpty()) {
-            graphics.drawString(
-                    font,
-                    Component.translatable("screen.aeronauticsplus.orbit_map.empty"),
-                    12,
-                    listY,
-                    0xFFABB2B9,
-                    false);
+            graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.empty"),
+                    12, listY, 0xFFABB2B9, false);
         }
         List<OrbitMapTrack> drawn = new ArrayList<>(tracks);
+        int row = 0;
         for (OrbitMapTrack track : drawn) {
             if (OrbitMapView.inFrame(track, frame.bodyId())) {
                 OrbitMapView.Plot plot = OrbitMapView.plot(track);
@@ -92,24 +109,89 @@ public final class OrbitMapScreen extends Screen {
                 int color = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT : WORLD_DOT;
                 graphics.fill(x - 2, y - 2, x + 3, y + 3, color);
             }
-            String ap = !Double.isFinite(track.apoapsisAltitudeMeters())
-                    ? "Ap esc"
-                    : String.format(Locale.ROOT, "Ap %.0f m", track.apoapsisAltitudeMeters());
-            String line = String.format(
-                    Locale.ROOT,
-                    "%s  %s  %.1f km  %s  horiz %.0f m/s  q %.0f Pa  %s  Pe %.0f m",
-                    track.id(),
-                    track.bodyId(),
-                    track.altitudeMeters() / 1000.0,
-                    track.presence() == FlightPresence.ORBIT_MAP ? "MAP" : "WORLD",
-                    track.horizontalSpeedMetersPerSecond(),
-                    track.dynamicPressurePascals(),
-                    ap,
-                    track.periapsisAltitudeMeters());
-            graphics.drawString(font, line, 12, listY, TEXT, false);
-            listY += 12;
+            boolean active = track.id().equals(selectedTrackId);
+            int rowTop = listY - 2;
+            graphics.fill(9, rowTop, Math.min(width / 3, 115), rowTop + 12,
+                    active ? 0xFF24546A : 0x00000000);
+            String shortId = track.id().length() > 14 ? track.id().substring(0, 14) : track.id();
+            graphics.drawString(font, shortId, 12, listY, active ? 0xFFFFFFFF : TEXT, false);
+            graphics.drawString(font,
+                    track.presence() == FlightPresence.ORBIT_MAP ? "● ORBIT" : "● WORLD",
+                    12, listY + 10, track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT : WORLD_DOT, false);
+            listY += 25;
+            row++;
+        }
+        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.flight_data"),
+                Math.max(width - 138, width * 2 / 3) + 8, 42, 0xFF58C4DD, false);
+        if (selected != null) {
+            int x = Math.max(width - 138, width * 2 / 3) + 8;
+            int y = 58;
+            y = dataLine(graphics, "BODY", selected.bodyId(), x, y);
+            y = dataLine(graphics, "ALT", String.format(Locale.ROOT, "%.2f km", selected.altitudeMeters() / 1000.0), x, y);
+            y = dataLine(graphics, "HORIZ V", String.format(Locale.ROOT, "%.0f m/s", selected.horizontalSpeedMetersPerSecond()), x, y);
+            y = dataLine(graphics, "AP", Double.isFinite(selected.apoapsisAltitudeMeters())
+                    ? String.format(Locale.ROOT, "%.1f km", selected.apoapsisAltitudeMeters() / 1000.0) : "ESCAPE", x, y);
+            y = dataLine(graphics, "PE", String.format(Locale.ROOT, "%.1f km", selected.periapsisAltitudeMeters() / 1000.0), x, y);
+            y = dataLine(graphics, "DYNAMIC Q", String.format(Locale.ROOT, "%.1f Pa", selected.dynamicPressurePascals()), x, y);
+            dataLine(graphics, "PRESENCE", selected.presence() == FlightPresence.ORBIT_MAP ? "ORBIT MAP" : "WORLD", x, y);
         }
         graphics.drawString(font, footer(frame), 12, height - 18, frame.handoff() ? RING : PARKING, false);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && mouseX >= 8 && mouseX <= Math.min(width / 3, 118) && mouseY >= 52) {
+            int index = (int) ((mouseY - 52) / 25.0);
+            if (index >= 0 && index < tracks.size()) {
+                selectedTrackId = tracks.get(index).id();
+                return true;
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    /** Draw the two-body conic in its XZ projection; this UI pass intentionally omits inclination. */
+    private static void drawOrbit(GuiGraphics graphics, OrbitMapTrack track, int cx, int cy, int mapRadius, int color) {
+        if (!Double.isFinite(track.apoapsisAltitudeMeters())) {
+            return; // Hyperbolic tracks have no closed ellipse; their live position remains plotted.
+        }
+        double bodyRadius;
+        try {
+            bodyRadius = SolarSystem.body(track.bodyId()).radiusMeters();
+        } catch (IllegalArgumentException unknownBody) {
+            return;
+        }
+        double rp = bodyRadius + track.periapsisAltitudeMeters();
+        double ra = bodyRadius + track.apoapsisAltitudeMeters();
+        if (!(rp > bodyRadius) || !(ra >= rp)) {
+            return; // Skip impact trajectories and degenerate conics.
+        }
+        double eccentricity = (ra - rp) / (ra + rp);
+        double semilatus = rp * (1.0 + eccentricity);
+        int segments = 160;
+        Integer previousX = null;
+        Integer previousY = null;
+        for (int i = 0; i <= segments; i++) {
+            double anomaly = 2.0 * Math.PI * i / segments;
+            double radiusMeters = semilatus / (1.0 + eccentricity * Math.cos(anomaly));
+            double angle = track.periapsisAngleRadians() + anomaly;
+            double altitude = radiusMeters - bodyRadius;
+            OrbitMapView.Plot point = OrbitMapView.plot(altitude, angle);
+            int x = cx + (int) Math.round(point.x() * mapRadius);
+            int y = cy - (int) Math.round(point.y() * mapRadius);
+            if (previousX != null) {
+                graphics.fill(Math.min(previousX, x), Math.min(previousY, y),
+                        Math.max(previousX, x) + 1, Math.max(previousY, y) + 1, color);
+            }
+            previousX = x;
+            previousY = y;
+        }
+    }
+
+    private int dataLine(GuiGraphics graphics, String label, String value, int x, int y) {
+        graphics.drawString(font, label, x, y, 0xFF879BA7, false);
+        graphics.drawString(font, value, x, y + 9, TEXT, false);
+        return y + 24;
     }
 
     private static int[] diskColors(String bodyId) {

@@ -15,6 +15,7 @@ public record OrbitMapTrack(
         double dynamicPressurePascals,
         double apoapsisAltitudeMeters,
         double periapsisAltitudeMeters,
+        double periapsisAngleRadians,
         String bodyId) {
     public OrbitMapTrack {
         if (id == null || id.isBlank() || presence == null
@@ -27,6 +28,7 @@ public record OrbitMapTrack(
                 || !Double.isFinite(dynamicPressurePascals)
                 || dynamicPressurePascals < 0.0
                 || !Double.isFinite(periapsisAltitudeMeters)
+                || !Double.isFinite(periapsisAngleRadians)
                 || Double.isNaN(apoapsisAltitudeMeters)) {
             throw new IllegalArgumentException("Map track numbers are invalid");
         }
@@ -48,6 +50,7 @@ public record OrbitMapTrack(
                 SolarSystem.atmosphereOf(orbit.centralBody()).dynamicPressurePascals(orbit),
                 orbit.apoapsisAltitudeMeters(),
                 orbit.periapsisAltitudeMeters(),
+                Math.atan2(orbit.eccentricityVector().z(), orbit.eccentricityVector().x()),
                 orbit.centralBody().id());
     }
 }

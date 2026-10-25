@@ -385,7 +385,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.103: ten-hour lunar day, Earth phases in the sky, cryo capsule.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.104: lunar Earth geography, selectable conic map and flight telemetry.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

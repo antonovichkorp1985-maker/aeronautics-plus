@@ -25,8 +25,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  * </ul>
  *
  * <p>The client is told the time by vanilla's sync every 20 ticks, which happens before the level
- * ticks — so the client's lunar clock is at most one sync interval behind. At 1/8 speed that is
- * 2–3 lunar ticks, invisible.</p>
+ * ticks — so the client's lunar clock is at most one sync interval behind. At 1/30 speed the error is about 0.67 lunar day-time ticks per 20-tick sync interval.</p>
  */
 @EventBusSubscriber(modid = AeronauticsPlus.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class MoonTimeEvents {

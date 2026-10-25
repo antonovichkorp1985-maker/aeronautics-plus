@@ -48,5 +48,7 @@
   "screen.aeronauticsplus.orbit_map.vacuum": "%s disk. No Overworld. Outer = 200 km.",
   "block.aeronauticsplus.mars_regolith": "Mars Regolith",
   "block.aeronauticsplus.cryo_capsule": "Cryo Capsule",
-  "block.aeronauticsplus.cryo_capsule.tooltip": "Skips the lunar night and anchors respawn. Life support is ChemMod's."
+  "block.aeronauticsplus.cryo_capsule.tooltip": "Skips the lunar night and anchors respawn. Life support is ChemMod's.",
+  "screen.aeronauticsplus.orbit_map.vessels": "VESSELS",
+  "screen.aeronauticsplus.orbit_map.flight_data": "FLIGHT DATA"
 }
