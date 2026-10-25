@@ -1,6 +1,7 @@
 package dev.leeeonidys.aeronauticsplus.client;
 
 import dev.leeeonidys.aeronauticsplus.space.core.FlightPresence;
+import dev.leeeonidys.aeronauticsplus.space.core.ManeuverPreview;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapView;
 import dev.leeeonidys.aeronauticsplus.space.core.SolarSystem;
@@ -32,6 +33,7 @@ public final class OrbitMapScreen extends Screen {
 
     private List<OrbitMapTrack> tracks;
     private String selectedTrackId;
+    private double plannedProgradeDeltaV;
     private int refresh;
 
     public OrbitMapScreen(List<OrbitMapTrack> tracks) {
@@ -75,8 +77,8 @@ public final class OrbitMapScreen extends Screen {
         int cx = width / 2;
         int cy = height / 2 + 8;
         int radius = Math.max(40, Math.min(width, height) / 3);
-        graphics.fill(6, 36, Math.min(width / 3, 118), height - 28, 0xCC101820);
-        graphics.fill(Math.max(width - 144, width * 2 / 3), 36, width - 6, height - 28, 0xCC101820);
+        graphics.fill(6, 36, Math.min(width / 3, 118), height - 6, 0xCC101820);
+        graphics.fill(Math.max(width - 144, width * 2 / 3), 36, width - 6, height - 6, 0xCC101820);
         fillCircle(graphics, cx, cy, radius, 0xFF0B1A24);
         fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION), disk[0]);
         fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION * 0.55), disk[1]);
@@ -128,22 +130,44 @@ public final class OrbitMapScreen extends Screen {
             int y = 58;
             y = dataLine(graphics, "BODY", selected.bodyId(), x, y);
             y = dataLine(graphics, "ALT", String.format(Locale.ROOT, "%.2f km", selected.altitudeMeters() / 1000.0), x, y);
-            y = dataLine(graphics, "HORIZ V", String.format(Locale.ROOT, "%.0f m/s", selected.horizontalSpeedMetersPerSecond()), x, y);
+            y = dataLine(graphics, "H V", String.format(Locale.ROOT, "%.0f m/s", selected.horizontalSpeedMetersPerSecond()), x, y);
             y = dataLine(graphics, "AP", Double.isFinite(selected.apoapsisAltitudeMeters())
                     ? String.format(Locale.ROOT, "%.1f km", selected.apoapsisAltitudeMeters() / 1000.0) : "ESCAPE", x, y);
             y = dataLine(graphics, "PE", String.format(Locale.ROOT, "%.1f km", selected.periapsisAltitudeMeters() / 1000.0), x, y);
-            y = dataLine(graphics, "DYNAMIC Q", String.format(Locale.ROOT, "%.1f Pa", selected.dynamicPressurePascals()), x, y);
+            y = dataLine(graphics, "Q", String.format(Locale.ROOT, "%.1f Pa", selected.dynamicPressurePascals()), x, y);
             dataLine(graphics, "PRESENCE", selected.presence() == FlightPresence.ORBIT_MAP ? "ORBIT MAP" : "WORLD", x, y);
+            drawManeuverPlanner(graphics, selected, x, height - 83);
         }
         graphics.drawString(font, footer(frame), 12, height - 18, frame.handoff() ? RING : PARKING, false);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            int panelX = Math.max(width - 138, width * 2 / 3) + 8;
+            int plannerTop = height - 83;
+            if (mouseX >= panelX && mouseX < panelX + 88 && mouseY >= plannerTop + 24 && mouseY < plannerTop + 37) {
+                int buttonIndex = (int) ((mouseX - panelX) / 22.0);
+                plannedProgradeDeltaV = switch (buttonIndex) {
+                    case 0 -> plannedProgradeDeltaV - 10.0;
+                    case 1 -> plannedProgradeDeltaV - 1.0;
+                    case 2 -> plannedProgradeDeltaV + 1.0;
+                    case 3 -> plannedProgradeDeltaV + 10.0;
+                    default -> plannedProgradeDeltaV;
+                };
+                plannedProgradeDeltaV = Math.max(-50_000.0, Math.min(50_000.0, plannedProgradeDeltaV));
+                return true;
+            }
+            if (mouseX >= panelX && mouseX < panelX + 130 && mouseY >= plannerTop + 10 && mouseY < plannerTop + 22) {
+                plannedProgradeDeltaV = 0.0;
+                return true;
+            }
+        }
         if (button == 0 && mouseX >= 8 && mouseX <= Math.min(width / 3, 118) && mouseY >= 52) {
             int index = (int) ((mouseY - 52) / 25.0);
             if (index >= 0 && index < tracks.size()) {
                 selectedTrackId = tracks.get(index).id();
+                plannedProgradeDeltaV = 0.0;
                 return true;
             }
         }
@@ -151,6 +175,38 @@ public final class OrbitMapScreen extends Screen {
     }
 
     /** Draw the two-body conic in its XZ projection; this UI pass intentionally omits inclination. */
+    private void drawManeuverPlanner(GuiGraphics graphics, OrbitMapTrack track, int x, int y) {
+        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.maneuver_preview"),
+                x, y, 0xFFFFC857, false);
+        graphics.drawString(font, String.format(Locale.ROOT, "Δv %+,.1f m/s", plannedProgradeDeltaV),
+                x, y + 11, TEXT, false);
+        int buttonY = y + 24;
+        String[] labels = {"-10", "-1", "+1", "+10"};
+        for (int i = 0; i < labels.length; i++) {
+            int bx = x + i * 22;
+            graphics.fill(bx, buttonY, bx + 20, buttonY + 13, 0xFF263746);
+            graphics.drawCenteredString(font, labels[i], bx + 10, buttonY + 3, 0xFFBDEBFA);
+        }
+        try {
+            ManeuverPreview.Result preview = ManeuverPreview.progradeImpulse(
+                    SolarSystem.body(track.bodyId()),
+                    track.altitudeMeters(),
+                    track.radialSpeedMetersPerSecond(),
+                    track.horizontalSpeedMetersPerSecond(),
+                    plannedProgradeDeltaV);
+            String ap = preview.escape()
+                    ? "Ap: escape"
+                    : String.format(Locale.ROOT, "Ap %.0f km", preview.apoapsisAltitudeMeters() / 1000.0);
+            String pe = String.format(Locale.ROOT, "Pe %.0f km", preview.periapsisAltitudeMeters() / 1000.0);
+            graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.plan_only"),
+                    x, y + 39, 0xFFFFC857, false);
+            graphics.drawString(font, ap + "   " + pe, x, y + 50, TEXT, false);
+        } catch (IllegalArgumentException invalid) {
+            graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.invalid_impulse"),
+                    x, y + 39, 0xFFFF7777, false);
+        }
+    }
+
     private static void drawOrbit(GuiGraphics graphics, OrbitMapTrack track, int cx, int cy, int mapRadius, int color) {
         if (!Double.isFinite(track.apoapsisAltitudeMeters())) {
             return; // Hyperbolic tracks have no closed ellipse; their live position remains plotted.
@@ -190,8 +246,8 @@ public final class OrbitMapScreen extends Screen {
 
     private int dataLine(GuiGraphics graphics, String label, String value, int x, int y) {
         graphics.drawString(font, label, x, y, 0xFF879BA7, false);
-        graphics.drawString(font, value, x, y + 9, TEXT, false);
-        return y + 24;
+        graphics.drawString(font, value, x + 54, y, TEXT, false);
+        return y + 14;
     }
 
     private static int[] diskColors(String bodyId) {

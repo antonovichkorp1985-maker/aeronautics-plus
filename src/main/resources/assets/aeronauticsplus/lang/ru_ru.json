@@ -50,5 +50,8 @@
   "block.aeronauticsplus.cryo_capsule": "Криокапсула",
   "block.aeronauticsplus.cryo_capsule.tooltip": "Пережидает лунную ночь и задаёт точку возрождения. Жизнеобеспечение — ChemMod.",
   "screen.aeronauticsplus.orbit_map.vessels": "АППАРАТЫ",
-  "screen.aeronauticsplus.orbit_map.flight_data": "ПАРАМЕТРЫ ПОЛЁТА"
+  "screen.aeronauticsplus.orbit_map.flight_data": "ПАРАМЕТРЫ ПОЛЁТА",
+  "screen.aeronauticsplus.orbit_map.maneuver_preview": "РАСЧЁТ МАНЁВРА",
+  "screen.aeronauticsplus.orbit_map.plan_only": "ТОЛЬКО ПРОСЧЁТ — НЕ ВЫПОЛНЕН",
+  "screen.aeronauticsplus.orbit_map.invalid_impulse": "НЕДОПУСТИМЫЙ ИМПУЛЬС"
 }

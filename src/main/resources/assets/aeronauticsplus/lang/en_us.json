@@ -50,5 +50,8 @@
   "block.aeronauticsplus.cryo_capsule": "Cryo Capsule",
   "block.aeronauticsplus.cryo_capsule.tooltip": "Skips the lunar night and anchors respawn. Life support is ChemMod's.",
   "screen.aeronauticsplus.orbit_map.vessels": "VESSELS",
-  "screen.aeronauticsplus.orbit_map.flight_data": "FLIGHT DATA"
+  "screen.aeronauticsplus.orbit_map.flight_data": "FLIGHT DATA",
+  "screen.aeronauticsplus.orbit_map.maneuver_preview": "MANEUVER PREVIEW",
+  "screen.aeronauticsplus.orbit_map.plan_only": "PREVIEW ONLY — NOT APPLIED",
+  "screen.aeronauticsplus.orbit_map.invalid_impulse": "INVALID IMPULSE"
 }

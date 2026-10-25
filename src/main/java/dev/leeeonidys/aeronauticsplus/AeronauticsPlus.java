@@ -49,6 +49,7 @@ import dev.leeeonidys.aeronauticsplus.space.core.DockingLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.StationLoopSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapViewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.MapAirSlice;
+import dev.leeeonidys.aeronauticsplus.space.core.ManeuverPreviewSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.AeroSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.LunarTimeSlice;
 import dev.leeeonidys.aeronauticsplus.space.core.TerrainSlice;
@@ -385,7 +386,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.104: lunar Earth geography, selectable conic map and flight telemetry.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.105: lunar Earth geography, conic map and prograde maneuver preview.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -834,6 +835,16 @@ public final class AeronauticsPlus {
                         mapAir.fuelHeld());
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus map-air slice failed", exception);
+            }
+            try {
+                ManeuverPreviewSlice.Result preview = ManeuverPreviewSlice.execute();
+                LOGGER.info(
+                        "Aeronautics Plus maneuver-preview slice OK: circularError={}m, raisedAp={}m, escape={}",
+                        String.format(java.util.Locale.ROOT, "%.6f", preview.circularErrorMeters()),
+                        String.format(java.util.Locale.ROOT, "%.1f", preview.raisedApoapsisMeters()),
+                        preview.escapePredicted());
+            } catch (RuntimeException exception) {
+                LOGGER.error("Aeronautics Plus maneuver-preview slice failed", exception);
             }
             try {
                 AeroSlice.Result aero = AeroSlice.execute();

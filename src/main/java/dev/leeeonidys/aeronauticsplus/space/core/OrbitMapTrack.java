@@ -12,6 +12,7 @@ public record OrbitMapTrack(
         double angleRadians,
         FlightPresence presence,
         double horizontalSpeedMetersPerSecond,
+        double radialSpeedMetersPerSecond,
         double dynamicPressurePascals,
         double apoapsisAltitudeMeters,
         double periapsisAltitudeMeters,
@@ -25,6 +26,7 @@ public record OrbitMapTrack(
         if (!Double.isFinite(altitudeMeters) || !Double.isFinite(angleRadians)
                 || !Double.isFinite(horizontalSpeedMetersPerSecond)
                 || horizontalSpeedMetersPerSecond < 0.0
+                || !Double.isFinite(radialSpeedMetersPerSecond)
                 || !Double.isFinite(dynamicPressurePascals)
                 || dynamicPressurePascals < 0.0
                 || !Double.isFinite(periapsisAltitudeMeters)
@@ -47,6 +49,7 @@ public record OrbitMapTrack(
                 Math.atan2(orbit.positionMeters().z(), orbit.positionMeters().x()),
                 loop.presence(),
                 orbit.horizontalSpeedMetersPerSecond(),
+                orbit.radialSpeedMetersPerSecond(),
                 SolarSystem.atmosphereOf(orbit.centralBody()).dynamicPressurePascals(orbit),
                 orbit.apoapsisAltitudeMeters(),
                 orbit.periapsisAltitudeMeters(),
