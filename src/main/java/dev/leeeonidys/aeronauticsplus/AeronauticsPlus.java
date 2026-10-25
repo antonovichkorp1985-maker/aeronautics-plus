@@ -838,7 +838,7 @@ public final class AeronauticsPlus {
                         String.format(java.util.Locale.ROOT, "%.3f", systemMap.earthDistanceAu()),
                         String.format(java.util.Locale.ROOT, "%.2f", systemMap.neptuneDistanceAu()),
                         String.format(java.util.Locale.ROOT, "%.0f", systemMap.moonDistanceKm()),
-                        String.format(java.util.Locale.ROOT, "%.3f", systemMap.outerProjectionRadius());
+                        String.format(java.util.Locale.ROOT, "%.3f", systemMap.outerProjectionRadius()));
             } catch (RuntimeException exception) {
                 LOGGER.error("Aeronautics Plus system-map slice failed", exception);
             }
