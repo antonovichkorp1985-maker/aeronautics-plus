@@ -47,6 +47,7 @@ public final class MapViewSlice {
         }
 
         validateInclinedProjection();
+        validateThreeDimensionalCamera();
 
         FlightLoop flown = FlightLoop.sit(hopper()).liftoff();
         OrbitMapTrack world = OrbitMapTrack.from(flown);
@@ -98,6 +99,25 @@ public final class MapViewSlice {
         }
 
         return new Result(padR, hopperR, handoffR, parkingR, true, true);
+    }
+
+    private static void validateThreeDimensionalCamera() {
+        OrbitMapView.Projected baseline = OrbitMapView.project3d(
+                0.0, Vector3d.UNIT_X, 0.0, 0.0, 1.0);
+        OrbitMapView.Projected yawed = OrbitMapView.project3d(
+                0.0, Vector3d.UNIT_X, Math.PI / 2.0, 0.0, 1.0);
+        OrbitMapView.Projected zoomed = OrbitMapView.project3d(
+                0.0, Vector3d.UNIT_X, 0.0, 0.0, 1.5);
+        if (Math.abs(baseline.x() - OrbitMapView.EARTH_FRACTION) > 1.0e-9
+                || Math.abs(yawed.x()) > 1.0e-9
+                || Math.abs(zoomed.x() - baseline.x() * 1.5) > 1.0e-9) {
+            throw new IllegalStateException("3D map camera must rotate and zoom projected positions");
+        }
+        OrbitMapView.Projected pitched = OrbitMapView.project3d(
+                0.0, Vector3d.UNIT_Y, 0.0, Math.PI / 4.0, 1.0);
+        if (!(pitched.y() < baseline.y()) || !(pitched.depth() > baseline.depth())) {
+            throw new IllegalStateException("Camera pitch must change projected height and depth");
+        }
     }
 
     private static void validateInclinedProjection() {

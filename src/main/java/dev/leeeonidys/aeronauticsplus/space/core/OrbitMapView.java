@@ -28,6 +28,15 @@ public final class OrbitMapView {
         }
     }
 
+    /** Orthographic camera-space point. Depth is positive toward the viewer. */
+    public record Projected(double x, double y, double depth) {
+        public Projected {
+            if (!Double.isFinite(x) || !Double.isFinite(y) || !Double.isFinite(depth)) {
+                throw new IllegalArgumentException("Projected coordinates must be finite");
+            }
+        }
+    }
+
     /** Which body's disk the map is drawing. Handoff ring is Earth-only. */
     public record Frame(String bodyId, boolean handoff) {
         public Frame {
@@ -87,6 +96,24 @@ public final class OrbitMapView {
                 || !Double.isFinite(trueAnomalyRadians)) {
             throw new IllegalArgumentException("Conic projection inputs are invalid");
         }
+        Vector3d position = conicPosition(bodyRadiusMeters, periapsisAltitudeMeters,
+                apoapsisAltitudeMeters, periapsisDirection, orbitNormal, trueAnomalyRadians);
+        double altitude = position.magnitude() - bodyRadiusMeters;
+        return plot(altitude, Math.atan2(position.z(), position.x()));
+    }
+
+    /** Position on a bound conic in the body-centred inertial frame. */
+    public static Vector3d conicPosition(double bodyRadiusMeters, double periapsisAltitudeMeters,
+                                         double apoapsisAltitudeMeters, Vector3d periapsisDirection,
+                                         Vector3d orbitNormal, double trueAnomalyRadians) {
+        if (!(bodyRadiusMeters > 0.0) || !Double.isFinite(bodyRadiusMeters)
+                || !(bodyRadiusMeters + periapsisAltitudeMeters > 0.0)
+                || !(bodyRadiusMeters + apoapsisAltitudeMeters >= bodyRadiusMeters + periapsisAltitudeMeters)
+                || !Double.isFinite(apoapsisAltitudeMeters)
+                || periapsisDirection == null || orbitNormal == null
+                || !Double.isFinite(trueAnomalyRadians)) {
+            throw new IllegalArgumentException("Conic projection inputs are invalid");
+        }
         double rp = bodyRadiusMeters + periapsisAltitudeMeters;
         double ra = bodyRadiusMeters + apoapsisAltitudeMeters;
         double eccentricity = (ra - rp) / (ra + rp);
@@ -99,12 +126,33 @@ public final class OrbitMapView {
         Vector3d normal = orbitNormal.normalized();
         Vector3d transverse = normal.cross(periapsis).normalized();
         double radius = semilatus / denominator;
-        Vector3d position = periapsis.multiply(radius * Math.cos(trueAnomalyRadians))
+        return periapsis.multiply(radius * Math.cos(trueAnomalyRadians))
                 .add(transverse.multiply(radius * Math.sin(trueAnomalyRadians)));
-        double azimuth = Math.atan2(position.z(), position.x());
-        return plot(radius - bodyRadiusMeters, azimuth);
     }
 
+    /** Project a live position onto a rotatable orthographic 3D map. */
+    public static Projected project3d(double altitudeMeters, Vector3d direction,
+                                      double yawRadians, double pitchRadians, double zoom) {
+        if (!Double.isFinite(altitudeMeters) || direction == null
+                || !Double.isFinite(yawRadians) || !Double.isFinite(pitchRadians)
+                || !(zoom > 0.0) || !Double.isFinite(zoom)) {
+            throw new IllegalArgumentException("3D projection inputs are invalid");
+        }
+        Vector3d unit = direction.normalized();
+        double cy = Math.cos(yawRadians);
+        double sy = Math.sin(yawRadians);
+        double xYaw = cy * unit.x() - sy * unit.z();
+        double zYaw = sy * unit.x() + cy * unit.z();
+        double cp = Math.cos(pitchRadians);
+        double sp = Math.sin(pitchRadians);
+        double yView = cp * unit.y() - sp * zYaw;
+        double depth = sp * unit.y() + cp * zYaw;
+        double radius = (EARTH_FRACTION + (1.0 - EARTH_FRACTION)
+                * Math.max(0.0, Math.min(1.0, altitudeMeters / VIEW_ALTITUDE_METERS))) * zoom;
+        return new Projected(radius * xYaw, radius * yView, depth);
+    }
+
+    /** Which body's disk the map is drawing. Handoff ring is Earth-only. */
     public static Plot plot(OrbitMapTrack track) {
         if (track == null) {
             throw new IllegalArgumentException("Plot needs a track");

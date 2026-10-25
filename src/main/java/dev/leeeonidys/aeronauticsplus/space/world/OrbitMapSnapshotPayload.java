@@ -38,6 +38,7 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
             buf.writeUtf(track.id());
             buf.writeDouble(track.altitudeMeters());
             buf.writeDouble(track.angleRadians());
+            writeVector(buf, track.positionDirection());
             buf.writeUtf(track.presence().name());
             buf.writeDouble(track.horizontalSpeedMetersPerSecond());
             buf.writeDouble(track.radialSpeedMetersPerSecond());
@@ -79,6 +80,7 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
                     buf.readUtf(),
                     buf.readDouble(),
                     buf.readDouble(),
+                    readVector(buf),
                     FlightPresence.valueOf(buf.readUtf()),
                     buf.readDouble(),
                     buf.readDouble(),

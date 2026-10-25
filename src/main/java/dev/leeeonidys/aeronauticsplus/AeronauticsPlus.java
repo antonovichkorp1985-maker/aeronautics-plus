@@ -387,11 +387,11 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.108: inclination-aware Kepler map projections.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.109: rotatable orthographic 3D orbit map.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("5");
+        PayloadRegistrar registrar = event.registrar("6");
         registrar.playToServer(
                 OrbitMapControlPayload.TYPE,
                 OrbitMapControlPayload.STREAM_CODEC,

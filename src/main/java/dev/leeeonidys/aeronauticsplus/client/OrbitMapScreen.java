@@ -17,8 +17,8 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * KSP-inspired orbit-map pass: selectable vessel, conic trace and live flight-data panel.
- * Altitude is linear to 200 km; the conic is projected into XZ and omits orbital inclination.
+ * KSP-inspired orbit map with selectable vessel, live conic, rotatable 3D orthographic mode and 2D fallback.
+ * Altitude is intentionally compressed linearly to 200 km so low orbits remain visible.
  */
 public final class OrbitMapScreen extends Screen {
     private static final int EARTH = 0xFF1B4F72;
@@ -34,11 +34,19 @@ public final class OrbitMapScreen extends Screen {
     private static final int TEXT = 0xFFEAECEE;
 
     private enum Panel { FLIGHT, PLAN, CONTROL }
+    private enum MapMode { THREE_D, TWO_D }
 
     private List<OrbitMapTrack> tracks;
     private String selectedTrackId;
     private Panel panel = Panel.FLIGHT;
     private double plannedProgradeDeltaV;
+    private MapMode mapMode = MapMode.THREE_D;
+    private double cameraYaw = 0.45;
+    private double cameraPitch = 0.38;
+    private double cameraZoom = 1.0;
+    private boolean draggingMap;
+    private double lastDragX;
+    private double lastDragY;
     private int refresh;
 
     public OrbitMapScreen(List<OrbitMapTrack> tracks) {
@@ -84,19 +92,12 @@ public final class OrbitMapScreen extends Screen {
         int radius = Math.max(40, Math.min(width, height) / 3);
         graphics.fill(6, 36, Math.min(width / 3, 118), height - 6, 0xCC101820);
         graphics.fill(Math.max(width - 144, width * 2 / 3), 36, width - 6, height - 6, 0xCC101820);
-        fillCircle(graphics, cx, cy, radius, 0xFF0B1A24);
-        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION), disk[0]);
-        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION * 0.55), disk[1]);
-        if (frame.handoff()) {
-            ring(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.handoffRadius()), RING);
+        if (mapMode == MapMode.THREE_D) {
+            drawThreeDimensionalMap(graphics, frame, disk, cx, cy, radius);
+        } else {
+            drawTwoDimensionalMap(graphics, frame, disk, cx, cy, radius);
         }
-        ring(graphics, cx, cy, radius, PARKING);
-        for (OrbitMapTrack track : tracks) {
-            if (OrbitMapView.inFrame(track, frame.bodyId())) {
-                drawOrbit(graphics, track, cx, cy, radius,
-                        track.id().equals(selectedTrackId) ? 0xFF66D9EF : 0x885A9EAA);
-            }
-        }
+        drawMapModeToggle(graphics, cx);
         graphics.drawCenteredString(font, title, cx, 12, TEXT);
         graphics.drawCenteredString(font, hint(frame), cx, 24, 0xFFABB2B9);
         graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.vessels"),
@@ -110,9 +111,9 @@ public final class OrbitMapScreen extends Screen {
         int row = 0;
         for (OrbitMapTrack track : drawn) {
             if (OrbitMapView.inFrame(track, frame.bodyId())) {
-                OrbitMapView.Plot plot = OrbitMapView.plot(track);
-                int x = cx + (int) Math.round(plot.x() * radius);
-                int y = cy - (int) Math.round(plot.y() * radius);
+                int[] point = mapPoint(track, cx, cy, radius);
+                int x = point[0];
+                int y = point[1];
                 int color = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT : WORLD_DOT;
                 graphics.fill(x - 2, y - 2, x + 3, y + 3, color);
             }
@@ -146,6 +147,21 @@ public final class OrbitMapScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         OrbitMapTrack selected = tracks.stream().filter(track -> track.id().equals(selectedTrackId)).findFirst().orElse(null);
         int panelX = Math.max(width - 138, width * 2 / 3) + 8;
+        int mapCenterX = width / 2;
+        int mapCenterY = height / 2 + 8;
+        int mapRadius = Math.max(40, Math.min(width, height) / 3);
+        if (button == 0 && mouseY >= 37 && mouseY < 52
+                && mouseX >= mapCenterX - 30 && mouseX < mapCenterX + 30) {
+            mapMode = mapMode == MapMode.THREE_D ? MapMode.TWO_D : MapMode.THREE_D;
+            return true;
+        }
+        if (mapMode == MapMode.THREE_D && button == 1
+                && Math.hypot(mouseX - mapCenterX, mouseY - mapCenterY) <= mapRadius * cameraZoom) {
+            draggingMap = true;
+            lastDragX = mouseX;
+            lastDragY = mouseY;
+            return true;
+        }
         if (button == 0 && mouseX >= panelX && mouseX < panelX + 129 && mouseY >= 40 && mouseY < 54) {
             int tab = (int) ((mouseX - panelX) / 43.0);
             if (tab >= 0 && tab < Panel.values().length) {
@@ -210,6 +226,207 @@ public final class OrbitMapScreen extends Screen {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (draggingMap && button == 1) {
+            cameraYaw += (mouseX - lastDragX) * 0.012;
+            cameraPitch = Math.max(-1.35, Math.min(1.35, cameraPitch + (mouseY - lastDragY) * 0.012));
+            lastDragX = mouseX;
+            lastDragY = mouseY;
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 1 && draggingMap) {
+            draggingMap = false;
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        int cx = width / 2;
+        int cy = height / 2 + 8;
+        int radius = Math.max(40, Math.min(width, height) / 3);
+        if (mapMode == MapMode.THREE_D && Math.hypot(mouseX - cx, mouseY - cy) <= radius * cameraZoom) {
+            cameraZoom = Math.max(0.72, Math.min(1.65, cameraZoom * (scrollY > 0.0 ? 1.08 : 1.0 / 1.08)));
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    private void drawMapModeToggle(GuiGraphics graphics, int cx) {
+        int left = cx - 27;
+        graphics.fill(left, 37, left + 54, 51, 0xDD263746);
+        graphics.drawCenteredString(font, mapMode == MapMode.THREE_D ? "3D" : "2D",
+                cx, 40, 0xFFBDEBFA);
+    }
+
+    private void drawTwoDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame frame, int[] disk,
+                                       int cx, int cy, int radius) {
+        fillCircle(graphics, cx, cy, radius, 0xFF0B1A24);
+        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION), disk[0]);
+        fillCircle(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.EARTH_FRACTION * 0.55), disk[1]);
+        if (frame.handoff()) {
+            ring(graphics, cx, cy, (int) Math.round(radius * OrbitMapView.handoffRadius()), RING);
+        }
+        ring(graphics, cx, cy, radius, PARKING);
+        for (OrbitMapTrack track : tracks) {
+            if (OrbitMapView.inFrame(track, frame.bodyId())) {
+                drawOrbit(graphics, track, cx, cy, radius,
+                        track.id().equals(selectedTrackId) ? 0xFF66D9EF : 0x885A9EAA);
+            }
+        }
+    }
+
+    private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame frame, int[] disk,
+                                         int cx, int cy, int radius) {
+        fillCircle(graphics, cx, cy, radius, 0xFF07111B);
+        int bodyRadius = (int) Math.round(radius * OrbitMapView.EARTH_FRACTION * cameraZoom);
+        fillSphere(graphics, cx, cy, bodyRadius, disk[0]);
+        drawGlobeGrid(graphics, cx, cy, radius, disk[1]);
+        if (frame.handoff()) {
+            drawSpatialRing(graphics, cx, cy, radius, 20_000.0, RING);
+        }
+        drawSpatialRing(graphics, cx, cy, radius, OrbitMapView.VIEW_ALTITUDE_METERS, PARKING);
+        for (OrbitMapTrack track : tracks) {
+            if (OrbitMapView.inFrame(track, frame.bodyId())) {
+                drawOrbit3d(graphics, track, cx, cy, radius,
+                        track.id().equals(selectedTrackId) ? 0xFF66D9EF : 0x885A9EAA);
+            }
+        }
+    }
+
+    private int[] mapPoint(OrbitMapTrack track, int cx, int cy, int radius) {
+        if (mapMode == MapMode.THREE_D) {
+            OrbitMapView.Projected point = OrbitMapView.project3d(
+                    track.altitudeMeters(), track.positionDirection(), cameraYaw, cameraPitch, cameraZoom);
+            return new int[] {cx + (int) Math.round(point.x() * radius), cy - (int) Math.round(point.y() * radius)};
+        }
+        OrbitMapView.Plot point = OrbitMapView.plot(track);
+        return new int[] {cx + (int) Math.round(point.x() * radius), cy - (int) Math.round(point.y() * radius)};
+    }
+
+    private void fillSphere(GuiGraphics graphics, int cx, int cy, int radius, int color) {
+        for (int dy = -radius; dy <= radius; dy++) {
+            double y = dy / (double) Math.max(1, radius);
+            int span = (int) Math.round(Math.sqrt(Math.max(0.0, 1.0 - y * y)) * radius);
+            double light = 0.35 + 0.65 * Math.sqrt(Math.max(0.0, 1.0 - y * y));
+            graphics.fill(cx - span, cy + dy, cx + span + 1, cy + dy + 1, shade(color, light));
+        }
+        ring(graphics, cx, cy, radius, 0x99D6EAF8);
+    }
+
+    private static int shade(int color, double factor) {
+        int alpha = (color >>> 24) & 0xFF;
+        int red = Math.min(255, (int) (((color >>> 16) & 0xFF) * factor));
+        int green = Math.min(255, (int) (((color >>> 8) & 0xFF) * factor));
+        int blue = Math.min(255, (int) ((color & 0xFF) * factor));
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+    }
+
+    private void drawGlobeGrid(GuiGraphics graphics, int cx, int cy, int radius, int gridColor) {
+        for (int latitude = -60; latitude <= 60; latitude += 30) {
+            double lat = Math.toRadians(latitude);
+            Integer px = null;
+            Integer py = null;
+            double oldDepth = -1.0;
+            for (int i = 0; i <= 96; i++) {
+                double lon = 2.0 * Math.PI * i / 96.0;
+                Vector3d direction = new Vector3d(Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon));
+                OrbitMapView.Projected point = OrbitMapView.project3d(0.0, direction, cameraYaw, cameraPitch, cameraZoom);
+                int x = cx + (int) Math.round(point.x() * radius);
+                int y = cy - (int) Math.round(point.y() * radius);
+                if (px != null && point.depth() >= 0.0 && oldDepth >= 0.0) {
+                    graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, gridColor);
+                }
+                px = point.depth() >= 0.0 ? x : null;
+                py = point.depth() >= 0.0 ? y : null;
+                oldDepth = point.depth();
+            }
+        }
+        for (int longitude = 0; longitude < 360; longitude += 60) {
+            double lon = Math.toRadians(longitude);
+            Integer px = null;
+            Integer py = null;
+            double oldDepth = -1.0;
+            for (int i = 0; i <= 64; i++) {
+                double lat = -Math.PI / 2.0 + Math.PI * i / 64.0;
+                Vector3d direction = new Vector3d(Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon));
+                OrbitMapView.Projected point = OrbitMapView.project3d(0.0, direction, cameraYaw, cameraPitch, cameraZoom);
+                int x = cx + (int) Math.round(point.x() * radius);
+                int y = cy - (int) Math.round(point.y() * radius);
+                if (px != null && point.depth() >= 0.0 && oldDepth >= 0.0) {
+                    graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, gridColor);
+                }
+                px = point.depth() >= 0.0 ? x : null;
+                py = point.depth() >= 0.0 ? y : null;
+                oldDepth = point.depth();
+            }
+        }
+    }
+
+    private void drawSpatialRing(GuiGraphics graphics, int cx, int cy, int radius, double altitude, int color) {
+        Integer px = null;
+        Integer py = null;
+        double oldDepth = -1.0;
+        for (int i = 0; i <= 160; i++) {
+            double angle = 2.0 * Math.PI * i / 160.0;
+            Vector3d direction = new Vector3d(Math.cos(angle), 0.0, Math.sin(angle));
+            OrbitMapView.Projected point = OrbitMapView.project3d(altitude, direction, cameraYaw, cameraPitch, cameraZoom);
+            int x = cx + (int) Math.round(point.x() * radius);
+            int y = cy - (int) Math.round(point.y() * radius);
+            if (px != null && point.depth() >= 0.0 && oldDepth >= 0.0) {
+                graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, color);
+            }
+            px = point.depth() >= 0.0 ? x : null;
+            py = point.depth() >= 0.0 ? y : null;
+            oldDepth = point.depth();
+        }
+    }
+
+    private void drawOrbit3d(GuiGraphics graphics, OrbitMapTrack track, int cx, int cy, int radius, int color) {
+        if (!Double.isFinite(track.apoapsisAltitudeMeters())) {
+            return;
+        }
+        double bodyRadius;
+        try {
+            bodyRadius = SolarSystem.body(track.bodyId()).radiusMeters();
+        } catch (IllegalArgumentException unknownBody) {
+            return;
+        }
+        if (!(bodyRadius + track.periapsisAltitudeMeters() > bodyRadius)
+                || !(bodyRadius + track.apoapsisAltitudeMeters() >= bodyRadius + track.periapsisAltitudeMeters())) {
+            return;
+        }
+        Integer px = null;
+        Integer py = null;
+        double previousDepth = 0.0;
+        for (int i = 0; i <= 192; i++) {
+            double anomaly = 2.0 * Math.PI * i / 192.0;
+            Vector3d position = OrbitMapView.conicPosition(bodyRadius, track.periapsisAltitudeMeters(),
+                    track.apoapsisAltitudeMeters(), track.periapsisDirection(), track.orbitNormal(), anomaly);
+            double altitude = position.magnitude() - bodyRadius;
+            OrbitMapView.Projected point = OrbitMapView.project3d(
+                    altitude, position.normalized(), cameraYaw, cameraPitch, cameraZoom);
+            int x = cx + (int) Math.round(point.x() * radius);
+            int y = cy - (int) Math.round(point.y() * radius);
+            boolean visible = point.depth() >= 0.0
+                    || Math.hypot(point.x(), point.y()) > OrbitMapView.EARTH_FRACTION * cameraZoom;
+            if (px != null && visible && (previousDepth >= 0.0
+                    || Math.hypot(point.x(), point.y()) > OrbitMapView.EARTH_FRACTION * cameraZoom)) {
+                graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, color);
+            }
+            px = visible ? x : null;
+            py = visible ? y : null;
+            previousDepth = point.depth();
+        }
     }
 
     private void drawPanelTabs(GuiGraphics graphics, int x) {

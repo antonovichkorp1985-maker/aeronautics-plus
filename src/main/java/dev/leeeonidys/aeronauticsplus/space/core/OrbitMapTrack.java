@@ -10,6 +10,7 @@ public record OrbitMapTrack(
         String id,
         double altitudeMeters,
         double angleRadians,
+        Vector3d positionDirection,
         FlightPresence presence,
         double horizontalSpeedMetersPerSecond,
         double radialSpeedMetersPerSecond,
@@ -28,7 +29,7 @@ public record OrbitMapTrack(
     public OrbitMapTrack {
         if (id == null || id.isBlank() || presence == null
                 || bodyId == null || bodyId.isBlank() || angularVelocityBodyRadiansPerSecond == null
-                || periapsisDirection == null || orbitNormal == null) {
+                || positionDirection == null || periapsisDirection == null || orbitNormal == null) {
             throw new IllegalArgumentException("Map track identity is required");
         }
         if (!Double.isFinite(altitudeMeters) || !Double.isFinite(angleRadians)
@@ -86,6 +87,7 @@ public record OrbitMapTrack(
                 id,
                 orbit.altitudeMeters(),
                 Math.atan2(orbit.positionMeters().z(), orbit.positionMeters().x()),
+                orbit.positionMeters().normalized(),
                 loop.presence(),
                 orbit.horizontalSpeedMetersPerSecond(),
                 orbit.radialSpeedMetersPerSecond(),
