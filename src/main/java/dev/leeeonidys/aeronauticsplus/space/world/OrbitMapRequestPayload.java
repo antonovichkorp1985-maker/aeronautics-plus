@@ -2,6 +2,7 @@ package dev.leeeonidys.aeronauticsplus.space.world;
 
 import dev.leeeonidys.aeronauticsplus.AeronauticsPlus;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -33,7 +34,8 @@ public record OrbitMapRequestPayload() implements CustomPacketPayload {
             }
             ServerLevel overworld = serverPlayer.server.getLevel(Level.OVERWORLD);
             if (overworld == null) {
-                PacketDistributor.sendToPlayer(serverPlayer, new OrbitMapSnapshotPayload(java.util.List.of()));
+                serverPlayer.displayClientMessage(
+                        Component.translatable("message.aeronauticsplus.orbit_map.unavailable"), true);
                 return;
             }
             // The system view is global: expose the Overworld's Kepler map from body-world dimensions too.
