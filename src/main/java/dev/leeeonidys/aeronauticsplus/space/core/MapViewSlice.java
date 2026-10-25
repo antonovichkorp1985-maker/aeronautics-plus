@@ -46,6 +46,8 @@ public final class MapViewSlice {
             throw new IllegalStateException("Parking orbit must sit on the outer ring");
         }
 
+        validateInclinedProjection();
+
         FlightLoop flown = FlightLoop.sit(hopper()).liftoff();
         OrbitMapTrack world = OrbitMapTrack.from(flown);
         if (world.presence() != FlightPresence.WORLD_ENTITY || world.altitudeMeters() >= 20_000.0) {
@@ -58,6 +60,15 @@ public final class MapViewSlice {
         OrbitMapTrack map = OrbitMapTrack.from(mapped);
         if (map.presence() != FlightPresence.ORBIT_MAP) {
             throw new IllegalStateException("20 km track must be the Kepler map");
+        }
+        if (!Double.isNaN(map.inclinationDegrees())) {
+            throw new IllegalStateException("A purely radial orbit must not claim a defined inclination");
+        }
+        OrbitMapTrack parked = OrbitMapTrack.from(flown.withOrbit(SolarSystem.circular(SolarSystem.earth(), 200_000.0)));
+        if (!Double.isFinite(parked.inclinationDegrees())
+                || Math.abs(parked.inclinationDegrees()
+                        - Math.toDegrees(SolarSystem.circular(SolarSystem.earth(), 200_000.0).inclinationRadians())) > 1.0e-9) {
+            throw new IllegalStateException("Map telemetry must preserve the live orbit inclination");
         }
         if (!(OrbitMapView.plot(map).radius() > OrbitMapView.plot(world).radius())) {
             throw new IllegalStateException("Map track must plot outside the world hopper");
@@ -87,6 +98,26 @@ public final class MapViewSlice {
         }
 
         return new Result(padR, hopperR, handoffR, parkingR, true, true);
+    }
+
+    private static void validateInclinedProjection() {
+        OrbitMapView.Plot equatorial = OrbitMapView.conicPoint(
+                SolarSystem.earth().radiusMeters(), 200_000.0, 200_000.0,
+                Vector3d.UNIT_X, Vector3d.UNIT_Y, Math.PI / 4.0);
+        Vector3d tiltedNormal = new Vector3d(0.0, Math.cos(Math.toRadians(60.0)), Math.sin(Math.toRadians(60.0)));
+        OrbitMapView.Plot inclined = OrbitMapView.conicPoint(
+                SolarSystem.earth().radiusMeters(), 200_000.0, 200_000.0,
+                Vector3d.UNIT_X, tiltedNormal, Math.PI / 4.0);
+        if (!(Math.abs(equatorial.x() - inclined.x()) > 1.0e-4
+                || Math.abs(equatorial.y() - inclined.y()) > 1.0e-4)) {
+            throw new IllegalStateException("Inclined conic should differ from the equatorial XZ projection");
+        }
+        if (Math.abs(OrbitMapView.conicPoint(
+                SolarSystem.earth().radiusMeters(), 200_000.0, 200_000.0,
+                Vector3d.UNIT_X, tiltedNormal, 0.0).radius()
+                - OrbitMapView.plot(200_000.0, 0.0).radius()) > 1.0e-9) {
+            throw new IllegalStateException("Conic projection must keep the map's altitude scale");
+        }
     }
 
     private static OrbitState atAltitude(double altitudeMeters) {

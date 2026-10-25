@@ -21,11 +21,14 @@ public record OrbitMapTrack(
         double dynamicPressurePascals,
         double apoapsisAltitudeMeters,
         double periapsisAltitudeMeters,
-        double periapsisAngleRadians,
+        double inclinationDegrees,
+        Vector3d periapsisDirection,
+        Vector3d orbitNormal,
         String bodyId) {
     public OrbitMapTrack {
         if (id == null || id.isBlank() || presence == null
-                || bodyId == null || bodyId.isBlank() || angularVelocityBodyRadiansPerSecond == null) {
+                || bodyId == null || bodyId.isBlank() || angularVelocityBodyRadiansPerSecond == null
+                || periapsisDirection == null || orbitNormal == null) {
             throw new IllegalArgumentException("Map track identity is required");
         }
         if (!Double.isFinite(altitudeMeters) || !Double.isFinite(angleRadians)
@@ -39,10 +42,37 @@ public record OrbitMapTrack(
                 || !Double.isFinite(dynamicPressurePascals)
                 || dynamicPressurePascals < 0.0
                 || !Double.isFinite(periapsisAltitudeMeters)
-                || !Double.isFinite(periapsisAngleRadians)
+                || Double.isInfinite(inclinationDegrees)
+                || (Double.isFinite(inclinationDegrees) && (inclinationDegrees < 0.0 || inclinationDegrees > 180.0))
                 || Double.isNaN(apoapsisAltitudeMeters)) {
             throw new IllegalArgumentException("Map track numbers are invalid");
         }
+    }
+
+    private static double inclinationDegrees(OrbitState orbit) {
+        try {
+            return Math.toDegrees(orbit.inclinationRadians());
+        } catch (IllegalStateException radialTrajectory) {
+            return Double.NaN; // A radial path has no orbital plane/inclination.
+        }
+    }
+
+    private static Vector3d periapsisDirection(OrbitState orbit) {
+        Vector3d eccentricity = orbit.eccentricityVector();
+        if (eccentricity.magnitudeSquared() > 1.0e-18) {
+            return eccentricity.normalized();
+        }
+        // Circular orbits have no unique periapsis. Use the live radial direction as a stable basis.
+        return orbit.positionMeters().normalized();
+    }
+
+    private static Vector3d orbitNormal(OrbitState orbit) {
+        Vector3d momentum = orbit.specificAngularMomentum();
+        if (momentum.magnitudeSquared() > 1.0e-18) {
+            return momentum.normalized();
+        }
+        // A radial trajectory has no defined plane; it is not drawn as a closed conic.
+        return Vector3d.UNIT_Y;
     }
 
     public static OrbitMapTrack from(FlightLoop loop) {
@@ -69,7 +99,9 @@ public record OrbitMapTrack(
                 SolarSystem.atmosphereOf(orbit.centralBody()).dynamicPressurePascals(orbit),
                 orbit.apoapsisAltitudeMeters(),
                 orbit.periapsisAltitudeMeters(),
-                Math.atan2(orbit.eccentricityVector().z(), orbit.eccentricityVector().x()),
+                inclinationDegrees(orbit),
+                periapsisDirection(orbit),
+                orbitNormal(orbit),
                 orbit.centralBody().id());
     }
 }

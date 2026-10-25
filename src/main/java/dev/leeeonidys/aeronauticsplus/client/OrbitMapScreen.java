@@ -235,6 +235,8 @@ public final class OrbitMapScreen extends Screen {
         y = dataLine(graphics, "AP", Double.isFinite(track.apoapsisAltitudeMeters())
                 ? String.format(Locale.ROOT, "%.1f km", track.apoapsisAltitudeMeters() / 1000.0) : "ESCAPE", x, y);
         y = dataLine(graphics, "PE", String.format(Locale.ROOT, "%.1f km", track.periapsisAltitudeMeters() / 1000.0), x, y);
+        y = dataLine(graphics, "INC (+Y)", Double.isFinite(track.inclinationDegrees())
+                ? String.format(Locale.ROOT, "%.2f°", track.inclinationDegrees()) : "N/A (radial)", x, y);
         y = dataLine(graphics, "THROTTLE", String.format(Locale.ROOT, "%.0f%%", track.throttle() * 100.0), x, y);
         y = dataLine(graphics, "THRUST", String.format(Locale.ROOT, "%.0f N", track.availableThrustNewtons()), x, y);
         y = dataLine(graphics, "FUEL", String.format(Locale.ROOT, "%.1f kg", track.propellantMassKg()), x, y);
@@ -288,7 +290,7 @@ public final class OrbitMapScreen extends Screen {
         }
     }
 
-    /** Draw the two-body conic in its XZ projection; this UI pass intentionally omits inclination. */
+    /** Draw the two-body conic projected from its actual orbital plane into the XZ map. */
     private void drawManeuverPlanner(GuiGraphics graphics, OrbitMapTrack track, int x, int y) {
         graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.maneuver_preview"),
                 x, y, 0xFFFFC857, false);
@@ -331,22 +333,22 @@ public final class OrbitMapScreen extends Screen {
         } catch (IllegalArgumentException unknownBody) {
             return;
         }
-        double rp = bodyRadius + track.periapsisAltitudeMeters();
-        double ra = bodyRadius + track.apoapsisAltitudeMeters();
-        if (!(rp > bodyRadius) || !(ra >= rp)) {
+        if (!(bodyRadius + track.periapsisAltitudeMeters() > bodyRadius)
+                || !(bodyRadius + track.apoapsisAltitudeMeters() >= bodyRadius + track.periapsisAltitudeMeters())) {
             return; // Skip impact trajectories and degenerate conics.
         }
-        double eccentricity = (ra - rp) / (ra + rp);
-        double semilatus = rp * (1.0 + eccentricity);
         int segments = 160;
         Integer previousX = null;
         Integer previousY = null;
         for (int i = 0; i <= segments; i++) {
             double anomaly = 2.0 * Math.PI * i / segments;
-            double radiusMeters = semilatus / (1.0 + eccentricity * Math.cos(anomaly));
-            double angle = track.periapsisAngleRadians() + anomaly;
-            double altitude = radiusMeters - bodyRadius;
-            OrbitMapView.Plot point = OrbitMapView.plot(altitude, angle);
+            OrbitMapView.Plot point = OrbitMapView.conicPoint(
+                    bodyRadius,
+                    track.periapsisAltitudeMeters(),
+                    track.apoapsisAltitudeMeters(),
+                    track.periapsisDirection(),
+                    track.orbitNormal(),
+                    anomaly);
             int x = cx + (int) Math.round(point.x() * mapRadius);
             int y = cy - (int) Math.round(point.y() * mapRadius);
             if (previousX != null) {

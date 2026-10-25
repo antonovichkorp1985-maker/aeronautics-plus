@@ -51,9 +51,21 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
             buf.writeDouble(track.dynamicPressurePascals());
             buf.writeDouble(track.apoapsisAltitudeMeters());
             buf.writeDouble(track.periapsisAltitudeMeters());
-            buf.writeDouble(track.periapsisAngleRadians());
+            buf.writeDouble(track.inclinationDegrees());
+            writeVector(buf, track.periapsisDirection());
+            writeVector(buf, track.orbitNormal());
             buf.writeUtf(track.bodyId());
         }
+    }
+
+    private static void writeVector(RegistryFriendlyByteBuf buf, Vector3d vector) {
+        buf.writeDouble(vector.x());
+        buf.writeDouble(vector.y());
+        buf.writeDouble(vector.z());
+    }
+
+    private static Vector3d readVector(RegistryFriendlyByteBuf buf) {
+        return new Vector3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
     }
 
     private static OrbitMapSnapshotPayload read(RegistryFriendlyByteBuf buf) {
@@ -79,6 +91,8 @@ public record OrbitMapSnapshotPayload(List<OrbitMapTrack> tracks) implements Cus
                     buf.readDouble(),
                     buf.readDouble(),
                     buf.readDouble(),
+                    readVector(buf),
+                    readVector(buf),
                     buf.readUtf()));
         }
         return new OrbitMapSnapshotPayload(tracks);

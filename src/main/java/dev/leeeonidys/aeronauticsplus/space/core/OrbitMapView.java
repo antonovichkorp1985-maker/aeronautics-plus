@@ -71,6 +71,40 @@ public final class OrbitMapView {
         return new Plot(r * Math.cos(angleRadians), r * Math.sin(angleRadians));
     }
 
+    /**
+     * Project a true 3D two-body conic into the map's XZ-facing azimuth/altitude plot.
+     * The radial scale is intentionally not geometric, but the azimuth now reflects the
+     * orbit plane instead of treating every orbit as equatorial.
+     */
+    public static Plot conicPoint(double bodyRadiusMeters, double periapsisAltitudeMeters,
+                                  double apoapsisAltitudeMeters, Vector3d periapsisDirection,
+                                  Vector3d orbitNormal, double trueAnomalyRadians) {
+        if (!(bodyRadiusMeters > 0.0) || !Double.isFinite(bodyRadiusMeters)
+                || !(bodyRadiusMeters + periapsisAltitudeMeters > 0.0)
+                || !(bodyRadiusMeters + apoapsisAltitudeMeters >= bodyRadiusMeters + periapsisAltitudeMeters)
+                || !Double.isFinite(apoapsisAltitudeMeters)
+                || periapsisDirection == null || orbitNormal == null
+                || !Double.isFinite(trueAnomalyRadians)) {
+            throw new IllegalArgumentException("Conic projection inputs are invalid");
+        }
+        double rp = bodyRadiusMeters + periapsisAltitudeMeters;
+        double ra = bodyRadiusMeters + apoapsisAltitudeMeters;
+        double eccentricity = (ra - rp) / (ra + rp);
+        double semilatus = rp * (1.0 + eccentricity);
+        double denominator = 1.0 + eccentricity * Math.cos(trueAnomalyRadians);
+        if (!(denominator > 0.0)) {
+            throw new IllegalArgumentException("Conic anomaly is outside its valid branch");
+        }
+        Vector3d periapsis = periapsisDirection.normalized();
+        Vector3d normal = orbitNormal.normalized();
+        Vector3d transverse = normal.cross(periapsis).normalized();
+        double radius = semilatus / denominator;
+        Vector3d position = periapsis.multiply(radius * Math.cos(trueAnomalyRadians))
+                .add(transverse.multiply(radius * Math.sin(trueAnomalyRadians)));
+        double azimuth = Math.atan2(position.z(), position.x());
+        return plot(radius - bodyRadius, azimuth);
+    }
+
     public static Plot plot(OrbitMapTrack track) {
         if (track == null) {
             throw new IllegalArgumentException("Plot needs a track");
