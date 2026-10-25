@@ -151,10 +151,10 @@ public final class OrbitMapScreen extends Screen {
                 drawFlightControls(graphics, selected, panelX);
             }
         }
-        graphics.drawString(font, mapMode == MapMode.SYSTEM
-                ? "SOLAR SYSTEM • LOG AU • approximate two-body ephemeris"
-                : footer(frame), 12, height - 18, mapMode == MapMode.SYSTEM ? 0xFF91C8E8
-                        : frame.handoff() ? RING : PARKING, false);
+        Component footerText = mapMode == MapMode.SYSTEM
+                ? Component.literal("SOLAR SYSTEM • LOG AU • approximate two-body ephemeris") : footer(frame);
+        graphics.drawString(font, footerText, 12, height - 18,
+                mapMode == MapMode.SYSTEM ? 0xFF91C8E8 : frame.handoff() ? RING : PARKING);
     }
 
     @Override
