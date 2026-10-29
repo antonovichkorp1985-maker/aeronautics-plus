@@ -82,6 +82,12 @@ public final class OrbitMapScreen extends Screen {
     }
 
     @Override
+    public void onClose() {
+        super.onClose();
+        OrbitMapClient.onScreenClosed();
+    }
+
+    @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics, mouseX, mouseY, partialTick);
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -190,6 +196,9 @@ public final class OrbitMapScreen extends Screen {
                         hitBody = entry.getKey();
                     }
                 }
+            }
+            if ("sun".equals(hitBody)) {
+                return true; // Sun is decorative: central zoom click never selects a body.
             }
             if (hitBody != null) {
                 focusedBodyId = hitBody;
@@ -822,6 +831,7 @@ public final class OrbitMapScreen extends Screen {
         return switch (bodyId) {
             case "moon" -> new int[] {MOON, MOON_LAND};
             case "mars" -> new int[] {MARS, MARS_LAND};
+            case "ceres", "vesta", "pallas", "hygiea" -> new int[] {0xFF9A8B7C, 0xFF6E5E4C};
             default -> new int[] {EARTH, LAND};
         };
     }

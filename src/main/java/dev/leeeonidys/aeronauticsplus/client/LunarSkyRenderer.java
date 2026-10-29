@@ -1,5 +1,6 @@
 package dev.leeeonidys.aeronauticsplus.client;
 
+import java.util.Random;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
@@ -71,11 +72,73 @@ public final class LunarSkyRenderer {
         }
         PoseStack pose = new PoseStack();
         pose.mulPose(new Matrix4f(event.getModelViewMatrix()));
+        float skyAngle = (float) ((minecraft.level.getDayTime() % 24000L) / 24000.0);
+        float sunFraction = (float) ((minecraft.level.getDayTime() % 24000L) / 24000.0);
+        // Stars belong to the world sky sphere — draw them BEFORE the Earth-local rotation.
+        drawStars(pose, skyAngle);
+        // From here on the pose is rotated to Earth's direction; Sun and Earth share that frame.
+        pose.pushPose();
         // Minecraft's sky forward is north (-Z); positive map longitude is east (+X).
         pose.mulPose(new Quaternionf()
                 .rotateY((float) -direction.azimuthFromNorthRadians())
                 .rotateX((float) direction.elevationRadians()));
+        drawSun(pose, sunFraction);
         drawEarth(pose, frame(minecraft.level.getDayTime()));
+        pose.popPose();
+    }
+
+    /** Starfield on the lunar sky sphere. Stars rotate with the sky angle; brightest at midnight. */
+    private static void drawStars(PoseStack pose, float skyAngle) {
+        // Stars are always visible on the airless Moon (no atmosphere to wash them out).
+        final float starAlpha = 1.0f;
+        if (starAlpha <= 0.01f) {
+            return;
+        }
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableCull();
+        RenderSystem.depthMask(false);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
+        float skyRot = skyAngle * (float) Math.PI * 2.0f;
+        float cosR = (float) Math.cos(skyRot);
+        float sinR = (float) Math.sin(skyRot);
+
+        BufferBuilder buffer = Tesselator.getInstance().begin(
+                VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        Random random = new Random(12345L);
+        for (int i = 0; i < 400; i++) {
+            float sx = random.nextFloat() * 2.0f - 1.0f;
+            float sy = random.nextFloat() * 2.0f - 1.0f;
+            float sz = random.nextFloat() * 2.0f - 1.0f;
+            float len = (float) Math.sqrt(sx * sx + sy * sy + sz * sz);
+            sx /= len; sy /= len; sz /= len;
+
+            float wx = (sx * cosR + sz * sinR) * SHELL;
+            float wy = sy * SHELL;
+            float wz = (-sx * sinR + sz * cosR) * SHELL;
+
+            pose.pushPose();
+            pose.translate(wx, wy, wz);
+            Matrix4f starMatrix = pose.last().pose();
+
+            float size = 0.15f + random.nextFloat() * 0.45f;
+            int alpha = (int) (starAlpha * 255);
+
+            buffer.addVertex(starMatrix, -size, -size, 0).setColor(255, 255, 255, alpha);
+            buffer.addVertex(starMatrix, size, -size, 0).setColor(255, 255, 255, alpha);
+            buffer.addVertex(starMatrix, size, size, 0).setColor(255, 255, 255, alpha);
+            buffer.addVertex(starMatrix, -size, size, 0).setColor(255, 255, 255, alpha);
+
+            pose.popPose();
+        }
+
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
+
+        RenderSystem.depthMask(true);
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
     }
 
     /**
@@ -109,6 +172,33 @@ public final class LunarSkyRenderer {
         buffer.addVertex(matrix, half, -half, z).setUv(u1, 1.0f);
         buffer.addVertex(matrix, half, half, z).setUv(u1, 0.0f);
         buffer.addVertex(matrix, -half, half, z).setUv(u0, 0.0f);
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
+
+        RenderSystem.depthMask(true);
+        RenderSystem.enableCull();
+        RenderSystem.disableBlend();
+    }
+
+    /** Draw the Sun disk on the lunar sky sphere at the true time-of-day angle. */
+    private static void drawSun(PoseStack pose, float sunFraction) {
+        // Sun angular radius seen from the Moon: about 0.5°.
+        final float SUN_RADIUS_DEGREES = 0.5f;
+        float half = (float) (Math.tan(Math.toRadians(SUN_RADIUS_DEGREES)) * SHELL);
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableCull();
+        RenderSystem.depthMask(false);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
+        Matrix4f matrix = pose.last().pose();
+        float z = -SHELL;
+        BufferBuilder buffer = Tesselator.getInstance().begin(
+                VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        buffer.addVertex(matrix, -half, -half, z).setColor(255, 255, 200, 255);
+        buffer.addVertex(matrix, half, -half, z).setColor(255, 255, 200, 255);
+        buffer.addVertex(matrix, half, half, z).setColor(255, 255, 200, 255);
+        buffer.addVertex(matrix, -half, half, z).setColor(255, 255, 200, 255);
         BufferUploader.drawWithShader(buffer.buildOrThrow());
 
         RenderSystem.depthMask(true);

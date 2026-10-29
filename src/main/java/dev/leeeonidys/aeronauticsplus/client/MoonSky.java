@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
  *
  * <p>Visual only. Light level still comes from sky light; vacuum, dust and heat stay ChemMod's.</p>
  */
-@EventBusSubscriber(modid = AeronauticsPlus.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = AeronauticsPlus.MODID, value = Dist.CLIENT)
 public final class MoonSky {
     private static final ResourceLocation TYPE =
             ResourceLocation.fromNamespaceAndPath(AeronauticsPlus.MODID, "moon");
