@@ -5,6 +5,8 @@ import dev.leeeonidys.aeronauticsplus.space.core.OrbitMapTrack;
 import dev.leeeonidys.aeronauticsplus.space.core.WorldHandoff;
 import dev.leeeonidys.aeronauticsplus.space.world.AsteroidWorld;
 import dev.leeeonidys.aeronauticsplus.space.world.CrewCommandPayload;
+import dev.leeeonidys.aeronauticsplus.space.world.MarsWorld;
+import dev.leeeonidys.aeronauticsplus.space.world.MoonWorld;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapClientHooks;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.StationEnterPayload;
@@ -12,6 +14,8 @@ import java.util.List;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /** Crew keys are {@link CrewKeys} — remappable in Controls. Physics keeps running. */
@@ -53,11 +57,26 @@ public final class OrbitMapClient {
             forcedMap = true;
         }
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.screen instanceof OrbitMapScreen) {
-            minecraft.setScreen(new OrbitMapScreen(tracks));
+        if (minecraft.screen instanceof OrbitMapScreen existing) {
+            existing.updateTracks(tracks);
             return;
         }
-        minecraft.setScreen(new OrbitMapScreen(tracks));
+        String bodyId = tracks.isEmpty() ? defaultBodyId(minecraft) : tracks.get(0).bodyId();
+        OrbitMapScreen screen = new OrbitMapScreen(tracks);
+        screen.setFocus(bodyId);
+        minecraft.setScreen(screen);
+    }
+
+    private static String defaultBodyId(Minecraft minecraft) {
+        if (minecraft.level == null) {
+            return "earth";
+        }
+        ResourceKey<net.minecraft.world.level.Level> dim = minecraft.level.dimension();
+        String path = dim.location().getPath();
+        if ("moon".equals(path)) return "moon";
+        if ("ceres".equals(path)) return "ceres";
+        if ("mars".equals(path)) return "mars";
+        return "earth";
     }
 
     public static void close() {
@@ -153,12 +172,27 @@ public final class OrbitMapClient {
     /**
      * Phase 1: player is on a body surface / in atmosphere below 20 km and not in orbit.
      * M does not open the map here. Asteroid belt / Ceres are orbital zones — M is allowed.
+     * Overworld >= 20000 m: map opens forcibly and does not close on M/Esc.
+     * Moon / Mars / Ceres / space: free M toggling.
      */
     private static boolean isSurfacePhase(Minecraft minecraft) {
         if (AsteroidWorld.isBelt(minecraft.level)) {
             return false;
         }
-        return minecraft.player.getY() < WorldHandoff.MAP_ALTITUDE_METERS;
+        Level level = minecraft.level;
+        if (level == null) {
+            return false;
+        }
+        if (level.dimension().equals(Level.OVERWORLD)) {
+            return minecraft.player.getY() < WorldHandoff.MAP_ALTITUDE_METERS;
+        }
+        if (MoonWorld.isMoon(level) || MarsWorld.isMars(level)) {
+            return false;
+        }
+        if (AsteroidWorld.isBelt(level)) {
+            return false;
+        }
+        return false;
     }
 
     /**

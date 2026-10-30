@@ -11,6 +11,7 @@ import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapControlPayload;
 import dev.leeeonidys.aeronauticsplus.space.world.OrbitMapRequestPayload;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -78,6 +79,19 @@ public final class OrbitMapScreen extends Screen {
         super(Component.translatable("screen.aeronauticsplus.orbit_map"));
         this.tracks = List.copyOf(tracks == null ? List.of() : tracks);
         this.selectedTrackId = this.tracks.isEmpty() ? null : this.tracks.get(0).id();
+    }
+
+    public void updateTracks(List<OrbitMapTrack> newTracks) {
+        this.tracks = List.copyOf(newTracks == null ? List.of() : newTracks);
+        if (selectedTrackId != null && this.tracks.stream().noneMatch(t -> t.id().equals(selectedTrackId))) {
+            selectedTrackId = this.tracks.isEmpty() ? null : this.tracks.get(0).id();
+        }
+    }
+
+    /** Установить локальный 3D фокус на тело (при открытии карты на Луне/Церере). */
+    public void setFocus(String bodyId) {
+        this.focusedBodyId = bodyId;
+        this.mapMode = MapMode.THREE_D;
     }
 
     @Override
@@ -323,32 +337,37 @@ public final class OrbitMapScreen extends Screen {
     }
 
     private void drawVesselList(GuiGraphics graphics, OrbitMapTrack selected, int cx, int cy, int radius) {
+        int panelWidth = Math.min(115, Math.max(2, width / 6));
         int listX = 10;
-        int listY = 55;
-        int listWidth = 150;
-        graphics.fill(listX - 4, listY - 4, listX + listWidth + 4, height - 4, PANEL_BG);
-        graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.vessels"),
-                listX + 2, listY - 2, 0xFF58C4DD, false);
+        int listY = 5;
+        int effectiveWidth = panelWidth;
         if (tracks.isEmpty()) {
+            graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.vessels"),
+                    listX + 2, listY, 0xFF58C4DD, false);
             graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.empty"),
                     listX + 2, listY + 16, TEXT_DIM, false);
-        }
-        for (int i = 0; i < tracks.size(); i++) {
-            OrbitMapTrack track = tracks.get(i);
-            boolean active = track.id().equals(selectedTrackId);
-            int rowY = listY + 16 + i * 26;
-            if (rowY > height - 30) break;
-            if (active) {
-                graphics.fill(listX, rowY - 2, listX + listWidth, rowY + 22, PANEL_ACTIVE);
+            effectiveWidth = 120;
+        } else {
+            graphics.drawString(font, Component.translatable("screen.aeronauticsplus.orbit_map.vessels"),
+                    listX + 2, listY, 0xFF58C4DD, false);
+            for (int i = 0; i < tracks.size(); i++) {
+                OrbitMapTrack track = tracks.get(i);
+                boolean active = track.id().equals(selectedTrackId);
+                int rowY = listY + 18 + i * 20;
+                if (rowY > height - 30) break;
+                if (active) {
+                    graphics.fill(listX, rowY - 2, listX + effectiveWidth, rowY + 18, PANEL_ACTIVE);
+                }
+                String shortId = track.id().length() > 12 ? track.id().substring(0, 12) + ".." : track.id();
+                graphics.drawString(font, shortId, listX + 4, rowY, active ? TEXT : TEXT, false);
+                String status = track.presence() == FlightPresence.ORBIT_MAP ? "● ORBIT"
+                        : track.presence() == FlightPresence.STATION_BLOCKS ? "● STATION" : "● WORLD";
+                int statusColor = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT
+                        : track.presence() == FlightPresence.STATION_BLOCKS ? 0xFFFFC107 : WORLD_DOT;
+                graphics.drawString(font, status, listX + 4, rowY + 12, statusColor, false);
             }
-            String shortId = track.id().length() > 18 ? track.id().substring(0, 18) + ".." : track.id();
-            graphics.drawString(font, shortId, listX + 4, rowY, active ? TEXT : TEXT, false);
-            String status = track.presence() == FlightPresence.ORBIT_MAP ? "● ORBIT"
-                    : track.presence() == FlightPresence.STATION_BLOCKS ? "● STATION" : "● WORLD";
-            int statusColor = track.presence() == FlightPresence.ORBIT_MAP ? MAP_DOT
-                    : track.presence() == FlightPresence.STATION_BLOCKS ? 0xFFFFC107 : WORLD_DOT;
-            graphics.drawString(font, status, listX + 4, rowY + 12, statusColor, false);
         }
+        cx = cx + effectiveWidth / 2;
     }
 
     private void drawSystemMap(GuiGraphics graphics, int cx, int cy, int radius,
@@ -409,11 +428,20 @@ public final class OrbitMapScreen extends Screen {
                                 int labelOffsetX, int labelOffsetY, int dotRadius, int color) {
         int labelX = point[0] + labelOffsetX;
         int labelY = point[1] + labelOffsetY;
+        fillCircle(graphics, point[0], point[1], dotRadius, color);
+        if (cameraZoom < 1.5) {
+            addSystemHit(bodyId, point[0], point[1]);
+            return;
+        }
         if (labelOffsetX != 0 || labelOffsetY != 0) {
             drawSystemLeader(graphics, point[0], point[1], labelX, labelY, 0x668F9BA8);
         }
-        fillCircle(graphics, point[0], point[1], dotRadius, color);
-        graphics.drawString(font, label, labelX, labelY, color, false);
+        PoseStack pose = graphics.pose();
+        pose.pushPose();
+        pose.translate(labelX, labelY, 0);
+        pose.scale(0.6f, 0.6f, 0.6f);
+        graphics.drawString(font, label, 0, 0, color, false);
+        pose.popPose();
         addSystemHit(bodyId, point[0], point[1]);
         addSystemHit(bodyId, labelX + font.width(label) / 2, labelY + font.lineHeight / 2);
     }
@@ -468,36 +496,26 @@ public final class OrbitMapScreen extends Screen {
     }
 
     private void drawSystemOrbit(GuiGraphics graphics, String bodyId, int cx, int cy, int radius, int color) {
-        Integer px = null;
-        Integer py = null;
+        List<float[]> points = new ArrayList<>();
         for (int i = 0; i <= 96; i++) {
             double offset = 2.0 * Math.PI * i / 96.0;
             Vector3d position = SolarSystemMap.orbitPoint(bodyId, mapEpochSeconds(), offset);
-            int[] point = projectSystem(position, cx, cy, radius);
-            if (px != null) {
-                graphics.fill(Math.min(px, point[0]), Math.min(py, point[1]),
-                        Math.max(px, point[0]) + 1, Math.max(py, point[1]) + 1, color);
-            }
-            px = point[0];
-            py = point[1];
+            int[] projected = projectSystem(position, cx, cy, radius);
+            points.add(new float[] {projected[0], projected[1]});
         }
+        drawSmoothPolyline(points, color, 1.2f);
     }
 
     private void drawSystemRing(GuiGraphics graphics, int cx, int cy, int radius, double ringAu, int color) {
-        Integer px = null;
-        Integer py = null;
+        List<float[]> points = new ArrayList<>();
         for (int i = 0; i <= 120; i++) {
             double angle = 2.0 * Math.PI * i / 120.0;
             Vector3d position = new Vector3d(ringAu * SolarSystem.AU_METERS * Math.cos(angle),
                     0.0, ringAu * SolarSystem.AU_METERS * Math.sin(angle));
             int[] point = projectSystem(position, cx, cy, radius);
-            if (px != null) {
-                graphics.fill(Math.min(px, point[0]), Math.min(py, point[1]),
-                        Math.max(px, point[0]) + 1, Math.max(py, point[1]) + 1, color);
-            }
-            px = point[0];
-            py = point[1];
+            points.add(new float[] {point[0], point[1]});
         }
+        drawSmoothPolyline(points, color, 1.2f);
     }
 
     private int[] projectSystem(Vector3d position, int cx, int cy, int radius) {
@@ -600,61 +618,52 @@ private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame fr
     private void drawGlobeGrid(GuiGraphics graphics, int cx, int cy, int radius, int gridColor) {
         for (int latitude = -60; latitude <= 60; latitude += 30) {
             double lat = Math.toRadians(latitude);
-            Integer px = null;
-            Integer py = null;
-            double oldDepth = -1.0;
+            List<float[]> points = new ArrayList<>();
             for (int i = 0; i <= 96; i++) {
                 double lon = 2.0 * Math.PI * i / 96.0;
                 Vector3d direction = new Vector3d(Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon));
                 OrbitMapView.Projected point = OrbitMapView.project3d(0.0, direction, cameraYaw, cameraPitch, cameraZoom);
-                int x = cx + (int) Math.round(point.x() * radius);
-                int y = cy - (int) Math.round(point.y() * radius);
-                if (px != null && point.depth() >= 0.0 && oldDepth >= 0.0) {
-                    graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, gridColor);
+                if (point.depth() >= 0.0) {
+                    points.add(new float[] {cx + (float) (point.x() * radius), cy - (float) (point.y() * radius)});
+                } else if (!points.isEmpty()) {
+                    drawSmoothPolyline(points, gridColor, 1.0f);
+                    points.clear();
                 }
-                px = point.depth() >= 0.0 ? x : null;
-                py = point.depth() >= 0.0 ? y : null;
-                oldDepth = point.depth();
             }
+            drawSmoothPolyline(points, gridColor, 1.0f);
         }
         for (int longitude = 0; longitude < 360; longitude += 60) {
             double lon = Math.toRadians(longitude);
-            Integer px = null;
-            Integer py = null;
-            double oldDepth = -1.0;
+            List<float[]> points = new ArrayList<>();
             for (int i = 0; i <= 64; i++) {
                 double lat = -Math.PI / 2.0 + Math.PI * i / 64.0;
                 Vector3d direction = new Vector3d(Math.cos(lat) * Math.cos(lon), Math.sin(lat), Math.cos(lat) * Math.sin(lon));
                 OrbitMapView.Projected point = OrbitMapView.project3d(0.0, direction, cameraYaw, cameraPitch, cameraZoom);
-                int x = cx + (int) Math.round(point.x() * radius);
-                int y = cy - (int) Math.round(point.y() * radius);
-                if (px != null && point.depth() >= 0.0 && oldDepth >= 0.0) {
-                    graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, gridColor);
+                if (point.depth() >= 0.0) {
+                    points.add(new float[] {cx + (float) (point.x() * radius), cy - (float) (point.y() * radius)});
+                } else if (!points.isEmpty()) {
+                    drawSmoothPolyline(points, gridColor, 1.0f);
+                    points.clear();
                 }
-                px = point.depth() >= 0.0 ? x : null;
-                py = point.depth() >= 0.0 ? y : null;
-                oldDepth = point.depth();
             }
+            drawSmoothPolyline(points, gridColor, 1.0f);
         }
     }
 
     private void drawSpatialRing(GuiGraphics graphics, int cx, int cy, int radius, double altitude, int color) {
-        Integer px = null;
-        Integer py = null;
-        double oldDepth = -1.0;
+        List<float[]> points = new ArrayList<>();
         for (int i = 0; i <= 160; i++) {
             double angle = 2.0 * Math.PI * i / 160.0;
             Vector3d direction = new Vector3d(Math.cos(angle), 0.0, Math.sin(angle));
             OrbitMapView.Projected point = OrbitMapView.project3d(altitude, direction, cameraYaw, cameraPitch, cameraZoom);
-            int x = cx + (int) Math.round(point.x() * radius);
-            int y = cy - (int) Math.round(point.y() * radius);
-            if (px != null && point.depth() >= 0.0 && oldDepth >= 0.0) {
-                graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, color);
+            if (point.depth() >= 0.0) {
+                points.add(new float[] {cx + (float) (point.x() * radius), cy - (float) (point.y() * radius)});
+            } else if (!points.isEmpty()) {
+                drawSmoothPolyline(points, color, 1.0f);
+                points.clear();
             }
-            px = point.depth() >= 0.0 ? x : null;
-            py = point.depth() >= 0.0 ? y : null;
-            oldDepth = point.depth();
         }
+        drawSmoothPolyline(points, color, 1.0f);
     }
 
     private void drawOrbit3d(GuiGraphics graphics, OrbitMapTrack track, int cx, int cy, int radius, int color) {
@@ -671,9 +680,7 @@ private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame fr
                 || !(bodyRadius + track.apoapsisAltitudeMeters() >= bodyRadius + track.periapsisAltitudeMeters())) {
             return;
         }
-        Integer px = null;
-        Integer py = null;
-        double previousDepth = 0.0;
+        List<float[]> points = new ArrayList<>();
         for (int i = 0; i <= 192; i++) {
             double anomaly = 2.0 * Math.PI * i / 192.0;
             Vector3d position = OrbitMapView.conicPosition(bodyRadius, track.periapsisAltitudeMeters(),
@@ -681,18 +688,16 @@ private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame fr
             double altitude = position.magnitude() - bodyRadius;
             OrbitMapView.Projected point = OrbitMapView.project3d(
                     altitude, position.normalized(), cameraYaw, cameraPitch, cameraZoom);
-            int x = cx + (int) Math.round(point.x() * radius);
-            int y = cy - (int) Math.round(point.y() * radius);
             boolean visible = point.depth() >= 0.0
                     || Math.hypot(point.x(), point.y()) > OrbitMapView.EARTH_FRACTION * cameraZoom;
-            if (px != null && visible && (previousDepth >= 0.0
-                    || Math.hypot(point.x(), point.y()) > OrbitMapView.EARTH_FRACTION * cameraZoom)) {
-                graphics.fill(Math.min(px, x), Math.min(py, y), Math.max(px, x) + 1, Math.max(py, y) + 1, color);
+            if (visible) {
+                points.add(new float[] {cx + (float) (point.x() * radius), cy - (float) (point.y() * radius)});
+            } else if (!points.isEmpty()) {
+                drawSmoothPolyline(points, color, 1.2f);
+                points.clear();
             }
-            px = visible ? x : null;
-            py = visible ? y : null;
-            previousDepth = point.depth();
         }
+        drawSmoothPolyline(points, color, 1.2f);
     }
 
     private void drawPanelTabs(GuiGraphics graphics, int x) {
@@ -808,7 +813,7 @@ private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame fr
 
     private static void drawOrbit(GuiGraphics graphics, OrbitMapTrack track, int cx, int cy, int mapRadius, int color) {
         if (!Double.isFinite(track.apoapsisAltitudeMeters())) {
-            return; // Hyperbolic tracks have no closed ellipse; their live position remains plotted.
+            return;
         }
         double bodyRadius;
         try {
@@ -818,11 +823,10 @@ private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame fr
         }
         if (!(bodyRadius + track.periapsisAltitudeMeters() > bodyRadius)
                 || !(bodyRadius + track.apoapsisAltitudeMeters() >= bodyRadius + track.periapsisAltitudeMeters())) {
-            return; // Skip impact trajectories and degenerate conics.
+            return;
         }
+        List<float[]> points = new ArrayList<>();
         int segments = 160;
-        Integer previousX = null;
-        Integer previousY = null;
         for (int i = 0; i <= segments; i++) {
             double anomaly = 2.0 * Math.PI * i / segments;
             OrbitMapView.Plot point = OrbitMapView.conicPoint(
@@ -834,13 +838,9 @@ private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame fr
                     anomaly);
             int x = cx + (int) Math.round(point.x() * mapRadius);
             int y = cy - (int) Math.round(point.y() * mapRadius);
-            if (previousX != null) {
-                graphics.fill(Math.min(previousX, x), Math.min(previousY, y),
-                        Math.max(previousX, x) + 1, Math.max(previousY, y) + 1, color);
-            }
-            previousX = x;
-            previousY = y;
+            points.add(new float[] {x, y});
         }
+        drawSmoothPolyline(points, color, 1.2f);
     }
 
     private int dataLine(GuiGraphics graphics, String label, String value, int x, int y) {
@@ -885,6 +885,51 @@ private void drawThreeDimensionalMap(GuiGraphics graphics, OrbitMapView.Frame fr
             return Component.translatable("screen.aeronauticsplus.orbit_map.vacuum", frame.bodyId());
         }
         return Component.translatable("screen.aeronauticsplus.orbit_map.handoff");
+    }
+
+    /** Draw a smooth vector line using Tesselator and GameRenderer::getPositionColorShader */
+    private static void drawSmoothPolyline(List<float[]> points, int color, float lineWidth) {
+        if (points == null || points.size() < 2) {
+            return;
+        }
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableCull();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+
+        float r = ((color >> 16) & 0xFF) / 255.0f;
+        float g = ((color >> 8) & 0xFF) / 255.0f;
+        float b = (color & 0xFF) / 255.0f;
+        float a = ((color >> 24) & 0xFF) / 255.0f;
+
+        float halfWidth = lineWidth * 0.5f;
+
+        for (int i = 0; i < points.size(); i++) {
+            float[] p = points.get(i);
+            float[] pNext = (i < points.size() - 1) ? points.get(i + 1) : points.get(i);
+            float[] pPrev = (i > 0) ? points.get(i - 1) : points.get(i);
+
+            float dx = pNext[0] - pPrev[0];
+            float dy = pNext[1] - pPrev[1];
+            float len = (float) Math.hypot(dx, dy);
+            if (len < 0.0001f) {
+                dx = 1.0f;
+                dy = 0.0f;
+                len = 1.0f;
+            }
+
+            float nx = -dy / len * halfWidth;
+            float ny = dx / len * halfWidth;
+
+            buffer.addVertex(p[0] + nx, p[1] + ny, 0.0f).setColor(r, g, b, a);
+            buffer.addVertex(p[0] - nx, p[1] - ny, 0.0f).setColor(r, g, b, a);
+        }
+
+        BufferUploader.drawWithShader(buffer.buildOrThrow());
+        RenderSystem.disableBlend();
     }
 
     private static void fillCircle(GuiGraphics graphics, int cx, int cy, int r, int color) {

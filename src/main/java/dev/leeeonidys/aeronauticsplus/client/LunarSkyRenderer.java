@@ -78,13 +78,15 @@ public final class LunarSkyRenderer {
         float sunFraction = (float) ((minecraft.level.getDayTime() % 24000L) / 24000.0);
         // Stars belong to the world sky sphere — draw them BEFORE the Earth-local rotation.
         drawStars(pose, skyAngle);
-        // From here on the pose is rotated to Earth's direction; Sun and Earth share that frame.
+        // Draw Sun BEFORE rotating to Earth's direction: position at sunFraction * 2*PI angle
         pose.pushPose();
-        // Minecraft's sky forward is north (-Z); positive map longitude is east (+X).
+        float sunAngle = sunFraction * (float) Math.PI * 2.0f;
+        pose.mulPose(new Quaternionf().rotateZ(-sunAngle));
+        drawSun(pose, sunFraction);
+        // From here on the pose is rotated to Earth's direction; Sun and Earth share that frame.
         pose.mulPose(new Quaternionf()
                 .rotateY((float) -direction.azimuthFromNorthRadians())
                 .rotateX((float) direction.elevationRadians()));
-        drawSun(pose, sunFraction);
         drawEarth(pose, frame(minecraft.level.getDayTime()));
         pose.popPose();
     }
@@ -125,13 +127,15 @@ public final class LunarSkyRenderer {
             pose.translate(wx, wy, wz);
             Matrix4f starMatrix = pose.last().pose();
 
+            // Flip quad to face camera: reverse winding so normal points toward camera
             float size = 0.15f + random.nextFloat() * 0.45f;
             int alpha = (int) (starAlpha * 255);
 
-            buffer.addVertex(starMatrix, -size, -size, 0).setColor(255, 255, 255, alpha);
+            // Reverse vertex order to face camera (front-face winding)
             buffer.addVertex(starMatrix, size, -size, 0).setColor(255, 255, 255, alpha);
-            buffer.addVertex(starMatrix, size, size, 0).setColor(255, 255, 255, alpha);
+            buffer.addVertex(starMatrix, -size, -size, 0).setColor(255, 255, 255, alpha);
             buffer.addVertex(starMatrix, -size, size, 0).setColor(255, 255, 255, alpha);
+            buffer.addVertex(starMatrix, size, size, 0).setColor(255, 255, 255, alpha);
 
             pose.popPose();
         }
@@ -161,7 +165,7 @@ public final class LunarSkyRenderer {
         float u1 = (frame + 1) / (float) FRAMES;
 
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE);
+        RenderSystem.defaultBlendFunc();
         RenderSystem.disableCull();
         RenderSystem.depthMask(false);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -171,7 +175,6 @@ public final class LunarSkyRenderer {
         float z = -SHELL;
         BufferBuilder buffer = Tesselator.getInstance().begin(
                 VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        // Additive blend: bright center with soft falloff from the phase map alpha.
         buffer.addVertex(matrix, -half, -half, z).setUv(u0, 1.0f).setColor(255, 255, 255, 255);
         buffer.addVertex(matrix, half, -half, z).setUv(u1, 1.0f).setColor(255, 255, 255, 255);
         buffer.addVertex(matrix, half, half, z).setUv(u1, 0.0f).setColor(255, 255, 255, 255);
