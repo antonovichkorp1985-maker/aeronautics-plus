@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "aeronauticsplus:block/wing_tip"
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/wing_tip",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/wing_tip",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/wing_tip",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "aeronauticsplus:block/wing_tip",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/wing_tip",
+      "x": -90
+    }
+  }
+}

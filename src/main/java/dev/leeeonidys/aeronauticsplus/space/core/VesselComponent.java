@@ -11,7 +11,7 @@ public record VesselComponent(
         Vector3d localPositionMeters) {
     public enum ComponentKind {
         STRUCTURE, TANK, ENGINE, RCS, AVIONICS, FAIRING, PAYLOAD, HABITAT, SOLAR, GYRO,
-        DOCKING, BATTERY, RADIATOR, ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS
+        DOCKING, BATTERY, RADIATOR, ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS, WING
     }
 
     public VesselComponent {
@@ -30,8 +30,8 @@ public record VesselComponent(
         if ((kind == ComponentKind.ENGINE || kind == ComponentKind.RCS) && engine == null) {
             throw new IllegalArgumentException("Engine component requires EngineState");
         }
-        if (kind != ComponentKind.TANK && tank != null
-                || kind != ComponentKind.ENGINE && kind != ComponentKind.RCS && engine != null) {
+        if (kind != ComponentKind.TANK && kind != ComponentKind.WING && tank != null
+                || kind != ComponentKind.ENGINE && kind != ComponentKind.RCS && kind != ComponentKind.WING && engine != null) {
             throw new IllegalArgumentException("Component payload does not match component kind");
         }
     }
@@ -68,5 +68,9 @@ public record VesselComponent(
             String id, String stageId, EngineState engine, ComponentKind kind) {
         return new VesselComponent(
                 id, stageId, kind, 0.0, null, engine, engine.localPositionMeters());
+    }
+
+    public static VesselComponent wing(String id, String stageId, double massKg, Vector3d localPositionMeters, CellOccupancy occupancy) {
+        return new VesselComponent(id, stageId, ComponentKind.WING, massKg, null, null, localPositionMeters);
     }
 }

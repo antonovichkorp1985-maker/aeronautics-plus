@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": { "item": "minecraft:paper" },
+    "I": { "item": "minecraft:iron_ingot" }
+  },
+  "pattern": [
+    "IWI",
+    "W I",
+    "IWI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:wing_tip"
+  }
+}

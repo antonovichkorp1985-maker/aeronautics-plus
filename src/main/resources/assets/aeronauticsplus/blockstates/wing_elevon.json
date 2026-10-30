@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "aeronauticsplus:block/wing_elevon"
+    },
+    "facing=south": {
+      "model": "aeronauticsplus:block/wing_elevon",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "aeronauticsplus:block/wing_elevon",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "aeronauticsplus:block/wing_elevon",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "aeronauticsplus:block/wing_elevon",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "aeronauticsplus:block/wing_elevon",
+      "x": -90
+    }
+  }
+}

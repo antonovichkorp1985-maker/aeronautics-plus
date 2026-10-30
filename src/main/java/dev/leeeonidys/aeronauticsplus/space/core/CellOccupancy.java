@@ -26,6 +26,14 @@ public record CellOccupancy(Vector3d origin, Vector3d size) {
     public static final CellOccupancy BUS = fromPixels(3, 2, 3, 13, 14, 13);
     /** Thin solar wing; not a full cube. */
     public static final CellOccupancy WING = fromPixels(0, 5, 3, 16, 11, 13);
+    /** Root section that attaches to the fuselage. */
+    public static final CellOccupancy WING_ROOT = fromPixels(0, 0, 0, 16, 16, 4);
+    /** Wing tip, reduces induced drag. */
+    public static final CellOccupancy WING_TIP = fromPixels(0, 12, 0, 16, 16, 4);
+    /** Elevon / rudder control surface. */
+    public static final CellOccupancy WING_ELEVON = fromPixels(0, 5, 0, 16, 11, 4);
+    /** Internal reinforced longeron within wing panel. */
+    public static final CellOccupancy WING_SPAR = fromPixels(0, 5, 0, 16, 11, 16);
     /** CMG can inside a cell. */
     public static final CellOccupancy CAN = fromPixels(4, 4, 4, 12, 12, 12);
     /** Small RCS pod. */

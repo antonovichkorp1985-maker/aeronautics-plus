@@ -119,6 +119,10 @@ public final class VesselPartBlock extends Block {
             // getNearestLookingDirection().getOpposite() would turn the chair to face the player.
             return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
         }
+        if (spec.kind() == VesselPartKind.WING) {
+            // Wing cells attach side-by-side; face where the builder looked horizontally.
+            return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+        }
         return defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
 

@@ -188,6 +188,31 @@ public record VesselPartSpec(
                 id, VesselPartKind.WING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING);
     }
 
+    public static VesselPartSpec wingRoot(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.WING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING_ROOT);
+    }
+
+    public static VesselPartSpec rocketWing(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.WING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING);
+    }
+
+    public static VesselPartSpec wingTip(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.WING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING_TIP);
+    }
+
+    public static VesselPartSpec wingElevon(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.WING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING_ELEVON);
+    }
+
+    public static VesselPartSpec wingSpar(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.WING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.WING_SPAR);
+    }
+
     /**
      * Common-bulkhead tanks expose both feeds (Centaur / S-II). Dedicated RP-1 or LOX
      * tanks expose only that species — oxidizer does not travel through the fuel hull.

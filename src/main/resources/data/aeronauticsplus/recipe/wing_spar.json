@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": { "item": "minecraft:iron_block" },
+    "S": { "item": "create:shaft" }
+  },
+  "pattern": [
+    "ISI",
+    "SIS",
+    "ISI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:wing_spar"
+  }
+}

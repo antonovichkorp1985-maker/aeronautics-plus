@@ -298,6 +298,31 @@ public final class AeronauticsPlus {
             registerVesselPart(VesselPartCatalog.LEGS, MapColor.COLOR_LIGHT_GRAY);
     public static final DeferredItem<BlockItem> LANDING_LEGS_ITEM =
             ITEMS.registerSimpleBlockItem(LANDING_LEGS);
+    /** Root section that attaches to the fuselage. */
+    public static final DeferredBlock<VesselPartBlock> WING_ROOT =
+            registerVesselPart(VesselPartCatalog.WING_ROOT, MapColor.COLOR_YELLOW);
+    public static final DeferredItem<BlockItem> WING_ROOT_ITEM =
+            ITEMS.registerSimpleBlockItem(WING_ROOT);
+    /** Basic aerodynamic wing panel. */
+    public static final DeferredBlock<VesselPartBlock> ROCKET_WING =
+            registerVesselPart(VesselPartCatalog.ROCKET_WING, MapColor.COLOR_YELLOW);
+    public static final DeferredItem<BlockItem> ROCKET_WING_ITEM =
+            ITEMS.registerSimpleBlockItem(ROCKET_WING);
+    /** Wing tip, reduces induced drag. */
+    public static final DeferredBlock<VesselPartBlock> WING_TIP =
+            registerVesselPart(VesselPartCatalog.WING_TIP, MapColor.COLOR_YELLOW);
+    public static final DeferredItem<BlockItem> WING_TIP_ITEM =
+            ITEMS.registerSimpleBlockItem(WING_TIP);
+    /** Elevon / rudder control surface. */
+    public static final DeferredBlock<VesselPartBlock> WING_ELEVON =
+            registerVesselPart(VesselPartCatalog.WING_ELEVON, MapColor.COLOR_YELLOW);
+    public static final DeferredItem<BlockItem> WING_ELEVON_ITEM =
+            ITEMS.registerSimpleBlockItem(WING_ELEVON);
+    /** Internal reinforced longeron within wing panel. */
+    public static final DeferredBlock<VesselPartBlock> WING_SPAR =
+            registerVesselPart(VesselPartCatalog.WING_SPAR, MapColor.COLOR_YELLOW);
+    public static final DeferredItem<BlockItem> WING_SPAR_ITEM =
+            ITEMS.registerSimpleBlockItem(WING_SPAR);
     /** Ogive covering the payload. Drops at 50 km by altitude, not ChemMod q. */
     public static final DeferredBlock<VesselPartBlock> ROCKET_FAIRING =
             registerVesselPart(VesselPartCatalog.FAIRING, MapColor.WOOL);
@@ -368,6 +393,11 @@ public final class AeronauticsPlus {
                         output.accept(ROCKET_ENGINE_ITEM.get());
                         output.accept(STAGE_SEPARATOR_ITEM.get());
                         output.accept(LANDING_LEGS_ITEM.get());
+                        output.accept(WING_ROOT_ITEM.get());
+                        output.accept(ROCKET_WING_ITEM.get());
+                        output.accept(WING_TIP_ITEM.get());
+                        output.accept(WING_ELEVON_ITEM.get());
+                        output.accept(WING_SPAR_ITEM.get());
                         output.accept(ROCKET_FAIRING_ITEM.get());
                         output.accept(RCS_THRUSTER_ITEM.get());
                         output.accept(DOCKING_PORT_ITEM.get());
@@ -388,7 +418,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.115: global solar-system map with body-local views.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.116: wing cells and 4-phase OrbitMap mechanics.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {

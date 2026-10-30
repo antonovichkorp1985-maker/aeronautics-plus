@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": { "item": "minecraft:iron_ingot" },
+    "H": { "item": "minecraft:lever" },
+    "R": { "item": "create:redstone_alloy" }
+  },
+  "pattern": [
+    "HRH",
+    "IRI",
+    "HRH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aeronauticsplus:wing_elevon"
+  }
+}

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.2-test.116] — 2026-10-30
+
+### Добавлено
+- 5 блоков модульных крыльев 1×1 м: `wing_root` (45 кг, корень), `rocket_wing` (30 кг, панель), `wing_tip` (15 кг, законцовка), `wing_elevon` (35 кг, элевон), `wing_spar` (55 кг, лонжерон) — свои модели, текстуры, рецепты, loot tables и переводы.
+- `VesselComponent.ComponentKind.WING` — крылья компилируются как отдельный вид компонента с массой и положением.
+- `CellOccupancy.WING_ROOT` / `WING_TIP` / `WING_ELEVON` / `WING_SPAR` — объёмные модели ячеек крыла в `CellOccupancy`.
+- `VesselPartSpec.wingRoot/wingTip/wingElevon/wingSpar` — чистые factory-методы для крыльевых клеток.
+
+### Исправлено
+- Дублирующийся `VesselPartSpec.WING` id переименован в `rocket_wing_fixture`, чтобы не конфликтовать с зарегистрированным `rocket_wing`.
+- `VesselBlockCompiler` собирает крылья как `ComponentKind.WING`, а не как `STRUCTURE`.
+- `VesselComponent` валидация разрешает `WING` без `TankState`/`EngineState`.
+- `VesselPartBlock.getStateForPlacement` поворачивает крылья горизонтально по направлению взгляда.
+
+### Проверки
+- `validate_science_docs.py` и `validate_resources.py` пройдены. Gradle `build` зелёный.
+
 ## [0.2.2-test.115] — 2026-10-30
 
 ### Исправлено

@@ -67,6 +67,18 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec PAYLOAD = VesselPartSpec.payload("rocket_payload", 180.0);
     /** Compiler fixture only. Not a registered AP block. */
     public static final VesselPartSpec HABITAT = VesselPartSpec.habitat("crew_habitat", 250.0);
+    /** AP's own wing family — compiler fixture id replaced by registered ROCKET_WING block. */
+    public static final VesselPartSpec WING = VesselPartSpec.wing("rocket_wing_fixture", 30.0);
+    /** Root section that attaches to the fuselage. 45 kg. */
+    public static final VesselPartSpec WING_ROOT = VesselPartSpec.wingRoot("wing_root", 45.0);
+    /** Basic aerodynamic wing panel. 30 kg. */
+    public static final VesselPartSpec ROCKET_WING = VesselPartSpec.rocketWing("rocket_wing", 30.0);
+    /** Wing tip, reduces induced drag. 15 kg. */
+    public static final VesselPartSpec WING_TIP = VesselPartSpec.wingTip("wing_tip", 15.0);
+    /** Elevon / rudder control surface. 35 kg. */
+    public static final VesselPartSpec WING_ELEVON = VesselPartSpec.wingElevon("wing_elevon", 35.0);
+    /** Internal reinforced longeron within wing panel. 55 kg. */
+    public static final VesselPartSpec WING_SPAR = VesselPartSpec.wingSpar("wing_spar", 55.0);
     public static final VesselPartSpec SOLAR = VesselPartSpec.solar("solar_panel", 25.0);
     public static final VesselPartSpec GYRO = VesselPartSpec.gyro("control_gyro", 40.0);
     public static final VesselPartSpec RCS = VesselPartSpec.rcs(
@@ -90,11 +102,6 @@ public final class VesselPartCatalog {
     public static final VesselPartSpec CONTROLLER = VesselPartSpec.controller("rocket_controller", 35.0);
     /** Falcon landing legs. Soft contact without them is NO_LEGS. */
     public static final VesselPartSpec LEGS = VesselPartSpec.legs("landing_legs", 25.0);
-    /**
-     * Wing / fin cell fixture. AP's own wing family — not a Create Propulsion sail block.
-     * No block is registered yet: a wing without a lift model would only add mass.
-     */
-    public static final VesselPartSpec WING = VesselPartSpec.wing("rocket_wing", 30.0);
 
     private VesselPartCatalog() {
     }
@@ -105,7 +112,8 @@ public final class VesselPartCatalog {
                 OXIDIZER_TANK, OXIDIZER_TANK_SMALL, OXIDIZER_TANK_LARGE, LH2_TANK,
                 ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, PAD, FAIRING, PAYLOAD,
                 HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR,
-                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS, WING);
+                OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS, WING,
+                WING_ROOT, ROCKET_WING, WING_TIP, WING_ELEVON, WING_SPAR);
     }
 
     public static VesselPartSpec byId(String id) {
