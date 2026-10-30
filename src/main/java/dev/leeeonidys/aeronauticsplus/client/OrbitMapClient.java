@@ -53,8 +53,8 @@ public final class OrbitMapClient {
             forcedMap = true;
         }
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.screen instanceof OrbitMapScreen screen) {
-            screen.setTracks(tracks);
+        if (minecraft.screen instanceof OrbitMapScreen) {
+            minecraft.setScreen(new OrbitMapScreen(tracks));
             return;
         }
         minecraft.setScreen(new OrbitMapScreen(tracks));

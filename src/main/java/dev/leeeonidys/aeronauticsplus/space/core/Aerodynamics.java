@@ -16,6 +16,29 @@ public final class Aerodynamics {
     public static final double FAIRING_MIN_ALTITUDE_METERS = 50_000.0;
     public static final double FAIRING_MAX_DYNAMIC_PRESSURE_PASCALS = 250.0;
 
+    /** Wing section chord (1 m cell). */
+    public static final double WING_CHORD_METERS = 1.0;
+    /** Wing section span (1 m cell). */
+    public static final double WING_SPAN_METERS = 1.0;
+    /** Wing section area (1 m² per cell). */
+    public static final double WING_AREA_M2 = WING_CHORD_METERS * WING_SPAN_METERS;
+    /** Maximum elevon deflection in radians (±25°). */
+    public static final double MAX_ELEVON_DEFLECTION_RAD = Math.toRadians(25.0);
+    /** Lift curve slope for 2D airfoil (2π per radian). */
+    private static final double CL_ALPHA_2D = 2.0 * Math.PI;
+    /** Stall angle in radians (~15°). */
+    public static final double STALL_ANGLE_RAD = Math.toRadians(15.0);
+    /** Post-stall lift drop factor. */
+    private static final double STALL_LIFT_FACTOR = 0.25;
+    /** Induced drag efficiency factor (Oswald). */
+    private static final double OSWALD_E = 0.85;
+    /** Elevon control effectiveness (roll moment per radian per m²). */
+    private static final double ELEVON_ROLL_EFFECTIVENESS = 0.15;
+    /** Elevon pitch effectiveness. */
+    private static final double ELEVON_PITCH_EFFECTIVENESS = 0.12;
+    /** Tip vortex reduction factor when wing_tip present. */
+    private static final double TIP_VORTEX_REDUCTION = 0.85;
+
     private Aerodynamics() {
     }
 
@@ -118,6 +141,65 @@ public final class Aerodynamics {
             return false;
         }
         return atmosphere.dynamicPressurePascals(orbit) <= FAIRING_MAX_DYNAMIC_PRESSURE_PASCALS;
+    }
+
+    /** Lift coefficient from AoA, aspect ratio, elevon deflection and tip presence. */
+    public static double wingClAlpha(double aoaRadians, double aspectRatio, double elevonDeflectionRad,
+                                     boolean hasTip) {
+        if (!Double.isFinite(aoaRadians) || aspectRatio <= 0.0 || !Double.isFinite(elevonDeflectionRad)) {
+            throw new IllegalArgumentException("Wing lift inputs must be finite; aspect ratio must be positive");
+        }
+        double clAlpha = CL_ALPHA_2D * aspectRatio / (aspectRatio + 2.0);
+        double stall = Math.min(1.0, Math.abs(aoaRadians) / STALL_ANGLE_RAD);
+        double lift = clAlpha * Math.sin(aoaRadians);
+        if (stall > 1.0) {
+            lift *= STALL_LIFT_FACTOR + (1.0 - STALL_LIFT_FACTOR) / stall;
+        }
+        lift += Math.sin(elevonDeflectionRad) * 0.4 * clAlpha;
+        return Math.max(-1.8, Math.min(1.8, lift));
+    }
+
+    /** Induced drag coefficient: Cl² / (π · AR · e), reduced by wing_tip. */
+    public static double wingInducedCd(double cl, double aspectRatio, boolean hasTip) {
+        if (!Double.isFinite(cl) || aspectRatio <= 0.0 || !Double.isFinite(cl)) {
+            throw new IllegalArgumentException("Induced drag inputs must be finite; aspect ratio positive");
+        }
+        double e = OSWALD_E * (hasTip ? TIP_VORTEX_REDUCTION : 1.0);
+        return cl * cl / (Math.PI * aspectRatio * e);
+    }
+
+    /** Profile drag coefficient (skin friction + form), roughly constant for thin wing. */
+    public static double wingProfileCd() {
+        return 0.012;
+    }
+
+    /** Total drag coefficient: induced + profile. */
+    public static double wingCd(double cl, double aspectRatio, boolean hasTip) {
+        return wingInducedCd(cl, aspectRatio, hasTip) + wingProfileCd();
+    }
+
+    /** Rolling moment from elevon differential deflection, N·m per wing cell. */
+    public static double elevonRollMomentNm(double deflectionRad, double spanMeters, double dynamicPressurePa) {
+        if (!Double.isFinite(deflectionRad) || spanMeters <= 0.0 || dynamicPressurePa < 0.0) {
+            throw new IllegalArgumentException("Elevon roll inputs must be finite; span positive, q non-negative");
+        }
+        return deflectionRad * ELEVON_ROLL_EFFECTIVENESS * dynamicPressurePa * spanMeters * spanMeters;
+    }
+
+    /** Pitching moment from elevon deflection, N·m per wing cell. */
+    public static double elevonPitchMomentNm(double deflectionRad, double chordMeters, double dynamicPressurePa) {
+        if (!Double.isFinite(deflectionRad) || chordMeters <= 0.0 || dynamicPressurePa < 0.0) {
+            throw new IllegalArgumentException("Elevon pitch inputs must be finite; chord positive, q non-negative");
+        }
+        return deflectionRad * ELEVON_PITCH_EFFECTIVENESS * dynamicPressurePa * chordMeters * chordMeters;
+    }
+
+    /** Topological span factor: how many consecutive intact cells remain from root to tip. */
+    public static double wingSpanFactor(int intactCells, int totalCells) {
+        if (intactCells < 0 || totalCells <= 0 || intactCells > totalCells) {
+            throw new IllegalArgumentException("Span cells must satisfy 0 <= intact <= total");
+        }
+        return (double) intactCells / (double) totalCells;
     }
 
     private static double lerp(double x0, double y0, double x1, double y1, double x) {

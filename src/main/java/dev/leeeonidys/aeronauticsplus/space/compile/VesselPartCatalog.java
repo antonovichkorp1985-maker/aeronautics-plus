@@ -124,4 +124,9 @@ public final class VesselPartCatalog {
         }
         throw new IllegalArgumentException("Unknown vessel part: " + id);
     }
+
+    /** Dry mass for the default VesselMassProvider. */
+    public static double massKg(String partId) {
+        return byId(partId).massKg();
+    }
 }

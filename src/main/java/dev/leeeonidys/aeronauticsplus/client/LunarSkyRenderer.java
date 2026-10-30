@@ -2,6 +2,8 @@ package dev.leeeonidys.aeronauticsplus.client;
 
 import java.util.Random;
 import com.mojang.blaze3d.systems.RenderSystem;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -43,8 +45,8 @@ public final class LunarSkyRenderer {
             AeronauticsPlus.MODID, "textures/environment/lunar_earth_phases.png");
     /** Frames in the phase strip: frame 0 is new, frame 8 is full. */
     private static final int FRAMES = 16;
-    /** Angular radius of the Earth seen from the Moon: 1.9°, about 3.7 times the Sun's. */
-    private static final float EARTH_RADIUS_DEGREES = 1.9f;
+    /** Angular radius of the Earth seen from the Moon: 1.9° * 1.8 ≈ 3.4°, ~6.7× the Sun's. */
+    private static final float EARTH_RADIUS_DEGREES = 3.4f;
     /** Vanilla draws its sky on a shell of radius 100; stay just inside it. */
     private static final float SHELL = 99.0f;
 
@@ -152,13 +154,14 @@ public final class LunarSkyRenderer {
         return Math.floorMod(index, FRAMES);
     }
 
+    /** Draw the Earth disk on the lunar sky sphere with its phase and increased angular size. */
     private static void drawEarth(PoseStack pose, int frame) {
         float half = (float) (Math.tan(Math.toRadians(EARTH_RADIUS_DEGREES)) * SHELL);
         float u0 = frame / (float) FRAMES;
         float u1 = (frame + 1) / (float) FRAMES;
 
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
+        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE);
         RenderSystem.disableCull();
         RenderSystem.depthMask(false);
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -168,10 +171,11 @@ public final class LunarSkyRenderer {
         float z = -SHELL;
         BufferBuilder buffer = Tesselator.getInstance().begin(
                 VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        buffer.addVertex(matrix, -half, -half, z).setUv(u0, 1.0f);
-        buffer.addVertex(matrix, half, -half, z).setUv(u1, 1.0f);
-        buffer.addVertex(matrix, half, half, z).setUv(u1, 0.0f);
-        buffer.addVertex(matrix, -half, half, z).setUv(u0, 0.0f);
+        // Additive blend: bright center with soft falloff from the phase map alpha.
+        buffer.addVertex(matrix, -half, -half, z).setUv(u0, 1.0f).setColor(255, 255, 255, 255);
+        buffer.addVertex(matrix, half, -half, z).setUv(u1, 1.0f).setColor(255, 255, 255, 255);
+        buffer.addVertex(matrix, half, half, z).setUv(u1, 0.0f).setColor(255, 255, 255, 255);
+        buffer.addVertex(matrix, -half, half, z).setUv(u0, 0.0f).setColor(255, 255, 255, 255);
         BufferUploader.drawWithShader(buffer.buildOrThrow());
 
         RenderSystem.depthMask(true);
@@ -186,7 +190,7 @@ public final class LunarSkyRenderer {
         float half = (float) (Math.tan(Math.toRadians(SUN_RADIUS_DEGREES)) * SHELL);
 
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
+        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE); // additive
         RenderSystem.disableCull();
         RenderSystem.depthMask(false);
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -195,10 +199,11 @@ public final class LunarSkyRenderer {
         float z = -SHELL;
         BufferBuilder buffer = Tesselator.getInstance().begin(
                 VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        buffer.addVertex(matrix, -half, -half, z).setColor(255, 255, 200, 255);
-        buffer.addVertex(matrix, half, -half, z).setColor(255, 255, 200, 255);
-        buffer.addVertex(matrix, half, half, z).setColor(255, 255, 200, 255);
-        buffer.addVertex(matrix, -half, half, z).setColor(255, 255, 200, 255);
+        // Bright white-yellow disk with full additive blend so it pops against black sky.
+        buffer.addVertex(matrix, -half, -half, z).setColor(255, 255, 220, 200);
+        buffer.addVertex(matrix, half, -half, z).setColor(255, 255, 220, 200);
+        buffer.addVertex(matrix, half, half, z).setColor(255, 255, 220, 200);
+        buffer.addVertex(matrix, -half, half, z).setColor(255, 255, 220, 200);
         BufferUploader.drawWithShader(buffer.buildOrThrow());
 
         RenderSystem.depthMask(true);

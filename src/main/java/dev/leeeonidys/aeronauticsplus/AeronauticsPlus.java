@@ -418,7 +418,7 @@ public final class AeronauticsPlus {
         CHUNK_GENERATORS.register(modEventBus);
         modEventBus.addListener(AeronauticsPlus::onCommonSetup);
         modEventBus.addListener(AeronauticsPlus::registerPayloads);
-        LOGGER.info("Aeronautics Plus 0.2.2-test.116: wing cells and 4-phase OrbitMap mechanics.");
+        LOGGER.info("Aeronautics Plus 0.2.2-test.117: KSP-style OrbitMap, ChemMod bridge, Lunar Sun fix.");
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
