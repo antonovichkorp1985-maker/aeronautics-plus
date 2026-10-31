@@ -937,6 +937,12 @@ public final class VesselEntity extends Entity {
             case CONTROLLER -> "кресло управления";
             case LEGS -> "опоры";
             case WING -> "крыло";
+            case HOLD_DOWN_CLAMP -> "стартовый зажим";
+            case TURBO_PUMP -> "турбонасосный узел";
+            case COMBUSTION_CHAMBER -> "камера сгорания";
+            case ENGINE_NOZZLE_SEA -> "сопло атмосферное";
+            case ENGINE_NOZZLE_VACUUM -> "сопло вакуумное";
+            case GIMBAL_MOUNT -> "привод УВТ";
         };
     }
 

@@ -459,6 +459,30 @@ public final class VesselBlockCompiler {
                     id, stageId, spec.massKg(), position, spec.occupancy());
             case TANK -> VesselComponent.tank(id, stageId, new TankState(
                     id, spec.massKg(), spec.tankCapacityKg(), spec.defaultPropellant(), position));
+            case TURBO_PUMP -> VesselComponent.engine(id, stageId, new EngineState(
+                    id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 8.0, true, position,
+                    occupant.facing().opposite().vector(), false,
+                    EngineState.defaultSeaLevelIsp(spec.fuelId(), spec.specificImpulseSeconds())));
+            case COMBUSTION_CHAMBER -> VesselComponent.engine(id, stageId, new EngineState(
+                    id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 8.0, true, position,
+                    occupant.facing().opposite().vector(), false,
+                    EngineState.defaultSeaLevelIsp(spec.fuelId(), spec.specificImpulseSeconds())));
+            case ENGINE_NOZZLE_SEA -> VesselComponent.engine(id, stageId, new EngineState(
+                    id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 8.0, true, position,
+                    occupant.facing().opposite().vector(), false,
+                    EngineState.defaultSeaLevelIsp(spec.fuelId(), spec.specificImpulseSeconds())));
+            case ENGINE_NOZZLE_VACUUM -> VesselComponent.engine(id, stageId, new EngineState(
+                    id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
+                    spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 8.0, true, position,
+                    occupant.facing().opposite().vector(), false,
+                    EngineState.defaultSeaLevelIsp(spec.fuelId(), spec.specificImpulseSeconds())));
+            case GIMBAL_MOUNT -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.GIMBAL, spec.massKg(), position);
+            default -> VesselComponent.structure(
+                    id, stageId, VesselComponent.ComponentKind.STRUCTURE, spec.massKg(), position);
             case ENGINE -> VesselComponent.engine(id, stageId, new EngineState(
                     id, spec.fuelId(), spec.oxidizerId(), spec.massKg(), spec.thrustNewtons(),
                     spec.specificImpulseSeconds(), spec.mixtureRatio(), 1.0, 8.0, true, position,

@@ -367,7 +367,7 @@ public final class OrbitMapScreen extends Screen {
                 graphics.drawString(font, status, listX + 4, rowY + 12, statusColor, false);
             }
         }
-        cx = cx + effectiveWidth / 2;
+        ;
     }
 
     private void drawSystemMap(GuiGraphics graphics, int cx, int cy, int radius,

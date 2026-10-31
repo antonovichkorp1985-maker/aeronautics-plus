@@ -83,6 +83,7 @@ public final class PartImpact {
             case TELESCOPE -> 11.0;
             case RCS -> 20.0;
             case TRANSPONDER -> 6.0;
+            default -> 15.0;
         };
     }
 
@@ -103,6 +104,7 @@ public final class PartImpact {
             case DOCKING -> Consequence.DOCKING;
             case TELESCOPE -> Consequence.SENSOR;
             case WING -> Consequence.SURFACE;
+            default -> Consequence.STRUCTURE;
         };
     }
 

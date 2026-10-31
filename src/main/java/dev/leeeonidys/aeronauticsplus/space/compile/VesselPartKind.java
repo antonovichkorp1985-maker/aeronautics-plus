@@ -23,8 +23,20 @@ public enum VesselPartKind {
     GYRO,
     /** Reaction-control thruster. Not a main engine. */
     RCS,
+    /** Main engine turbopump / feed unit. */
+    TURBO_PUMP,
+    /** Engine combustion chamber. */
+    COMBUSTION_CHAMBER,
+    /** Engine nozzle (atmospheric). */
+    ENGINE_NOZZLE_SEA,
+    /** Engine nozzle (vacuum). */
+    ENGINE_NOZZLE_VACUUM,
+    /** Gimbal / TVC mount for engine. */
+    GIMBAL_MOUNT,
     /** Androgynous capture ring (APAS / IDSS silhouette). */
     DOCKING,
+    /** Hold-down clamps on launch pad, hold rocket until T/W > 1. */
+    HOLD_DOWN_CLAMP,
     /** Eclipse energy store. Solar does not work in shadow. */
     BATTERY,
     /** Vacuum heat rejection. There is no convection off-atmosphere. */

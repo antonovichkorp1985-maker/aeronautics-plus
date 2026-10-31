@@ -55,14 +55,35 @@ public final class VesselPartCatalog {
             CellOccupancy.WIDE);
     public static final VesselPartSpec ENGINE = VesselPartSpec.engine(
             "rocket_engine", 90.0, 20_000.0, 300.0, FUEL_ID, OXIDIZER_ID, KEROLX_MIXTURE);
+    /** Turbopump / propellant feed unit (1 m segment). */
+    public static final VesselPartSpec TURBO_PUMP = VesselPartSpec.engine(
+            "turbopump_unit", 15.0, 5_000.0, 300.0, FUEL_ID, OXIDIZER_ID, KEROLX_MIXTURE);
+    /** Combustion chamber (1 m segment). */
+    public static final VesselPartSpec COMBUSTION_CHAMBER = VesselPartSpec.engine(
+            "combustion_chamber", 25.0, 8_000.0, 320.0, FUEL_ID, OXIDIZER_ID, KEROLX_MIXTURE);
+    /** Engine nozzle, atmospheric / sea-level. */
+    public static final VesselPartSpec ENGINE_NOZZLE_SEA = VesselPartSpec.engine(
+            "engine_nozzle_sea", 10.0, 4_000.0, 280.0, FUEL_ID, OXIDIZER_ID, KEROLX_MIXTURE);
+    /** Engine nozzle, vacuum optimized. */
+    public static final VesselPartSpec ENGINE_NOZZLE_VACUUM = VesselPartSpec.engine(
+            "engine_nozzle_vacuum", 12.0, 2_500.0, 380.0, FUEL_ID, OXIDIZER_ID, HYDROLOX_MIXTURE);
+    /** Gimbal / TVC mount for engine (1 m). */
+    public static final VesselPartSpec GIMBAL_MOUNT = VesselPartSpec.mount("gimbal_mount", 20.0);
     /** Vacuum hydrolox, RL10 class at 1 m-segment scale. */
     public static final VesselPartSpec HYDROLOX_ENGINE = VesselPartSpec.engine(
             "hydrolox_engine", 40.0, 8_000.0, 450.0, HYDROGEN_ID, OXIDIZER_ID, HYDROLOX_MIXTURE);
     public static final VesselPartSpec SEPARATOR = VesselPartSpec.separator("stage_separator", 40.0);
     public static final VesselPartSpec MOUNT = VesselPartSpec.mount("rocket_mount", 160.0);
-    /** Ground table. Not ChemMod, not a flying SKU. */
+/** Ground table. Not ChemMod, not a flying SKU. */
     public static final VesselPartSpec PAD = VesselPartSpec.pad("launch_pad", 420.0);
+    /** Launch-pad hold-down clamp (1 m segment). Holds rocket until T/W > 1. */
+    public static final VesselPartSpec HOLD_DOWN_CLAMP = VesselPartSpec.holdDownClamp("hold_down_clamp", 15.0);
+    /** Single-block rocket fairing (original). */
     public static final VesselPartSpec FAIRING = VesselPartSpec.fairing("rocket_fairing", 45.0);
+    /** 1 m fairing panel section (cylindrical). */
+    public static final VesselPartSpec FAIRING_PANEL = VesselPartSpec.fairingPanel("fairing_panel", 5.0);
+    /** 1 m ogive fairing cone nose section. */
+    public static final VesselPartSpec FAIRING_CONE = VesselPartSpec.fairingCone("fairing_cone", 8.0);
     /** Compiler satellite fixture. Not an AP item; payload is a property. */
     public static final VesselPartSpec PAYLOAD = VesselPartSpec.payload("rocket_payload", 180.0);
     /** Compiler fixture only. Not a registered AP block. */
@@ -106,11 +127,11 @@ public final class VesselPartCatalog {
     private VesselPartCatalog() {
     }
 
-    public static List<VesselPartSpec> all() {
+public static List<VesselPartSpec> all() {
         return List.of(
                 STRUCTURE, TANK, FUEL_TANK, FUEL_TANK_SMALL, FUEL_TANK_LARGE,
                 OXIDIZER_TANK, OXIDIZER_TANK_SMALL, OXIDIZER_TANK_LARGE, LH2_TANK,
-                ENGINE, HYDROLOX_ENGINE, SEPARATOR, MOUNT, PAD, FAIRING, PAYLOAD,
+                ENGINE, TURBO_PUMP, COMBUSTION_CHAMBER, ENGINE_NOZZLE_SEA, ENGINE_NOZZLE_VACUUM, GIMBAL_MOUNT, HYDROLOX_ENGINE, SEPARATOR, MOUNT, PAD, FAIRING, FAIRING_PANEL, FAIRING_CONE, HOLD_DOWN_CLAMP, PAYLOAD,
                 HABITAT, SOLAR, GYRO, RCS, DOCKING, BATTERY, RADIATOR,
                 OMNI_ANTENNA, HIGH_GAIN_ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS, WING,
                 WING_ROOT, ROCKET_WING, WING_TIP, WING_ELEVON, WING_SPAR);

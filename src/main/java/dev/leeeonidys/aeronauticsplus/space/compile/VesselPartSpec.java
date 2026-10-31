@@ -93,7 +93,25 @@ public record VesselPartSpec(
                 id, VesselPartKind.PAD, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.PAD);
     }
 
+    /** Launch-pad hold-down clamp (1 m segment). Holds rocket until T/W > 1. */
+    public static VesselPartSpec holdDownClamp(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.HOLD_DOWN_CLAMP, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.PAD);
+    }
+
     public static VesselPartSpec fairing(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.FAIRING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.OGIVE);
+    }
+
+    /** 1 m fairing panel section (cylindrical). */
+    public static VesselPartSpec fairingPanel(String id, double massKg) {
+        return new VesselPartSpec(
+                id, VesselPartKind.FAIRING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.OGIVE);
+    }
+
+    /** 1 m ogive fairing cone nose section. */
+    public static VesselPartSpec fairingCone(String id, double massKg) {
         return new VesselPartSpec(
                 id, VesselPartKind.FAIRING, massKg, 0.0, null, 0.0, 0.0, 0.0, "", "", CellOccupancy.OGIVE);
     }
@@ -279,6 +297,13 @@ public record VesselPartSpec(
                         VesselConnection.ConnectionKind.FUEL,
                         VesselConnection.ConnectionKind.OXIDIZER);
             }
+            case TURBO_PUMP, COMBUSTION_CHAMBER, ENGINE_NOZZLE_SEA, ENGINE_NOZZLE_VACUUM -> {
+                // Engine components carry structural, fuel, and oxidizer feeds
+                yield EnumSet.of(
+                        VesselConnection.ConnectionKind.STRUCTURAL,
+                        VesselConnection.ConnectionKind.FUEL,
+                        VesselConnection.ConnectionKind.OXIDIZER);
+            }
             case SEPARATOR -> face == facing
                     ? EnumSet.of(VesselConnection.ConnectionKind.SEPARATION)
                     : EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
@@ -302,6 +327,7 @@ public record VesselPartSpec(
                 }
                 yield EnumSet.of(VesselConnection.ConnectionKind.STRUCTURAL);
             }
+            default -> EnumSet.noneOf(VesselConnection.ConnectionKind.class);
         };
     }
 }
