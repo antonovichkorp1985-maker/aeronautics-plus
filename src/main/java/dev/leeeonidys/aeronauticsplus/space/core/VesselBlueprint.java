@@ -70,27 +70,36 @@ public record VesselBlueprint(
             burners.addAll(rcs);
             validateFuelConnections(stageId, burners, tanks, diagnostics);
             validateStructuralConnectivity(stageId, stageComponents, diagnostics);
-            if (!tanks.isEmpty() && !engines.isEmpty()) {
+if (!tanks.isEmpty() && !engines.isEmpty()) {
                 List<EngineState> allEngines = new ArrayList<>();
                 engines.stream().map(VesselComponent::engine).forEach(allEngines::add);
                 rcs.stream().map(VesselComponent::engine).forEach(allEngines::add);
+                List<MassElement> stageStructure = stageComponents.stream()
+                        .filter(component -> component.kind() != VesselComponent.ComponentKind.TANK
+                                && component.kind() != VesselComponent.ComponentKind.ENGINE
+                                && component.kind() != VesselComponent.ComponentKind.RCS)
+                        .filter(component -> component.structuralMassKg() > 0.0)
+                        .map(component -> new MassElement(
+                                component.id(),
+                                component.structuralMassKg(),
+                                component.localPositionMeters(),
+                                roleOf(component)))
+                        .toList();
+                List<MassElement> wingCells = stageStructure.stream()
+                        .filter(m -> m.role() == MassElement.Role.WING
+                                || m.role() == MassElement.Role.WING_ROOT
+                                || m.role() == MassElement.Role.WING_TIP
+                                || m.role() == MassElement.Role.WING_ELEVON
+                                || m.role() == MassElement.Role.WING_SPAR)
+                        .toList();
                 StageState stage = new StageState(
                         stageId,
-                        stageComponents.stream()
-                                .filter(component -> component.kind() != VesselComponent.ComponentKind.TANK
-                                        && component.kind() != VesselComponent.ComponentKind.ENGINE
-                                        && component.kind() != VesselComponent.ComponentKind.RCS)
-                                .filter(component -> component.structuralMassKg() > 0.0)
-                                .map(component -> new MassElement(
-                                        component.id(),
-                                        component.structuralMassKg(),
-                                        component.localPositionMeters(),
-                                        roleOf(component.kind())))
-                                .toList(),
+                        stageStructure,
                         tanks.stream().map(VesselComponent::tank).toList(),
                         allEngines,
                         true,
-                        strapOnStageIds.contains(stageId));
+                        strapOnStageIds.contains(stageId),
+                        wingCells);
                 addThrustGeometryDiagnostics(stage, diagnostics);
                 stages.add(stage);
             }
@@ -247,7 +256,18 @@ public record VesselBlueprint(
         return false;
     }
 
-    private static MassElement.Role roleOf(VesselComponent.ComponentKind kind) {
+    private static MassElement.Role roleOf(VesselComponent component) {
+        VesselComponent.ComponentKind kind = component.kind();
+        if (kind == VesselComponent.ComponentKind.WING) {
+            CellOccupancy occ = component.occupancy();
+            if (occ != null) {
+                if (occ.equals(CellOccupancy.WING_ROOT)) return MassElement.Role.WING_ROOT;
+                if (occ.equals(CellOccupancy.WING_TIP)) return MassElement.Role.WING_TIP;
+                if (occ.equals(CellOccupancy.WING_ELEVON)) return MassElement.Role.WING_ELEVON;
+                if (occ.equals(CellOccupancy.WING_SPAR)) return MassElement.Role.WING_SPAR;
+            }
+            return MassElement.Role.WING;
+        }
         return switch (kind) {
             case FAIRING -> MassElement.Role.FAIRING;
             case PAYLOAD -> MassElement.Role.PAYLOAD;

@@ -11,7 +11,8 @@ public record StageState(
         List<TankState> tanks,
         List<EngineState> engines,
         boolean separable,
-        boolean strapOn) {
+        boolean strapOn,
+        List<MassElement> wingCells) {
     public StageState {
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Stage id must not be blank");
@@ -19,6 +20,7 @@ public record StageState(
         structure = List.copyOf(structure == null ? List.of() : structure);
         tanks = List.copyOf(tanks == null ? List.of() : tanks);
         engines = List.copyOf(engines == null ? List.of() : engines);
+        wingCells = List.copyOf(wingCells == null ? List.of() : wingCells);
         if (tanks.isEmpty()) {
             throw new IllegalArgumentException("A stage must contain at least one tank");
         }
@@ -33,7 +35,27 @@ public record StageState(
             List<TankState> tanks,
             List<EngineState> engines,
             boolean separable) {
-        this(id, structure, tanks, engines, separable, false);
+        this(id, structure, tanks, engines, separable, false, extractWingCells(structure));
+    }
+
+    public StageState(
+            String id,
+            List<MassElement> structure,
+            List<TankState> tanks,
+            List<EngineState> engines,
+            boolean separable,
+            boolean strapOn) {
+        this(id, structure, tanks, engines, separable, strapOn, extractWingCells(structure));
+    }
+
+    private static List<MassElement> extractWingCells(List<MassElement> structure) {
+        return structure.stream()
+                .filter(e -> e.role() == MassElement.Role.WING
+                        || e.role() == MassElement.Role.WING_ROOT
+                        || e.role() == MassElement.Role.WING_TIP
+                        || e.role() == MassElement.Role.WING_ELEVON
+                        || e.role() == MassElement.Role.WING_SPAR)
+                .toList();
     }
 
     public double structuralDryMassKg() {
@@ -99,6 +121,152 @@ public record StageState(
 
     public boolean hasLab() {
         return structure.stream().anyMatch(element -> element.role() == MassElement.Role.LAB);
+    }
+
+    public boolean hasWings() {
+        return !wingCells.isEmpty();
+    }
+
+    public int wingCellCount() {
+        return wingCells.size();
+    }
+
+    public double wingSpanMeters() {
+        return wingCells.stream()
+                .filter(w -> w.role() != MassElement.Role.WING_SPAR)
+                .mapToDouble(w -> 1.0)
+                .sum();
+    }
+
+    public double wingAreaM2() {
+        return wingCells.stream()
+                .filter(w -> w.role() != MassElement.Role.WING_SPAR)
+                .mapToDouble(w -> 1.0)
+                .sum();
+    }
+
+    public double aspectRatio() {
+        double span = wingSpanMeters();
+        double area = wingAreaM2();
+        if (span <= 0.0 || area <= 0.0) {
+            return 0.0;
+        }
+        return span * span / area;
+    }
+
+    public Vector3d centerOfPressureMeters() {
+        if (wingCells.isEmpty()) {
+            return centerOfMassMeters();
+        }
+        double mass = 0.0;
+        Vector3d moment = Vector3d.ZERO;
+        for (MassElement wing : wingCells) {
+            double cellMass = wing.massKg();
+            if (wing.role() == MassElement.Role.WING_SPAR) {
+                cellMass *= 0.5;
+            }
+            mass += cellMass;
+            moment = moment.add(wing.localPositionMeters().multiply(cellMass));
+        }
+        if (mass <= 0.0) {
+            return centerOfMassMeters();
+        }
+        return moment.multiply(1.0 / mass);
+    }
+
+    public boolean hasElevon() {
+        return wingCells.stream().anyMatch(w -> w.role() == MassElement.Role.WING_ELEVON);
+    }
+
+    public boolean hasTip() {
+        return wingCells.stream().anyMatch(w -> w.role() == MassElement.Role.WING_TIP);
+    }
+
+    public int elevonCount() {
+        return (int) wingCells.stream().filter(w -> w.role() == MassElement.Role.WING_ELEVON).count();
+    }
+
+    public int tipCount() {
+        return (int) wingCells.stream().filter(w -> w.role() == MassElement.Role.WING_TIP).count();
+    }
+
+    public int rootCount() {
+        return (int) wingCells.stream().filter(w -> w.role() == MassElement.Role.WING_ROOT).count();
+    }
+
+    public int sparCount() {
+        return (int) wingCells.stream().filter(w -> w.role() == MassElement.Role.WING_SPAR).count();
+    }
+
+    public double wingLiftCoefficient(double aoaRadians, double elevonDeflectionRad) {
+        if (wingCells.isEmpty()) {
+            return 0.0;
+        }
+        double ar = aspectRatio();
+        boolean hasTip = hasTip();
+        return Aerodynamics.wingClAlpha(aoaRadians, ar, elevonDeflectionRad, hasTip);
+    }
+
+    public double wingDragCoefficient(double cl, boolean hasTip) {
+        if (wingCells.isEmpty()) {
+            return 0.0;
+        }
+        double ar = aspectRatio();
+        return Aerodynamics.wingCd(cl, ar, hasTip);
+    }
+
+    public double elevonRollMomentNm(double deflectionRad, double dynamicPressurePa) {
+        if (!hasElevon()) {
+            return 0.0;
+        }
+        double span = wingSpanMeters();
+        return Aerodynamics.elevonRollMomentNm(deflectionRad, span, dynamicPressurePa) * elevonCount();
+    }
+
+    public double elevonPitchMomentNm(double deflectionRad, double dynamicPressurePa) {
+        if (!hasElevon()) {
+            return 0.0;
+        }
+        double chord = 1.0;
+        return Aerodynamics.elevonPitchMomentNm(deflectionRad, chord, dynamicPressurePa) * elevonCount();
+    }
+
+    public int intactWingCellsFromRoot() {
+        if (wingCells.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        for (MassElement wing : wingCells) {
+            if (wing.role() == MassElement.Role.WING_ROOT) {
+                count++;
+            } else if (count > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public boolean wingRootIntact() {
+        return wingCells.stream().anyMatch(w -> w.role() == MassElement.Role.WING_ROOT);
+    }
+
+    /**
+     * Static stability margin: positive means Centre of Pressure is behind Centre of Mass
+     * (stable), negative means CP ahead of CM (unstable, will tumble). Measured in metres
+     * along the body longitudinal axis.
+     */
+    public double staticStabilityMarginMeters() {
+        if (!hasWings()) {
+            return 0.0;
+        }
+        Vector3d cm = centerOfMassMeters();
+        Vector3d cp = centerOfPressureMeters();
+        Vector3d bodyForward = Vector3d.UNIT_Y;
+        return (cp.subtract(cm)).dot(bodyForward);
+    }
+
+    public boolean isStaticallyStable() {
+        return staticStabilityMarginMeters() > 1.0e-3;
     }
 
     public boolean hasOxygen() {

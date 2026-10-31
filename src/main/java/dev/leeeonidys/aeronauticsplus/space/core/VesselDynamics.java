@@ -489,6 +489,29 @@ public final class VesselDynamics {
             Vector3d acceleration = gravity
                     .add(thrust.multiply(1.0 / mass))
                     .add(drag.multiply(1.0 / mass));
+            // Wing lift when airfoils are present and moving through atmosphere
+            if (state.activeStage().hasWings()) {
+                Vector3d velocity = orbit.velocityMetersPerSecond();
+                double speed = velocity.magnitude();
+                if (speed > 1.0) {
+                    double density = atmosphere.densityAt(orbit);
+                    double q = 0.5 * density * speed * speed;
+                    double cl = state.activeStage().wingLiftCoefficient(0.0, 0.0);
+                    if (Math.abs(cl) > 1.0e-6 && q > 0.0) {
+                        double liftArea = state.activeStage().wingAreaM2();
+                        double liftMag = q * cl * liftArea;
+                        // Lift acts perpendicular to velocity, in the plane containing
+                        // velocity and the vessel's body up axis
+                        Vector3d bodyUp = state.attitude().toBody(Vector3d.UNIT_Y).normalized();
+                        Vector3d velNorm = velocity.normalized();
+                        Vector3d liftDir = velNorm.cross(bodyUp);
+                        if (liftDir.magnitudeSquared() > 1.0e-12) {
+                            liftDir = liftDir.normalized();
+                            acceleration = acceleration.add(liftDir.multiply(liftMag / mass));
+                        }
+                    }
+                }
+            }
             Vector3d nextPosition = orbit.positionMeters()
                     .add(orbit.velocityMetersPerSecond().multiply(dt))
                     .add(acceleration.multiply(0.5 * dt * dt));

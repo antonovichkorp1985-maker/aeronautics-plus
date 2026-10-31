@@ -8,7 +8,8 @@ public record VesselComponent(
         double structuralMassKg,
         TankState tank,
         EngineState engine,
-        Vector3d localPositionMeters) {
+        Vector3d localPositionMeters,
+        CellOccupancy occupancy) {
     public enum ComponentKind {
         STRUCTURE, TANK, ENGINE, RCS, AVIONICS, FAIRING, PAYLOAD, HABITAT, SOLAR, GYRO,
         DOCKING, BATTERY, RADIATOR, ANTENNA, LAB, OXYGEN, TRANSPONDER, TELESCOPE, CONTROLLER, LEGS, WING, GIMBAL
@@ -23,6 +24,9 @@ public record VesselComponent(
         }
         if (localPositionMeters == null) {
             throw new IllegalArgumentException("Component position must not be null");
+        }
+        if (occupancy == null) {
+            occupancy = CellOccupancy.FULL;
         }
         if (kind == ComponentKind.TANK && tank == null) {
             throw new IllegalArgumentException("Tank component requires TankState");
@@ -45,12 +49,12 @@ public record VesselComponent(
         if (kind == ComponentKind.TANK || kind == ComponentKind.ENGINE || kind == ComponentKind.RCS) {
             throw new IllegalArgumentException("Use tank() or engine() for physical components");
         }
-        return new VesselComponent(id, stageId, kind, massKg, null, null, localPositionMeters);
+        return new VesselComponent(id, stageId, kind, massKg, null, null, localPositionMeters, CellOccupancy.COLUMN);
     }
 
     public static VesselComponent tank(String id, String stageId, TankState tank) {
         return new VesselComponent(
-                id, stageId, ComponentKind.TANK, 0.0, tank, null, tank.localPositionMeters());
+                id, stageId, ComponentKind.TANK, 0.0, tank, null, tank.localPositionMeters(), tank.localPositionMeters() == null ? CellOccupancy.COLUMN : CellOccupancy.COLUMN);
     }
 
     public static VesselComponent engine(String id, String stageId, EngineState engine) {
@@ -67,10 +71,10 @@ public record VesselComponent(
     private static VesselComponent engine(
             String id, String stageId, EngineState engine, ComponentKind kind) {
         return new VesselComponent(
-                id, stageId, kind, 0.0, null, engine, engine.localPositionMeters());
+                id, stageId, kind, 0.0, null, engine, engine.localPositionMeters(), CellOccupancy.NOZZLE);
     }
 
     public static VesselComponent wing(String id, String stageId, double massKg, Vector3d localPositionMeters, CellOccupancy occupancy) {
-        return new VesselComponent(id, stageId, ComponentKind.WING, massKg, null, null, localPositionMeters);
+        return new VesselComponent(id, stageId, ComponentKind.WING, massKg, null, null, localPositionMeters, occupancy);
     }
 }
