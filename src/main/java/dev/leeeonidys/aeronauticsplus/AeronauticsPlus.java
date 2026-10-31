@@ -8,6 +8,7 @@ import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerShaftAdapterBlo
 import dev.leeeonidys.aeronauticsplus.content.propeller.PropellerSpec;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlock;
 import dev.leeeonidys.aeronauticsplus.content.propeller.PrototypePropellerBlockEntity;
+import dev.leeeonidys.aeronauticsplus.content.rotor.HelicopterRotorBlock;
 import dev.leeeonidys.aeronauticsplus.content.rocket.SeatEntity;
 import dev.leeeonidys.aeronauticsplus.content.rocket.VesselPartBlock;
 import dev.leeeonidys.aeronauticsplus.content.space.CryoCapsuleBlock;
@@ -262,6 +263,29 @@ public final class AeronauticsPlus {
             BlockState state
     ) {
         return new SimpleKineticBlockEntity(PROPELLER_SHAFT_ADAPTER_BE.get(), pos, state);
+    }
+
+    // Э4: helicopter main rotor — converts Create shaft power into atmospheric thrust
+    public static final DeferredBlock<HelicopterRotorBlock> HELICOPTER_ROTOR =
+            BLOCKS.register("helicopter_rotor", () -> new HelicopterRotorBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(2.0f, 6.0f)
+                            .noOcclusion()));
+
+    public static final DeferredItem<BlockItem> HELICOPTER_ROTOR_ITEM =
+            ITEMS.registerSimpleBlockItem(HELICOPTER_ROTOR);
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SimpleKineticBlockEntity>> HELICOPTER_ROTOR_BE =
+            BLOCK_ENTITIES.register("helicopter_rotor", () -> BlockEntityType.Builder.of(
+                    AeronauticsPlus::createHelicopterRotorBE,
+                    HELICOPTER_ROTOR.get()).build(null));
+
+    private static SimpleKineticBlockEntity createHelicopterRotorBE(
+            BlockPos pos,
+            BlockState state
+    ) {
+        return new SimpleKineticBlockEntity(HELICOPTER_ROTOR_BE.get(), pos, state);
     }
 
     private static AircraftPropellerBlockEntity createAircraftPropellerBE(BlockPos pos, BlockState state) {
