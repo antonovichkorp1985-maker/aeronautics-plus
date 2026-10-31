@@ -60,6 +60,43 @@ public final class ChemAtmosphereHooks {
         return 0.5 * density * orbit.velocityMetersPerSecond().magnitudeSquared();
     }
 
+    public static double windXMPerSecond(double geometricAltitudeMetres) {
+        Double sampled = invoke("windXMetersPerSecond", geometricAltitudeMetres);
+        return sampled != null ? sampled : 0.0;
+    }
+
+    public static double windYMPerSecond(double geometricAltitudeMetres) {
+        Double sampled = invoke("windYMetersPerSecond", geometricAltitudeMetres);
+        return sampled != null ? sampled : 0.0;
+    }
+
+    public static double windZMPerSecond(double geometricAltitudeMetres) {
+        Double sampled = invoke("windZMetersPerSecond", geometricAltitudeMetres);
+        return sampled != null ? sampled : 0.0;
+    }
+
+    public static double dynamicPressurePascals(double geometricAltitudeMetres, double velocityMetersPerSecond) {
+        double density = densityKgPerM3(geometricAltitudeMetres);
+        return 0.5 * density * velocityMetersPerSecond * velocityMetersPerSecond;
+    }
+
+    public static double maxQPascals(double velocityMetersPerSecond, double altitudeMetres) {
+        double density = densityKgPerM3(altitudeMetres);
+        double q = 0.5 * density * velocityMetersPerSecond * velocityMetersPerSecond;
+        return q;
+    }
+
+    public static double qDotKelvinPerSecond(double geometricAltitudeMetres, double velocityMetersPerSecond) {
+        double density = densityKgPerM3(geometricAltitudeMetres);
+        double q = 0.5 * density * velocityMetersPerSecond * velocityMetersPerSecond;
+        double velocityM = Math.abs(velocityMetersPerSecond);
+        if (velocityM < 1.0) {
+            return 0.0;
+        }
+        double heating = 1.8e-4 * q * velocityM;
+        return heating;
+    }
+
     private static Double invoke(String method, double altitudeMetres) {
         if (!columnPresent()) {
             return null;
